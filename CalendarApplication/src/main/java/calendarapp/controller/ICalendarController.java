@@ -1,6 +1,6 @@
-package controller;
+package calendarapp.controller;
 
-import model.ICalendarApplication;
+import calendarapp.model.ICalendarApplication;
 
 public interface ICalendarController {
   void go(ICalendarApplication calendarApplication);

@@ -1,4 +1,4 @@
-package model;
+package calendarapp.model;
 
 public interface ICalendarApplication {
 

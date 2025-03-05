@@ -1,4 +1,4 @@
-package view;
+package calendarapp.view;
 
 public interface ICalendarView {
 }
