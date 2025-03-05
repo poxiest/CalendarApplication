@@ -1,9 +1,8 @@
-package controller;
+package calendarapp.controller;
 
-import java.io.IOException;
 import java.util.Scanner;
 
-import model.ICalendarApplication;
+import calendarapp.model.ICalendarApplication;
 
 public class HeadlessCalendarController implements ICalendarController {
 

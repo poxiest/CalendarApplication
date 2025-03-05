@@ -1,4 +1,4 @@
-package controller;
+package calendarapp.controller;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

@@ -8,3 +8,5 @@
 /dataSources.local.xml
 /encodings.xml
 /*.xml
+/.idea/misc.xml
+/.idea/vcs.xml

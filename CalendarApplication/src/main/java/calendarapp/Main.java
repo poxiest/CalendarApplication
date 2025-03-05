@@ -1,10 +1,10 @@
-package CalendarApplication;
+package calendarapp;
 
 import java.io.IOException;
 
-import controller.CalendarControllerFactory;
-import controller.ICalendarController;
-import model.CalendarApplication;
+import calendarapp.controller.CalendarControllerFactory;
+import calendarapp.controller.ICalendarController;
+import calendarapp.model.CalendarApplication;
 
 public class Main {
   public static void main(String[] args) {
