@@ -38,3 +38,5 @@ build/
 .DS_Store
 /.idea/encodings.xml
 /.idea/*
+/.idea/misc.xml
+/.idea/vcs.xml
