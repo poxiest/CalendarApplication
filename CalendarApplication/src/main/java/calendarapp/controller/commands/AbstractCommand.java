@@ -1,6 +1,6 @@
 package calendarapp.controller.commands;
 
-import calendarapp.model.ICalendarApplication;
+import calendarapp.model.calendar.ICalendarApplication;
 import calendarapp.view.ICalendarView;
 
 public abstract class AbstractCommand implements Command {

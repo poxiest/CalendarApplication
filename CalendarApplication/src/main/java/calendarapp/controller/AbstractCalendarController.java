@@ -1,14 +1,9 @@
 package calendarapp.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import calendarapp.controller.commands.Command;
 import calendarapp.controller.commands.CommandFactory;
 import calendarapp.controller.commands.CommandFactoryImpl;
-import calendarapp.model.ICalendarApplication;
+import calendarapp.model.calendar.ICalendarApplication;
 import calendarapp.view.ICalendarView;
 
 public abstract class AbstractCalendarController implements ICalendarController {

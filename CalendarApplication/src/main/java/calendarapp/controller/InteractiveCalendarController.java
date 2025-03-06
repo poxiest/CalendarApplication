@@ -2,7 +2,7 @@ package calendarapp.controller;
 
 import java.util.Scanner;
 
-import calendarapp.model.ICalendarApplication;
+import calendarapp.model.calendar.ICalendarApplication;
 import calendarapp.view.ICalendarView;
 
 public class InteractiveCalendarController extends AbstractCalendarController {

@@ -3,10 +3,9 @@ package calendarapp;
 import java.io.FileNotFoundException;
 
 import calendarapp.controller.CalendarControllerFactory;
-import calendarapp.controller.HeadlessCalendarController;
 import calendarapp.controller.ICalendarController;
-import calendarapp.model.CalendarApplication;
-import calendarapp.model.ICalendarApplication;
+import calendarapp.model.calendar.CalendarApplication;
+import calendarapp.model.calendar.ICalendarApplication;
 import calendarapp.view.CLIView;
 import calendarapp.view.ICalendarView;
 
