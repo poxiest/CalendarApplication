@@ -3,24 +3,21 @@ package calendarapp.controller;
 import java.util.Scanner;
 
 import calendarapp.model.ICalendarApplication;
+import calendarapp.view.ICalendarView;
 
-public class HeadlessCalendarController implements ICalendarController {
+public class HeadlessCalendarController extends AbstractCalendarController {
 
-  private Readable in;
-  private Appendable out;
-
-  public HeadlessCalendarController(Readable in, Appendable out) {
-    this.in = in;
-    this.out = out;
+  HeadlessCalendarController(Readable in, ICalendarApplication model, ICalendarView view) {
+    super(in, model, view);
   }
 
   @Override
-  public void go(ICalendarApplication calendarApplication) {
-    String line;
+  public void go() {
+    String command;
     Scanner scanner = new Scanner(in);
     while (scanner.hasNextLine()) {
-      line = scanner.nextLine();
-      System.out.println(line);
+      command = scanner.nextLine();
+      processCommand(command);
     }
   }
 }
