@@ -3,9 +3,6 @@ package calendarapp.model.event;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * Implementation of a calendar event
- */
 public class Event implements IEvent {
   private final String name;
   private final LocalDateTime startTime;
@@ -108,13 +105,13 @@ public class Event implements IEvent {
       return this;
     }
 
-    public Builder startTime(LocalDateTime startTime) {
+    public Builder startTimeAndEndTime(LocalDateTime startTime, LocalDateTime endTime) {
       this.startTime = startTime;
-      return this;
-    }
-
-    public Builder endTime(LocalDateTime endTime) {
       this.endTime = endTime;
+      if (endTime == null) {
+        this.startTime = startTime.toLocalDate().atStartOfDay();
+        this.endTime = this.startTime.toLocalDate().atTime(23, 59, 59, 59);
+      }
       return this;
     }
 
@@ -191,4 +188,21 @@ public class Event implements IEvent {
   public static Builder builder() {
     return new Builder();
   }
+
+  @Override
+  public String toString() {
+    return "Event{" +
+            "name='" + name + '\'' +
+            ", startTime=" + startTime +
+            ", endTime=" + endTime +
+            ", description='" + description + '\'' +
+            ", location='" + location + '\'' +
+            ", visibility=" + visibility +
+            ", recurringDays='" + recurringDays + '\'' +
+            ", occurrenceCount=" + occurrenceCount +
+            ", recurrenceEndDate=" + recurrenceEndDate +
+            ", isAutoDecline=" + isAutoDecline +
+            '}';
+  }
+
 }

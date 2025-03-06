@@ -105,7 +105,7 @@ public class CalendarApplication implements ICalendarApplication {
     }
     if (endDateTime == null) {
       startDateTime = startDateTime.toLocalDate().atStartOfDay();
-      endDateTime = startDateTime.toLocalDate().atTime(23, 59, 59, 999999999);
+      endDateTime = startDateTime.toLocalDate().atTime(23, 59, 59);
     }
     return findEventsByStartAndEndTimeAndNameIfPresent(null, startDateTime, endDateTime);
   }
@@ -138,8 +138,7 @@ public class CalendarApplication implements ICalendarApplication {
                                   LocalDate recurrenceEndDate, boolean autoDecline) {
     return Event.builder()
             .name(eventName)
-            .startTime(startTime)
-            .endTime(endTime)
+            .startTimeAndEndTime(startTime, endTime)
             .description(description)
             .location(location)
             .visibility(visibility)
@@ -252,8 +251,7 @@ public class CalendarApplication implements ICalendarApplication {
   private IEvent updateEventProperty(Event event, String property, String value) {
     Event.Builder builder = Event.builder()
             .name(event.getName())
-            .startTime(event.getStartDateTime())
-            .endTime(event.getEndDateTime())
+            .startTimeAndEndTime(event.getStartDateTime(), event.getEndDateTime())
             .description(event.getDescription())
             .location(event.getLocation())
             .visibility(event.getVisibility())
@@ -269,7 +267,7 @@ public class CalendarApplication implements ICalendarApplication {
 
       case PROPERTY_START_TIME:
         LocalDateTime startTime = parseDateTime(value);
-        builder.startTime(startTime);
+        builder.startTimeAndEndTime(startTime, event.getEndDateTime());
         if (event.isAutoDecline()) {
           Event tempEvent = builder.build();
           for (IEvent existingEvent: events) {
@@ -282,7 +280,7 @@ public class CalendarApplication implements ICalendarApplication {
 
       case PROPERTY_END_TIME:
         LocalDateTime endTime = parseDateTime(value);
-        builder.endTime(endTime);
+        builder.startTimeAndEndTime(event.getStartDateTime(), endTime);
         if (event.isAutoDecline()) {
           Event tempEvent = builder.build();
           for (IEvent existingEvent: events) {
