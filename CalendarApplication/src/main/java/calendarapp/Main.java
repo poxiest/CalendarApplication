@@ -1,10 +1,14 @@
 package calendarapp;
 
-import java.io.IOException;
+import java.io.FileNotFoundException;
 
 import calendarapp.controller.CalendarControllerFactory;
+import calendarapp.controller.HeadlessCalendarController;
 import calendarapp.controller.ICalendarController;
 import calendarapp.model.CalendarApplication;
+import calendarapp.model.ICalendarApplication;
+import calendarapp.view.CLIView;
+import calendarapp.view.ICalendarView;
 
 public class Main {
   public static void main(String[] args) {
@@ -18,14 +22,15 @@ public class Main {
       filename = args[2];
     }
 
+    ICalendarApplication model = new CalendarApplication();
+    ICalendarView view = new CLIView(System.out);
+
     try {
-      ICalendarController controller = CalendarControllerFactory.createController(mode, filename);
-      controller.go(new CalendarApplication());
-    } catch (IllegalArgumentException e) {
-      System.out.println("Error: " + e.getMessage());
-    } catch (IOException e) {
-      System.out.println("Error: " + e.getMessage());
-      throw new RuntimeException(e);
+      ICalendarController controller = CalendarControllerFactory.createController(mode, filename,
+          model, view);
+      controller.go();
+    } catch (FileNotFoundException e) {
+      view.display("File not found in path : " + filename + "\n");
     }
   }
 }
