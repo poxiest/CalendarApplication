@@ -2,7 +2,7 @@ package calendarapp.controller.commands;
 
 import java.util.regex.Matcher;
 
-import calendarapp.model.ICalendarApplication;
+import calendarapp.model.calendar.ICalendarApplication;
 import calendarapp.view.ICalendarView;
 
 public class CreateCommand extends AbstractCommand {

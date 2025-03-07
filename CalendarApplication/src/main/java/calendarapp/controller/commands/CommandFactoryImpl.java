@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import calendarapp.model.ICalendarApplication;
+import calendarapp.model.calendar.ICalendarApplication;
 import calendarapp.view.ICalendarView;
 
 public class CommandFactoryImpl implements CommandFactory {

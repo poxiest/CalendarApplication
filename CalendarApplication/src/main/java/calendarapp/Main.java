@@ -7,8 +7,8 @@ import java.io.InputStreamReader;
 
 import calendarapp.controller.CalendarController;
 import calendarapp.controller.ICalendarController;
-import calendarapp.model.CalendarApplication;
-import calendarapp.model.ICalendarApplication;
+import calendarapp.model.calendar.CalendarApplication;
+import calendarapp.model.calendar.ICalendarApplication;
 import calendarapp.view.CLIView;
 import calendarapp.view.ICalendarView;
 
