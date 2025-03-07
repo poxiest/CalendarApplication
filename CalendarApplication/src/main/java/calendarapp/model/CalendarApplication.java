@@ -9,10 +9,6 @@ public class CalendarApplication implements ICalendarApplication {
 
   @Override
   public void createEvent() {
-    IEvent newEvent = new Event.Builder()
-        .from(from)
-        .build();
-
   }
 
   @Override

@@ -3,7 +3,7 @@ package calendarapp.controller.commands;
 import calendarapp.model.ICalendarApplication;
 import calendarapp.view.ICalendarView;
 
-public class ExportCommand extends AbstractCommand{
+public class ExportCommand extends AbstractCommand {
 
   ExportCommand(ICalendarApplication model, ICalendarView view) {
     super(model, view);

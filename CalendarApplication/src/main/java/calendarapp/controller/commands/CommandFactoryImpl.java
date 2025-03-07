@@ -1,5 +1,6 @@
 package calendarapp.controller.commands;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,18 +24,18 @@ public class CommandFactoryImpl implements CommandFactory {
     Pattern pattern = Pattern.compile(commandPattern);
     Matcher matcher = pattern.matcher(command);
 
-    String cmnd = matcher.find() ? matcher.group(1) : "";
+    String cmd = matcher.find() ? matcher.group(1) : "";
 
-    switch (cmnd.toLowerCase()) {
-      case "create":
+    switch (Objects.requireNonNull(CommandProperties.getCommand(cmd.toLowerCase()))) {
+      case CREATE:
         return new CreateCommand(model, view);
-      case "edit":
+      case EDIT:
         return new EditCommand(model, view);
-      case "print":
+      case PRINT:
         return new PrintCommand(model, view);
-      case "export":
+      case EXPORT:
         return new ExportCommand(model, view);
-      case "show":
+      case SHOW:
         return new ShowCommand(model, view);
       default: {
         view.display("Unknown command: " + command + "\n");

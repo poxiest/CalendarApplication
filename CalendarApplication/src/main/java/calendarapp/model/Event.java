@@ -36,7 +36,9 @@ public class Event implements IEvent {
     private String scope;
     private boolean autoDecline;
 
-    public Builder eventName() {}
+    public Builder eventName() {
+      return this;
+    }
 
     public Builder from(String from) {
       this.from = from;

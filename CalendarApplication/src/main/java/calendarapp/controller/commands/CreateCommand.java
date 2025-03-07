@@ -1,7 +1,6 @@
 package calendarapp.controller.commands;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import calendarapp.model.ICalendarApplication;
 import calendarapp.view.ICalendarView;
@@ -44,41 +43,35 @@ public class CreateCommand extends AbstractCommand {
       command = command.replaceAll("(?i)--autoDecline", "");
     }
 
-    Pattern pattern = Pattern.compile(eventNamePattern);
-    Matcher matcher = pattern.matcher(command);
+    Matcher matcher = regexMatching(eventNamePattern, command);
     if (matcher.find()) {
       eventName = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
     }
 
-    pattern = Pattern.compile(dateFromToPattern);
-    matcher = pattern.matcher(command);
+    matcher = regexMatching(dateFromToPattern, command);
     if (matcher.find()) {
-      from  = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
+      from = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
       to = matcher.group(3) != null ? matcher.group(3) : matcher.group(4);
     }
 
-    pattern = Pattern.compile(dateOnPattern);
-    matcher = pattern.matcher(command);
+    matcher = regexMatching(dateOnPattern, command);
     if (matcher.find()) {
       on = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
     }
 
-    pattern = Pattern.compile(repeatsForPattern);
-    matcher = pattern.matcher(command);
+    matcher = regexMatching(repeatsForPattern, command);
     if (matcher.find()) {
       repeats = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
       times = matcher.group(3);
     }
 
-    pattern = Pattern.compile(repeatsUntilPattern);
-    matcher = pattern.matcher(command);
+    matcher = regexMatching(repeatsUntilPattern, command);
     if (matcher.find()) {
       repeats = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
       until = matcher.group(3) != null ? matcher.group(3) : matcher.group(4);
     }
 
-    pattern = Pattern.compile(optionalParameters);
-    matcher = pattern.matcher(command);
+    matcher = regexMatching(optionalParameters, command);
     while (matcher.find()) {
       if (matcher.group(1).equalsIgnoreCase("description")) {
         description = matcher.group(2) != null ? matcher.group(2) : matcher.group(3);
