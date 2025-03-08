@@ -1,9 +1,10 @@
-package calendarapp.controller.commands;
+package calendarapp.controller.commands.impl;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import calendarapp.model.ICalendarApplication;
+import calendarapp.controller.commands.Command;
+import calendarapp.model.calendar.ICalendarApplication;
 import calendarapp.view.ICalendarView;
 
 public abstract class AbstractCommand implements Command {
@@ -18,6 +19,6 @@ public abstract class AbstractCommand implements Command {
 
   protected Matcher regexMatching(String regexPattern, String command) {
     Pattern pattern = Pattern.compile(regexPattern);
-    return pattern.matcher(command);
+    return pattern.matcher(command.trim());
   }
 }

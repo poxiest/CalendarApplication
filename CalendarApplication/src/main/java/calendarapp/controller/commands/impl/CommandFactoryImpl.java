@@ -1,9 +1,12 @@
-package calendarapp.controller.commands;
+package calendarapp.controller.commands.impl;
 
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import calendarapp.controller.commands.Command;
+import calendarapp.controller.commands.CommandFactory;
+import calendarapp.controller.commands.CommandProperties;
 import calendarapp.model.calendar.ICalendarApplication;
 import calendarapp.view.ICalendarView;
 

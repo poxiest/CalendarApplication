@@ -1,14 +1,13 @@
 package calendarapp.model.event;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.temporal.Temporal;
 
 public interface IEvent {
   String getName();
 
-  LocalDateTime getStartDateTime();
+  Temporal getStartDateTime();
 
-  LocalDateTime getEndDateTime();
+  Temporal getEndDateTime();
 
   String getDescription();
 
@@ -20,7 +19,7 @@ public interface IEvent {
 
   Integer getOccurrenceCount();
 
-  LocalDate getRecurrenceEndDate();
+  Temporal getRecurrenceEndDate();
 
   boolean isAutoDecline();
 

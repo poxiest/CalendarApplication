@@ -1,11 +1,12 @@
-package calendarapp.controller;
+package calendarapp.controller.impl;
 
 import java.util.Scanner;
 
+import calendarapp.controller.ICalendarController;
 import calendarapp.controller.commands.Command;
 import calendarapp.controller.commands.CommandFactory;
-import calendarapp.controller.commands.CommandFactoryImpl;
-import calendarapp.model.ICalendarApplication;
+import calendarapp.controller.commands.impl.CommandFactoryImpl;
+import calendarapp.model.calendar.ICalendarApplication;
 import calendarapp.view.ICalendarView;
 
 public class CalendarController implements ICalendarController {
@@ -28,18 +29,19 @@ public class CalendarController implements ICalendarController {
     Scanner scanner = new Scanner(in);
 
     while (true) {
-      view.display("Enter the next command or exit.\n");
-
+      view.display("ENTER THE NEXT COMMAND/EXIT:\n");
       command = scanner.nextLine();
       if (command.trim().equalsIgnoreCase("exit")) {
+        view.display("Executing: " + command + "\n");
         view.display("Exiting application.\n");
         System.exit(0);
       }
-
       Command cmnd = commandFactory.createCommand(command);
       if (cmnd != null) {
+        view.display("Executing: " + command + "\n");
         cmnd.execute(command);
       }
+      view.display("\n");
     }
   }
 }

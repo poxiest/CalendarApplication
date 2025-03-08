@@ -1,25 +1,23 @@
 package calendarapp.model.calendar;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+
+import java.time.temporal.Temporal;
 import java.util.List;
 
-import calendarapp.model.event.EventVisibility;
 import calendarapp.model.event.IEvent;
 
 public interface ICalendarApplication {
 
-  void createEvent(String eventName, LocalDateTime startTime, LocalDateTime endTime,
-                   String recurringDays, Integer occurrenceCount, LocalDate recurrenceEndDate,
-                   String description, String location, EventVisibility visibility,
+  void createEvent(String eventName, Temporal startTime, Temporal endTime,
+                   String recurringDays, String occurrenceCount, Temporal recurrenceEndDate,
+                   String description, String location, String visibility,
                    boolean autoDecline);
 
-  void editEvent(String eventName, LocalDateTime startTime, LocalDateTime endTime, String property, String value);
+  void editEvent(String eventName, Temporal startTime, Temporal endTime, String property, String value);
 
-  List<IEvent> printEvents(LocalDateTime startTime, LocalDateTime endTime);
+  List<IEvent> printEvents(Temporal startTime, Temporal endTime);
 
-  void export();
+  void export(String filename);
 
-  void showStatus(LocalDateTime dateTime);
-
+  String showStatus(Temporal dateTime);
 }

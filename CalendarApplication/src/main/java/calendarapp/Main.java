@@ -4,16 +4,19 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.util.TimeZone;
 
-import calendarapp.controller.CalendarController;
 import calendarapp.controller.ICalendarController;
+import calendarapp.controller.impl.CalendarController;
 import calendarapp.model.calendar.CalendarApplication;
 import calendarapp.model.calendar.ICalendarApplication;
-import calendarapp.view.CLIView;
 import calendarapp.view.ICalendarView;
+import calendarapp.view.impl.CLIView;
 
 public class Main {
   public static void main(String[] args) {
+    TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
+
     if (args.length < 2 || !args[0].equalsIgnoreCase("--mode")) {
       throw new IllegalArgumentException("--mode argument required for the application to run.");
     }

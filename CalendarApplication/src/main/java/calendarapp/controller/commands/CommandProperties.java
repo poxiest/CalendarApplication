@@ -14,10 +14,6 @@ public enum CommandProperties {
     this.command = command;
   }
 
-  public String getCommand() {
-    return command;
-  }
-
   public static CommandProperties getCommand(String command) {
     for (CommandProperties prop : values()) {
       if (prop.command.equalsIgnoreCase(command)) {

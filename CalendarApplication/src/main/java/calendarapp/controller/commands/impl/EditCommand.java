@@ -1,18 +1,22 @@
-package calendarapp.controller.commands;
+package calendarapp.controller.commands.impl;
 
 import java.util.regex.Matcher;
 
-import calendarapp.model.ICalendarApplication;
 import calendarapp.model.calendar.ICalendarApplication;
 import calendarapp.view.ICalendarView;
+
+import static calendarapp.controller.commands.impl.RegexPatternConstants.editEventNamePattern;
+import static calendarapp.controller.commands.impl.RegexPatternConstants.fromPattern;
+import static calendarapp.controller.commands.impl.RegexPatternConstants.fromToPattern;
+import static calendarapp.utils.TimeUtil.getLocalDateTimeFromString;
 
 public class EditCommand extends AbstractCommand {
 
   private String propertyName;
   private String newPropertyValue;
   private String eventName;
-  private String fromDateTimeString;
-  private String toDateTimeString;
+  private String startDateTime;
+  private String endDateTime;
 
   EditCommand(ICalendarApplication model, ICalendarView view) {
     super(model, view);
@@ -20,16 +24,12 @@ public class EditCommand extends AbstractCommand {
 
   @Override
   public void execute(String command) {
-    String fromToPattern = "(?i)\\s+event\\s+(\\S+)\\s+(?:\"([^\"]+)\"|(\\S+))\\s+from\\s+(?:\"([^\"]+)\"|(\\S+))\\s+to\\s+(?:\"([^\"]+)\"|(\\S+))\\s+with\\s+(?:\"([^\"]+)\"|(\\S+))$";
-    String fromPattern = "(?i)\\s+events\\s+(\\S+)\\s+(?:\"([^\"]+)\"|(\\S+))\\s+from\\s+(?:\"([^\"]+)\"|(\\S+))\\s+with\\s+(?:\"([^\"]+)\"|(\\S+))$";
-    String eventNamePattern = "(?i)\\s+events\\s+(\\S+)\\s+(?:\"([^\"]+)\"|(\\S+))\\s+(?:\"([^\"]+)\"|(\\S+))$";
-
     Matcher matcher = regexMatching(fromToPattern, command);
     if (matcher.find()) {
       propertyName = matcher.group(1);
       eventName = matcher.group(2) != null ? matcher.group(2) : matcher.group(3);
-      fromDateTimeString = matcher.group(4) != null ? matcher.group(4) : matcher.group(5);
-      toDateTimeString = matcher.group(6) != null ? matcher.group(6) : matcher.group(7);
+      startDateTime = matcher.group(4) != null ? matcher.group(4) : matcher.group(5);
+      endDateTime = matcher.group(6) != null ? matcher.group(6) : matcher.group(7);
       newPropertyValue = matcher.group(8) != null ? matcher.group(8) : matcher.group(9);
     }
 
@@ -37,11 +37,11 @@ public class EditCommand extends AbstractCommand {
     if (matcher.find()) {
       propertyName = matcher.group(1);
       eventName = matcher.group(2) != null ? matcher.group(2) : matcher.group(3);
-      fromDateTimeString = matcher.group(4) != null ? matcher.group(4) : matcher.group(5);
+      startDateTime = matcher.group(4) != null ? matcher.group(4) : matcher.group(5);
       newPropertyValue = matcher.group(6) != null ? matcher.group(6) : matcher.group(7);
     }
 
-    matcher = regexMatching(eventNamePattern, command);
+    matcher = regexMatching(editEventNamePattern, command);
     if (matcher.find()) {
       propertyName = matcher.group(1);
       eventName = matcher.group(2) != null ? matcher.group(2) : matcher.group(3);
@@ -49,11 +49,17 @@ public class EditCommand extends AbstractCommand {
     }
 
     if (eventName == null || newPropertyValue == null || propertyName == null) {
-      view.display("Required fields are missing. Cannot process the command.\n\n");
+      view.display("Required fields are missing. Cannot process the command.\n");
+      return;
     }
 
 //    view.display( propertyName + "\n" + eventName + "\n" + newPropertyValue + "\n" + fromDateTimeString + "\n" + toDateTimeString + "\n" );
 
-    model.editEvent();
+    try {
+      model.editEvent(eventName, getLocalDateTimeFromString(startDateTime),
+          getLocalDateTimeFromString(endDateTime), propertyName, newPropertyValue);
+    } catch (IllegalArgumentException e) {
+      view.display("Error editing event: " + e.getMessage() + ".\n");
+    }
   }
 }

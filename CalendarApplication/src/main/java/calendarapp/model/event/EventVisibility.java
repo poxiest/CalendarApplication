@@ -1,6 +1,22 @@
 package calendarapp.model.event;
 
 public enum EventVisibility {
-  PUBLIC,
-  PRIVATE
+  PUBLIC("public"),
+  PRIVATE("private"),
+  UNKNOWN("unknown");
+
+  private final String value;
+
+  EventVisibility(String value) {
+    this.value = value;
+  }
+
+  public static EventVisibility getVisibility(String visibility) {
+    for (EventVisibility prop : values()) {
+      if (prop.value.equalsIgnoreCase(visibility)) {
+        return prop;
+      }
+    }
+    return UNKNOWN;
+  }
 }
