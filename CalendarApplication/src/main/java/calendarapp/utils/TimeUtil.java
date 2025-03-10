@@ -47,4 +47,23 @@ public class TimeUtil {
       throw new UnsupportedOperationException("Cannot convert to LocalDateTime: " + temporal.getClass());
     }
   }
+
+  public static String formatDate(Temporal temporal) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+
+    if (temporal instanceof LocalDate) {
+      return ((LocalDate) temporal).format(formatter);
+    } else if (temporal instanceof LocalDateTime) {
+      return ((LocalDateTime) temporal).format(formatter);
+    }
+
+    return LocalDate.from(temporal).format(formatter);
+  }
+
+  public static String formatTime(Temporal temporal) {
+    if (temporal instanceof LocalDateTime) {
+      return ((LocalDateTime) temporal).format(DateTimeFormatter.ofPattern("h:mm:ss a"));
+    }
+    return "";
+  }
 }

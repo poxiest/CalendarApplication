@@ -1,6 +1,7 @@
 package calendarapp.model.calendar;
 
 
+import java.io.IOException;
 import java.time.temporal.Temporal;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public interface ICalendarApplication {
 
   List<IEvent> printEvents(Temporal startTime, Temporal endTime);
 
-  void export(String filename);
+  void export(String filename) throws IOException;
 
   String showStatus(Temporal dateTime);
 }
