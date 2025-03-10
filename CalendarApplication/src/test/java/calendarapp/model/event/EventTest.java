@@ -3,9 +3,7 @@ package calendarapp.model.event;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 import calendarapp.model.EventVisibility;
 import calendarapp.model.IEvent;
