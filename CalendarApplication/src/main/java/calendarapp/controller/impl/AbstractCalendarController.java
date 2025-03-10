@@ -4,17 +4,17 @@ import calendarapp.controller.ICalendarController;
 import calendarapp.controller.commands.Command;
 import calendarapp.controller.commands.CommandFactory;
 import calendarapp.controller.commands.impl.CommandFactoryImpl;
-import calendarapp.model.calendar.ICalendarApplication;
+import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
 public abstract class AbstractCalendarController implements ICalendarController {
 
   protected CommandFactory commandFactory;
-  protected ICalendarApplication model;
+  protected ICalendarModel model;
   protected Readable in;
   protected ICalendarView view;
 
-  protected AbstractCalendarController(Readable in, ICalendarApplication model, ICalendarView view) {
+  protected AbstractCalendarController(Readable in, ICalendarModel model, ICalendarView view) {
     this.in = in;
     this.view = view;
     this.model = model;

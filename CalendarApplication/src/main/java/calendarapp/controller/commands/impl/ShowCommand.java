@@ -2,7 +2,7 @@ package calendarapp.controller.commands.impl;
 
 import java.util.regex.Matcher;
 
-import calendarapp.model.calendar.ICalendarApplication;
+import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
 import static calendarapp.controller.commands.impl.RegexPatternConstants.STATUS_ON_PATTERN;
@@ -12,7 +12,7 @@ public class ShowCommand extends AbstractCommand {
 
   private String on;
 
-  ShowCommand(ICalendarApplication model, ICalendarView view) {
+  ShowCommand(ICalendarModel model, ICalendarView view) {
     super(model, view);
   }
 

@@ -2,7 +2,7 @@ package calendarapp.view;
 
 import java.util.List;
 
-import calendarapp.model.event.IEvent;
+import calendarapp.model.IEvent;
 
 public interface ICalendarView {
 

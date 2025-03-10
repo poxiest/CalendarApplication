@@ -8,8 +8,8 @@ import calendarapp.controller.ICalendarController;
 import calendarapp.controller.impl.CalendarControllerFactory;
 import calendarapp.controller.impl.HeadlessCalendarController;
 import calendarapp.controller.impl.InteractiveCalendarController;
-import calendarapp.model.calendar.ICalendarApplication;
-import calendarapp.model.event.IEvent;
+import calendarapp.model.ICalendarModel;
+import calendarapp.model.IEvent;
 import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
@@ -17,12 +17,12 @@ import static org.junit.Assert.assertEquals;
 public class CalendarControllerFactoryTest {
   private ICalendarController controller;
   private ICalendarView view;
-  private ICalendarApplication model;
+  private ICalendarModel model;
 
   @Before
   public void setup() {
     view = new MockView();
-    model = new MockCalendarApplication();
+    model = new MockCalendarModel();
   }
 
   @Test
@@ -90,7 +90,7 @@ public class CalendarControllerFactoryTest {
     }
   }
 
-  private static class MockCalendarApplication implements ICalendarApplication {
+  private static class MockCalendarModel implements ICalendarModel {
 
     @Override
     public void createEvent(String eventName, Temporal startTime, Temporal endTime,

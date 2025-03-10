@@ -3,7 +3,7 @@ package calendarapp.view.impl;
 import java.io.IOException;
 import java.util.List;
 
-import calendarapp.model.event.IEvent;
+import calendarapp.model.IEvent;
 import calendarapp.view.ICalendarView;
 
 public class CLIView implements ICalendarView {

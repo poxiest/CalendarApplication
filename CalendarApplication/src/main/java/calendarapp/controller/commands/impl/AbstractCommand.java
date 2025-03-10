@@ -4,15 +4,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import calendarapp.controller.commands.Command;
-import calendarapp.model.calendar.ICalendarApplication;
+import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
 public abstract class AbstractCommand implements Command {
 
-  protected ICalendarApplication model;
+  protected ICalendarModel model;
   protected ICalendarView view;
 
-  AbstractCommand(ICalendarApplication model, ICalendarView view) {
+  AbstractCommand(ICalendarModel model, ICalendarView view) {
     this.model = model;
     this.view = view;
   }

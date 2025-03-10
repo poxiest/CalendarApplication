@@ -2,7 +2,7 @@ package calendarapp.controller.commands.impl;
 
 import java.util.regex.Matcher;
 
-import calendarapp.model.calendar.ICalendarApplication;
+import calendarapp.model.ICalendarModel;
 import calendarapp.utils.TimeUtil;
 import calendarapp.view.ICalendarView;
 
@@ -29,7 +29,7 @@ public class CreateCommand extends AbstractCommand {
   private String visibility;
   private boolean autoDecline;
 
-  CreateCommand(ICalendarApplication model, ICalendarView view) {
+  CreateCommand(ICalendarModel model, ICalendarView view) {
     super(model, view);
   }
 

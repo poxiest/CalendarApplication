@@ -1,13 +1,11 @@
-package calendarapp.model.calendar;
+package calendarapp.model;
 
 
 import java.io.IOException;
 import java.time.temporal.Temporal;
 import java.util.List;
 
-import calendarapp.model.event.IEvent;
-
-public interface ICalendarApplication {
+public interface ICalendarModel {
 
   void createEvent(String eventName, Temporal startTime, Temporal endTime,
                    String recurringDays, String occurrenceCount, Temporal recurrenceEndDate,

@@ -1,4 +1,4 @@
-package calendarapp.model.calendar;
+package calendarapp.model.impl;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.Temporal;
 import java.util.List;
 
-import calendarapp.model.event.EventVisibility;
-import calendarapp.model.event.IEvent;
+import calendarapp.model.EventVisibility;
+import calendarapp.model.IEvent;
 
 import static calendarapp.utils.TimeUtil.formatDate;
 import static calendarapp.utils.TimeUtil.formatTime;

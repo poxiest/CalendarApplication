@@ -6,13 +6,13 @@ import java.io.FileReader;
 import java.io.InputStreamReader;
 
 import calendarapp.controller.ICalendarController;
-import calendarapp.model.calendar.ICalendarApplication;
+import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
 public class CalendarControllerFactory {
   public static ICalendarController getController(String mode,
                                                   String filename,
-                                                  ICalendarApplication model,
+                                                  ICalendarModel model,
                                                   ICalendarView view) {
     switch (mode.toLowerCase()) {
       case "interactive":

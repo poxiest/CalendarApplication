@@ -1,4 +1,4 @@
-package calendarapp.model.event;
+package calendarapp.model;
 
 import java.time.temporal.Temporal;
 

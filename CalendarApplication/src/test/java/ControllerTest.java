@@ -7,21 +7,21 @@ import java.util.Scanner;
 
 import calendarapp.controller.ICalendarController;
 import calendarapp.controller.impl.AbstractCalendarController;
-import calendarapp.model.calendar.CalendarApplication;
-import calendarapp.model.calendar.ICalendarApplication;
-import calendarapp.model.event.IEvent;
+import calendarapp.model.impl.CalendarModel;
+import calendarapp.model.ICalendarModel;
+import calendarapp.model.IEvent;
 import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
 
 public class ControllerTest {
   private ICalendarController controller;
-  private ICalendarApplication model;
+  private ICalendarModel model;
   private MockView view;
 
   @Before
   public void setUp() {
-    model = new CalendarApplication();
+    model = new CalendarModel();
     view = new MockView();
   }
 
@@ -105,7 +105,7 @@ public class ControllerTest {
   }
 
   private static class MockController extends AbstractCalendarController {
-    public MockController(String input, ICalendarApplication calendarApplication,
+    public MockController(String input, ICalendarModel calendarApplication,
                           ICalendarView calendarView) {
       super(new StringReader(input), calendarApplication, calendarView);
     }
