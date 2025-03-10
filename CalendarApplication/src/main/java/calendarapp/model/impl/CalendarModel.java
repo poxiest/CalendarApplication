@@ -25,17 +25,6 @@ import static calendarapp.utils.TimeUtil.isFirstAfterSecond;
 import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
 
 public class CalendarModel implements ICalendarModel {
-
-  private static final String PROPERTY_NAME = "eventname";
-  private static final String PROPERTY_START_TIME = "from";
-  private static final String PROPERTY_END_TIME = "to";
-  private static final String PROPERTY_DESCRIPTION = "description";
-  private static final String PROPERTY_LOCATION = "location";
-  private static final String PROPERTY_VISIBILITY = "visibility";
-
-  private static final String STATUS_BUSY = "Busy";
-  private static final String STATUS_AVAILABLE = "Available";
-
   private final List<IEvent> events;
 
   public CalendarModel() {
@@ -51,7 +40,7 @@ public class CalendarModel implements ICalendarModel {
     boolean isRecurring = recurringDays != null;
     Integer occurrence = occurrenceCount != null ? Integer.parseInt(occurrenceCount) : null;
     EventVisibility visibilityEnum = visibility != null ?
-        EventVisibility.getVisibility(visibility) : EventVisibility.PRIVATE;
+        EventVisibility.getVisibility(visibility) : EventVisibility.DEFAULT;
 
     if (!isRecurring) {
       IEvent event = createSingleEvent(eventName, startTime, endTime, description, location,
@@ -118,9 +107,9 @@ public class CalendarModel implements ICalendarModel {
   public String showStatus(Temporal dateTime) {
     boolean isBusy = events.stream().anyMatch(event -> isEventActiveAt(event, dateTime));
     if (isBusy) {
-      return STATUS_BUSY;
+      return EventConstants.Status.BUSY;
     } else {
-      return STATUS_AVAILABLE;
+      return EventConstants.Status.AVAILABLE;
     }
   }
 
@@ -237,11 +226,11 @@ public class CalendarModel implements ICalendarModel {
         .isAutoDecline(event.isAutoDecline());
 
     switch (property.toLowerCase()) {
-      case PROPERTY_NAME:
+      case EventConstants.PropertyKeys.NAME:
         builder.name(value);
         break;
 
-      case PROPERTY_START_TIME:
+      case EventConstants.PropertyKeys.START_TIME:
         builder.startTime(getLocalDateTimeFromString(value));
         if (event.isAutoDecline()) {
           Event tempEvent = builder.build();
@@ -254,7 +243,7 @@ public class CalendarModel implements ICalendarModel {
         }
         break;
 
-      case PROPERTY_END_TIME:
+      case EventConstants.PropertyKeys.END_TIME:
         builder.endTime(getLocalDateTimeFromString(value));
         if (event.isAutoDecline()) {
           Event tempEvent = builder.build();
@@ -267,16 +256,16 @@ public class CalendarModel implements ICalendarModel {
         }
         break;
 
-      case PROPERTY_DESCRIPTION:
+      case EventConstants.PropertyKeys.DESCRIPTION:
         builder.description(value);
         break;
 
-      case PROPERTY_LOCATION:
+      case EventConstants.PropertyKeys.LOCATION:
         builder.location(value);
         break;
 
-      case PROPERTY_VISIBILITY:
-        if (EventVisibility.getVisibility(value) == EventVisibility.DEFAULT) {
+      case EventConstants.PropertyKeys.VISIBILITY:
+        if (EventVisibility.getVisibility(value) == EventVisibility.UNKNOWN) {
           throw new IllegalArgumentException("Invalid visibility value: " + value + "\n");
         }
         builder.visibility(EventVisibility.getVisibility(value));

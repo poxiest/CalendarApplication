@@ -3,7 +3,8 @@ package calendarapp.model;
 public enum EventVisibility {
   PUBLIC("public"),
   PRIVATE("private"),
-  DEFAULT("default");
+  DEFAULT("default"),
+  UNKNOWN("unknown");
 
   private final String value;
 
@@ -17,6 +18,6 @@ public enum EventVisibility {
         return prop;
       }
     }
-    return DEFAULT;
+    return UNKNOWN;
   }
 }

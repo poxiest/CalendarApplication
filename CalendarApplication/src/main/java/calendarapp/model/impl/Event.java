@@ -100,7 +100,7 @@ public class Event implements IEvent {
     private Temporal endTime;
     private String description;
     private String location;
-    private EventVisibility visibility = EventVisibility.PUBLIC;
+    private EventVisibility visibility = EventVisibility.DEFAULT;
     private String recurringDays;
     private Integer occurrenceCount;
     private Temporal recurrenceEndDate;
@@ -193,8 +193,14 @@ public class Event implements IEvent {
           throw new IllegalArgumentException("Occurrence count must be greater than 0");
         }
 
-        if (recurrenceEndDate != null && isFirstBeforeSecond(recurrenceEndDate, startTime)) {
-          throw new IllegalArgumentException("Occurrence count must be greater than 0");
+        if (recurrenceEndDate != null && isFirstBeforeSecond(recurrenceEndDate, endTime)) {
+          throw new IllegalArgumentException("Recurrence end date must be after end date");
+        }
+
+        // TODO: Add a validation to check that recurring events should not cross 1 day
+      } else {
+        if (occurrenceCount != null || recurrenceEndDate != null) {
+          throw new IllegalArgumentException("Recurring events require recurring days of week");
         }
       }
     }
