@@ -8,15 +8,15 @@ import calendarapp.controller.InvalidCommandFileException;
 import calendarapp.controller.commands.Command;
 import calendarapp.controller.commands.CommandFactory;
 import calendarapp.controller.commands.CommandProperties;
-import calendarapp.model.calendar.ICalendarApplication;
+import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
 public class CommandFactoryImpl implements CommandFactory {
 
-  ICalendarApplication model;
+  ICalendarModel model;
   ICalendarView view;
 
-  public CommandFactoryImpl(ICalendarApplication model, ICalendarView view) {
+  public CommandFactoryImpl(ICalendarModel model, ICalendarView view) {
     this.model = model;
     this.view = view;
   }

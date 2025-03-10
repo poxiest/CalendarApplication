@@ -1,7 +1,9 @@
-package calendarapp.model.event;
+package calendarapp.model.impl;
 
 import java.time.temporal.Temporal;
 
+import calendarapp.model.EventVisibility;
+import calendarapp.model.IEvent;
 import calendarapp.utils.TimeUtil;
 
 import static calendarapp.utils.TimeUtil.isFirstAfterSecond;

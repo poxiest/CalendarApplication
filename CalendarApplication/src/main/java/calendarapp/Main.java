@@ -4,8 +4,8 @@ import java.util.TimeZone;
 
 import calendarapp.controller.ICalendarController;
 import calendarapp.controller.impl.CalendarControllerFactory;
-import calendarapp.model.calendar.CalendarApplication;
-import calendarapp.model.calendar.ICalendarApplication;
+import calendarapp.model.impl.CalendarModel;
+import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 import calendarapp.view.impl.CLIView;
 
@@ -23,7 +23,7 @@ public class Main {
       filename = args[2];
     }
 
-    ICalendarApplication model = new CalendarApplication();
+    ICalendarModel model = new CalendarModel();
     ICalendarView view = new CLIView(System.out);
 
 

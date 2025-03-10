@@ -3,12 +3,12 @@ package calendarapp.controller.impl;
 import java.util.Scanner;
 
 import calendarapp.controller.InvalidCommandFileException;
-import calendarapp.model.calendar.ICalendarApplication;
+import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
 public class HeadlessCalendarController extends AbstractCalendarController {
 
-  HeadlessCalendarController(Readable in, ICalendarApplication model, ICalendarView view) {
+  HeadlessCalendarController(Readable in, ICalendarModel model, ICalendarView view) {
     super(in, model, view);
   }
 

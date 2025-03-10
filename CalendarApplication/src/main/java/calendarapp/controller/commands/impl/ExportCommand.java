@@ -3,7 +3,7 @@ package calendarapp.controller.commands.impl;
 import java.io.IOException;
 import java.util.regex.Matcher;
 
-import calendarapp.model.calendar.ICalendarApplication;
+import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
 import static calendarapp.controller.commands.impl.RegexPatternConstants.EXPORT_FILENAME_PATTERN;
@@ -12,7 +12,7 @@ public class ExportCommand extends AbstractCommand {
 
   private String filename;
 
-  ExportCommand(ICalendarApplication model, ICalendarView view) {
+  ExportCommand(ICalendarModel model, ICalendarView view) {
     super(model, view);
   }
 

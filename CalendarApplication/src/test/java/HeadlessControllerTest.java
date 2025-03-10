@@ -6,9 +6,9 @@ import java.util.List;
 import calendarapp.controller.ICalendarController;
 import calendarapp.controller.InvalidCommandFileException;
 import calendarapp.controller.impl.CalendarControllerFactory;
-import calendarapp.model.calendar.CalendarApplication;
-import calendarapp.model.calendar.ICalendarApplication;
-import calendarapp.model.event.IEvent;
+import calendarapp.model.impl.CalendarModel;
+import calendarapp.model.ICalendarModel;
+import calendarapp.model.IEvent;
 import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
@@ -16,12 +16,12 @@ import static org.junit.Assert.assertEquals;
 public class HeadlessControllerTest {
 
   private ICalendarController controller;
-  private ICalendarApplication model;
+  private ICalendarModel model;
   private MockView view;
 
   @Before
   public void setUp() {
-    model = new CalendarApplication();
+    model = new CalendarModel();
     view = new MockView();
   }
 

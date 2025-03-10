@@ -2,7 +2,7 @@ package calendarapp.controller.commands.impl;
 
 import java.util.regex.Matcher;
 
-import calendarapp.model.calendar.ICalendarApplication;
+import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
 import static calendarapp.controller.commands.impl.RegexPatternConstants.EDIT_EVENT_NAME_PATTERN;
@@ -18,7 +18,7 @@ public class EditCommand extends AbstractCommand {
   private String startDateTime;
   private String endDateTime;
 
-  EditCommand(ICalendarApplication model, ICalendarView view) {
+  EditCommand(ICalendarModel model, ICalendarView view) {
     super(model, view);
   }
 

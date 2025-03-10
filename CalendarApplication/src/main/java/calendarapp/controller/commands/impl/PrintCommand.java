@@ -1,13 +1,12 @@
 package calendarapp.controller.commands.impl;
 
 import java.time.temporal.ChronoUnit;
-import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
-import calendarapp.model.calendar.ICalendarApplication;
-import calendarapp.model.event.IEvent;
+import calendarapp.model.ICalendarModel;
+import calendarapp.model.IEvent;
 import calendarapp.view.ICalendarView;
 
 import static calendarapp.controller.commands.impl.RegexPatternConstants.PRINT_FROM_TO_PATTERN;
@@ -20,7 +19,7 @@ public class PrintCommand extends AbstractCommand {
   private String endDateTime;
   private String on;
 
-  PrintCommand(ICalendarApplication model, ICalendarView view) {
+  PrintCommand(ICalendarModel model, ICalendarView view) {
     super(model, view);
   }
 

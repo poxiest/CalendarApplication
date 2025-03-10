@@ -1,4 +1,4 @@
-package calendarapp.model.calendar;
+package calendarapp.model.impl;
 
 import java.io.IOException;
 import java.time.DayOfWeek;
@@ -13,18 +13,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import calendarapp.model.event.Event;
-import calendarapp.model.event.EventConflictException;
-import calendarapp.model.event.EventVisibility;
-import calendarapp.model.event.IEvent;
+import calendarapp.model.EventConflictException;
+import calendarapp.model.EventVisibility;
+import calendarapp.model.ICalendarModel;
+import calendarapp.model.IEvent;
 
-import static calendarapp.model.calendar.CalendarExporter.exportEventAsGoogleCalendarCsv;
+import static calendarapp.model.impl.CalendarExporter.exportEventAsGoogleCalendarCsv;
 import static calendarapp.utils.TimeUtil.getLocalDateTimeFromString;
 import static calendarapp.utils.TimeUtil.isEqual;
 import static calendarapp.utils.TimeUtil.isFirstAfterSecond;
 import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
 
-public class CalendarApplication implements ICalendarApplication {
+public class CalendarModel implements ICalendarModel {
 
   private static final String PROPERTY_NAME = "eventname";
   private static final String PROPERTY_START_TIME = "from";
@@ -38,7 +38,7 @@ public class CalendarApplication implements ICalendarApplication {
 
   private final List<IEvent> events;
 
-  public CalendarApplication() {
+  public CalendarModel() {
     this.events = new ArrayList<>();
   }
 
@@ -276,7 +276,7 @@ public class CalendarApplication implements ICalendarApplication {
         break;
 
       case PROPERTY_VISIBILITY:
-        if (EventVisibility.getVisibility(value) == EventVisibility.UNKNOWN) {
+        if (EventVisibility.getVisibility(value) == EventVisibility.DEFAULT) {
           throw new IllegalArgumentException("Invalid visibility value: " + value + "\n");
         }
         builder.visibility(EventVisibility.getVisibility(value));
