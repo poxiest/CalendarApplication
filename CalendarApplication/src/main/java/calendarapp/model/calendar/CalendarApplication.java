@@ -1,5 +1,6 @@
 package calendarapp.model.calendar;
 
+import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import calendarapp.model.event.EventConflictException;
 import calendarapp.model.event.EventVisibility;
 import calendarapp.model.event.IEvent;
 
+import static calendarapp.model.calendar.CalendarExporter.exportEventAsGoogleCalendarCsv;
 import static calendarapp.utils.TimeUtil.getLocalDateTimeFromString;
 import static calendarapp.utils.TimeUtil.isEqual;
 import static calendarapp.utils.TimeUtil.isFirstAfterSecond;
@@ -31,8 +33,8 @@ public class CalendarApplication implements ICalendarApplication {
   private static final String PROPERTY_LOCATION = "location";
   private static final String PROPERTY_VISIBILITY = "visibility";
 
-  public static final String STATUS_BUSY = "Busy";
-  public static final String STATUS_AVAILABLE = "Available";
+  private static final String STATUS_BUSY = "Busy";
+  private static final String STATUS_AVAILABLE = "Available";
 
   private final List<IEvent> events;
 
@@ -106,7 +108,9 @@ public class CalendarApplication implements ICalendarApplication {
   }
 
   @Override
-  public void export(String filename) {
+  public void export(String filename) throws IOException {
+    String filePath = filename + ".csv";
+    exportEventAsGoogleCalendarCsv(events, filePath);
 
   }
 
