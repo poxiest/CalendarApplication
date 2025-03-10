@@ -1,7 +1,7 @@
 create event test on "2025-11-11"
 create event test1 from "2025-11-12T12:00" to "2025-11-12T13:00"
 create event --autoDecline "test3" from "2025-11-13T13:00" to "2025-11-13T14:00" description "testing" location SA scope private
-create event --autoDecline "recurring 1'" from "2025-11-15T11:00" to "2025-11-15T12:30" repeats "MTW" for 3 times
+create event --autoDecline "recurring 1" from "2025-11-15T11:00" to "2025-11-15T12:30" repeats "MTW" for 3 times
 create event --autoDecline "recurring 2" from "2025-11-09T15:00" to "2025-11-09T16:00" repeats "RFS" until "2025-11-21"
 print events from "2025-11-09" to "2025-11-25"
 edit event eventname "test3" from "2025-11-13T13:00" to "2025-11-13T14:00" with "test 3 new name"

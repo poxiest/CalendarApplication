@@ -47,9 +47,9 @@ public class CalendarApplication implements ICalendarApplication {
                           boolean autoDecline) throws EventConflictException {
 
     boolean isRecurring = recurringDays != null;
-    int occurrence = occurrenceCount != null ? Integer.parseInt(occurrenceCount) : 0;
+    Integer occurrence = occurrenceCount != null ? Integer.parseInt(occurrenceCount) : null;
     EventVisibility visibilityEnum = visibility != null ?
-        EventVisibility.getVisibility(visibility) : EventVisibility.PUBLIC;
+        EventVisibility.getVisibility(visibility) : EventVisibility.PRIVATE;
 
     if (!isRecurring) {
       IEvent event = createSingleEvent(eventName, startTime, endTime, description, location,

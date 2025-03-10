@@ -1,7 +1,8 @@
 package calendarapp.model.event;
 
-import java.time.LocalDateTime;
 import java.time.temporal.Temporal;
+
+import calendarapp.utils.TimeUtil;
 
 import static calendarapp.utils.TimeUtil.isFirstAfterSecond;
 import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
@@ -118,8 +119,10 @@ public class Event implements IEvent {
         throw new IllegalStateException("Set startTime before setting endTime.\n");
       }
       if (endTime == null) {
-        this.endTime = ((LocalDateTime) this.startTime)
-            .toLocalDate().atTime(23, 59, 59);
+        this.startTime = (TimeUtil.getLocalDateTimeFromTemporal(startTime)
+            .toLocalDate().atTime(0, 0, 0));
+        this.endTime = (TimeUtil.getLocalDateTimeFromTemporal(startTime)
+            .toLocalDate().atTime(23, 59, 59));
       } else {
         this.endTime = endTime;
       }
@@ -183,7 +186,7 @@ public class Event implements IEvent {
         if (occurrenceCount == null && recurrenceEndDate == null) {
           throw new IllegalArgumentException("Recurring events require either occurrence count or end date");
         }
-        /*
+
         if (occurrenceCount != null && occurrenceCount <= 0) {
           throw new IllegalArgumentException("Occurrence count must be greater than 0");
         }
@@ -191,42 +194,20 @@ public class Event implements IEvent {
         if (recurrenceEndDate != null && isFirstBeforeSecond(recurrenceEndDate, startTime)) {
           throw new IllegalArgumentException("Occurrence count must be greater than 0");
         }
-         */
       }
     }
   }
 
-  /*
-  @Override
   public String toString() {
-    return "Event {\n" +
-        "name='" + name + "',\n" +
-        "startTime=" + startTime + ",\n" +
-        "endTime=" + endTime + ",\n" +
-        "description='" + description + "',\n" +
-        "location='" + location + "',\n" +
-        "visibility=" + visibility + ",\n" +
-        "recurringDays='" + recurringDays + "',\n" +
-        "occurrenceCount=" + occurrenceCount + ",\n" +
-        "recurrenceEndDate=" + recurrenceEndDate + ",\n" +
-        "isAutoDecline=" + isAutoDecline + "\n" +
-        "}\n";
-  }
-  */
-
-  @Override
-  public String toString() {
-    return "Event { " +
-        "name='" + name + "'," +
-        "startTime=" + startTime + ", " +
-        "endTime=" + endTime + ", " +
-        "description='" + description + "', " +
-        "location='" + location + "', " +
-        "visibility=" + visibility + ", " +
-        "recurringDays='" + recurringDays + "', " +
-        "occurrenceCount=" + occurrenceCount + ", " +
-        "recurrenceEndDate=" + recurrenceEndDate + ", " +
-        "isAutoDecline=" + isAutoDecline + " " +
-        "}";
+    return "Name: " + name + " " +
+        "Start Time: " + startTime + " " +
+        "End Time: " + endTime + " " +
+        "Description: " + description + " " +
+        "Location: " + location + " " +
+        "Visibility: " + visibility + " " +
+        "Recurring Days: " + recurringDays + " " +
+        "Occurrence Count: " + occurrenceCount + " " +
+        "Recurrence End Date: " + recurrenceEndDate + " " +
+        "Auto Decline: " + isAutoDecline + "\n";
   }
 }

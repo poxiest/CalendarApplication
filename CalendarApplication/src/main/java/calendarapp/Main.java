@@ -1,13 +1,9 @@
 package calendarapp;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.InputStreamReader;
 import java.util.TimeZone;
 
 import calendarapp.controller.ICalendarController;
-import calendarapp.controller.impl.CalendarController;
+import calendarapp.controller.impl.CalendarControllerFactory;
 import calendarapp.model.calendar.CalendarApplication;
 import calendarapp.model.calendar.ICalendarApplication;
 import calendarapp.view.ICalendarView;
@@ -30,24 +26,9 @@ public class Main {
     ICalendarApplication model = new CalendarApplication();
     ICalendarView view = new CLIView(System.out);
 
-    try {
-      ICalendarController controller;
 
-      switch (mode.toLowerCase()) {
-        case "interactive":
-          controller = new CalendarController(new InputStreamReader(System.in), model, view);
-          break;
-        case "headless":
-          controller = new CalendarController(new BufferedReader(new FileReader(filename)),
-              model, view);
-          break;
-        default:
-          throw new IllegalArgumentException("Unknown mode: " + mode);
-      }
-
-      controller.go();
-    } catch (FileNotFoundException e) {
-      view.display("File not found in path : " + filename + "\n");
-    }
+    ICalendarController controller = CalendarControllerFactory.getController(mode, filename,
+        model, view);
+    controller.go();
   }
 }

@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import calendarapp.controller.InvalidCommandFileException;
 import calendarapp.controller.commands.Command;
 import calendarapp.controller.commands.CommandFactory;
 import calendarapp.controller.commands.CommandProperties;
@@ -21,7 +22,7 @@ public class CommandFactoryImpl implements CommandFactory {
   }
 
   @Override
-  public Command createCommand(String command) {
+  public Command getCommand(String command) {
 
     String commandPattern = "^\\s*(\\S+)";
     Pattern pattern = Pattern.compile(commandPattern);
@@ -41,9 +42,8 @@ public class CommandFactoryImpl implements CommandFactory {
       case SHOW:
         return new ShowCommand(model, view);
       default: {
-        view.display("Unknown command: " + command + "\n");
+        throw new InvalidCommandFileException("Unknown command: " + command + "\n");
       }
     }
-    return null;
   }
 }

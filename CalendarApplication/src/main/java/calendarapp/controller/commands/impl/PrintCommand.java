@@ -1,14 +1,17 @@
 package calendarapp.controller.commands.impl;
 
+import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
 import calendarapp.model.calendar.ICalendarApplication;
 import calendarapp.model.event.IEvent;
 import calendarapp.view.ICalendarView;
 
-import static calendarapp.controller.commands.impl.RegexPatternConstants.printFromToPattern;
-import static calendarapp.controller.commands.impl.RegexPatternConstants.printOnPattern;
+import static calendarapp.controller.commands.impl.RegexPatternConstants.PRINT_FROM_TO_PATTERN;
+import static calendarapp.controller.commands.impl.RegexPatternConstants.PRINT_ON_PATTERN;
 import static calendarapp.utils.TimeUtil.getLocalDateTimeFromString;
 
 public class PrintCommand extends AbstractCommand {
@@ -23,13 +26,13 @@ public class PrintCommand extends AbstractCommand {
 
   @Override
   public void execute(String command) {
-    Matcher matcher = regexMatching(printFromToPattern, command);
+    Matcher matcher = regexMatching(PRINT_FROM_TO_PATTERN, command);
     if (matcher.find()) {
       startDateTime = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
       endDateTime = matcher.group(3) != null ? matcher.group(3) : matcher.group(4);
     }
 
-    matcher = regexMatching(printOnPattern, command);
+    matcher = regexMatching(PRINT_ON_PATTERN, command);
     if (matcher.find()) {
       on = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
     }
@@ -39,18 +42,20 @@ public class PrintCommand extends AbstractCommand {
     }
 
     if (startDateTime == null) {
-      view.display("Required fields are missing. Cannot process the command.\n");
+      view.displayMessage("Required fields are missing. Cannot process the command.\n");
       return;
     }
 
     try {
       List<IEvent> eventsToShow = model.printEvents(getLocalDateTimeFromString(startDateTime),
-          getLocalDateTimeFromString(endDateTime));
-      for (IEvent event : eventsToShow) {
-        view.display(event.toString() + "\n");
-      }
-    } catch (IllegalArgumentException e) {
-      view.display("Error viewing: " + e.getMessage() + ".\n");
+          getLocalDateTimeFromString(endDateTime)).stream()
+          .sorted((o1, o2) ->
+              (int) ChronoUnit.SECONDS.between(o2.getStartDateTime(), o1.getStartDateTime()))
+          .collect(Collectors.toList());
+      view.displayEvents(eventsToShow);
+    } catch (
+        IllegalArgumentException e) {
+      view.displayMessage("Error viewing: " + e.getMessage() + ".\n\n");
     }
   }
 }
