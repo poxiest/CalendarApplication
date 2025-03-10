@@ -34,8 +34,8 @@ public class CalendarExporter {
   public static void exportEventAsGoogleCalendarCsv(List<IEvent> events, String filePath) throws IOException {
     try (FileWriter writer = new FileWriter(filePath)) {
       writer.write(String.join(CSV_DELIMITER,
-              SUBJECT, START_DATE, START_TIME, END_DATE, END_TIME,
-              ALL_DAY_EVENT, DESCRIPTION, LOCATION, PRIVATE));
+          SUBJECT, START_DATE, START_TIME, END_DATE, END_TIME,
+          ALL_DAY_EVENT, DESCRIPTION, LOCATION, PRIVATE));
       writer.write(CSV_LINE_END);
 
       for (IEvent event : events) {
