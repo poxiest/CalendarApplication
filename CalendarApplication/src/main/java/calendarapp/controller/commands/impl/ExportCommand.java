@@ -1,5 +1,6 @@
 package calendarapp.controller.commands.impl;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 
 import calendarapp.model.calendar.ICalendarApplication;
@@ -29,7 +30,7 @@ public class ExportCommand extends AbstractCommand {
 
     try {
       model.export(filename);
-    } catch (IllegalArgumentException e) {
+    } catch (IOException e) {
       view.display("Error exporting: " + e.getMessage() + ".\n");
     }
   }

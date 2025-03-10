@@ -39,7 +39,7 @@ public class Main {
           break;
         case "headless":
           controller = new CalendarController(new BufferedReader(new FileReader(filename)),
-              model, view);
+                  model, view);
           break;
         default:
           throw new IllegalArgumentException("Unknown mode: " + mode);

@@ -1,5 +1,6 @@
 package calendarapp.model.calendar;
 
+import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import calendarapp.model.event.EventConflictException;
 import calendarapp.model.event.EventVisibility;
 import calendarapp.model.event.IEvent;
 
+import static calendarapp.model.calendar.CalendarExporter.exportEventAsGoogleCalendarCsv;
 import static calendarapp.utils.TimeUtil.getLocalDateTimeFromString;
 import static calendarapp.utils.TimeUtil.isEqual;
 import static calendarapp.utils.TimeUtil.isFirstAfterSecond;
@@ -31,8 +33,8 @@ public class CalendarApplication implements ICalendarApplication {
   private static final String PROPERTY_LOCATION = "location";
   private static final String PROPERTY_VISIBILITY = "visibility";
 
-  public static final String STATUS_BUSY = "Busy";
-  public static final String STATUS_AVAILABLE = "Available";
+  private static final String STATUS_BUSY = "Busy";
+  private static final String STATUS_AVAILABLE = "Available";
 
   private final List<IEvent> events;
 
@@ -49,31 +51,31 @@ public class CalendarApplication implements ICalendarApplication {
     boolean isRecurring = recurringDays != null;
     int occurrence = occurrenceCount != null ? Integer.parseInt(occurrenceCount) : 0;
     EventVisibility visibilityEnum = visibility != null ?
-        EventVisibility.getVisibility(visibility) : EventVisibility.PUBLIC;
+            EventVisibility.getVisibility(visibility) : EventVisibility.PUBLIC;
 
     if (!isRecurring) {
       IEvent event = createSingleEvent(eventName, startTime, endTime, description, location,
-          visibilityEnum, recurringDays, occurrence, recurrenceEndDate, autoDecline);
+              visibilityEnum, recurringDays, occurrence, recurrenceEndDate, autoDecline);
 
       if (autoDecline) {
         for (IEvent existingEvent : events) {
           if (event.conflictsWith(existingEvent)) {
             throw new EventConflictException("Event conflicts with existing event: "
-                + existingEvent.getName());
+                    + existingEvent.getName());
           }
         }
       }
       events.add(event);
     } else {
       List<Event> recurringEvents = createRecurringEvents(
-          eventName, startTime, endTime, description, location, visibilityEnum,
-          recurringDays, occurrence, recurrenceEndDate);
+              eventName, startTime, endTime, description, location, visibilityEnum,
+              recurringDays, occurrence, recurrenceEndDate);
 
       for (Event newEvent : recurringEvents) {
         for (IEvent existingEvent : events) {
           if (newEvent.conflictsWith(existingEvent)) {
             throw new EventConflictException("Recurring event conflicts with existing event: " +
-                existingEvent.getName());
+                    existingEvent.getName());
           }
         }
       }
@@ -100,13 +102,15 @@ public class CalendarApplication implements ICalendarApplication {
   public List<IEvent> printEvents(Temporal startDateTime, Temporal endDateTime) {
     if (endDateTime == null) {
       endDateTime = ((LocalDateTime) startDateTime)
-          .toLocalDate().atTime(23, 59, 59);
+              .toLocalDate().atTime(23, 59, 59);
     }
     return findEvents(null, startDateTime, endDateTime);
   }
 
   @Override
-  public void export(String filename) {
+  public void export(String filename) throws IOException {
+    String filePath = filename + ".csv";
+    exportEventAsGoogleCalendarCsv(events, filePath);
 
   }
 
@@ -122,8 +126,8 @@ public class CalendarApplication implements ICalendarApplication {
 
   private boolean isEventActiveAt(IEvent event, Temporal dateTime) {
     return isEqual(dateTime, event.getStartDateTime()) || isEqual(dateTime, event.getEndDateTime())
-        || (isFirstAfterSecond(dateTime, event.getStartDateTime())
-        && isFirstBeforeSecond(dateTime, event.getEndDateTime()));
+            || (isFirstAfterSecond(dateTime, event.getStartDateTime())
+            && isFirstBeforeSecond(dateTime, event.getEndDateTime()));
   }
 
   private Event createSingleEvent(String eventName, Temporal startTime, Temporal endTime,
@@ -131,17 +135,17 @@ public class CalendarApplication implements ICalendarApplication {
                                   String recurringDays, Integer occurrenceCount,
                                   Temporal recurrenceEndDate, boolean autoDecline) {
     return Event.builder()
-        .name(eventName)
-        .startTime(startTime)
-        .endTime(endTime)
-        .description(description)
-        .location(location)
-        .visibility(visibility)
-        .recurringDays(recurringDays)
-        .occurrenceCount(occurrenceCount)
-        .recurrenceEndDate(recurrenceEndDate)
-        .isAutoDecline(autoDecline)
-        .build();
+            .name(eventName)
+            .startTime(startTime)
+            .endTime(endTime)
+            .description(description)
+            .location(location)
+            .visibility(visibility)
+            .recurringDays(recurringDays)
+            .occurrenceCount(occurrenceCount)
+            .recurrenceEndDate(recurrenceEndDate)
+            .isAutoDecline(autoDecline)
+            .build();
   }
 
   private List<Event> createRecurringEvents(String eventName, Temporal startTime, Temporal endTime,
@@ -155,7 +159,7 @@ public class CalendarApplication implements ICalendarApplication {
 
     int occurrencesCreated = 0;
     while ((occurrenceCount != null && occurrencesCreated < occurrenceCount) ||
-        (recurrenceEndDate != null && isFirstBeforeSecond(startTime, recurrenceEndDate))) {
+            (recurrenceEndDate != null && isFirstBeforeSecond(startTime, recurrenceEndDate))) {
 
       DayOfWeek currentDay = DayOfWeek.of(startTime.get(ChronoField.DAY_OF_WEEK));
 
@@ -163,9 +167,9 @@ public class CalendarApplication implements ICalendarApplication {
         Temporal eventEndTime = startTime.plus(eventDuration);
 
         Event event = createSingleEvent(
-            eventName, startTime, eventEndTime,
-            description, location, visibility, recurringDays,
-            occurrenceCount, recurrenceEndDate, true
+                eventName, startTime, eventEndTime,
+                description, location, visibility, recurringDays,
+                occurrenceCount, recurrenceEndDate, true
         );
 
         recurringEvents.add(event);
@@ -213,24 +217,24 @@ public class CalendarApplication implements ICalendarApplication {
 
   private List<IEvent> findEvents(String eventName, Temporal startTime, Temporal endTime) {
     return events.stream()
-        .filter(event -> eventName == null || event.getName().equals(eventName))
-        .filter(event -> startTime == null || isFirstAfterSecond(event.getStartDateTime(), startTime) || isEqual(event.getStartDateTime(), startTime))
-        .filter(event -> endTime == null || isFirstBeforeSecond(event.getEndDateTime(), endTime) || isEqual(event.getEndDateTime(), endTime))
-        .collect(Collectors.toList());
+            .filter(event -> eventName == null || event.getName().equals(eventName))
+            .filter(event -> startTime == null || isFirstAfterSecond(event.getStartDateTime(), startTime) || isEqual(event.getStartDateTime(), startTime))
+            .filter(event -> endTime == null || isFirstBeforeSecond(event.getEndDateTime(), endTime) || isEqual(event.getEndDateTime(), endTime))
+            .collect(Collectors.toList());
   }
 
   private IEvent updateEventProperty(IEvent event, String property, String value) {
     Event.Builder builder = Event.builder()
-        .name(event.getName())
-        .startTime(event.getStartDateTime())
-        .endTime(event.getEndDateTime())
-        .description(event.getDescription())
-        .location(event.getLocation())
-        .visibility(event.getVisibility())
-        .recurringDays(event.getRecurringDays())
-        .occurrenceCount(event.getOccurrenceCount())
-        .recurrenceEndDate(event.getRecurrenceEndDate())
-        .isAutoDecline(event.isAutoDecline());
+            .name(event.getName())
+            .startTime(event.getStartDateTime())
+            .endTime(event.getEndDateTime())
+            .description(event.getDescription())
+            .location(event.getLocation())
+            .visibility(event.getVisibility())
+            .recurringDays(event.getRecurringDays())
+            .occurrenceCount(event.getOccurrenceCount())
+            .recurrenceEndDate(event.getRecurrenceEndDate())
+            .isAutoDecline(event.isAutoDecline());
 
     switch (property.toLowerCase()) {
       case PROPERTY_NAME:
@@ -244,7 +248,7 @@ public class CalendarApplication implements ICalendarApplication {
           for (IEvent existingEvent : events) {
             if (existingEvent != event && tempEvent.conflictsWith(existingEvent)) {
               throw new EventConflictException("Event conflicts with existing event: "
-                  + existingEvent.getName() + "\n");
+                      + existingEvent.getName() + "\n");
             }
           }
         }
@@ -257,7 +261,7 @@ public class CalendarApplication implements ICalendarApplication {
           for (IEvent existingEvent : events) {
             if (existingEvent != event && tempEvent.conflictsWith(existingEvent)) {
               throw new EventConflictException("Event conflicts with existing event: "
-                  + existingEvent.getName() + "\n");
+                      + existingEvent.getName() + "\n");
             }
           }
         }

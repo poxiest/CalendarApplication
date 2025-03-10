@@ -84,7 +84,7 @@ public class Event implements IEvent {
   @Override
   public boolean conflictsWith(IEvent other) {
     return isFirstBeforeSecond(this.getStartDateTime(), other.getEndDateTime())
-        && isFirstAfterSecond(this.getEndDateTime(), other.getStartDateTime());
+            && isFirstAfterSecond(this.getEndDateTime(), other.getStartDateTime());
   }
 
   public static Builder builder() {
@@ -119,7 +119,7 @@ public class Event implements IEvent {
       }
       if (endTime == null) {
         this.endTime = ((LocalDateTime) this.startTime)
-            .toLocalDate().atTime(23, 59, 59);
+                .toLocalDate().atTime(23, 59, 59);
       } else {
         this.endTime = endTime;
       }
@@ -217,16 +217,16 @@ public class Event implements IEvent {
   @Override
   public String toString() {
     return "Event { " +
-        "name='" + name + "'," +
-        "startTime=" + startTime + ", " +
-        "endTime=" + endTime + ", " +
-        "description='" + description + "', " +
-        "location='" + location + "', " +
-        "visibility=" + visibility + ", " +
-        "recurringDays='" + recurringDays + "', " +
-        "occurrenceCount=" + occurrenceCount + ", " +
-        "recurrenceEndDate=" + recurrenceEndDate + ", " +
-        "isAutoDecline=" + isAutoDecline + " " +
-        "}";
+            "name='" + name + "'," +
+            "startTime=" + startTime + ", " +
+            "endTime=" + endTime + ", " +
+            "description='" + description + "', " +
+            "location='" + location + "', " +
+            "visibility=" + visibility + ", " +
+            "recurringDays='" + recurringDays + "', " +
+            "occurrenceCount=" + occurrenceCount + ", " +
+            "recurrenceEndDate=" + recurrenceEndDate + ", " +
+            "isAutoDecline=" + isAutoDecline + " " +
+            "}";
   }
 }
