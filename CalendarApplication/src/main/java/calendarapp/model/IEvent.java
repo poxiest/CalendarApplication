@@ -19,4 +19,6 @@ public interface IEvent {
   String formatForExport();
 
   boolean shouldAutoDecline();
+
+  boolean hasIntersectionWith(Temporal startTime, Temporal endTime);
 }

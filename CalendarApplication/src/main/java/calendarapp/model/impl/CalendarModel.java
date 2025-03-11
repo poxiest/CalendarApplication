@@ -3,7 +3,6 @@ package calendarapp.model.impl;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
@@ -20,9 +19,6 @@ import calendarapp.model.ICalendarModel;
 import calendarapp.model.IEvent;
 
 import static calendarapp.model.impl.CalendarExporter.exportEventAsGoogleCalendarCsv;
-import static calendarapp.utils.TimeUtil.getLocalDateTimeFromString;
-import static calendarapp.utils.TimeUtil.isEqual;
-import static calendarapp.utils.TimeUtil.isFirstAfterSecond;
 import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
 
 public class CalendarModel implements ICalendarModel {
@@ -40,12 +36,10 @@ public class CalendarModel implements ICalendarModel {
 
     boolean isRecurring = recurringDays != null;
     Integer occurrence = occurrenceCount != null ? Integer.parseInt(occurrenceCount) : null;
-    EventVisibility visibilityEnum = visibility != null ?
-        EventVisibility.getVisibility(visibility) : EventVisibility.DEFAULT;
 
     if (!isRecurring) {
       IEvent event = createSingleEvent(eventName, startTime, endTime, description, location,
-          visibilityEnum, recurringDays, occurrence, recurrenceEndDate, autoDecline);
+          visibility, recurringDays, occurrence, recurrenceEndDate, autoDecline);
 
       if (autoDecline) {
         for (IEvent existingEvent : events) {
@@ -57,7 +51,7 @@ public class CalendarModel implements ICalendarModel {
       events.add(event);
     } else {
       List<Event> recurringEvents = createRecurringEvents(
-          eventName, startTime, endTime, description, location, visibilityEnum,
+          eventName, startTime, endTime, description, location, visibility,
           recurringDays, occurrence, recurrenceEndDate);
 
       for (Event newEvent : recurringEvents) {
@@ -102,8 +96,10 @@ public class CalendarModel implements ICalendarModel {
       endDateTime = (TimeUtil.getLocalDateTimeFromTemporal(startDateTime)
           .toLocalDate().plusDays(1).atStartOfDay());
     }
-    List<IEvent> eventsToShow = findEvents(null, startDateTime, endDateTime);
-    return eventsToShow.stream()
+
+    Temporal finalEndDateTime = endDateTime;
+    return events.stream()
+        .filter(event -> event.hasIntersectionWith(startDateTime, finalEndDateTime))
         .map(event -> event.formatForDisplay())
         .collect(Collectors.toList());
   }
@@ -126,7 +122,7 @@ public class CalendarModel implements ICalendarModel {
   }
 
   private Event createSingleEvent(String eventName, Temporal startTime, Temporal endTime,
-                                  String description, String location, EventVisibility visibility,
+                                  String description, String location, String visibility,
                                   String recurringDays, Integer occurrenceCount,
                                   Temporal recurrenceEndDate, boolean autoDecline) {
     return Event.builder()
@@ -145,7 +141,7 @@ public class CalendarModel implements ICalendarModel {
 
   private List<Event> createRecurringEvents(String eventName, Temporal startTime, Temporal endTime,
                                             String description, String location,
-                                            EventVisibility visibility, String recurringDays,
+                                            String visibility, String recurringDays,
                                             Integer occurrenceCount, Temporal recurrenceEndDate) {
 
     List<Event> recurringEvents = new ArrayList<>();

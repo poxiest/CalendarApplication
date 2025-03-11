@@ -29,7 +29,7 @@ public class ShowCommand extends AbstractCommand {
     }
 
     try {
-      view.displayMessage(model.showStatus(getLocalDateTimeFromString(on)) + "\n");
+      view.displayMessage("Status: " + model.showStatus(getLocalDateTimeFromString(on)) + "\n");
     } catch (IllegalArgumentException e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     }

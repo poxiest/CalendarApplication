@@ -72,8 +72,10 @@ public class TimeUtil {
       LocalDateTime start = getLocalDateTimeFromTemporal(startTime);
       LocalDateTime end = getLocalDateTimeFromTemporal(endTime);
 
-      boolean startsAtMidnight = start.getHour() == 0 && start.getMinute() == 0 && start.getSecond() == 0;
-      boolean endsAtEndOfDay = end.getHour() == 23 && end.getMinute() == 59 && end.getSecond() == 59;
+      // TODO: bro check this
+      boolean startsAtMidnight = start.getHour() == 0 && start.getMinute() == 0;
+      boolean endsAtEndOfDay = end.getHour() == 0 && end.getMinute() == 0 &&
+          (end.getDayOfMonth() == (start.getDayOfMonth() + 1));
 
       return startsAtMidnight && endsAtEndOfDay;
     } catch (UnsupportedOperationException e) {

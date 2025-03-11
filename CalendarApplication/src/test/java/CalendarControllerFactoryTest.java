@@ -17,6 +17,9 @@ public class CalendarControllerFactoryTest {
   private ICalendarView view;
   private ICalendarModel model;
 
+  private String filepath = System.getProperty("user.dir").contains("CalendarApplication") ?
+      System.getProperty("user.dir") : System.getProperty("user.dir") + "/CalendarApplication";
+
   @Before
   public void setup() {
     view = new MockView();
@@ -46,7 +49,7 @@ public class CalendarControllerFactoryTest {
   @Test
   public void testControllerFactory3() {
     controller = CalendarControllerFactory.getController("headless",
-        System.getProperty("user.dir") +
+        filepath +
             "/src/test/resources/positiveTestcase.txt", model,
         view);
     assertEquals(CalendarController.class, controller.getClass());
@@ -61,7 +64,7 @@ public class CalendarControllerFactoryTest {
   @Test
   public void testControllerFactory5() {
     controller = CalendarControllerFactory.getController("HEADLESS",
-        System.getProperty("user.dir") +
+        filepath +
             "/src/test/resources/positiveTestcase.txt", model,
         view);
     assertEquals(CalendarController.class, controller.getClass());

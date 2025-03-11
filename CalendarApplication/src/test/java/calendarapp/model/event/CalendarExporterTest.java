@@ -1,11 +1,5 @@
 package calendarapp.model.event;
 
-import calendarapp.model.EventVisibility;
-import calendarapp.model.IEvent;
-import calendarapp.model.impl.CalendarExporter;
-import calendarapp.model.impl.Event;
-import calendarapp.model.impl.EventConstants;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -20,7 +14,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import calendarapp.model.EventVisibility;
+import calendarapp.model.IEvent;
+import calendarapp.model.impl.CalendarExporter;
+import calendarapp.model.impl.Event;
+import calendarapp.model.impl.EventConstants;
+
+import static org.junit.Assert.assertEquals;
 
 public class CalendarExporterTest {
 
@@ -70,7 +70,6 @@ public class CalendarExporterTest {
         .endTime(LocalDateTime.of(2025, 3, 15, 11, 0))
         .description("Sample Description")
         .location("Sample Location")
-        .visibility(EventVisibility.DEFAULT)
         .build();
     events.add(event);
 
@@ -98,7 +97,6 @@ public class CalendarExporterTest {
         .name("All Day Event")
         .startTime(LocalDateTime.of(2025, 3, 10, 10, 0))
         .endTime(null)
-        .visibility(EventVisibility.DEFAULT)
         .build();
     events.add(allDayEvent);
 
@@ -110,7 +108,7 @@ public class CalendarExporterTest {
     assertEquals("\"All Day Event\"", fields[0]);
     assertEquals("03/10/2025", fields[1]);
     assertEquals("", fields[2]);
-    assertEquals("03/10/2025", fields[3]);
+    assertEquals("03/11/2025", fields[3]);
     assertEquals("", fields[4]);
     assertEquals(EventConstants.CsvFormat.TRUE_VALUE, fields[5]);
   }
@@ -121,7 +119,7 @@ public class CalendarExporterTest {
         .name("Private Event")
         .startTime(LocalDateTime.of(2025, 4, 10, 14, 30))
         .endTime(LocalDateTime.of(2025, 4, 10, 15, 30))
-        .visibility(EventVisibility.PRIVATE)
+        .visibility("private")
         .build();
     events.add(privateEvent);
 
@@ -139,21 +137,21 @@ public class CalendarExporterTest {
         .name("Event 1")
         .startTime(LocalDateTime.of(2025, 3, 10, 9, 0))
         .endTime(LocalDateTime.of(2025, 3, 10, 10, 0))
-        .visibility(EventVisibility.PUBLIC)
+        .visibility("public")
         .build();
 
     IEvent event2 = Event.builder()
         .name("Event 2")
         .startTime(LocalDateTime.of(2025, 3, 10, 12, 0))
         .endTime(LocalDateTime.of(2025, 3, 10, 13, 0))
-        .visibility(EventVisibility.DEFAULT)
+        .visibility("default")
         .build();
 
     IEvent event3 = Event.builder()
         .name("Event 3")
         .startTime(LocalDateTime.of(2025, 3, 10, 15, 0))
         .endTime(LocalDateTime.of(2025, 3, 10, 15, 30))
-        .visibility(EventVisibility.PRIVATE)
+        .visibility("PRIVATE")
         .build();
 
     events.addAll(Arrays.asList(event1, event2, event3));
@@ -173,7 +171,7 @@ public class CalendarExporterTest {
         .endTime(LocalDateTime.of(2025, 3, 20, 16, 0))
         .description("Discuss \"Project X\"")
         .location("Room \"42\"")
-        .visibility(EventVisibility.DEFAULT)
+        .visibility("default")
         .build();
     events.add(specialEvent);
 
