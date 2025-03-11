@@ -3,6 +3,7 @@ package calendarapp.controller.commands.impl;
 import java.io.IOException;
 import java.util.regex.Matcher;
 
+import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
@@ -24,14 +25,13 @@ public class ExportCommand extends AbstractCommand {
     }
 
     if (filename == null) {
-      view.displayMessage("Required fields are missing. Cannot process the command.\n\n");
-      return;
+      throw new InvalidCommandException(command + "\nReason : Required fields are missing.\n");
     }
 
     try {
       model.export(filename);
     } catch (IOException e) {
-      view.displayMessage("Error exporting: " + e.getMessage() + ".\n");
+      throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     }
   }
 }

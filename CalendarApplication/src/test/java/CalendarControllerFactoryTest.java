@@ -5,11 +5,9 @@ import java.time.temporal.Temporal;
 import java.util.List;
 
 import calendarapp.controller.ICalendarController;
+import calendarapp.controller.impl.CalendarController;
 import calendarapp.controller.impl.CalendarControllerFactory;
-import calendarapp.controller.impl.HeadlessCalendarController;
-import calendarapp.controller.impl.InteractiveCalendarController;
 import calendarapp.model.ICalendarModel;
-import calendarapp.model.IEvent;
 import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
@@ -29,7 +27,7 @@ public class CalendarControllerFactoryTest {
   public void testControllerFactory() {
     controller = CalendarControllerFactory.getController("interactive",
         null, model, view);
-    assertEquals(InteractiveCalendarController.class, controller.getClass());
+    assertEquals(CalendarController.class, controller.getClass());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -51,7 +49,7 @@ public class CalendarControllerFactoryTest {
         "/Users/vishaakroot/NEU/pdp/pdp_assignments/group/CalendarApplication" +
             "/src/test/resources/positiveTestcase.txt", model,
         view);
-    assertEquals(HeadlessCalendarController.class, controller.getClass());
+    assertEquals(CalendarController.class, controller.getClass());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -66,7 +64,7 @@ public class CalendarControllerFactoryTest {
         "/Users/vishaakroot/NEU/pdp/pdp_assignments/group/CalendarApplication" +
             "/src/test/resources/positiveTestcase.txt", model,
         view);
-    assertEquals(HeadlessCalendarController.class, controller.getClass());
+    assertEquals(CalendarController.class, controller.getClass());
   }
 
   @Test
@@ -74,7 +72,7 @@ public class CalendarControllerFactoryTest {
     controller = CalendarControllerFactory.getController("INTERACTIVE",
         null, model,
         view);
-    assertEquals(InteractiveCalendarController.class, controller.getClass());
+    assertEquals(CalendarController.class, controller.getClass());
   }
 
   private static class MockView implements ICalendarView {
@@ -82,11 +80,6 @@ public class CalendarControllerFactoryTest {
     @Override
     public void displayMessage(String message) {
       System.out.println(message);
-    }
-
-    @Override
-    public void displayEvents(List<IEvent> events) {
-      System.out.println(events);
     }
   }
 
@@ -109,7 +102,7 @@ public class CalendarControllerFactoryTest {
     }
 
     @Override
-    public List<IEvent> printEvents(Temporal startTime, Temporal endTime) {
+    public List<String> printEvents(Temporal startTime, Temporal endTime) {
       return List.of();
     }
 

@@ -6,10 +6,11 @@ create event --autoDecline "recurring 2" from "2025-11-09T15:00" to "2025-11-09T
 print events from "2025-11-09" to "2025-11-25"
 edit event eventname "test3" from "2025-11-13T13:00" to "2025-11-13T14:00" with "test 3 new name"
 print events from "2025-11-09" to "2025-11-25"
-edit events from "test" "2025-11-12"
 print events from "2025-11-09" to "2025-11-25"
 edit events from "test1" from "2025-11-12T12:00" with "2025-11-12T11:00"
 print events from "2025-11-09" to "2025-11-25"
 print events from "2025-11-09" to "2025-11-13T12:00"
+print events on "2025-11-25T12:00"
 show status on "2025-11-12T12:00"
+show status on "2025-11-30T11:00"
 exit

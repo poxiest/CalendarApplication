@@ -1,14 +1,11 @@
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
-
 import calendarapp.controller.ICalendarController;
-import calendarapp.controller.InvalidCommandFileException;
+import calendarapp.controller.InvalidCommandException;
 import calendarapp.controller.impl.CalendarControllerFactory;
-import calendarapp.model.impl.CalendarModel;
 import calendarapp.model.ICalendarModel;
-import calendarapp.model.IEvent;
+import calendarapp.model.impl.CalendarModel;
 import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
@@ -31,7 +28,7 @@ public class HeadlessControllerTest {
         model, view);
   }
 
-  @Test(expected = InvalidCommandFileException.class)
+  @Test(expected = InvalidCommandException.class)
   public void testHeadless1() {
     controller = CalendarControllerFactory.getController("headless",
         "./CalendarApplication/src/test/resources/withoutExitCommand.txt",
@@ -45,10 +42,16 @@ public class HeadlessControllerTest {
         "./CalendarApplication/src/test/resources/positiveTestcase.txt",
         model, view);
     controller.go();
-    assertEquals("Name: test Start Time: 2025-11-11T00:00 End Time: 2025-11-11T23:59:59" +
-            " Description: null Location: null Visibility: PRIVATE Recurring Days: null" +
-            " Occurrence Count: null Recurrence End Date: null Auto Decline: false\n" +
-            "Exiting Application",
+    assertEquals("Enter command or enter 'exit' to exit the calendar application.\n" +
+            "Processing command: create event test on \"2025-11-11\"\n" +
+            "\n" +
+            "Enter command or enter 'exit' to exit the calendar application.\n" +
+            "Processing command: print events from \"2025-11-09\" to \"2025-11-25\"\n" +
+            "Events:\n" +
+            "• test - 2025-11-11T00:00 to 2025-11-12T00:00 \n" +
+            "\n" +
+            "Enter command or enter 'exit' to exit the calendar application.\n" +
+            "Exiting application.\n",
         view.getResult());
   }
 
@@ -58,13 +61,6 @@ public class HeadlessControllerTest {
     @Override
     public void displayMessage(String message) {
       resultBuilder.append(message);
-    }
-
-    @Override
-    public void displayEvents(List<IEvent> events) {
-      for (IEvent event : events) {
-        resultBuilder.append(event.toString());
-      }
     }
 
     public String getResult() {

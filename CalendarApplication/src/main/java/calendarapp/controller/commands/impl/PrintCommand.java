@@ -1,12 +1,10 @@
 package calendarapp.controller.commands.impl;
 
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.regex.Matcher;
-import java.util.stream.Collectors;
 
+import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.ICalendarModel;
-import calendarapp.model.IEvent;
 import calendarapp.view.ICalendarView;
 
 import static calendarapp.controller.commands.impl.RegexPatternConstants.PRINT_FROM_TO_PATTERN;
@@ -41,20 +39,23 @@ public class PrintCommand extends AbstractCommand {
     }
 
     if (startDateTime == null) {
-      view.displayMessage("Required fields are missing. Cannot process the command.\n");
-      return;
+      throw new InvalidCommandException(command + "\nReason : Required fields are missing.\n");
     }
 
     try {
-      List<IEvent> eventsToShow = model.printEvents(getLocalDateTimeFromString(startDateTime),
-          getLocalDateTimeFromString(endDateTime)).stream()
-          .sorted((o1, o2) ->
-              (int) ChronoUnit.SECONDS.between(o2.getStartDateTime(), o1.getStartDateTime()))
-          .collect(Collectors.toList());
-      view.displayEvents(eventsToShow);
+      List<String> eventsToShow = model.printEvents(getLocalDateTimeFromString(startDateTime),
+          getLocalDateTimeFromString(endDateTime));
+      if (!eventsToShow.isEmpty()) {
+        view.displayMessage("Events:\n");
+        for (String event : eventsToShow) {
+          view.displayMessage("• " + event + "\n");
+        }
+      } else {
+        view.displayMessage("No events found.\n");
+      }
     } catch (
         IllegalArgumentException e) {
-      view.displayMessage("Error viewing: " + e.getMessage() + ".\n\n");
+      throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     }
   }
 }
