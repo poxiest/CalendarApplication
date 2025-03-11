@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import calendarapp.utils.TimeUtil;
 
 import calendarapp.model.EventConflictException;
 import calendarapp.model.EventVisibility;
@@ -49,8 +50,7 @@ public class CalendarModel implements ICalendarModel {
       if (autoDecline) {
         for (IEvent existingEvent : events) {
           if (event.conflictsWith(existingEvent)) {
-            throw new EventConflictException("Event conflicts with existing event: "
-                + existingEvent.getName());
+            throw new EventConflictException("Event conflicts with existing event: " + existingEvent);
           }
         }
       }
@@ -63,8 +63,7 @@ public class CalendarModel implements ICalendarModel {
       for (Event newEvent : recurringEvents) {
         for (IEvent existingEvent : events) {
           if (newEvent.conflictsWith(existingEvent)) {
-            throw new EventConflictException("Recurring event conflicts with existing event: " +
-                existingEvent.getName());
+            throw new EventConflictException("Recurring event conflicts with existing event: " + existingEvent);
           }
         }
       }
@@ -79,7 +78,17 @@ public class CalendarModel implements ICalendarModel {
 
     List<IEvent> updatedEvents = new ArrayList<>();
     for (IEvent event : eventsToEdit) {
-      IEvent updatedEvent = updateEventProperty(event, property, value);
+      IEvent updatedEvent = event.updateProperty(property, value);
+
+      // Check for conflicts if necessary
+      if (updatedEvent.shouldAutoDecline()) {
+        for (IEvent existingEvent : events) {
+          if (existingEvent != event && updatedEvent.conflictsWith(existingEvent)) {
+            throw new EventConflictException("Event conflicts with existing event: " + existingEvent);
+          }
+        }
+      }
+
       updatedEvents.add(updatedEvent);
     }
 
@@ -88,35 +97,31 @@ public class CalendarModel implements ICalendarModel {
   }
 
   @Override
-  public List<IEvent> printEvents(Temporal startDateTime, Temporal endDateTime) {
+  public List<String> printEvents(Temporal startDateTime, Temporal endDateTime) {
     if (endDateTime == null) {
-      endDateTime = ((LocalDateTime) startDateTime)
-          .toLocalDate().atTime(23, 59, 59);
+      endDateTime = (TimeUtil.getLocalDateTimeFromTemporal(startDateTime)
+          .toLocalDate().plusDays(1).atStartOfDay());
     }
-    return findEvents(null, startDateTime, endDateTime);
+    List<IEvent> eventsToShow = findEvents(null, startDateTime, endDateTime);
+    return eventsToShow.stream()
+        .map(event -> event.formatForDisplay())
+        .collect(Collectors.toList());
   }
 
   @Override
   public void export(String filename) throws IOException {
     String filePath = filename + ".csv";
     exportEventAsGoogleCalendarCsv(events, filePath);
-
   }
 
   @Override
   public String showStatus(Temporal dateTime) {
-    boolean isBusy = events.stream().anyMatch(event -> isEventActiveAt(event, dateTime));
+    boolean isBusy = events.stream().anyMatch(event -> event.isActiveAt(dateTime));
     if (isBusy) {
       return EventConstants.Status.BUSY;
     } else {
       return EventConstants.Status.AVAILABLE;
     }
-  }
-
-  private boolean isEventActiveAt(IEvent event, Temporal dateTime) {
-    return isEqual(dateTime, event.getStartDateTime()) || isEqual(dateTime, event.getEndDateTime())
-        || (isFirstAfterSecond(dateTime, event.getStartDateTime())
-        && isFirstBeforeSecond(dateTime, event.getEndDateTime()));
   }
 
   private Event createSingleEvent(String eventName, Temporal startTime, Temporal endTime,
@@ -147,16 +152,18 @@ public class CalendarModel implements ICalendarModel {
     Duration eventDuration = Duration.between(startTime, endTime);
 
     int occurrencesCreated = 0;
-    while ((occurrenceCount != null && occurrencesCreated < occurrenceCount) ||
-        (recurrenceEndDate != null && isFirstBeforeSecond(startTime, recurrenceEndDate))) {
+    Temporal currentStartTime = startTime;
 
-      DayOfWeek currentDay = DayOfWeek.of(startTime.get(ChronoField.DAY_OF_WEEK));
+    while ((occurrenceCount != null && occurrencesCreated < occurrenceCount) ||
+        (recurrenceEndDate != null && isFirstBeforeSecond(currentStartTime, recurrenceEndDate))) {
+
+      DayOfWeek currentDay = DayOfWeek.of(currentStartTime.get(ChronoField.DAY_OF_WEEK));
 
       if (daysOfWeek.contains(currentDay)) {
-        Temporal eventEndTime = startTime.plus(eventDuration);
+        Temporal eventEndTime = currentStartTime.plus(eventDuration);
 
         Event event = createSingleEvent(
-            eventName, startTime, eventEndTime,
+            eventName, currentStartTime, eventEndTime,
             description, location, visibility, recurringDays,
             occurrenceCount, recurrenceEndDate, true
         );
@@ -165,7 +172,7 @@ public class CalendarModel implements ICalendarModel {
         occurrencesCreated++;
       }
 
-      startTime = startTime.plus(1, ChronoUnit.DAYS);
+      currentStartTime = currentStartTime.plus(1, ChronoUnit.DAYS);
     }
 
     return recurringEvents;
@@ -206,76 +213,8 @@ public class CalendarModel implements ICalendarModel {
 
   private List<IEvent> findEvents(String eventName, Temporal startTime, Temporal endTime) {
     return events.stream()
-        .filter(event -> eventName == null || event.getName().equals(eventName))
-        .filter(event -> startTime == null || isFirstAfterSecond(event.getStartDateTime(), startTime) || isEqual(event.getStartDateTime(), startTime))
-        .filter(event -> endTime == null || isFirstBeforeSecond(event.getEndDateTime(), endTime) || isEqual(event.getEndDateTime(), endTime))
+        .filter(event -> event.matchesName(eventName))
+        .filter(event -> event.isWithinTimeRange(startTime, endTime))
         .collect(Collectors.toList());
-  }
-
-  private IEvent updateEventProperty(IEvent event, String property, String value) {
-    Event.Builder builder = Event.builder()
-        .name(event.getName())
-        .startTime(event.getStartDateTime())
-        .endTime(event.getEndDateTime())
-        .description(event.getDescription())
-        .location(event.getLocation())
-        .visibility(event.getVisibility())
-        .recurringDays(event.getRecurringDays())
-        .occurrenceCount(event.getOccurrenceCount())
-        .recurrenceEndDate(event.getRecurrenceEndDate())
-        .isAutoDecline(event.isAutoDecline());
-
-    switch (property.toLowerCase()) {
-      case EventConstants.PropertyKeys.NAME:
-        builder.name(value);
-        break;
-
-      case EventConstants.PropertyKeys.START_TIME:
-        builder.startTime(getLocalDateTimeFromString(value));
-        if (event.isAutoDecline()) {
-          Event tempEvent = builder.build();
-          for (IEvent existingEvent : events) {
-            if (existingEvent != event && tempEvent.conflictsWith(existingEvent)) {
-              throw new EventConflictException("Event conflicts with existing event: "
-                  + existingEvent.getName() + "\n");
-            }
-          }
-        }
-        break;
-
-      case EventConstants.PropertyKeys.END_TIME:
-        builder.endTime(getLocalDateTimeFromString(value));
-        if (event.isAutoDecline()) {
-          Event tempEvent = builder.build();
-          for (IEvent existingEvent : events) {
-            if (existingEvent != event && tempEvent.conflictsWith(existingEvent)) {
-              throw new EventConflictException("Event conflicts with existing event: "
-                  + existingEvent.getName() + "\n");
-            }
-          }
-        }
-        break;
-
-      case EventConstants.PropertyKeys.DESCRIPTION:
-        builder.description(value);
-        break;
-
-      case EventConstants.PropertyKeys.LOCATION:
-        builder.location(value);
-        break;
-
-      case EventConstants.PropertyKeys.VISIBILITY:
-        if (EventVisibility.getVisibility(value) == EventVisibility.UNKNOWN) {
-          throw new IllegalArgumentException("Invalid visibility value: " + value + "\n");
-        }
-        builder.visibility(EventVisibility.getVisibility(value));
-        break;
-
-      // TODO: Add logic for changing recurring properties
-      default:
-        throw new IllegalArgumentException("Cannot edit property: " + property + "\n");
-    }
-
-    return builder.build();
   }
 }

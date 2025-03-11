@@ -1,6 +1,5 @@
 package calendarapp.model;
 
-
 import java.io.IOException;
 import java.time.temporal.Temporal;
 import java.util.List;
@@ -14,7 +13,7 @@ public interface ICalendarModel {
 
   void editEvent(String eventName, Temporal startTime, Temporal endTime, String property, String value);
 
-  List<IEvent> printEvents(Temporal startTime, Temporal endTime);
+  List<String> printEvents(Temporal startTime, Temporal endTime);
 
   void export(String filename) throws IOException;
 
