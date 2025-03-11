@@ -16,11 +16,11 @@ public class CalendarControllerFactory {
                                                   ICalendarView view) {
     switch (mode.toLowerCase()) {
       case "interactive":
-        return new InteractiveCalendarController(new InputStreamReader(System.in), model, view);
+        return new CalendarController(new InputStreamReader(System.in), model, view);
       case "headless":
         try {
-          return new HeadlessCalendarController(new BufferedReader(new FileReader(filename)), model,
-              view);
+          return new CalendarController(new BufferedReader(new FileReader(filename)),
+              model, view);
         } catch (FileNotFoundException e) {
           throw new IllegalArgumentException("File is not found at " + filename);
         } catch (NullPointerException e) {

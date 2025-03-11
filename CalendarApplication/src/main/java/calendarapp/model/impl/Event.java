@@ -6,9 +6,9 @@ import calendarapp.model.EventVisibility;
 import calendarapp.model.IEvent;
 import calendarapp.utils.TimeUtil;
 
+import static calendarapp.utils.TimeUtil.isEqual;
 import static calendarapp.utils.TimeUtil.isFirstAfterSecond;
 import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
-import static calendarapp.utils.TimeUtil.isEqual;
 
 public class Event implements IEvent {
   private final String name;
@@ -39,8 +39,8 @@ public class Event implements IEvent {
 
   @Override
   public boolean conflictsWith(IEvent other) {
-    return isFirstBeforeSecond(this.startTime, ((Event)other).endTime)
-        && isFirstAfterSecond(this.endTime, ((Event)other).startTime);
+    return isFirstBeforeSecond(this.startTime, ((Event) other).endTime)
+        && isFirstAfterSecond(this.endTime, ((Event) other).startTime);
   }
 
   @Override
@@ -176,9 +176,9 @@ public class Event implements IEvent {
       }
       if (endTime == null) {
         this.startTime = (TimeUtil.getLocalDateTimeFromTemporal(startTime)
-            .toLocalDate().atTime(0, 0, 0));
+            .toLocalDate().atStartOfDay());
         this.endTime = (TimeUtil.getLocalDateTimeFromTemporal(startTime)
-            .toLocalDate().atTime(23, 59, 59));
+            .toLocalDate().plusDays(1).atStartOfDay());
       } else {
         this.endTime = endTime;
       }
@@ -262,6 +262,6 @@ public class Event implements IEvent {
 
   @Override
   public String toString() {
-    return formatForDisplay();
+    return "Name: " + name + " " + "Start Time: " + startTime + " " + "End Time: " + endTime + " " + "Description: " + description + " " + "Location: " + location + " " + "Visibility: " + visibility + " " + "Recurring Days: " + recurringDays + " " + "Occurrence Count: " + occurrenceCount + " " + "Recurrence End Date: " + recurrenceEndDate + " " + "Auto Decline: " + isAutoDecline + "\n";
   }
 }

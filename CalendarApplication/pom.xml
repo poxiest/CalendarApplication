@@ -36,7 +36,7 @@
                     </targetClasses>
                     <targetTests>
                         <param>CalendarControllerFactoryTest</param>
-                        <param>ControllerTest</param>
+                        <param>CommandTests</param>
                     </targetTests>
                 </configuration>
             </plugin>

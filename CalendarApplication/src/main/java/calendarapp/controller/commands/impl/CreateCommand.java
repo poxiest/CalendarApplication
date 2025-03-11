@@ -2,6 +2,8 @@ package calendarapp.controller.commands.impl;
 
 import java.util.regex.Matcher;
 
+import calendarapp.controller.InvalidCommandException;
+import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
 import calendarapp.utils.TimeUtil;
 import calendarapp.view.ICalendarView;
@@ -84,15 +86,14 @@ public class CreateCommand extends AbstractCommand {
     }
 
     if (eventName == null || startDateTime == null) {
-      view.displayMessage("Required fields are missing. Cannot process the command.\n");
-      return;
+      throw new InvalidCommandException(command + "\nReason : Required fields are missing.\n");
     }
 
     if ((recurringDays != null && occurrenceCount == null && recurrenceEndDate == null) ||
         (recurringDays == null && (occurrenceCount != null || recurrenceEndDate != null)) ||
         (occurrenceCount != null && recurrenceEndDate != null)) {
-      view.displayMessage("Recurrence specification is incorrect.\n\n");
-      return;
+      throw new InvalidCommandException(command + "\nReason : Recurrence specification is " +
+          "incorrect.\n");
     }
 
     try {
@@ -101,7 +102,9 @@ public class CreateCommand extends AbstractCommand {
           TimeUtil.getLocalDateTimeFromString(recurrenceEndDate),
           description, location, visibility, autoDecline);
     } catch (IllegalArgumentException e) {
-      view.displayMessage("Error creating event: " + e.getMessage() + ".\n\n");
+      throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
+    } catch (EventConflictException e) {
+      throw new EventConflictException(command + "\nReason : " + e.getMessage());
     }
   }
 }

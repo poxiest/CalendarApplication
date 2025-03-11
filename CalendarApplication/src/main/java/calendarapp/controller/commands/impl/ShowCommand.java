@@ -2,6 +2,7 @@ package calendarapp.controller.commands.impl;
 
 import java.util.regex.Matcher;
 
+import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
@@ -24,14 +25,13 @@ public class ShowCommand extends AbstractCommand {
     }
 
     if (on == null) {
-      view.displayMessage("Required fields are missing. Cannot process the command.\\n\n");
-      return;
+      throw new InvalidCommandException(command + "\nReason : Required fields are missing.\n");
     }
 
     try {
-      view.displayMessage(model.showStatus(getLocalDateTimeFromString(on)) + "\n\n");
+      view.displayMessage(model.showStatus(getLocalDateTimeFromString(on)) + "\n");
     } catch (IllegalArgumentException e) {
-      view.displayMessage("Error running show command: " + e.getMessage() + ".\n\n");
+      throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     }
   }
 }
