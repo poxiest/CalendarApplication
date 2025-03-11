@@ -264,4 +264,6 @@ public class Event implements IEvent {
   public String toString() {
     return "Name: " + name + " " + "Start Time: " + startTime + " " + "End Time: " + endTime + " " + "Description: " + description + " " + "Location: " + location + " " + "Visibility: " + visibility + " " + "Recurring Days: " + recurringDays + " " + "Occurrence Count: " + occurrenceCount + " " + "Recurrence End Date: " + recurrenceEndDate + " " + "Auto Decline: " + isAutoDecline + "\n";
   }
+
+  // TODO: Override Equals() and Hashcode() functions
 }

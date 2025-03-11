@@ -80,7 +80,6 @@ public class CalendarModel implements ICalendarModel {
     for (IEvent event : eventsToEdit) {
       IEvent updatedEvent = event.updateProperty(property, value);
 
-      // Check for conflicts if necessary
       if (updatedEvent.shouldAutoDecline()) {
         for (IEvent existingEvent : events) {
           if (existingEvent != event && updatedEvent.conflictsWith(existingEvent)) {
@@ -96,6 +95,7 @@ public class CalendarModel implements ICalendarModel {
     events.addAll(updatedEvents);
   }
 
+  // TODO: Fix multi-day event print
   @Override
   public List<String> printEvents(Temporal startDateTime, Temporal endDateTime) {
     if (endDateTime == null) {
@@ -108,6 +108,7 @@ public class CalendarModel implements ICalendarModel {
         .collect(Collectors.toList());
   }
 
+  // TODO: Return the absolute path
   @Override
   public void export(String filename) throws IOException {
     String filePath = filename + ".csv";
@@ -181,6 +182,7 @@ public class CalendarModel implements ICalendarModel {
   private Set<DayOfWeek> parseDaysOfWeek(String daysString) {
     Set<DayOfWeek> days = new HashSet<>();
 
+    // TODO: Convert this to map
     for (char day : daysString.toUpperCase().toCharArray()) {
       switch (day) {
         case 'M':
