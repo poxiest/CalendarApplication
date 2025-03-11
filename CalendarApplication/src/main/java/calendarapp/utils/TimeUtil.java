@@ -66,4 +66,18 @@ public class TimeUtil {
     }
     return "";
   }
+
+  public static boolean isAllDayEvent(Temporal startTime, Temporal endTime) {
+    try {
+      LocalDateTime start = getLocalDateTimeFromTemporal(startTime);
+      LocalDateTime end = getLocalDateTimeFromTemporal(endTime);
+
+      boolean startsAtMidnight = start.getHour() == 0 && start.getMinute() == 0 && start.getSecond() == 0;
+      boolean endsAtEndOfDay = end.getHour() == 23 && end.getMinute() == 59 && end.getSecond() == 59;
+
+      return startsAtMidnight && endsAtEndOfDay;
+    } catch (UnsupportedOperationException e) {
+      return false;
+    }
+  }
 }

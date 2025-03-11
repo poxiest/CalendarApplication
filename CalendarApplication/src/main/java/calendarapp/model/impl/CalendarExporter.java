@@ -2,9 +2,6 @@ package calendarapp.model.impl;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.Temporal;
 import java.util.List;
 
 import calendarapp.model.EventVisibility;
@@ -12,6 +9,7 @@ import calendarapp.model.IEvent;
 
 import static calendarapp.utils.TimeUtil.formatDate;
 import static calendarapp.utils.TimeUtil.formatTime;
+import static calendarapp.utils.TimeUtil.isAllDayEvent;
 
 public class CalendarExporter {
 
@@ -39,7 +37,7 @@ public class CalendarExporter {
   private static String formatEventAsCsvRow(IEvent event) {
     StringBuilder row = new StringBuilder();
 
-    boolean isAllDay = isAllDayEvent(event.getStartDateTime());
+    boolean isAllDay = isAllDayEvent(event.getStartDateTime(), event.getEndDateTime());
 
     row.append(escapeField(event.getName())).append(EventConstants.CsvFormat.DELIMITER);
     row.append(formatDate(event.getStartDateTime())).append(EventConstants.CsvFormat.DELIMITER);
@@ -52,16 +50,6 @@ public class CalendarExporter {
     row.append(isPrivate(event.getVisibility())).append(EventConstants.CsvFormat.DELIMITER);
 
     return row.toString();
-  }
-
-  private static boolean isAllDayEvent(Temporal time) {
-    if (time instanceof LocalDate) {
-      return true;
-    } else if (time instanceof LocalDateTime) {
-      LocalDateTime dateTime = (LocalDateTime) time;
-      return dateTime.getHour() == 0 && dateTime.getMinute() == 0 && dateTime.getSecond() == 0;
-    }
-    return false;
   }
 
   private static String isPrivate(EventVisibility visibility) {
