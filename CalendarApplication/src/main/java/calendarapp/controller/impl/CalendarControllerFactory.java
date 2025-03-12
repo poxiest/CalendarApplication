@@ -19,6 +19,10 @@ public class CalendarControllerFactory {
         return new CalendarController(new InputStreamReader(System.in), model, view);
       case "headless":
         try {
+          if(filename.split("\\.").length <= 1
+              || !filename.split("\\.")[1].equalsIgnoreCase("txt")) {
+            throw new IllegalArgumentException("Only txt files are supported.");
+          }
           return new CalendarController(new BufferedReader(new FileReader(filename)),
               model, view);
         } catch (FileNotFoundException e) {
