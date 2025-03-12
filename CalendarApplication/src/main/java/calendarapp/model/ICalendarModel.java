@@ -15,7 +15,7 @@ public interface ICalendarModel {
 
   List<IEvent> printEvents(Temporal startTime, Temporal endTime);
 
-  void export(String filename) throws IOException;
+  String export(String filename) throws IOException;
 
   String showStatus(Temporal dateTime);
 }

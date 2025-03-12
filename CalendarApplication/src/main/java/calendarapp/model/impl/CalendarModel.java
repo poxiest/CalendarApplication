@@ -9,6 +9,7 @@ import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,10 +22,23 @@ import static calendarapp.model.impl.CalendarExporter.exportEventAsGoogleCalenda
 import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
 
 public class CalendarModel implements ICalendarModel {
+
   private final List<IEvent> events;
+
+  private final Map<Character, DayOfWeek> dayMap;
 
   public CalendarModel() {
     this.events = new ArrayList<>();
+
+    this.dayMap = Map.of(
+        'M', DayOfWeek.MONDAY,
+        'T', DayOfWeek.TUESDAY,
+        'W', DayOfWeek.WEDNESDAY,
+        'R', DayOfWeek.THURSDAY,
+        'F', DayOfWeek.FRIDAY,
+        'S', DayOfWeek.SATURDAY,
+        'U', DayOfWeek.SUNDAY
+    );
   }
 
   @Override
@@ -96,7 +110,6 @@ public class CalendarModel implements ICalendarModel {
       endDateTime = (TimeUtil.getLocalDateTimeFromTemporal(startDateTime)
           .toLocalDate().plusDays(1).atStartOfDay());
     }
-
     Temporal finalEndDateTime = endDateTime;
     return events.stream()
         .filter(event -> event.hasIntersectionWith(startDateTime, finalEndDateTime))
@@ -105,9 +118,9 @@ public class CalendarModel implements ICalendarModel {
 
   // TODO: Return the absolute path
   @Override
-  public void export(String filename) throws IOException {
+  public String export(String filename) throws IOException {
     String filePath = filename + ".csv";
-    exportEventAsGoogleCalendarCsv(events, filePath);
+    return exportEventAsGoogleCalendarCsv(events, filePath);
   }
 
   @Override
@@ -180,34 +193,14 @@ public class CalendarModel implements ICalendarModel {
   private Set<DayOfWeek> parseDaysOfWeek(String daysString) {
     Set<DayOfWeek> days = new HashSet<>();
 
-    // TODO: Convert this to map
     for (char day : daysString.toUpperCase().toCharArray()) {
-      switch (day) {
-        case 'M':
-          days.add(DayOfWeek.MONDAY);
-          break;
-        case 'T':
-          days.add(DayOfWeek.TUESDAY);
-          break;
-        case 'W':
-          days.add(DayOfWeek.WEDNESDAY);
-          break;
-        case 'R':
-          days.add(DayOfWeek.THURSDAY);
-          break;
-        case 'F':
-          days.add(DayOfWeek.FRIDAY);
-          break;
-        case 'S':
-          days.add(DayOfWeek.SATURDAY);
-          break;
-        case 'U':
-          days.add(DayOfWeek.SUNDAY);
-          break;
-        default:
-          throw new IllegalArgumentException("Invalid day character: " + day);
+      DayOfWeek dayOfWeek = dayMap.get(day);
+      if (dayOfWeek == null) {
+        throw new IllegalArgumentException("Invalid day character: " + day);
       }
+      days.add(dayOfWeek);
     }
+
     return days;
   }
 

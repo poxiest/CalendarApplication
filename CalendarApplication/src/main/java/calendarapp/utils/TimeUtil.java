@@ -83,12 +83,15 @@ public class TimeUtil {
       LocalDateTime start = getLocalDateTimeFromTemporal(startTime);
       LocalDateTime end = getLocalDateTimeFromTemporal(endTime);
 
+//       boolean startsAtMidnight = start.getHour() == 0 && start.getMinute() ==.0 && start.getSecond() == 0;
+//       boolean endsAtStartOfNextDay = end.getHour() == 0 && end.getMinute() == 0 && end.getSecond() == 0 &&
+//           end.toLocalDate().isEqual(start.toLocalDate().plusDays(1));
       // TODO: bro check this
       boolean startsAtMidnight = start.getHour() == 0 && start.getMinute() == 0;
       boolean endsAtEndOfDay = end.getHour() == 0 && end.getMinute() == 0 &&
           (end.getDayOfMonth() == (start.getDayOfMonth() + 1));
 
-      return startsAtMidnight && endsAtEndOfDay;
+      return startsAtMidnight && endsAtStartOfNextDay;
     } catch (UnsupportedOperationException e) {
       return false;
     }

@@ -111,8 +111,9 @@ public class CalendarControllerFactoryTest {
     }
 
     @Override
-    public void export(String filename) {
+    public String export(String filename) {
       System.out.println("message");
+      return filename;
     }
 
     @Override
