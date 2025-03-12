@@ -190,7 +190,7 @@ public class CommandsE2ETest {
 
   @Test
   public void AllDayEventTest3() {
-    controller = new MockController("create event abc on \"2025-12-22T10:00\"\n" +
+    controller = new MockController("create event abc on \"2025-12-22\"\n" +
         "create event abc on \"2025-12-22T10:00\"\n" +
         "print events on \"2025-12-22\"", model, view);
     controller.go();
@@ -204,6 +204,18 @@ public class CommandsE2ETest {
   public void RecurringEventsForNTimes() {
     controller = new MockController("create event \"Recurring Event\" from " +
         "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" for 3 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-20\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+        "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n" +
+        "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+        "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n", stringOutput.toString());
+  }
+
+  @Test
+  public void RecurringEventsForNTimes_1() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats MTWRFSU for 3 times\n" +
         "print events from \"2025-11-10\" to \"2025-11-20\"", model, view);
     controller.go();
     assertEquals("Events:\n" +
@@ -518,6 +530,20 @@ public class CommandsE2ETest {
     } catch (InvalidCommandException e) {
       assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
           " to \"2025-11-11T12:00\" repeats \"MTW\" for times\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate4_1() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from " +
+          "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats \"MTW\" for d times", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
+          " to \"2025-11-11T12:00\" repeats \"MTW\" for d times\n" +
           "Reason : Required fields are missing.\n", e.getMessage());
       throw new InvalidCommandException(e.getMessage());
     }
