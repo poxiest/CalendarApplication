@@ -16,7 +16,7 @@ import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_
 import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_REPEATS_F0R_PATTERN;
 import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_REPEATS_UNTIL_PATTERN;
 import static calendarapp.controller.commands.impl.RegexPatternConstants.IS_RECURRING_EVENT;
-import static calendarapp.utils.TimeUtil.getLocalDateTimeFromString;
+import static calendarapp.utils.TimeUtil.getTemporalFromString;
 
 /**
  * Create Command implementation for creating calendar events.
@@ -107,8 +107,8 @@ public class CreateCommand extends AbstractCommand {
   public void execute(String command) throws InvalidCommandException {
     parseCommand(command);
     try {
-      model.createEvent(eventName, getLocalDateTimeFromString(startDateTime),
-          getLocalDateTimeFromString(endDateTime), recurringDays, occurrenceCount,
+      model.createEvent(eventName, getTemporalFromString(startDateTime),
+          getTemporalFromString(endDateTime), recurringDays, occurrenceCount,
           TimeUtil.getEndOfDayFromString(recurrenceEndDate),
           description, location, visibility, autoDecline);
     } catch (IllegalArgumentException e) {

@@ -70,7 +70,7 @@ public class HeadlessControllerTest {
     @Override
     public void displayEvents(List<IEvent> events) {
       for (IEvent event : events) {
-        displayMessage("• " + event.formatForDisplay() + "\n");
+        displayMessage(event.formatForDisplay() + "\n");
       }
     }
 

@@ -10,7 +10,7 @@ import calendarapp.view.ICalendarView;
 
 import static calendarapp.controller.commands.impl.RegexPatternConstants.PRINT_FROM_TO_PATTERN;
 import static calendarapp.controller.commands.impl.RegexPatternConstants.PRINT_ON_PATTERN;
-import static calendarapp.utils.TimeUtil.getLocalDateTimeFromString;
+import static calendarapp.utils.TimeUtil.getTemporalFromString;
 
 /**
  * Print Command implementation for printing calendar events within a specified time range.
@@ -71,8 +71,8 @@ public class PrintCommand extends AbstractCommand {
       throw new InvalidCommandException(command + "\nReason : Required fields are missing.\n");
     }
 
-    List<IEvent> eventsToShow = model.printEvents(getLocalDateTimeFromString(startDateTime),
-        getLocalDateTimeFromString(endDateTime));
+    List<IEvent> eventsToShow = model.printEvents(getTemporalFromString(startDateTime),
+        getTemporalFromString(endDateTime));
     if (!eventsToShow.isEmpty()) {
       view.displayMessage("Events:\n");
       view.displayEvents(eventsToShow);

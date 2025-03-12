@@ -8,8 +8,23 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 
+/**
+ * Utility class for handling time and date operations in the calendar application.
+ * Provides methods for parsing, formatting, and comparing temporal values.
+ */
 public class TimeUtil {
-  public static Temporal getLocalDateTimeFromString(String dateTime) {
+
+  /**
+   * Converts a string representation of date/time to a Temporal object.
+   * Accepts two formats: "yyyy-MM-dd'T'HH:mm" and
+   * "yyyy-MM-dd" - will be converted to start of day.
+   *
+   * @param dateTime the string representation of date/time to parse.
+   * @return a Temporal object (specifically a LocalDateTime) representing the parsed date/time,
+   *     or null if the input is null.
+   * @throws IllegalArgumentException if the date/time string cannot be parsed.
+   */
+  public static Temporal getTemporalFromString(String dateTime) {
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -28,29 +43,65 @@ public class TimeUtil {
     }
   }
 
-  public static Temporal getEndOfDayFromString(String dateTime) {
+  /**
+   * Gets the end of day or exact time from a string representation.
+   *
+   * @param dateTime the string representation of date/time to parse.
+   * @return a Temporal object representing either the exact time or the end of the day,
+   *     or null if the input is null.
+   * @throws IllegalArgumentException if the date/time string cannot be parsed.
+   */
+  public static Temporal getEndOfDayFromString(String dateTime) throws IllegalArgumentException {
     if (dateTime == null) {
       return null;
     }
-    Temporal time = getLocalDateTimeFromString(dateTime);
+    Temporal time = getTemporalFromString(dateTime);
     if (!dateTime.contains("T")) {
       time = time.plus(1, ChronoUnit.DAYS);
     }
     return time;
   }
 
+  /**
+   * Checks if the first temporal is chronologically before the second temporal.
+   *
+   * @param temporal1 the first temporal to compare.
+   * @param temporal2 the second temporal to compare.
+   * @return true if the first temporal is before the second, false otherwise.
+   */
   public static boolean isFirstBeforeSecond(Temporal temporal1, Temporal temporal2) {
     return ChronoUnit.SECONDS.between(temporal1, temporal2) > 0;
   }
 
+  /**
+   * Checks if the first temporal is chronologically after the second temporal.
+   *
+   * @param temporal1 the first temporal to compare.
+   * @param temporal2 the second temporal to compare.
+   * @return true if the first temporal is after the second, false otherwise.
+   */
   public static boolean isFirstAfterSecond(Temporal temporal1, Temporal temporal2) {
     return ChronoUnit.SECONDS.between(temporal1, temporal2) < 0;
   }
 
+  /**
+   * Checks if two temporal objects represent the same instant.
+   *
+   * @param temporal1 the first temporal to compare.
+   * @param temporal2 the second temporal to compare.
+   * @return true if both temporals represent the same time, false otherwise.
+   */
   public static boolean isEqual(Temporal temporal1, Temporal temporal2) {
     return ChronoUnit.SECONDS.between(temporal1, temporal2) == 0;
   }
 
+  /**
+   * Converts a Temporal object to LocalDateTime.
+   *
+   * @param temporal the temporal object to convert.
+   * @return the LocalDateTime representation of the temporal.
+   * @throws UnsupportedOperationException if the temporal cannot be converted to LocalDateTime.
+   */
   public static LocalDateTime getLocalDateTimeFromTemporal(Temporal temporal) {
     if (temporal instanceof LocalDateTime) {
       return ((LocalDateTime) temporal).atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -59,6 +110,12 @@ public class TimeUtil {
     }
   }
 
+  /**
+   * Formats a temporal object as a date string (MM/dd/yyyy).
+   *
+   * @param temporal the temporal object to format.
+   * @return a string representation of the date.
+   */
   public static String formatDate(Temporal temporal) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
@@ -71,6 +128,12 @@ public class TimeUtil {
     return LocalDate.from(temporal).format(formatter);
   }
 
+  /**
+   * Formats a temporal object as a time string (h:mm:ss a).
+   *
+   * @param temporal the temporal object to format.
+   * @return a string representation of the time, or an empty string if not a LocalDateTime.
+   */
   public static String formatTime(Temporal temporal) {
     if (temporal instanceof LocalDateTime) {
       return ((LocalDateTime) temporal).format(DateTimeFormatter.ofPattern("h:mm:ss a"));
@@ -78,6 +141,13 @@ public class TimeUtil {
     return "";
   }
 
+  /**
+   * Determines if the given start and end times represent an all-day event.
+   *
+   * @param startTime the start time of the event.
+   * @param endTime   the end time of the event.
+   * @return true if the event is an all-day event, false otherwise.
+   */
   public static boolean isAllDayEvent(Temporal startTime, Temporal endTime) {
     try {
       LocalDateTime start = getLocalDateTimeFromTemporal(startTime);

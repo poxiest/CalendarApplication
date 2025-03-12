@@ -89,11 +89,11 @@ public class Event implements IEvent {
         break;
 
       case EventConstants.PropertyKeys.START_TIME:
-        builder.startTime(TimeUtil.getLocalDateTimeFromString(value));
+        builder.startTime(TimeUtil.getTemporalFromString(value));
         break;
 
       case EventConstants.PropertyKeys.END_TIME:
-        builder.endTime(TimeUtil.getLocalDateTimeFromString(value));
+        builder.endTime(TimeUtil.getTemporalFromString(value));
         break;
 
       case EventConstants.PropertyKeys.DESCRIPTION:
@@ -118,7 +118,7 @@ public class Event implements IEvent {
 
   @Override
   public String formatForDisplay() {
-    return String.format("%s - %s to %s %s",
+    return String.format("• %s - %s to %s %s",
         name,
         startTime,
         endTime,

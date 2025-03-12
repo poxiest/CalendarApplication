@@ -1,7 +1,6 @@
 package calendarapp.controller.commands;
 
 import calendarapp.controller.InvalidCommandException;
-import calendarapp.model.EventConflictException;
 
 /**
  * Interface representing a command in the calendar application.

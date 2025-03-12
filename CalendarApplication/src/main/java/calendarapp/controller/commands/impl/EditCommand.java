@@ -10,7 +10,7 @@ import calendarapp.view.ICalendarView;
 import static calendarapp.controller.commands.impl.RegexPatternConstants.EDIT_EVENT_NAME_PATTERN;
 import static calendarapp.controller.commands.impl.RegexPatternConstants.EDIT_FROM_PATTERN;
 import static calendarapp.controller.commands.impl.RegexPatternConstants.EDIT_FROM_TO_PATTERN;
-import static calendarapp.utils.TimeUtil.getLocalDateTimeFromString;
+import static calendarapp.utils.TimeUtil.getTemporalFromString;
 
 /**
  * Edit Command implementation for editing existing calendar events.
@@ -66,8 +66,8 @@ public class EditCommand extends AbstractCommand {
   public void execute(String command) throws InvalidCommandException, EventConflictException {
     parseCommand(command);
     try {
-      model.editEvent(eventName, getLocalDateTimeFromString(startDateTime),
-          getLocalDateTimeFromString(endDateTime), propertyName, newPropertyValue);
+      model.editEvent(eventName, getTemporalFromString(startDateTime),
+          getTemporalFromString(endDateTime), propertyName, newPropertyValue);
     } catch (IllegalArgumentException e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     } catch (EventConflictException e) {

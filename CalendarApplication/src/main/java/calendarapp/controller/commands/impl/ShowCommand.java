@@ -7,7 +7,7 @@ import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
 import static calendarapp.controller.commands.impl.RegexPatternConstants.STATUS_ON_PATTERN;
-import static calendarapp.utils.TimeUtil.getLocalDateTimeFromString;
+import static calendarapp.utils.TimeUtil.getTemporalFromString;
 
 /**
  * Show Command implementation for showing calendar status at a specific date and time.
@@ -49,6 +49,6 @@ public class ShowCommand extends AbstractCommand {
       throw new InvalidCommandException(command + "\nReason : Required fields are missing.\n");
     }
 
-    view.displayMessage("Status: " + model.showStatus(getLocalDateTimeFromString(on)) + "\n");
+    view.displayMessage("Status: " + model.showStatus(getTemporalFromString(on)) + "\n");
   }
 }
