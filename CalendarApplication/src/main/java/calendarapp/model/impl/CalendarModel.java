@@ -103,7 +103,6 @@ public class CalendarModel implements ICalendarModel {
     events.addAll(updatedEvents);
   }
 
-  // TODO: Fix multi-day event print
   @Override
   public List<IEvent> printEvents(Temporal startDateTime, Temporal endDateTime) {
     if (endDateTime == null) {
@@ -116,7 +115,6 @@ public class CalendarModel implements ICalendarModel {
         .collect(Collectors.toList());
   }
 
-  // TODO: Return the absolute path
   @Override
   public String export(String filename) throws IOException {
     String filePath = filename + ".csv";

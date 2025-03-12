@@ -79,6 +79,30 @@ public class CalendarControllerFactoryTest {
     assertEquals(CalendarController.class, controller.getClass());
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void IllegalTextFile() {
+    try {
+      controller = CalendarControllerFactory.getController("headless",
+          "test", model,
+          view);
+    } catch (IllegalArgumentException e) {
+      assertEquals("Only txt files are supported.", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void IllegalTextFile1() {
+    try {
+      controller = CalendarControllerFactory.getController("headless",
+          "test.pdf", model,
+          view);
+    } catch (IllegalArgumentException e) {
+      assertEquals("Only txt files are supported.", e.getMessage());
+      throw e;
+    }
+  }
+
   private static class MockView implements ICalendarView {
 
     @Override
