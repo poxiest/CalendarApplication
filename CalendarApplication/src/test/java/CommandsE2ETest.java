@@ -40,6 +40,14 @@ public class CommandsE2ETest {
     assertEquals("Events:\n" +
             "• Standup - 2025-11-11T11:00 to 2025-11-11T12:00 \n",
         stringOutput.toString());
+    setUp();
+    controller = new MockController("create event Standup from 2025-11-11T11:00 " +
+        "to 2025-11-11T12:00\n" +
+        "print events on 2025-11-11", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Standup - 2025-11-11T11:00 to 2025-11-11T12:00 \n",
+        stringOutput.toString());
   }
 
   // Subject with space
@@ -639,6 +647,386 @@ public class CommandsE2ETest {
     }
   }
 
+  @Test(expected = InvalidCommandException.class)
+  public void EndDateLessThanStartDate() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" " +
+          "from \"2025-11-11T11:00\" to \"2025-11-11T10:00\"", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\" to \"2025-11-11T10:00\"\n" +
+          "Reason : Event end time cannot be before start time", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test
+  public void SameStartTimeAndEndTime() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from \"2025-11-11T11:00\" to \"2025-11-11T11:00\"\n" +
+        "create event \"Sprint Planning2\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 \n" +
+            "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T12:00 \n",
+        stringOutput.toString());
+  }
+
+  @Test
+  public void CreateCommandWithLocation() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
+        "create event \"Sprint Planning2\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n" +
+            "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T12:00 \n",
+        stringOutput.toString());
+  }
+
+  @Test
+  public void ShowCommand() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from \"2025-11-11T11:00\" to \"2025-11-11T12:00\" location \"Shillman Hall\"\n" +
+        "create event \"Sprint Planning2\" from \"2025-11-11T12:00\" to \"2025-11-11T13:00\"\n" +
+        "print events on \"2025-11-11\"\n" +
+        "show status on \"2025-11-11T11:30\"\n" +
+        "show status on \"2025-11-12T11:30\"\n" +
+        "show status on \"2025-11-11T12:30\""
+        , model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 - Location: Shillman Hall\n" +
+            "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T13:00 \n" +
+            "Status: Busy\n" +
+            "Status: Available\n" +
+            "Status: Busy\n",
+        stringOutput.toString());
+  }
+
+  @Test
+  public void ShowCommand1() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from 2025-11-11T11:00 to 2025-11-11T12:00 location \"Shillman Hall\"\n" +
+        "create event \"Sprint Planning2\" from 2025-11-11T12:00 to 2025-11-11T13:00\n" +
+        "print events on 2025-11-11\n" +
+        "show status on 2025-11-11T11:30\n" +
+        "show status on 2025-11-12T11:30\n" +
+        "show status on 2025-11-11T12:30"
+        , model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 - Location: Shillman Hall\n" +
+            "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T13:00 \n" +
+            "Status: Busy\n" +
+            "Status: Available\n" +
+            "Status: Busy\n",
+        stringOutput.toString());
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void ShowCommandInvalid() {
+    try {
+      controller = new MockController("show status 2025-11-11T11:00", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("show status 2025-11-11T11:00\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void ShowCommandInvalid1() {
+    try {
+      controller = new MockController("show status on", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("show status on\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  // Edit just one event at a time
+  @Test
+  public void EditCommandWithLocation() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
+        "create event Sprint from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+        "print events on \"2025-11-11\"\n" +
+        "edit event location \"Sprint Planning\" from \"2025-11-11T11:00\" to" +
+        " \"2025-11-11T11:00\" with \"Richard Hall\" \n" +
+        "edit event location Sprint from \"2025-11-11T12:00\" to" +
+        " \"2025-11-11T13:00\" with \"Shillman Hall\" \n" +
+        "print events on \"2025-11-11\"\n", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n" +
+            "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 \n" +
+            "Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Richard Hall\n" +
+            "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 - Location: Shillman Hall\n",
+        stringOutput.toString());
+  }
+
+  // Edit multiple events property
+  @Test
+  public void EditCommandWithLocation1() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
+        "create event \"Sprint Planning\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+        "print events on \"2025-11-11\"\n" +
+        "edit events location \"Sprint Planning\" from \"2025-11-11T10:00\" with" +
+        " \"Richard Hall\"\n" +
+        "print events on \"2025-11-11\"\n", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n" +
+            "• Sprint Planning - 2025-11-11T12:00 to 2025-11-11T12:00 \n" +
+            "Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Richard Hall\n" +
+            "• Sprint Planning - 2025-11-11T12:00 to 2025-11-11T12:00 - Location: Richard Hall\n",
+        stringOutput.toString());
+  }
+
+  // Edit multiple events property
+  @Test
+  public void EditCommandWithLocation1_1() {
+    controller = new MockController("create event Sprint from" +
+        " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location Shillman\n" +
+        "create event Sprint from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+        "print events on \"2025-11-11\"\n" +
+        "edit events location Sprint from \"2025-11-11T10:00\" with" +
+        " Richard\n" +
+        "print events on \"2025-11-11\"\n", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Sprint - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman\n" +
+            "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 \n" +
+            "Events:\n" +
+            "• Sprint - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Richard\n" +
+            "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 - Location: Richard\n",
+        stringOutput.toString());
+  }
+
+  // Edit multiple events property with eventname
+  @Test
+  public void EditCommandWithLocation2() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
+        "create event \"Sprint Planning\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+        "print events on \"2025-11-11\"\n" +
+        "edit events location \"Sprint Planning\" \"Richard Hall\"\n" +
+        "print events on \"2025-11-11\"\n", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n" +
+            "• Sprint Planning - 2025-11-11T12:00 to 2025-11-11T12:00 \n" +
+            "Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Richard Hall\n" +
+            "• Sprint Planning - 2025-11-11T12:00 to 2025-11-11T12:00 - Location: Richard Hall\n",
+        stringOutput.toString());
+  }
+
+  // Edit multiple events property with eventname
+  @Test
+  public void EditCommandWithLocation3() {
+    controller = new MockController("create event Sprint from" +
+        " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
+        "create event Sprint from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+        "print events on \"2025-11-11\"\n" +
+        "edit events location Sprint Richard\n" +
+        "print events on \"2025-11-11\"\n", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Sprint - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n" +
+            "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 \n" +
+            "Events:\n" +
+            "• Sprint - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Richard\n" +
+            "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 - Location: Richard\n",
+        stringOutput.toString());
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid() {
+    try {
+      controller = new MockController("edit event \"Sprint Meeting\"", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit event \"Sprint Meeting\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid1() {
+    try {
+      controller = new MockController("edit event location \"Sprint Meeting\"", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit event location \"Sprint Meeting\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid2() {
+    try {
+      controller = new MockController("edit event location \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" to with Shillman", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit event location \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" to with Shillman\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid3() {
+    try {
+      controller = new MockController("edit event location \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" to \"2025-11-11T11:00\" with", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit event location \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" to \"2025-11-11T11:00\" with\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid4() {
+    try {
+      controller = new MockController("edit event location \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" with Shillam", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit event location \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" with Shillam\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid5() {
+    try {
+      controller = new MockController("edit events \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" with Shillam", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit events \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" with Shillam\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid6() {
+    try {
+      controller = new MockController("edit events location \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" with", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit events location \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" with\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid7() {
+    try {
+      controller = new MockController("edit events \"Sprint Meeting\" Shillam", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit events \"Sprint Meeting\" Shillam\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid8() {
+    try {
+      controller = new MockController("edit events location \"Sprint Meeting\"", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit events location \"Sprint Meeting\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void PrintCommandInvalid() {
+    try {
+      controller = new MockController("print events on", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("print events on\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void PrintCommandInvalid1() {
+    try {
+      controller = new MockController("print on 2025-11-11T11:00", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("print on 2025-11-11T11:00\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void PrintCommandInvalid2() {
+    try {
+      controller = new MockController("print events from \"2025-11-11\" to", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("print events from \"2025-11-11\" to\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void PrintCommandInvalid3() {
+    try {
+      controller = new MockController("print events \"2025-11-11\" to \"2025-11-12\"", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("print events \"2025-11-11\" to \"2025-11-12\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void PrintCommandInvalid4() {
+    try {
+      controller = new MockController("print events from to \"2025-11-12\"", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("print events from to \"2025-11-12\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
 
   // TODO
   @Test

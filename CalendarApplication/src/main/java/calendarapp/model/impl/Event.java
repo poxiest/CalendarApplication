@@ -233,7 +233,7 @@ public class Event implements IEvent {
       }
 
       if (startTime == null || (endTime != null && isFirstBeforeSecond(endTime, startTime))) {
-        throw new IllegalArgumentException("Event start time cannot be before end time");
+        throw new IllegalArgumentException("Event end time cannot be before start time");
       }
 
       if (recurringDays != null && !recurringDays.isEmpty()) {

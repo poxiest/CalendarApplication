@@ -134,7 +134,7 @@ public class EventTest {
           .endTime(LocalDateTime.of(2025, 3, 10, 9, 0))
           .build();
     } catch (IllegalArgumentException e) {
-      assertEquals("Event start time cannot be before end time", e.getMessage());
+      assertEquals("Event end time cannot be before start time", e.getMessage());
     }
   }
 

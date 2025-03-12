@@ -17,9 +17,9 @@ public class RegexPatternConstants {
   /*
   Edit command regex pattern constants.
    */
-  public static final String EDIT_FROM_TO_PATTERN = "(?i)\\s+event\\s+(\\S+)\\s+(?:\"([^\"]+)\"|(\\S+))\\s+from\\s+(?:\"([^\"]+)\"|(\\S+))\\s+to\\s+(?:\"([^\"]+)\"|(\\S+))\\s+with\\s+(?:\"([^\"]+)\"|(\\S+))$";
-  public static final String EDIT_FROM_PATTERN = "(?i)\\s+events\\s+(\\S+)\\s+(?:\"([^\"]+)\"|(\\S+))\\s+from\\s+(?:\"([^\"]+)\"|(\\S+))\\s+with\\s+(?:\"([^\"]+)\"|(\\S+))$";
-  public static final String EDIT_EVENT_NAME_PATTERN = "(?i)\\s+events\\s+(\\S+)\\s+(?:\"([^\"]+)\"|(\\S+))\\s+(?:\"([^\"]+)\"|(\\S+))$";
+  public static final String EDIT_FROM_TO_PATTERN = "(?i)\\s+event\\s+([a-zA-Z]+)\\s+(?:\"([^\"]+)\"|(\\S+))\\s+from\\s+(?:\"([^\"]+)\"|(\\S+))\\s+to\\s+(?:\"([^\"]+)\"|(\\S+))\\s+with\\s+(?:\"([^\"]+)\"|(\\S+))$";
+  public static final String EDIT_FROM_PATTERN = "(?i)\\s+events\\s+([a-zA-Z]+)\\s+(?:\"([^\"]+)\"|(\\S+))\\s+from\\s+(?:\"([^\"]+)\"|(\\S+))\\s+with\\s+(?:\"([^\"]+)\"|(\\S+))$";
+  public static final String EDIT_EVENT_NAME_PATTERN = "(?i)\\s+events\\s+([a-zA-Z]+)\\s+(?:\"([^\"]+)\"|([^\\s\"]+))\\s+(?:\"([^\"]+)\"|([^\\s\"]+))$";
 
   /*
   Export command regex pattern constants.
