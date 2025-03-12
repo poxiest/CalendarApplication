@@ -80,7 +80,8 @@ public class CommandFactoryTest {
     }
 
     @Override
-    public void export(String filename) throws IOException {
+    public String export(String filename) throws IOException {
+      return "";
     }
 
     @Override

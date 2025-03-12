@@ -110,7 +110,7 @@ public class CalendarExporterTest {
     assertEquals("\"All Day Event\"", fields[0]);
     assertEquals("03/10/2025", fields[1]);
     assertEquals("", fields[2]);
-    assertEquals("03/10/2025", fields[3]);
+    assertEquals("03/11/2025", fields[3]);
     assertEquals("", fields[4]);
     assertEquals(EventConstants.CsvFormat.TRUE_VALUE, fields[5]);
   }

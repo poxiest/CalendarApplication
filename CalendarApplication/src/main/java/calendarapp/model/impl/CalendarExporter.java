@@ -1,5 +1,6 @@
 package calendarapp.model.impl;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.temporal.Temporal;
@@ -14,9 +15,8 @@ import static calendarapp.utils.TimeUtil.isAllDayEvent;
 
 public class CalendarExporter {
 
-  public static void exportEventAsGoogleCalendarCsv(List<IEvent> events, String filePath) throws IOException {
+  public static String exportEventAsGoogleCalendarCsv(List<IEvent> events, String filePath) throws IOException {
     try (FileWriter writer = new FileWriter(filePath)) {
-      // Write CSV header
       writer.write(String.join(EventConstants.CsvFormat.DELIMITER,
           EventConstants.CsvHeaders.SUBJECT,
           EventConstants.CsvHeaders.START_DATE,
@@ -29,21 +29,20 @@ public class CalendarExporter {
           EventConstants.CsvHeaders.PRIVATE));
       writer.write(EventConstants.CsvFormat.LINE_END);
 
-      // Write each event as a CSV row
       for (IEvent event : events) {
-        // Instead of directly accessing event properties, we'll use the new format method
         writer.write(formatEventForExport(event));
         writer.write(EventConstants.CsvFormat.LINE_END);
       }
     }
+
+    File file = new File(filePath);
+    return file.getAbsolutePath();
   }
 
   private static String formatEventForExport(IEvent event) {
-    // Let each event format itself for export
     return event.formatForExport();
   }
 
-  // These utility methods can be moved to the Event class or a utility class
   public static String determinePrivacyFlag(EventVisibility visibility) {
     return EventVisibility.PRIVATE.equals(visibility) ?
         EventConstants.CsvFormat.TRUE_VALUE :
@@ -57,7 +56,6 @@ public class CalendarExporter {
     return "\"" + field.replace("\"", "\"\"") + "\"";
   }
 
-  // This method could be used by Event to help format CSV rows
   public static String formatEventAsCsvRow(String name, Temporal startTime, Temporal endTime,
                                            String description, String location, EventVisibility visibility) {
     StringBuilder row = new StringBuilder();

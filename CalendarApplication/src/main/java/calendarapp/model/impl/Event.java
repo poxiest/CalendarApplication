@@ -1,5 +1,6 @@
 package calendarapp.model.impl;
 
+import java.time.LocalDateTime;
 import java.time.temporal.Temporal;
 
 import calendarapp.model.EventVisibility;
@@ -34,8 +35,6 @@ public class Event implements IEvent {
     this.recurrenceEndDate = builder.recurrenceEndDate;
     this.isAutoDecline = builder.isAutoDecline;
   }
-
-  // Removed getters and replaced with methods that perform operations
 
   @Override
   public boolean conflictsWith(IEvent other) {
@@ -128,7 +127,6 @@ public class Event implements IEvent {
 
   @Override
   public String formatForExport() {
-    // Use CalendarExporter's helper method to format for CSV export
     return CalendarExporter.formatEventAsCsvRow(
         this.name,
         this.startTime,
@@ -236,11 +234,13 @@ public class Event implements IEvent {
 
       if (recurringDays != null && !recurringDays.isEmpty()) {
         if (!recurringDays.matches("^[MTWRFSU]+$")) {
-          throw new IllegalArgumentException("Invalid recurring days format. Use M,T,W,R,F,S,U for days of week");
+          throw new IllegalArgumentException("Invalid recurring days format. Use M,T,W,R,F,S,U for " +
+              "days of week");
         }
 
         if (occurrenceCount == null && recurrenceEndDate == null) {
-          throw new IllegalArgumentException("Recurring events require either occurrence count or end date");
+          throw new IllegalArgumentException("Recurring events require either occurrence count or " +
+              "end date");
         }
 
         if (occurrenceCount != null && occurrenceCount <= 0) {
@@ -251,7 +251,13 @@ public class Event implements IEvent {
           throw new IllegalArgumentException("Recurrence end date must be after end date");
         }
 
-        // TODO: Add a validation to check that recurring events should not cross 1 day
+        LocalDateTime startDateTime = TimeUtil.getLocalDateTimeFromTemporal(startTime);
+        LocalDateTime endDateTime = TimeUtil.getLocalDateTimeFromTemporal(endTime);
+        LocalDateTime nextDayStart = startDateTime.toLocalDate().plusDays(1).atStartOfDay();
+
+        if (endDateTime.isAfter(nextDayStart)) {
+          throw new IllegalArgumentException("Recurring events cannot span more than one day");
+        }
       } else {
         if (occurrenceCount != null || recurrenceEndDate != null) {
           throw new IllegalArgumentException("Recurring events require recurring days of week");
@@ -262,8 +268,27 @@ public class Event implements IEvent {
 
   @Override
   public String toString() {
-    return "Name: " + name + " " + "Start Time: " + startTime + " " + "End Time: " + endTime + " " + "Description: " + description + " " + "Location: " + location + " " + "Visibility: " + visibility + " " + "Recurring Days: " + recurringDays + " " + "Occurrence Count: " + occurrenceCount + " " + "Recurrence End Date: " + recurrenceEndDate + " " + "Auto Decline: " + isAutoDecline + "\n";
+    return "Name: " + name + " " + "Start Time: " + startTime + " " + "End Time: " + endTime + " "
+        + "Description: " + description + " " + "Location: " + location + " " + "Visibility: "
+        + visibility + " " + "Recurring Days: " + recurringDays + " " + "Occurrence Count: "
+        + occurrenceCount + " " + "Recurrence End Date: " + recurrenceEndDate + " " + "Auto Decline: "
+        + isAutoDecline + "\n";
   }
 
-  // TODO: Override Equals() and Hashcode() functions
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+
+    Event other = (Event) obj;
+
+    return name.equals(other.name) &&
+        startTime.equals(other.startTime) &&
+        endTime.equals(other.endTime);
+  }
+
+  @Override
+  public int hashCode() {
+    return name.hashCode() + startTime.hashCode() + endTime.hashCode();
+  }
 }
