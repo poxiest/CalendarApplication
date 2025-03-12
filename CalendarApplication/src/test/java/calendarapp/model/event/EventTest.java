@@ -357,7 +357,6 @@ public class EventTest {
         .name("Test Event")
         .startTime(LocalDateTime.of(2025, 3, 15, 10, 0))
         .endTime(LocalDateTime.of(2025, 3, 15, 11, 0))
-        .visibility(EventVisibility.DEFAULT)
         .build();
 
     IEvent updatedEvent = event.updateProperty(

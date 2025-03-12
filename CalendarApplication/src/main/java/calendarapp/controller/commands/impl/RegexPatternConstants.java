@@ -12,6 +12,7 @@ public class RegexPatternConstants {
   public static final String CREATE_REPEATS_F0R_PATTERN = "(?i)\\s+repeats\\s+(?:\"([^\"]+)\"|(\\S+))\\s+for\\s+(\\d+)\\s+times";
   public static final String CREATE_REPEATS_UNTIL_PATTERN = "(?i)\\s+repeats\\s+(?:\"([^\"]+)\"|(\\S+))\\s+until\\s+(?:\"([^\"]+)\"|(\\S+))";
   public static final String CREATE_OPTIONAL_PARAMETERS = "(?i)(description|location|visibility)\\s+(?:\"([^\"]+)\"|(\\S+))";
+  public static final String IS_RECURRING_EVENT = "repeats";
 
   /*
   Edit command regex pattern constants.

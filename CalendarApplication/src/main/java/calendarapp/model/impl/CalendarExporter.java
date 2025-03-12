@@ -14,7 +14,7 @@ import static calendarapp.utils.TimeUtil.formatTime;
 import static calendarapp.utils.TimeUtil.isAllDayEvent;
 
 public class CalendarExporter {
-  public static void exportEventAsGoogleCalendarCsv(List<IEvent> events, String filePath)
+  public static String exportEventAsGoogleCalendarCsv(List<IEvent> events, String filePath)
       throws IOException {
     try (FileWriter writer = new FileWriter(filePath)) {
       writer.write(String.join(EventConstants.CsvFormat.DELIMITER,

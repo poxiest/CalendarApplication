@@ -88,7 +88,7 @@ public class TimeUtil {
 //           end.toLocalDate().isEqual(start.toLocalDate().plusDays(1));
       // TODO: bro check this
       boolean startsAtMidnight = start.getHour() == 0 && start.getMinute() == 0;
-      boolean endsAtEndOfDay = end.getHour() == 0 && end.getMinute() == 0 &&
+      boolean endsAtStartOfNextDay = end.getHour() == 0 && end.getMinute() == 0 &&
           (end.getDayOfMonth() == (start.getDayOfMonth() + 1));
 
       return startsAtMidnight && endsAtStartOfNextDay;

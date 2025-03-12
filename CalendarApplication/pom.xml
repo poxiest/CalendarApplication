@@ -36,7 +36,10 @@
                     </targetClasses>
                     <targetTests>
                         <param>CalendarControllerFactoryTest</param>
-                        <param>CommandTests</param>
+                        <param>CommandsE2ETest</param>
+                        <param>CommandFactoryTest</param>
+                        <param>HeadlessControllerTest</param>
+                        <param>calendarapp.model.event.*</param>
                     </targetTests>
                 </configuration>
             </plugin>

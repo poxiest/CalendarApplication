@@ -57,6 +57,11 @@ public class CommandFactoryTest {
       resultBuilder.append(message);
     }
 
+    @Override
+    public void displayEvents(List<IEvent> events) {
+      resultBuilder.append(events.toString());
+    }
+
     public String getResult() {
       return resultBuilder.toString();
     }

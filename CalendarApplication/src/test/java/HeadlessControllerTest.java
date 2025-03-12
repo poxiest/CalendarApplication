@@ -1,10 +1,13 @@
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
+
 import calendarapp.controller.ICalendarController;
 import calendarapp.controller.InvalidCommandException;
 import calendarapp.controller.impl.CalendarControllerFactory;
 import calendarapp.model.ICalendarModel;
+import calendarapp.model.IEvent;
 import calendarapp.model.impl.CalendarModel;
 import calendarapp.view.ICalendarView;
 
@@ -41,8 +44,7 @@ public class HeadlessControllerTest {
   @Test
   public void testHeadless2() {
     controller = CalendarControllerFactory.getController("headless",
-        filepath + "/src/test/resources/positiveTestcase.txt",
-        model, view);
+        filepath + "/src/test/resources/positiveTestcase.txt", model, view);
     controller.go();
     assertEquals("Enter command or enter 'exit' to exit the calendar application.\n" +
             "Processing command: create event test on \"2025-11-11\"\n" +
@@ -63,6 +65,13 @@ public class HeadlessControllerTest {
     @Override
     public void displayMessage(String message) {
       resultBuilder.append(message);
+    }
+
+    @Override
+    public void displayEvents(List<IEvent> events) {
+      for (IEvent event : events) {
+        displayMessage("• " + event.formatForDisplay() + "\n");
+      }
     }
 
     public String getResult() {

@@ -15,6 +15,7 @@ import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_
 import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_OPTIONAL_PARAMETERS;
 import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_REPEATS_F0R_PATTERN;
 import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_REPEATS_UNTIL_PATTERN;
+import static calendarapp.controller.commands.impl.RegexPatternConstants.IS_RECURRING_EVENT;
 import static calendarapp.utils.TimeUtil.getLocalDateTimeFromString;
 
 public class CreateCommand extends AbstractCommand {
@@ -30,6 +31,7 @@ public class CreateCommand extends AbstractCommand {
   private String location;
   private String visibility;
   private boolean autoDecline;
+  private boolean isRecurring;
 
   CreateCommand(ICalendarModel model, ICalendarView view) {
     super(model, view);
@@ -58,6 +60,7 @@ public class CreateCommand extends AbstractCommand {
       on = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
     }
 
+    isRecurring = command.toLowerCase().contains(IS_RECURRING_EVENT.toLowerCase());
     matcher = regexMatching(CREATE_REPEATS_F0R_PATTERN, command);
     if (matcher.find()) {
       recurringDays = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
@@ -85,15 +88,9 @@ public class CreateCommand extends AbstractCommand {
       startDateTime = on;
     }
 
-    if (eventName == null || startDateTime == null) {
+    if (eventName == null || startDateTime == null ||
+        (isRecurring && recurringDays == null)) {
       throw new InvalidCommandException(command + "\nReason : Required fields are missing.\n");
-    }
-
-    if ((recurringDays != null && occurrenceCount == null && recurrenceEndDate == null) ||
-        (recurringDays == null && (occurrenceCount != null || recurrenceEndDate != null)) ||
-        (occurrenceCount != null && recurrenceEndDate != null)) {
-      throw new InvalidCommandException(command + "\nReason : Recurrence specification is " +
-          "incorrect.\n");
     }
 
     try {

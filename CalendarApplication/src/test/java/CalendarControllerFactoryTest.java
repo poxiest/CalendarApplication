@@ -85,6 +85,11 @@ public class CalendarControllerFactoryTest {
     public void displayMessage(String message) {
       System.out.println(message);
     }
+
+    @Override
+    public void displayEvents(List<IEvent> events) {
+      System.out.println(events);
+    }
   }
 
   private static class MockCalendarModel implements ICalendarModel {

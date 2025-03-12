@@ -2,26 +2,33 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.StringReader;
+import java.util.List;
 import java.util.Scanner;
 
 import calendarapp.controller.ICalendarController;
+import calendarapp.controller.InvalidCommandException;
 import calendarapp.controller.impl.AbstractCalendarController;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
+import calendarapp.model.IEvent;
 import calendarapp.model.impl.CalendarModel;
 import calendarapp.view.ICalendarView;
+import calendarapp.view.impl.CLIView;
 
 import static org.junit.Assert.assertEquals;
 
-public class CommandTests {
+public class CommandsE2ETest {
   private ICalendarController controller;
   private ICalendarModel model;
-  private MockView view;
+  private ICalendarView view;
+  private MockView viewMock;
+  private StringBuilder stringOutput;
 
   @Before
   public void setUp() {
+    stringOutput = new StringBuilder();
     model = new CalendarModel();
-    view = new MockView();
+    view = new CLIView(stringOutput);
   }
 
   @Test
@@ -32,7 +39,7 @@ public class CommandTests {
     controller.go();
     assertEquals("Events:\n" +
             "• Standup - 2025-11-11T11:00 to 2025-11-11T12:00 \n",
-        view.getResult());
+        stringOutput.toString());
   }
 
   // Subject with space
@@ -44,7 +51,7 @@ public class CommandTests {
     controller.go();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 \n",
-        view.getResult());
+        stringOutput.toString());
   }
 
   // Single event span Two days
@@ -56,7 +63,7 @@ public class CommandTests {
     controller.go();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-12T11:00 \n",
-        view.getResult());
+        stringOutput.toString());
   }
 
   @Test
@@ -67,7 +74,7 @@ public class CommandTests {
     controller.go();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-12T11:00 \n",
-        view.getResult());
+        stringOutput.toString());
   }
 
 
@@ -82,7 +89,7 @@ public class CommandTests {
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 \n" +
             "• Sprint Planning2 - 2025-11-11T11:00 to 2025-11-11T12:00 \n",
-        view.getResult());
+        stringOutput.toString());
   }
 
   // Multiple events on Different time same day
@@ -98,7 +105,7 @@ public class CommandTests {
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 \n" +
             "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T13:00 \n" +
             "• Sprint Planning3 - 2025-11-11T13:00 to 2025-11-11T14:00 \n",
-        view.getResult());
+        stringOutput.toString());
   }
 
   // Multiple events on Different time same day - with autodecline
@@ -116,7 +123,7 @@ public class CommandTests {
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 \n" +
             "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T13:00 \n" +
             "• Sprint Planning3 - 2025-11-11T13:00 to 2025-11-11T14:00 \n",
-        view.getResult());
+        stringOutput.toString());
   }
 
   // Multiple events on same time
@@ -159,17 +166,18 @@ public class CommandTests {
     controller.go();
     assertEquals("Events:\n" +
             "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
-        view.getResult());
+        stringOutput.toString());
   }
 
   @Test
   public void AllDayEventTest2() {
-    controller = new MockController("create event \"Sprint Planning\" on \"2025-12-22T10:00\"" +
+    controller = new MockController("create event \"Sprint Planning\" on" +
+        " \"2025-12-22T10:00\"" +
         "\nprint events on \"2025-12-22\"", model, view);
     controller.go();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
-        view.getResult());
+        stringOutput.toString());
   }
 
   @Test
@@ -181,7 +189,7 @@ public class CommandTests {
     assertEquals("Events:\n" +
             "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n" +
             "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
-        view.getResult());
+        stringOutput.toString());
   }
 
   @Test
@@ -193,7 +201,7 @@ public class CommandTests {
     assertEquals("Events:\n" +
         "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n" +
         "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
-        "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n", view.getResult());
+        "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n", stringOutput.toString());
   }
 
   // Recurring on all days for 6 times
@@ -210,7 +218,7 @@ public class CommandTests {
             "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
             "• Recurring Event - 2025-11-15T10:00 to 2025-11-15T10:30 \n" +
             "• Recurring Event - 2025-11-16T10:00 to 2025-11-16T10:30 \n"
-        , view.getResult());
+        , stringOutput.toString());
   }
 
   // Recurring on Monday, wednesday and friday
@@ -227,7 +235,7 @@ public class CommandTests {
             "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
             "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n" +
             "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
-        , view.getResult());
+        , stringOutput.toString());
   }
 
   @Test
@@ -246,7 +254,7 @@ public class CommandTests {
             "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
             "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n" +
             "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
-        , view.getResult());
+        , stringOutput.toString());
   }
 
   @Test
@@ -265,7 +273,7 @@ public class CommandTests {
             "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
             "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n" +
             "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
-        , view.getResult());
+        , stringOutput.toString());
   }
 
   @Test(expected = EventConflictException.class)
@@ -297,7 +305,7 @@ public class CommandTests {
     assertEquals("Events:\n" +
         "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n" +
         "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
-        "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n", view.getResult());
+        "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n", stringOutput.toString());
   }
 
   // Recurring on all days for 6 times
@@ -315,7 +323,7 @@ public class CommandTests {
             "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
             "• Recurring Event - 2025-11-15T10:00 to 2025-11-15T10:30 \n" +
             "• Recurring Event - 2025-11-16T10:00 to 2025-11-16T10:30 \n"
-        , view.getResult());
+        , stringOutput.toString());
   }
 
   // Recurring on Monday, wednesday and friday
@@ -333,7 +341,7 @@ public class CommandTests {
             "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
             "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n" +
             "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
-        , view.getResult());
+        , stringOutput.toString());
   }
 
   @Test
@@ -352,7 +360,7 @@ public class CommandTests {
             "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
             "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n" +
             "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
-        , view.getResult());
+        , stringOutput.toString());
   }
 
   @Test
@@ -371,7 +379,7 @@ public class CommandTests {
             "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
             "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n" +
             "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
-        , view.getResult());
+        , stringOutput.toString());
   }
 
   @Test(expected = EventConflictException.class)
@@ -405,7 +413,7 @@ public class CommandTests {
         "• All Day Recurring - 2025-11-13T00:00 to 2025-11-14T00:00 \n" +
         "• All Day Recurring - 2025-11-17T00:00 to 2025-11-18T00:00 \n" +
         "• All Day Recurring - 2025-11-18T00:00 to 2025-11-19T00:00 \n" +
-        "• All Day Recurring - 2025-11-19T00:00 to 2025-11-20T00:00 \n", view.getResult());
+        "• All Day Recurring - 2025-11-19T00:00 to 2025-11-20T00:00 \n", stringOutput.toString());
   }
 
   @Test(expected = EventConflictException.class)
@@ -428,7 +436,7 @@ public class CommandTests {
         "• All Day Recurring - 2025-11-13T00:00 to 2025-11-14T00:00 \n" +
         "• All Day Recurring - 2025-11-17T00:00 to 2025-11-18T00:00 \n" +
         "• All Day Recurring - 2025-11-18T00:00 to 2025-11-19T00:00 \n" +
-        "• All Day Recurring - 2025-11-19T00:00 to 2025-11-20T00:00 \n", view.getResult());
+        "• All Day Recurring - 2025-11-19T00:00 to 2025-11-20T00:00 \n", stringOutput.toString());
   }
 
   @Test(expected = EventConflictException.class)
@@ -441,6 +449,197 @@ public class CommandTests {
     controller.go();
   }
 
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from " +
+          "\"2025-11-12T10:15\"", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-12T10:15\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate1() {
+    try {
+      controller = new MockController("create event from " +
+          "\"2025-11-12T10:15\" to \"2025-11-12T11:15\"", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event from \"2025-11-12T10:15\" to \"2025-11-12T11:15\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate2() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\"", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate3() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from " +
+          "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats \"MTW\" for", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
+          " to \"2025-11-11T12:00\" repeats \"MTW\" for\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate4() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from " +
+          "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats \"MTW\" for times", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
+          " to \"2025-11-11T12:00\" repeats \"MTW\" for times\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate5() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from " +
+          "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats for 5 times", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
+          " to \"2025-11-11T12:00\" repeats for 5 times\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate6() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from " +
+          "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats \"MTW\" until", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
+          " to \"2025-11-11T12:00\" repeats \"MTW\" until\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate7() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from " +
+          "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats until \"2025-11-11\"", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
+          " to \"2025-11-11T12:00\" repeats until \"2025-11-11\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate8() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" on", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" on\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate9() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" on " +
+          "\"2025-11-11T11:00\" repeats \"MTW\" for", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" on \"2025-11-11T11:00\" " +
+          "repeats \"MTW\" for\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate10() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" on " +
+          "\"2025-11-11T11:00\" repeats \"MTW\" for times", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" on \"2025-11-11T11:00\" " +
+          "repeats \"MTW\" for times\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate11() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" " +
+          "on \"2025-11-11T11:00\" repeats for 5 times", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" on \"2025-11-11T11:00\"" +
+          " repeats for 5 times\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate12() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" " +
+          "on \"2025-11-11T11:00\" repeats \"MTW\" until", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" on \"2025-11-11T11:00\" " +
+          "repeats \"MTW\" until\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate13() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" " +
+          "on \"2025-11-11T11:00\" repeats until \"2025-11-11\"", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" " +
+          "on \"2025-11-11T11:00\" repeats until \"2025-11-11\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+
   // TODO
   @Test
   public void testInteractive1() {
@@ -449,7 +648,7 @@ public class CommandTests {
     controller.go();
     assertEquals("Events:\n" +
             "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
-        view.getResult());
+        stringOutput.toString());
   }
 
   @Test
@@ -459,7 +658,7 @@ public class CommandTests {
     controller.go();
     assertEquals("Events:\n" +
             "• ABC - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
-        view.getResult());
+        stringOutput.toString());
   }
 
   // Create
@@ -470,7 +669,7 @@ public class CommandTests {
     controller.go();
     assertEquals("Events:\n" +
             "• Happy Event - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
-        view.getResult());
+        stringOutput.toString());
   }
 
   // Create two events
@@ -483,7 +682,7 @@ public class CommandTests {
     assertEquals("Events:\n" +
             "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n" +
             "• cdb - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
-        view.getResult());
+        stringOutput.toString());
   }
 
   private static class MockView implements ICalendarView {
@@ -492,6 +691,13 @@ public class CommandTests {
     @Override
     public void displayMessage(String message) {
       resultBuilder.append(message);
+    }
+
+    @Override
+    public void displayEvents(List<IEvent> events) {
+      for (IEvent event : events) {
+        resultBuilder.append(event.toString());
+      }
     }
 
     public String getResult() {

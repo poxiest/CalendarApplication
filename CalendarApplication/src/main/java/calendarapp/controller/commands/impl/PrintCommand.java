@@ -48,9 +48,7 @@ public class PrintCommand extends AbstractCommand {
           getLocalDateTimeFromString(endDateTime));
       if (!eventsToShow.isEmpty()) {
         view.displayMessage("Events:\n");
-        for (IEvent event : eventsToShow) {
-          view.displayMessage("• " + event.formatForDisplay() + "\n");
-        }
+        view.displayEvents(eventsToShow);
       } else {
         view.displayMessage("No events found.\n");
       }
