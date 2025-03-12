@@ -10,7 +10,20 @@ import calendarapp.controller.commands.CommandProperties;
 import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
+/**
+ * Factory class for creating specific command objects based on input command.
+ */
 public class CommandFactory {
+
+  /**
+   * Creates and returns the appropriate command object based on the command string.
+   *
+   * @param command The full command string to parse.
+   * @param model The calendar model to pass to the command.
+   * @param view The view to pass to the command.
+   * @return A specific Command implementation based on the command type.
+   * @throws InvalidCommandException If the command is not recognized or invalid.
+   */
   public static Command getCommand(String command, ICalendarModel model, ICalendarView view)
       throws InvalidCommandException {
     String commandPattern = "^\\s*(\\S+)";
@@ -18,7 +31,6 @@ public class CommandFactory {
     Matcher matcher = pattern.matcher(command);
 
     String cmd = matcher.find() ? matcher.group(1) : "";
-
     switch (Objects.requireNonNull(CommandProperties.getCommand(cmd.toLowerCase()))) {
       case CREATE:
         return new CreateCommand(model, view);

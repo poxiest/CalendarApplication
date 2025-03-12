@@ -1115,6 +1115,18 @@ public class CommandsE2ETest {
     assertEquals("No events found.\n", stringOutput.toString());
   }
 
+
+  @Test(expected = InvalidCommandException.class)
+  public void InvalidCommandName() {
+    try {
+      controller = new MockController("exrt filename.csv", model, view);
+      controller.go();
+    } catch (InvalidCommandException e) {
+      assertEquals("Unknown command: exrt filename.csv\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
   @Test
   public void testInteractive1() {
     controller = new MockController("CREATE EVENT abc ON \"2025-12-22T10:00\"" +

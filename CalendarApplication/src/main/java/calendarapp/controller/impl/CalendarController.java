@@ -6,14 +6,34 @@ import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
+/**
+ * Concrete implementation of a calendar controller that processes user commands
+ * from an input source and displays results through a view.
+ * Supports interactive command processing with continuous input until exit.
+ */
 public class CalendarController extends AbstractCalendarController {
 
+  /**
+   * Creates a new calendar controller with the specified input, model, and view.
+   *
+   * @param in    The input source for reading commands.
+   * @param model The calendar model to operate on.
+   * @param view  The view to display information.
+   */
   public CalendarController(Readable in, ICalendarModel model, ICalendarView view) {
     super(in, model, view);
   }
 
+  /**
+   * Starts the controller and begins processing user commands.
+   * Continuously reads commands from the input source until an "exit" command is received.
+   * Displays prompts and results through the view.
+   *
+   * @throws InvalidCommandException If a command is invalid or if the input source ends
+   *                                 without an "exit" command.
+   */
   @Override
-  public void go() {
+  public void go() throws InvalidCommandException {
     String command;
     Scanner scanner = new Scanner(in);
 
@@ -31,7 +51,7 @@ public class CalendarController extends AbstractCalendarController {
         view.displayMessage("Processing command: " + command + "\n");
         processCommand(command);
       } catch (InvalidCommandException e) {
-        throw new InvalidCommandException("Invalid command: " + command + "\n");
+        throw e;
       }
       view.displayMessage("\n");
     }

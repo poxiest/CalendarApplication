@@ -18,27 +18,112 @@ import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_
 import static calendarapp.controller.commands.impl.RegexPatternConstants.IS_RECURRING_EVENT;
 import static calendarapp.utils.TimeUtil.getLocalDateTimeFromString;
 
+/**
+ * Create Command implementation for creating calendar events.
+ * Parses the input command and creates events with various properties including
+ * recurring events with different recurrence patterns.
+ */
 public class CreateCommand extends AbstractCommand {
 
+  /**
+   * The name of the event to be created.
+   */
   private String eventName;
+
+  /**
+   * The start date and time of the event.
+   */
   private String startDateTime;
+
+  /**
+   * The end date and time of the event.
+   */
   private String endDateTime;
+
+  /**
+   * The date for single-day events.
+   */
   private String on;
+
+  /**
+   * The days on which a recurring event repeats.
+   */
   private String recurringDays;
+
+  /**
+   * The number of occurrences for a recurring event.
+   */
   private String occurrenceCount;
+
+  /**
+   * The end date for a recurring event.
+   */
   private String recurrenceEndDate;
+
+  /**
+   * The description of the event.
+   */
   private String description;
+
+  /**
+   * The location where the event takes place.
+   */
   private String location;
+
+  /**
+   * The visibility setting for the event.
+   */
   private String visibility;
+
+  /**
+   * Whether conflicting events should be automatically declined.
+   */
   private boolean autoDecline;
+
+  /**
+   * Whether the event is recurring.
+   */
   private boolean isRecurring;
 
+  /**
+   * Creates a new CreateCommand with the specified model and view.
+   *
+   * @param model The calendar model to use for creating events.
+   * @param view  The view to use for displaying information.
+   */
   CreateCommand(ICalendarModel model, ICalendarView view) {
     super(model, view);
   }
 
+  /**
+   * Executes the create command by parsing the command string,
+   * extracting event details, and creating the event in the model.
+   *
+   * @param command The command string containing event creation instructions.
+   * @throws InvalidCommandException If the syntax is invalid or required fields are missing.
+   * @throws EventConflictException  If the new event conflicts with existing events.
+   */
   @Override
-  public void execute(String command) {
+  public void execute(String command) throws InvalidCommandException {
+    parseCommand(command);
+    try {
+      model.createEvent(eventName, getLocalDateTimeFromString(startDateTime),
+          getLocalDateTimeFromString(endDateTime), recurringDays, occurrenceCount,
+          TimeUtil.getEndOfDayFromString(recurrenceEndDate),
+          description, location, visibility, autoDecline);
+    } catch (IllegalArgumentException e) {
+      throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
+    } catch (EventConflictException e) {
+      throw new EventConflictException(command + "\nReason : " + e.getMessage());
+    }
+  }
+
+  /**
+   * Parses the input command to get the properties.
+   *
+   * @param command String input of create command.
+   */
+  private void parseCommand(String command) {
     autoDecline = command.toLowerCase().contains(CREATE_AUTO_DECLINE_PATTERN.toLowerCase());
     if (autoDecline) {
       command = command.replaceAll("(?i)--autoDecline", "");
@@ -91,17 +176,6 @@ public class CreateCommand extends AbstractCommand {
     if (eventName == null || startDateTime == null ||
         (isRecurring && recurringDays == null)) {
       throw new InvalidCommandException(command + "\nReason : Required fields are missing.\n");
-    }
-
-    try {
-      model.createEvent(eventName, getLocalDateTimeFromString(startDateTime),
-          getLocalDateTimeFromString(endDateTime), recurringDays, occurrenceCount,
-          TimeUtil.getEndOfDayFromString(recurrenceEndDate),
-          description, location, visibility, autoDecline);
-    } catch (IllegalArgumentException e) {
-      throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
-    } catch (EventConflictException e) {
-      throw new EventConflictException(command + "\nReason : " + e.getMessage());
     }
   }
 }
