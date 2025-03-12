@@ -28,6 +28,17 @@ public class TimeUtil {
     }
   }
 
+  public static Temporal getEndOfDayFromString(String dateTime) {
+    if (dateTime == null) {
+      return null;
+    }
+    Temporal time = getLocalDateTimeFromString(dateTime);
+    if (!dateTime.contains("T")) {
+      time = time.plus(1, ChronoUnit.DAYS);
+    }
+    return time;
+  }
+
   public static boolean isFirstBeforeSecond(Temporal temporal1, Temporal temporal2) {
     return ChronoUnit.SECONDS.between(temporal1, temporal2) > 0;
   }

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import calendarapp.model.EventVisibility;
 import calendarapp.model.IEvent;
 import calendarapp.model.impl.CalendarExporter;
 import calendarapp.model.impl.Event;

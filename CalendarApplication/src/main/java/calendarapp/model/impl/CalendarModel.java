@@ -11,12 +11,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import calendarapp.utils.TimeUtil;
 
 import calendarapp.model.EventConflictException;
-import calendarapp.model.EventVisibility;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.IEvent;
+import calendarapp.utils.TimeUtil;
 
 import static calendarapp.model.impl.CalendarExporter.exportEventAsGoogleCalendarCsv;
 import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
@@ -57,7 +56,8 @@ public class CalendarModel implements ICalendarModel {
       for (Event newEvent : recurringEvents) {
         for (IEvent existingEvent : events) {
           if (newEvent.conflictsWith(existingEvent)) {
-            throw new EventConflictException("Recurring event conflicts with existing event: " + existingEvent);
+            throw new EventConflictException("Recurring event conflicts with existing event: "
+                + existingEvent.formatForDisplay());
           }
         }
       }
@@ -91,7 +91,7 @@ public class CalendarModel implements ICalendarModel {
 
   // TODO: Fix multi-day event print
   @Override
-  public List<String> printEvents(Temporal startDateTime, Temporal endDateTime) {
+  public List<IEvent> printEvents(Temporal startDateTime, Temporal endDateTime) {
     if (endDateTime == null) {
       endDateTime = (TimeUtil.getLocalDateTimeFromTemporal(startDateTime)
           .toLocalDate().plusDays(1).atStartOfDay());
@@ -100,7 +100,6 @@ public class CalendarModel implements ICalendarModel {
     Temporal finalEndDateTime = endDateTime;
     return events.stream()
         .filter(event -> event.hasIntersectionWith(startDateTime, finalEndDateTime))
-        .map(event -> event.formatForDisplay())
         .collect(Collectors.toList());
   }
 
@@ -146,6 +145,9 @@ public class CalendarModel implements ICalendarModel {
 
     List<Event> recurringEvents = new ArrayList<>();
     Set<DayOfWeek> daysOfWeek = parseDaysOfWeek(recurringDays);
+    if (endTime == null) {
+      endTime = startTime.plus(1, ChronoUnit.DAYS);
+    }
     Duration eventDuration = Duration.between(startTime, endTime);
 
     int occurrencesCreated = 0;

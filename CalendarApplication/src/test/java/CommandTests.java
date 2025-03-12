@@ -25,26 +25,6 @@ public class CommandTests {
   }
 
   @Test
-  public void AllDayEventTest() {
-    controller = new MockController("create event abc on \"2025-12-22\"" +
-        "\nprint events on \"2025-12-22\"", model, view);
-    controller.go();
-    assertEquals("Events:\n" +
-            "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
-        view.getResult());
-  }
-
-  @Test
-  public void AllDayEventTest2() {
-    controller = new MockController("create event abc on \"2025-12-22T10:00\"" +
-        "\nprint events on \"2025-12-22\"", model, view);
-    controller.go();
-    assertEquals("Events:\n" +
-            "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
-        view.getResult());
-  }
-
-  @Test
   public void SingleDayEvent() {
     controller = new MockController("create event Standup from \"2025-11-11T11:00\" " +
         "to \"2025-11-11T12:00\"\n" +
@@ -68,7 +48,6 @@ public class CommandTests {
   }
 
   // Single event span Two days
-  // check this if it should display or not
   @Test
   public void SingleEventSpanTwoDays() {
     controller = new MockController("create event \"Sprint Planning\" from" +
@@ -112,11 +91,31 @@ public class CommandTests {
     controller = new MockController("create event \"Sprint Planning\" " +
         "from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
         "create event \"Sprint Planning2\" from \"2025-11-11T12:00\" to \"2025-11-11T13:00\"\n" +
+        "create event \"Sprint Planning3\" from \"2025-11-11T13:00\" to \"2025-11-11T14:00\"\n" +
         "print events on \"2025-11-11\"", model, view);
     controller.go();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 \n" +
-            "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T13:00 \n",
+            "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T13:00 \n" +
+            "• Sprint Planning3 - 2025-11-11T13:00 to 2025-11-11T14:00 \n",
+        view.getResult());
+  }
+
+  // Multiple events on Different time same day - with autodecline
+  @Test
+  public void MultipleEventsOnDifferentTime1() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
+        "create event --autoDecline \"Sprint Planning2\" from \"2025-11-11T12:00\" to" +
+        " \"2025-11-11T13:00\"\n" +
+        "create event --autoDecline \"Sprint Planning3\" from \"2025-11-11T13:00\" to" +
+        " \"2025-11-11T14:00\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 \n" +
+            "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T13:00 \n" +
+            "• Sprint Planning3 - 2025-11-11T13:00 to 2025-11-11T14:00 \n",
         view.getResult());
   }
 
@@ -125,17 +124,328 @@ public class CommandTests {
   public void MultipleEventsOnSameTimeAutoDecline() {
     controller = new MockController("create event \"Sprint Planning\" " +
         "from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
-        "create event --autoDecline \"Sprint Planning2\" from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
+        "create event --autoDecline \"Sprint Planning2\" from \"2025-11-11T11:00\" to" +
+        " \"2025-11-11T12:00\"\n" +
         "print events on \"2025-11-11\"", model, view);
     controller.go();
   }
 
+  // Multiple events on same time
+  @Test(expected = EventConflictException.class)
+  public void MultipleEventsOnSameTimeAutoDecline2() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
+        "create event --autoDecline \"Sprint Planning2\" from \"2025-11-11T10:00\" to" +
+        " \"2025-11-11T11:15\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.go();
+  }
+
+  // Multiple events on same time
+  @Test(expected = EventConflictException.class)
+  public void MultipleEventsOnSameTimeAutoDecline3() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
+        "create event --autoDecline \"Sprint Planning2\" from \"2025-11-11T11:30\" to" +
+        " \"2025-11-11T12:30\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.go();
+  }
+
+  @Test
+  public void AllDayEventTest() {
+    controller = new MockController("create event abc on \"2025-12-22\"" +
+        "\nprint events on \"2025-12-22\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
+        view.getResult());
+  }
+
+  @Test
+  public void AllDayEventTest2() {
+    controller = new MockController("create event \"Sprint Planning\" on \"2025-12-22T10:00\"" +
+        "\nprint events on \"2025-12-22\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
+        view.getResult());
+  }
+
+  @Test
+  public void AllDayEventTest3() {
+    controller = new MockController("create event abc on \"2025-12-22T10:00\"\n" +
+        "create event abc on \"2025-12-22T10:00\"\n" +
+        "print events on \"2025-12-22\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n" +
+            "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
+        view.getResult());
+  }
+
+  @Test
+  public void RecurringEventsForNTimes() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" for 3 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-20\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+        "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n" +
+        "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+        "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n", view.getResult());
+  }
+
+  // Recurring on all days for 6 times
+  @Test
+  public void RecurringEventsForNTimes1() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" for 6 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-20\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n" +
+            "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+            "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n" +
+            "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
+            "• Recurring Event - 2025-11-15T10:00 to 2025-11-15T10:30 \n" +
+            "• Recurring Event - 2025-11-16T10:00 to 2025-11-16T10:30 \n"
+        , view.getResult());
+  }
+
+  // Recurring on Monday, wednesday and friday
+  @Test
+  public void RecurringEventsForNTimes2() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MWF\" for 6 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+            "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
+            "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n" +
+            "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
+            "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n" +
+            "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
+        , view.getResult());
+  }
+
+  @Test
+  public void RecurringEventsForNTimesWithExistingEvent() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-12T09:00\" to \"2025-11-12T10:00\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"" +
+        " repeats \"MFW\" for 6 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-12T09:00 to 2025-11-12T10:00 \n" +
+            "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+            "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
+            "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n" +
+            "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
+            "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n" +
+            "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
+        , view.getResult());
+  }
+
+  @Test
+  public void RecurringEventsForNTimesWithExistingEvent1() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-12T10:30\" to \"2025-11-12T11:00\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"" +
+        " repeats \"MFW\" for 6 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-12T10:30 to 2025-11-12T11:00 \n" +
+            "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+            "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
+            "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n" +
+            "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
+            "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n" +
+            "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
+        , view.getResult());
+  }
+
+  @Test(expected = EventConflictException.class)
+  public void RecurringEventsForNTimesConflict() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-12T10:15\" to \"2025-11-12T11:00\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"" +
+        " repeats \"MFW\" for 6 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.go();
+  }
+
+  @Test(expected = EventConflictException.class)
+  public void RecurringEventsForNTimesConflict1() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-12T09:15\" to \"2025-11-12T10:15\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"" +
+        " repeats \"MFW\" for 6 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.go();
+  }
+
+  @Test
+  public void RecurringEventsUntil() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" until \"2025-11-13\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-20\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+        "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n" +
+        "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+        "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n", view.getResult());
+  }
+
+  // Recurring on all days for 6 times
+  @Test
+  public void RecurringEventsUntil1() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" until " +
+        "\"2025-11-16T20:00\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-20\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n" +
+            "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+            "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n" +
+            "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
+            "• Recurring Event - 2025-11-15T10:00 to 2025-11-15T10:30 \n" +
+            "• Recurring Event - 2025-11-16T10:00 to 2025-11-16T10:30 \n"
+        , view.getResult());
+  }
+
+  // Recurring on Monday, wednesday and friday
+  @Test
+  public void RecurringEventsUntil2() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MWF\" " +
+        "until \"2025-11-24T20:00\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+            "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
+            "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n" +
+            "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
+            "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n" +
+            "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
+        , view.getResult());
+  }
+
+  @Test
+  public void RecurringEventsUntilWithExistingEvent() {
+    controller = new MockController("create event \"Sprint Planning\" from " +
+        "\"2025-11-12T09:00\" to \"2025-11-12T10:00\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\" " +
+        "repeats \"MFW\" until \"2025-11-24T20:00\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-12T09:00 to 2025-11-12T10:00 \n" +
+            "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+            "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
+            "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n" +
+            "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
+            "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n" +
+            "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
+        , view.getResult());
+  }
+
+  @Test
+  public void RecurringEventsUntilWithExistingEvent1() {
+    controller = new MockController("create event \"Sprint Planning\" from " +
+        "\"2025-11-12T10:30\" to \"2025-11-12T11:00\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\" " +
+        "repeats \"MFW\" until \"2025-11-24T20:00\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-12T10:30 to 2025-11-12T11:00 \n" +
+            "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+            "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
+            "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n" +
+            "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
+            "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n" +
+            "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
+        , view.getResult());
+  }
+
+  @Test(expected = EventConflictException.class)
+  public void RecurringEventsUntilConflict() {
+    controller = new MockController("create event \"Sprint Planning\" from " +
+        "\"2025-11-12T10:15\" to \"2025-11-12T11:00\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\" " +
+        "repeats \"MFW\" until \"2025-11-24T20:00\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.go();
+  }
+
+  @Test(expected = EventConflictException.class)
+  public void RecurringEventsUntilConflict1() {
+    controller = new MockController("create event \"Sprint Planning\" from " +
+        "\"2025-11-12T09:15\" to \"2025-11-12T10:15\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\" " +
+        "repeats \"MFW\" until \"2025-11-24T20:00\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.go();
+  }
+
+  @Test
+  public void AllDayRecurringEventsFor() {
+    controller = new MockController("create event \"All Day Recurring\" on \"2025-11-12\"" +
+        " repeats \"MWRT\" for 5 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+        "• All Day Recurring - 2025-11-12T00:00 to 2025-11-13T00:00 \n" +
+        "• All Day Recurring - 2025-11-13T00:00 to 2025-11-14T00:00 \n" +
+        "• All Day Recurring - 2025-11-17T00:00 to 2025-11-18T00:00 \n" +
+        "• All Day Recurring - 2025-11-18T00:00 to 2025-11-19T00:00 \n" +
+        "• All Day Recurring - 2025-11-19T00:00 to 2025-11-20T00:00 \n", view.getResult());
+  }
+
+  @Test(expected = EventConflictException.class)
+  public void AllDayRecurringEventsFor1() {
+    controller = new MockController("create event \"Sprint Planning\" from " +
+        "\"2025-11-12T10:15\" to \"2025-11-12T11:00\"\n" +
+        "create event \"All Day Recurring\" on \"2025-11-12\" repeats \"MWRU\" for 3 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.go();
+  }
+
+  @Test
+  public void AllDayRecurringEventsUntil() {
+    controller = new MockController("create event \"All Day Recurring\" on \"2025-11-12\"" +
+        " repeats \"MWRT\" until \"2025-11-19\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.go();
+    assertEquals("Events:\n" +
+        "• All Day Recurring - 2025-11-12T00:00 to 2025-11-13T00:00 \n" +
+        "• All Day Recurring - 2025-11-13T00:00 to 2025-11-14T00:00 \n" +
+        "• All Day Recurring - 2025-11-17T00:00 to 2025-11-18T00:00 \n" +
+        "• All Day Recurring - 2025-11-18T00:00 to 2025-11-19T00:00 \n" +
+        "• All Day Recurring - 2025-11-19T00:00 to 2025-11-20T00:00 \n", view.getResult());
+  }
+
+  @Test(expected = EventConflictException.class)
+  public void AllDayRecurringEventsUntil1() {
+    controller = new MockController("create event \"Sprint Planning\" from " +
+        "\"2025-11-12T10:15\" to \"2025-11-12T11:00\"\n" +
+        "create event \"All Day Recurring\" on \"2025-11-12\" repeats \"MWRU\" " +
+        "until \"2025-11-19\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.go();
+  }
 
   // TODO
   @Test
   public void testInteractive1() {
     controller = new MockController("CREATE EVENT abc ON \"2025-12-22T10:00\"" +
-        "\nprint events on \"2025-12-22\"", model, view);
+        "\nPRINT EVENTS ON \"2025-12-22\"", model, view);
     controller.go();
     assertEquals("Events:\n" +
             "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
@@ -145,7 +455,7 @@ public class CommandTests {
   @Test
   public void testInteractive2() {
     controller = new MockController("CREATE EVENT ABC ON \"2025-12-22T10:00\"" +
-        "\nprint events on \"2025-12-22\"", model, view);
+        "\nPRINT EVENTS ON \"2025-12-22\"", model, view);
     controller.go();
     assertEquals("Events:\n" +
             "• ABC - 2025-12-22T00:00 to 2025-12-23T00:00 \n",

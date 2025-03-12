@@ -13,8 +13,8 @@ import static calendarapp.utils.TimeUtil.formatTime;
 import static calendarapp.utils.TimeUtil.isAllDayEvent;
 
 public class CalendarExporter {
-
-  public static void exportEventAsGoogleCalendarCsv(List<IEvent> events, String filePath) throws IOException {
+  public static void exportEventAsGoogleCalendarCsv(List<IEvent> events, String filePath)
+      throws IOException {
     try (FileWriter writer = new FileWriter(filePath)) {
       // Write CSV header
       writer.write(String.join(EventConstants.CsvFormat.DELIMITER,
@@ -44,13 +44,13 @@ public class CalendarExporter {
   }
 
   // These utility methods can be moved to the Event class or a utility class
-  public static String determinePrivacyFlag(EventVisibility visibility) {
+  private static String determinePrivacyFlag(EventVisibility visibility) {
     return EventVisibility.PRIVATE.equals(visibility) ?
         EventConstants.CsvFormat.TRUE_VALUE :
         EventConstants.CsvFormat.FALSE_VALUE;
   }
 
-  public static String escapeField(String field) {
+  private static String escapeField(String field) {
     if (field == null || field.isEmpty()) {
       return "";
     }
@@ -59,7 +59,8 @@ public class CalendarExporter {
 
   // This method could be used by Event to help format CSV rows
   public static String formatEventAsCsvRow(String name, Temporal startTime, Temporal endTime,
-                                           String description, String location, EventVisibility visibility) {
+                                           String description, String location,
+                                           EventVisibility visibility) {
     StringBuilder row = new StringBuilder();
 
     boolean isAllDay = isAllDayEvent(startTime, endTime);
@@ -69,7 +70,8 @@ public class CalendarExporter {
     row.append(isAllDay ? "" : formatTime(startTime)).append(EventConstants.CsvFormat.DELIMITER);
     row.append(formatDate(endTime)).append(EventConstants.CsvFormat.DELIMITER);
     row.append(isAllDay ? "" : formatTime(endTime)).append(EventConstants.CsvFormat.DELIMITER);
-    row.append(isAllDay ? EventConstants.CsvFormat.TRUE_VALUE : EventConstants.CsvFormat.FALSE_VALUE).append(EventConstants.CsvFormat.DELIMITER);
+    row.append(isAllDay ? EventConstants.CsvFormat.TRUE_VALUE :
+        EventConstants.CsvFormat.FALSE_VALUE).append(EventConstants.CsvFormat.DELIMITER);
     row.append(escapeField(description)).append(EventConstants.CsvFormat.DELIMITER);
     row.append(escapeField(location)).append(EventConstants.CsvFormat.DELIMITER);
     row.append(determinePrivacyFlag(visibility));

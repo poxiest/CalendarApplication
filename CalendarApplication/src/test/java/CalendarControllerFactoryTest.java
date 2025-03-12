@@ -8,6 +8,7 @@ import calendarapp.controller.ICalendarController;
 import calendarapp.controller.impl.CalendarController;
 import calendarapp.controller.impl.CalendarControllerFactory;
 import calendarapp.model.ICalendarModel;
+import calendarapp.model.IEvent;
 import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
@@ -105,7 +106,7 @@ public class CalendarControllerFactoryTest {
     }
 
     @Override
-    public List<String> printEvents(Temporal startTime, Temporal endTime) {
+    public List<IEvent> printEvents(Temporal startTime, Temporal endTime) {
       return List.of();
     }
 

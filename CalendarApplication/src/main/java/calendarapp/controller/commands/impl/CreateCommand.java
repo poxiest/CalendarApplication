@@ -99,7 +99,7 @@ public class CreateCommand extends AbstractCommand {
     try {
       model.createEvent(eventName, getLocalDateTimeFromString(startDateTime),
           getLocalDateTimeFromString(endDateTime), recurringDays, occurrenceCount,
-          TimeUtil.getLocalDateTimeFromString(recurrenceEndDate),
+          TimeUtil.getEndOfDayFromString(recurrenceEndDate),
           description, location, visibility, autoDecline);
     } catch (IllegalArgumentException e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
