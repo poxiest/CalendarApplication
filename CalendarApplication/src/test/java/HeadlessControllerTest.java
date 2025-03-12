@@ -15,6 +15,8 @@ public class HeadlessControllerTest {
   private ICalendarController controller;
   private ICalendarModel model;
   private MockView view;
+  private String filepath = System.getProperty("user.dir").contains("CalendarApplication") ?
+      System.getProperty("user.dir") : System.getProperty("user.dir") + "/CalendarApplication";
 
   @Before
   public void setUp() {
@@ -31,7 +33,7 @@ public class HeadlessControllerTest {
   @Test(expected = InvalidCommandException.class)
   public void testHeadless1() {
     controller = CalendarControllerFactory.getController("headless",
-        System.getProperty("user.dir") + "./src/test/resources/withoutExitCommand.txt",
+        filepath + "/src/test/resources/withoutExitCommand.txt",
         model, view);
     controller.go();
   }
@@ -39,7 +41,7 @@ public class HeadlessControllerTest {
   @Test
   public void testHeadless2() {
     controller = CalendarControllerFactory.getController("headless",
-        System.getProperty("user.dir") + "./src/test/resources/positiveTestcase.txt",
+        filepath + "/src/test/resources/positiveTestcase.txt",
         model, view);
     controller.go();
     assertEquals("Enter command or enter 'exit' to exit the calendar application.\n" +

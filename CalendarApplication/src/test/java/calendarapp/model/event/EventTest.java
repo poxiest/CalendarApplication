@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 
-import calendarapp.model.EventVisibility;
 import calendarapp.model.IEvent;
 import calendarapp.model.impl.Event;
 import calendarapp.model.impl.EventConstants;

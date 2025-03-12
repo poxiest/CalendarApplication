@@ -8,6 +8,7 @@ import calendarapp.controller.ICalendarController;
 import calendarapp.controller.impl.CalendarController;
 import calendarapp.controller.impl.CalendarControllerFactory;
 import calendarapp.model.ICalendarModel;
+import calendarapp.model.IEvent;
 import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
@@ -16,6 +17,9 @@ public class CalendarControllerFactoryTest {
   private ICalendarController controller;
   private ICalendarView view;
   private ICalendarModel model;
+
+  private String filepath = System.getProperty("user.dir").contains("CalendarApplication") ?
+      System.getProperty("user.dir") : System.getProperty("user.dir") + "/CalendarApplication";
 
   @Before
   public void setup() {
@@ -46,7 +50,7 @@ public class CalendarControllerFactoryTest {
   @Test
   public void testControllerFactory3() {
     controller = CalendarControllerFactory.getController("headless",
-        System.getProperty("user.dir") +
+        filepath +
             "/src/test/resources/positiveTestcase.txt", model,
         view);
     assertEquals(CalendarController.class, controller.getClass());
@@ -61,7 +65,7 @@ public class CalendarControllerFactoryTest {
   @Test
   public void testControllerFactory5() {
     controller = CalendarControllerFactory.getController("HEADLESS",
-        System.getProperty("user.dir") +
+        filepath +
             "/src/test/resources/positiveTestcase.txt", model,
         view);
     assertEquals(CalendarController.class, controller.getClass());
@@ -102,7 +106,7 @@ public class CalendarControllerFactoryTest {
     }
 
     @Override
-    public List<String> printEvents(Temporal startTime, Temporal endTime) {
+    public List<IEvent> printEvents(Temporal startTime, Temporal endTime) {
       return List.of();
     }
 

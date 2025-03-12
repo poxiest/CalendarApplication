@@ -9,6 +9,7 @@ import calendarapp.controller.commands.impl.CommandFactory;
 import calendarapp.controller.commands.impl.CreateCommand;
 import calendarapp.controller.commands.impl.EditCommand;
 import calendarapp.model.ICalendarModel;
+import calendarapp.model.IEvent;
 import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
@@ -75,7 +76,7 @@ public class CommandFactoryTest {
     }
 
     @Override
-    public List<String> printEvents(Temporal startTime, Temporal endTime) {
+    public List<IEvent> printEvents(Temporal startTime, Temporal endTime) {
       return List.of();
     }
 

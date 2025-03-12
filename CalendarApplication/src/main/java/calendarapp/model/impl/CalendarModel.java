@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import calendarapp.model.EventConflictException;
-import calendarapp.model.EventVisibility;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.IEvent;
 import calendarapp.utils.TimeUtil;
@@ -50,12 +49,10 @@ public class CalendarModel implements ICalendarModel {
 
     boolean isRecurring = recurringDays != null;
     Integer occurrence = occurrenceCount != null ? Integer.parseInt(occurrenceCount) : null;
-    EventVisibility visibilityEnum = visibility != null ?
-        EventVisibility.getVisibility(visibility) : EventVisibility.DEFAULT;
 
     if (!isRecurring) {
       IEvent event = createSingleEvent(eventName, startTime, endTime, description, location,
-          visibilityEnum, recurringDays, occurrence, recurrenceEndDate, autoDecline);
+          visibility, recurringDays, occurrence, recurrenceEndDate, autoDecline);
 
       if (autoDecline) {
         for (IEvent existingEvent : events) {
@@ -67,13 +64,14 @@ public class CalendarModel implements ICalendarModel {
       events.add(event);
     } else {
       List<Event> recurringEvents = createRecurringEvents(
-          eventName, startTime, endTime, description, location, visibilityEnum,
+          eventName, startTime, endTime, description, location, visibility,
           recurringDays, occurrence, recurrenceEndDate);
 
       for (Event newEvent : recurringEvents) {
         for (IEvent existingEvent : events) {
           if (newEvent.conflictsWith(existingEvent)) {
-            throw new EventConflictException("Recurring event conflicts with existing event: " + existingEvent);
+            throw new EventConflictException("Recurring event conflicts with existing event: "
+                + existingEvent.formatForDisplay());
           }
         }
       }
@@ -107,14 +105,14 @@ public class CalendarModel implements ICalendarModel {
 
   // TODO: Fix multi-day event print
   @Override
-  public List<String> printEvents(Temporal startDateTime, Temporal endDateTime) {
+  public List<IEvent> printEvents(Temporal startDateTime, Temporal endDateTime) {
     if (endDateTime == null) {
       endDateTime = (TimeUtil.getLocalDateTimeFromTemporal(startDateTime)
           .toLocalDate().plusDays(1).atStartOfDay());
     }
-    List<IEvent> eventsToShow = findEvents(null, startDateTime, endDateTime);
-    return eventsToShow.stream()
-        .map(IEvent::formatForDisplay)
+    Temporal finalEndDateTime = endDateTime;
+    return events.stream()
+        .filter(event -> event.hasIntersectionWith(startDateTime, finalEndDateTime))
         .collect(Collectors.toList());
   }
 
@@ -136,7 +134,7 @@ public class CalendarModel implements ICalendarModel {
   }
 
   private Event createSingleEvent(String eventName, Temporal startTime, Temporal endTime,
-                                  String description, String location, EventVisibility visibility,
+                                  String description, String location, String visibility,
                                   String recurringDays, Integer occurrenceCount,
                                   Temporal recurrenceEndDate, boolean autoDecline) {
     return Event.builder()
@@ -155,11 +153,14 @@ public class CalendarModel implements ICalendarModel {
 
   private List<Event> createRecurringEvents(String eventName, Temporal startTime, Temporal endTime,
                                             String description, String location,
-                                            EventVisibility visibility, String recurringDays,
+                                            String visibility, String recurringDays,
                                             Integer occurrenceCount, Temporal recurrenceEndDate) {
 
     List<Event> recurringEvents = new ArrayList<>();
     Set<DayOfWeek> daysOfWeek = parseDaysOfWeek(recurringDays);
+    if (endTime == null) {
+      endTime = startTime.plus(1, ChronoUnit.DAYS);
+    }
     Duration eventDuration = Duration.between(startTime, endTime);
 
     int occurrencesCreated = 0;

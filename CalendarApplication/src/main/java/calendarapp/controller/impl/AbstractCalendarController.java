@@ -20,8 +20,6 @@ public abstract class AbstractCalendarController implements ICalendarController 
 
   protected void processCommand(String commandString) {
     Command command = CommandFactory.getCommand(commandString, model, view);
-    if (command != null) {
-      command.execute(commandString);
-    }
+    command.execute(commandString);
   }
 }

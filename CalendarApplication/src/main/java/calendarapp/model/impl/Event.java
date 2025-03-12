@@ -38,8 +38,11 @@ public class Event implements IEvent {
 
   @Override
   public boolean conflictsWith(IEvent other) {
-    return isFirstBeforeSecond(this.startTime, ((Event) other).endTime)
-        && isFirstAfterSecond(this.endTime, ((Event) other).startTime);
+    if (!(other instanceof Event)) {
+      return false;
+    }
+    Event otherEvent = (Event) other;
+    return overlapsWith(otherEvent.startTime, otherEvent.endTime);
   }
 
   @Override
@@ -74,7 +77,7 @@ public class Event implements IEvent {
         .endTime(this.endTime)
         .description(this.description)
         .location(this.location)
-        .visibility(this.visibility)
+        .visibility(this.visibility.getValue())
         .recurringDays(this.recurringDays)
         .occurrenceCount(this.occurrenceCount)
         .recurrenceEndDate(this.recurrenceEndDate)
@@ -102,10 +105,7 @@ public class Event implements IEvent {
         break;
 
       case EventConstants.PropertyKeys.VISIBILITY:
-        if (EventVisibility.getVisibility(value) == EventVisibility.UNKNOWN) {
-          throw new IllegalArgumentException("Invalid visibility value: " + value + "\n");
-        }
-        builder.visibility(EventVisibility.getVisibility(value));
+        builder.visibility(value);
         break;
 
       // TODO: Add logic for changing recurring properties
@@ -193,8 +193,12 @@ public class Event implements IEvent {
       return this;
     }
 
-    public Builder visibility(EventVisibility visibility) {
-      this.visibility = visibility;
+    public Builder visibility(String visibility) {
+      this.visibility = visibility != null ?
+          EventVisibility.getVisibility(visibility) : EventVisibility.DEFAULT;
+      if (this.visibility == EventVisibility.UNKNOWN) {
+        throw new IllegalArgumentException("Unknown Visibility input\n");
+      }
       return this;
     }
 
@@ -290,5 +294,13 @@ public class Event implements IEvent {
   @Override
   public int hashCode() {
     return name.hashCode() + startTime.hashCode() + endTime.hashCode();
+  }
+
+  public boolean hasIntersectionWith(Temporal startTime, Temporal endTime) {
+    return overlapsWith(startTime, endTime);
+  }
+
+  private boolean overlapsWith(Temporal otherStartTime, Temporal otherEndTime) {
+    return isFirstBeforeSecond(this.startTime, otherEndTime) && isFirstAfterSecond(this.endTime, otherStartTime);
   }
 }

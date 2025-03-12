@@ -20,4 +20,8 @@ public enum EventVisibility {
     }
     return UNKNOWN;
   }
+
+  public String getValue() {
+    return value;
+  }
 }
