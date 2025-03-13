@@ -15,6 +15,7 @@ import calendarapp.view.ICalendarView;
 import calendarapp.view.impl.CLIView;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * End 2 end test for the calendar application.
@@ -212,6 +213,25 @@ public class CommandsE2ETest {
         "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n" +
         "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
         "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n", stringOutput.toString());
+  }
+
+  @Test
+  public void RecurringEventsForNTimesEdit() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" for 3 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-20\"\n"
+        + "edit events recurring_days \"Recurring Event\" \"MW\"\n"
+        + "print events from \"2025-11-10\" to \"2025-11-20\""
+        , model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n"
+        + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+        + "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n"
+        + "Events:\n"
+        + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+        + "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n"
+        + "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n", stringOutput.toString());
   }
 
   @Test
@@ -1120,6 +1140,45 @@ public class CommandsE2ETest {
     assertEquals("No events found.\n", stringOutput.toString());
   }
 
+  @Test
+  public void exportCommand() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
+        "create event \"Sprint Planning\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+        "export cal exportTest.csv", model, view);
+    controller.start();
+    assertTrue(stringOutput.toString().contains("/exportTest.csv"));
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void exportCommandInvalidFile() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from" +
+          " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
+          "create event \"Sprint Planning\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+          "export cal exportTest.xlsx", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("export cal exportTest.xlsx\n"
+          + "Reason : Only CSV files are supported.", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void exportCommandInvalidFile1() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from" +
+          " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
+          "create event \"Sprint Planning\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+          "export cal exportTest", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("export cal exportTest\n"
+          + "Reason : Only CSV files are supported.", e.getMessage());
+      throw e;
+    }
+  }
 
   @Test(expected = InvalidCommandException.class)
   public void InvalidCommandName() {

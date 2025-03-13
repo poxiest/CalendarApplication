@@ -39,7 +39,11 @@
                         <param>CommandsE2ETest</param>
                         <param>CommandFactoryTest</param>
                         <param>HeadlessControllerTest</param>
-                        <param>calendarapp.model.event.*</param>
+                        <param>CalendarExporterTest</param>
+                        <param>EventTest</param>
+                        <param>TimeUtilsTest</param>
+                        <param>CommandPropertiesTest</param>
+                        <param>EventVisibilityTest</param>
                     </targetTests>
                 </configuration>
             </plugin>

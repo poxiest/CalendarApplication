@@ -231,14 +231,15 @@ public class CalendarModel implements ICalendarModel {
   /**
    * Validates and adds a list of recurring events to the calendar.
    *
-   * @param newEvents   The list of events to be added.
+   * @param newEvents The list of events to be added.
    * @throws EventConflictException if any of the recurring events conflict with existing events.
    */
   private void validateAndAddEvents(List<IEvent> newEvents)
       throws EventConflictException {
     for (IEvent newEvent : newEvents) {
       for (IEvent existingEvent : events) {
-        if (TimeUtil.isConflicting(newEvent.getStartTime(), newEvent.getEndTime(),
+        if (newEvent.getName() != existingEvent.getName() &&
+            TimeUtil.isConflicting(newEvent.getStartTime(), newEvent.getEndTime(),
             existingEvent.getStartTime(), existingEvent.getEndTime())) {
           throw new EventConflictException("Recurring event conflicts with existing event: "
               + existingEvent);
@@ -260,14 +261,14 @@ public class CalendarModel implements ICalendarModel {
   @Override
   public void editEvent(String eventName, Temporal startTime, Temporal endTime, String property,
                         String value) {
-    boolean isRecurring = property.equals(EventConstants.PropertyKeys.RECURRING_DAYS) ||
+    boolean isRecurringProperty = property.equals(EventConstants.PropertyKeys.RECURRING_DAYS) ||
         property.equals(EventConstants.PropertyKeys.OCCURRENCE_COUNT) ||
         property.equals(EventConstants.PropertyKeys.RECURRENCE_END_DATE);
 
-    List<IEvent> eventsToEdit = findEvents(eventName, startTime, endTime, isRecurring);
+    List<IEvent> eventsToEdit = findEvents(eventName, startTime, endTime, isRecurringProperty);
     List<IEvent> updatedEvents = new ArrayList<>();
 
-    if (!isRecurring) {
+    if (!isRecurringProperty) {
       for (IEvent event : eventsToEdit) {
         IEvent updatedEvent = event.updateProperty(property, value);
         if (updatedEvent.isAutoDecline()) {
@@ -278,15 +279,13 @@ public class CalendarModel implements ICalendarModel {
       events.addAll(updatedEvents);
     } else {
       IEvent firstEvent = eventsToEdit.get(0);
+      firstEvent = firstEvent.updateProperty(property, value);
       createEvent(firstEvent.getName(), firstEvent.getStartTime(), firstEvent.getEndTime(),
           firstEvent.getRecurringDays(), Integer.toString(firstEvent.getOccurrenceCount()), firstEvent.getRecurrenceEndDate(),
           firstEvent.getDescription(), firstEvent.getLocation(), firstEvent.getVisibility().getValue(),
           firstEvent.isAutoDecline());
     }
-
-
     events.removeAll(eventsToEdit);
-
   }
 
   /**
@@ -336,8 +335,7 @@ public class CalendarModel implements ICalendarModel {
    */
   @Override
   public String export(String filename) {
-    String filePath = filename + ".csv";
-    return exportEventAsGoogleCalendarCsv(events, filePath);
+    return exportEventAsGoogleCalendarCsv(events, filename);
   }
 
   /**

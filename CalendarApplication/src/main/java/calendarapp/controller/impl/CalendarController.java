@@ -43,16 +43,12 @@ public class CalendarController extends AbstractCalendarController {
         throw new InvalidCommandException("Command file must end with 'exit' command./n");
       }
       command = scanner.nextLine();
-      try {
-        if (command.trim().equalsIgnoreCase("exit")) {
-          view.displayMessage("Exiting application.\n");
-          break;
-        }
-        view.displayMessage("Processing command: " + command + "\n");
-        processCommand(command);
-      } catch (InvalidCommandException e) {
-        throw e;
+      if (command.trim().equalsIgnoreCase("exit")) {
+        view.displayMessage("Exiting application.\n");
+        break;
       }
+      view.displayMessage("Processing command: " + command + "\n");
+      processCommand(command);
       view.displayMessage("\n");
     }
   }

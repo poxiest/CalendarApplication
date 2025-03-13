@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.time.temporal.Temporal;
 import java.util.List;
 
+import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.EventVisibility;
 import calendarapp.model.IEvent;
 
@@ -28,6 +29,12 @@ public class CalendarExporter {
    * @throws RuntimeException If an I/O error occurs during file writing.
    */
   public static String exportEventAsGoogleCalendarCsv(List<IEvent> events, String filePath) {
+
+    if (filePath.split("\\.").length <= 1
+        || !filePath.split("\\.")[1].equalsIgnoreCase("csv")) {
+      throw new InvalidCommandException("Only CSV files are supported.");
+    }
+
     try (FileWriter writer = new FileWriter(filePath)) {
       writer.write(String.join(EventConstants.CsvFormat.DELIMITER,
           EventConstants.CsvHeaders.SUBJECT,
