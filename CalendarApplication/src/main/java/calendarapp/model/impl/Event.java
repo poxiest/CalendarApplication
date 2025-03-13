@@ -108,7 +108,21 @@ public class Event implements IEvent {
         builder.visibility(value);
         break;
 
-      // TODO: Add logic for changing recurring properties
+      case EventConstants.PropertyKeys.RECURRING_DAYS:
+        builder.recurringDays(value);
+        break;
+
+      case EventConstants.PropertyKeys.OCCURRENCE_COUNT:
+        Integer occurrenceCount = value != null ? Integer.parseInt(value) : null;
+        builder.occurrenceCount(occurrenceCount);
+        break;
+
+      case EventConstants.PropertyKeys.RECURRENCE_END_DATE:
+        Temporal recurrenceEndDate = value != null ?
+            TimeUtil.getLocalDateTimeFromString(value) : null;
+        builder.recurrenceEndDate(recurrenceEndDate);
+        break;
+
       default:
         throw new IllegalArgumentException("Cannot edit property: " + property + "\n");
     }
@@ -298,6 +312,11 @@ public class Event implements IEvent {
 
   public boolean hasIntersectionWith(Temporal startTime, Temporal endTime) {
     return overlapsWith(startTime, endTime);
+  }
+
+  @Override
+  public boolean isRecurring() {
+    return recurringDays != null && !recurringDays.isEmpty();
   }
 
   private boolean overlapsWith(Temporal otherStartTime, Temporal otherEndTime) {

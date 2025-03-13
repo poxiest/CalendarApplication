@@ -21,4 +21,6 @@ public interface IEvent {
   boolean shouldAutoDecline();
 
   boolean hasIntersectionWith(Temporal startTime, Temporal endTime);
+
+  boolean isRecurring();
 }

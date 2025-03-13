@@ -82,25 +82,36 @@ public class CalendarModel implements ICalendarModel {
   @Override
   public void editEvent(String eventName, Temporal startTime, Temporal endTime, String property,
                         String value) {
-    List<IEvent> eventsToEdit = findEvents(eventName, startTime, endTime);
+    if (!isRecurringProperty(property)) {
+      List<IEvent> eventsToEdit = findEvents(eventName, startTime, endTime);
 
-    List<IEvent> updatedEvents = new ArrayList<>();
-    for (IEvent event : eventsToEdit) {
-      IEvent updatedEvent = event.updateProperty(property, value);
+      List<IEvent> updatedEvents = new ArrayList<>();
+      for (IEvent event : eventsToEdit) {
+        IEvent updatedEvent = event.updateProperty(property, value);
 
-      if (updatedEvent.shouldAutoDecline()) {
-        for (IEvent existingEvent : events) {
-          if (existingEvent != event && updatedEvent.conflictsWith(existingEvent)) {
-            throw new EventConflictException("Event conflicts with existing event: " + existingEvent);
+        if (updatedEvent.shouldAutoDecline()) {
+          for (IEvent existingEvent : events) {
+            if (existingEvent != event && updatedEvent.conflictsWith(existingEvent)) {
+              throw new EventConflictException("Event conflicts with existing event: " + existingEvent);
+            }
           }
         }
+
+        updatedEvents.add(updatedEvent);
       }
 
-      updatedEvents.add(updatedEvent);
+      events.removeAll(eventsToEdit);
+      events.addAll(updatedEvents);
+    } else {
+      List<IEvent> recurringEventsToEdit = findEvents(eventName, startTime, endTime);
+
+      if (!recurringEventsToEdit.isEmpty()) {
+        IEvent firstEvent = recurringEventsToEdit.get(0);
+        IEvent updatedEvent = firstEvent.updateProperty(property, value);
+      }
+
     }
 
-    events.removeAll(eventsToEdit);
-    events.addAll(updatedEvents);
   }
 
   // TODO: Fix multi-day event print
@@ -116,7 +127,6 @@ public class CalendarModel implements ICalendarModel {
         .collect(Collectors.toList());
   }
 
-  // TODO: Return the absolute path
   @Override
   public String export(String filename) throws IOException {
     String filePath = filename + ".csv";
@@ -204,10 +214,25 @@ public class CalendarModel implements ICalendarModel {
     return days;
   }
 
+  private boolean isRecurringProperty(String property) {
+    String lowerCaseProperty = property.toLowerCase();
+    return lowerCaseProperty.equals(EventConstants.PropertyKeys.RECURRING_DAYS) ||
+        lowerCaseProperty.equals(EventConstants.PropertyKeys.OCCURRENCE_COUNT) ||
+        lowerCaseProperty.equals(EventConstants.PropertyKeys.RECURRENCE_END_DATE);
+  }
+
   private List<IEvent> findEvents(String eventName, Temporal startTime, Temporal endTime) {
     return events.stream()
         .filter(event -> event.matchesName(eventName))
         .filter(event -> event.isWithinTimeRange(startTime, endTime))
+        .collect(Collectors.toList());
+  }
+
+  private List<IEvent> findRecurringEvents(String eventName, Temporal startTime, Temporal endTime) {
+    return events.stream()
+        .filter(event -> event.matchesName(eventName))
+        .filter(event -> event.isWithinTimeRange(startTime, endTime))
+        .filter(IEvent::isRecurring)
         .collect(Collectors.toList());
   }
 }

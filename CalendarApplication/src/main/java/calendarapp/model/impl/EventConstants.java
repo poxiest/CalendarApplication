@@ -27,6 +27,9 @@ public class EventConstants {
     public static final String DESCRIPTION = "description";
     public static final String LOCATION = "location";
     public static final String VISIBILITY = "visibility";
+    public static final String RECURRING_DAYS = "recurring_days";
+    public static final String OCCURRENCE_COUNT = "occurrence_count";
+    public static final String RECURRENCE_END_DATE = "recurrence_end_date";
   }
 
   public static final class Status {
