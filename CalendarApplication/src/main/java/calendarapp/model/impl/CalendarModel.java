@@ -230,7 +230,7 @@ public class CalendarModel implements ICalendarModel {
   /**
    * Validates and adds a list of recurring events to the calendar.
    *
-   * @param newEvents   The list of events to be added.
+   * @param newEvents The list of events to be added.
    * @throws EventConflictException if any of the recurring events conflict with existing events.
    */
   private void validateAndAddEvents(List<IEvent> newEvents)
