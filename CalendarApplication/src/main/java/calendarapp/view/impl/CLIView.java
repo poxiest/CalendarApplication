@@ -3,7 +3,6 @@ package calendarapp.view.impl;
 import java.io.IOException;
 import java.util.List;
 
-import calendarapp.model.IEvent;
 import calendarapp.view.ICalendarView;
 
 /**
@@ -44,10 +43,10 @@ public class CLIView implements ICalendarView {
    * @throws RuntimeException if appending to the output destination fails.
    */
   @Override
-  public void displayEvents(List<IEvent> events) {
-    for (IEvent event : events) {
+  public void displayEvents(List<String> events) {
+    for (String event : events) {
       try {
-        out.append(event.formatForDisplay()).append("\n");
+        out.append(event).append("\n");
       } catch (IOException e) {
         throw new RuntimeException("Append failed : ", e);
       }

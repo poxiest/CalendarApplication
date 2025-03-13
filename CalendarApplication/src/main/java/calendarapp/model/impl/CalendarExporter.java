@@ -60,7 +60,14 @@ public class CalendarExporter {
    * @return A CSV-formatted string representation of the event.
    */
   private static String formatEventForExport(IEvent event) {
-    return event.formatForExport();
+    return CalendarExporter.formatEventAsCsvRow(
+        event.getName(),
+        event.getStartTime(),
+        event.getEndTime(),
+        event.getDescription(),
+        event.getLocation(),
+        event.getVisibility()
+    );
   }
 
   /**

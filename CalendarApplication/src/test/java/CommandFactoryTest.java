@@ -13,7 +13,6 @@ import calendarapp.controller.commands.impl.ExportCommand;
 import calendarapp.controller.commands.impl.PrintCommand;
 import calendarapp.controller.commands.impl.ShowCommand;
 import calendarapp.model.ICalendarModel;
-import calendarapp.model.IEvent;
 import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
@@ -181,8 +180,8 @@ public class CommandFactoryTest {
     }
 
     @Override
-    public void displayEvents(List<IEvent> events) {
-      resultBuilder.append(events.toString());
+    public void displayEvents(List<String> events) {
+      resultBuilder.append(events);
     }
 
     public String getResult() {
@@ -206,7 +205,7 @@ public class CommandFactoryTest {
     }
 
     @Override
-    public List<IEvent> getEventsBetween(Temporal startTime, Temporal endTime) {
+    public List<String> getEventsForPrinting(Temporal startTime, Temporal endTime) {
       return List.of();
     }
 

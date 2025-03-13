@@ -2,8 +2,6 @@ package calendarapp.view;
 
 import java.util.List;
 
-import calendarapp.model.IEvent;
-
 /**
  * Interface for the calendar view component.
  * Defines methods for displaying messages and events to the user.
@@ -23,5 +21,5 @@ public interface ICalendarView {
    *
    * @param events the list of events to be displayed
    */
-  void displayEvents(List<IEvent> events);
+  void displayEvents(List<String> events);
 }

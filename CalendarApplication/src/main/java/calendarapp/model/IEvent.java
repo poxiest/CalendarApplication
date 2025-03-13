@@ -3,90 +3,99 @@ package calendarapp.model;
 import java.time.temporal.Temporal;
 
 /**
- * Interface for calendar events in the calendar application.
+ * Interface representing a calendar event in the calendar application.
  */
 public interface IEvent {
 
   /**
-   * Determines whether this event has a time conflict with another event.
+   * Gets the name of the event.
    *
-   * @param other the event to check for conflicts with.
-   * @return true if the events conflict (overlap in time), false otherwise.
+   * @return the name of the event.
    */
-  boolean conflictsWith(IEvent other);
+  String getName();
 
   /**
-   * Checks if the event is active (ongoing) at the specified date and time.
+   * Gets the start time of the event.
    *
-   * @param dateTime the date and time to check.
-   * @return true if the event is active at the specified time, false otherwise.
+   * @return the start time of the event as a {@link Temporal} object.
    */
-  boolean isActiveAt(Temporal dateTime);
+  Temporal getStartTime();
 
   /**
-   * Checks if this event matches the specified name.
+   * Gets the end time of the event.
    *
-   * @param eventName the name to match against, or null to match any event.
-   * @return true if the event name matches or if eventName is null, false otherwise.
+   * @return the end time of the event as a {@link Temporal} object.
    */
-  boolean matchesName(String eventName);
+  Temporal getEndTime();
 
   /**
-   * Determines if this event falls within the specified time range.
+   * Gets the description of the event.
    *
-   * @param startDateTime the start of the time range, or null for no start constraint.
-   * @param endDateTime   the end of the time range, or null for no end constraint.
-   * @return true if the event is within the specified time range, false otherwise.
+   * @return the description of the event as a String.
    */
-  boolean isWithinTimeRange(Temporal startDateTime, Temporal endDateTime);
+  String getDescription();
 
   /**
-   * Creates a new event with the specified property updated to the given value.
+   * Gets the location where the event is taking place.
    *
-   * @param property the property to update.
-   * @param value    the new value for the property.
-   * @return a new IEvent instance with the updated property.
-   * @throws IllegalArgumentException if the property is not supported or the value is invalid.
+   * @return the location of the event as a String.
    */
-  IEvent updateProperty(String property, String value) throws IllegalArgumentException;
+  String getLocation();
 
   /**
-   * Formats the event details for display in the user interface.
+   * Gets the visibility setting of the event.
    *
-   * @return a formatted string representation of the event suitable for display.
+   * @return the visibility of the event as an {@link EventVisibility} object.
+   */
+  EventVisibility getVisibility();
+
+  /**
+   * Gets the recurring days of the event (if applicable).
+   * The format is a string representing days of the week: M (Monday), T (Tuesday),
+   * W (Wednesday), R (Thursday), F (Friday), S (Saturday), U (Sunday).
+   * For example, "MWF" represents Monday, Wednesday, and Friday.
+   *
+   * @return the recurring days as a String or null if the event is not recurring.
+   */
+  String getRecurringDays();
+
+  /**
+   * Gets the occurrence count for recurring events.
+   *
+   * @return the number of occurrences for a recurring event, or null if not applicable.
+   */
+  Integer getOccurrenceCount();
+
+  /**
+   * Gets the recurrence end date for recurring events.
+   * This date signifies when the recurring events stop repeating.
+   *
+   * @return the recurrence end date as a {@link Temporal} object, or null if not applicable.
+   */
+  Temporal getRecurrenceEndDate();
+
+  /**
+   * Checks whether this event should automatically decline conflicting events.
+   *
+   * @return true if the event should auto-decline conflicts, false otherwise.
+   */
+  boolean isAutoDecline();
+
+  /**
+   * Formats the event details into a user-friendly string for display.
+   *
+   * @return a formatted string representing the event, suitable for display in the UI.
    */
   String formatForDisplay();
 
   /**
-   * Formats the event details for export to external formats.
+   * Updates the property of the event.
+   * The property name and value are passed as strings, and the event is updated accordingly.
    *
-   * @return a string representation of the event suitable for export.
+   * @param name  the property name to be updated.
+   * @param value the new value for the property.
+   * @return a new {@link IEvent} instance with the updated property.
+   * @throws IllegalArgumentException if the property is not valid or the value is invalid.
    */
-  String formatForExport();
-
-  /**
-   * Indicates whether this event should automatically decline conflicting events.
-   *
-   * @return true if this event should auto-decline conflicts, false otherwise.
-   */
-  boolean shouldAutoDecline();
-
-  /**
-   * Determines if this event has any time intersection with the specified time range.
-   * An intersection occurs if the event's time period overlaps at all with the
-   * given time range.
-   *
-   * @param startTime the start of the time range to check.
-   * @param endTime   the end of the time range to check.
-   * @return true if there is any intersection, false otherwise.
-   */
-  boolean hasIntersectionWith(Temporal startTime, Temporal endTime);
-
-  /**
-   * Find the difference between start date times.
-   *
-   * @param event Other event to check with.
-   * @return Difference between two times in int.
-   */
-  int getDifference(IEvent event);
+  IEvent updateProperty(String name, String value) throws IllegalArgumentException;
 }

@@ -10,7 +10,6 @@ import calendarapp.controller.InvalidCommandException;
 import calendarapp.controller.impl.AbstractCalendarController;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
-import calendarapp.model.IEvent;
 import calendarapp.model.impl.CalendarModel;
 import calendarapp.view.ICalendarView;
 import calendarapp.view.impl.CLIView;
@@ -1186,9 +1185,9 @@ public class CommandsE2ETest {
     }
 
     @Override
-    public void displayEvents(List<IEvent> events) {
-      for (IEvent event : events) {
-        resultBuilder.append(event.toString());
+    public void displayEvents(List<String> events) {
+      for (String event : events) {
+        resultBuilder.append(event);
       }
     }
 

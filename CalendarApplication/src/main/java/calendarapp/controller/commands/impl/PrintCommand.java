@@ -5,7 +5,6 @@ import java.util.regex.Matcher;
 
 import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.ICalendarModel;
-import calendarapp.model.IEvent;
 import calendarapp.view.ICalendarView;
 
 import static calendarapp.controller.commands.impl.RegexPatternConstants.PRINT_FROM_TO_PATTERN;
@@ -71,7 +70,7 @@ public class PrintCommand extends AbstractCommand {
       throw new InvalidCommandException(command + "\nReason : Required fields are missing.\n");
     }
 
-    List<IEvent> eventsToShow = model.getEventsBetween(getTemporalFromString(startDateTime),
+    List<String> eventsToShow = model.getEventsForPrinting(getTemporalFromString(startDateTime),
         getTemporalFromString(endDateTime));
     if (!eventsToShow.isEmpty()) {
       view.displayMessage("Events:\n");

@@ -87,7 +87,9 @@ public class CalendarModel implements ICalendarModel {
 
       if (autoDecline) {
         for (IEvent existingEvent : events) {
-          if (event.conflictsWith(existingEvent)) {
+          if (TimeUtil.isConflicting(event.getStartTime(), event.getEndTime(),
+              existingEvent.getStartTime(),
+              existingEvent.getEndTime())) {
             throw new EventConflictException("Event conflicts with existing event: "
                 + existingEvent);
           }
@@ -101,7 +103,8 @@ public class CalendarModel implements ICalendarModel {
 
       for (IEvent newEvent : recurringEvents) {
         for (IEvent existingEvent : events) {
-          if (newEvent.conflictsWith(existingEvent)) {
+          if (TimeUtil.isConflicting(newEvent.getStartTime(), newEvent.getEndTime(),
+              existingEvent.getStartTime(), existingEvent.getEndTime())) {
             throw new EventConflictException("Recurring event conflicts with existing event: "
                 + existingEvent.formatForDisplay());
           }
@@ -129,18 +132,18 @@ public class CalendarModel implements ICalendarModel {
     for (IEvent event : eventsToEdit) {
       IEvent updatedEvent = event.updateProperty(property, value);
 
-      if (updatedEvent.shouldAutoDecline()) {
+      if (updatedEvent.isAutoDecline()) {
         for (IEvent existingEvent : events) {
-          if (existingEvent != event && updatedEvent.conflictsWith(existingEvent)) {
+          if (existingEvent != event && TimeUtil
+              .isConflicting(updatedEvent.getStartTime(), updatedEvent.getEndTime(),
+                  existingEvent.getStartTime(), existingEvent.getEndTime())) {
             throw new EventConflictException("Event conflicts with existing event: "
                 + existingEvent);
           }
         }
       }
-
       updatedEvents.add(updatedEvent);
     }
-
     events.removeAll(eventsToEdit);
     events.addAll(updatedEvents);
   }
@@ -153,15 +156,18 @@ public class CalendarModel implements ICalendarModel {
    * @return List of events found.
    */
   @Override
-  public List<IEvent> getEventsBetween(Temporal startDateTime, Temporal endDateTime) {
+  public List<String> getEventsForPrinting(Temporal startDateTime, Temporal endDateTime) {
     if (endDateTime == null) {
       endDateTime = (TimeUtil.getLocalDateTimeFromTemporal(startDateTime)
           .toLocalDate().plusDays(1).atStartOfDay());
     }
     Temporal finalEndDateTime = endDateTime;
     return events.stream()
-        .filter(event -> event.hasIntersectionWith(startDateTime, finalEndDateTime))
-        .sorted((event1, event2) -> event2.getDifference(event1))
+        .filter(event -> TimeUtil.isConflicting(event.getStartTime(),
+            event.getEndTime(), startDateTime, finalEndDateTime))
+        .sorted((event1, event2) ->
+            Math.toIntExact(TimeUtil.difference(event2.getStartTime(), event1.getStartTime())))
+        .map(event -> event.formatForDisplay())
         .collect(Collectors.toList());
   }
 
@@ -185,7 +191,8 @@ public class CalendarModel implements ICalendarModel {
    */
   @Override
   public String showStatus(Temporal dateTime) {
-    boolean isBusy = events.stream().anyMatch(event -> event.isActiveAt(dateTime));
+    boolean isBusy = events.stream().anyMatch(event -> TimeUtil
+        .isActiveAt(dateTime, event.getStartTime(), event.getEndTime()));
     if (isBusy) {
       return EventConstants.Status.BUSY;
     } else {
@@ -316,8 +323,9 @@ public class CalendarModel implements ICalendarModel {
    */
   private List<IEvent> findEvents(String eventName, Temporal startTime, Temporal endTime) {
     return events.stream()
-        .filter(event -> event.matchesName(eventName))
-        .filter(event -> event.isWithinTimeRange(startTime, endTime))
+        .filter(event -> event.getName().equals(eventName))
+        .filter(event -> TimeUtil
+            .isWithinTimeRange(startTime, endTime, event.getStartTime(), event.getEndTime()))
         .collect(Collectors.toList());
   }
 }

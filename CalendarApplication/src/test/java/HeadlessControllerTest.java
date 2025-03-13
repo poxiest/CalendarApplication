@@ -7,7 +7,6 @@ import calendarapp.controller.ICalendarController;
 import calendarapp.controller.InvalidCommandException;
 import calendarapp.controller.impl.CalendarControllerFactory;
 import calendarapp.model.ICalendarModel;
-import calendarapp.model.IEvent;
 import calendarapp.model.impl.CalendarModel;
 import calendarapp.view.ICalendarView;
 
@@ -71,9 +70,9 @@ public class HeadlessControllerTest {
     }
 
     @Override
-    public void displayEvents(List<IEvent> events) {
-      for (IEvent event : events) {
-        displayMessage(event.formatForDisplay() + "\n");
+    public void displayEvents(List<String> events) {
+      for (String event : events) {
+        displayMessage(event + "\n");
       }
     }
 

@@ -54,7 +54,7 @@ public interface ICalendarModel {
    * @param endTime   the end of the time range (if null, defaults to one day after startTime).
    * @return a list of events that intersect with the specified time range.
    */
-  List<IEvent> getEventsBetween(Temporal startTime, Temporal endTime);
+  List<String> getEventsForPrinting(Temporal startTime, Temporal endTime);
 
   /**
    * Exports calendar events to a CSV file compatible with Google Calendar.
