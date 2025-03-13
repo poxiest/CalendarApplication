@@ -21,6 +21,9 @@ import calendarapp.model.impl.EventConstants;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Test class for {@link CalendarExporter}.
+ */
 public class CalendarExporterTest {
 
   @Rule
@@ -179,8 +182,11 @@ public class CalendarExporterTest {
     List<String> lines = Files.readAllLines(csvFile.toPath());
 
     String[] fields = lines.get(1).split(EventConstants.CsvFormat.DELIMITER, -1);
-    assertEquals("\"John's \"\"Important\"\" Meeting\"", fields[0]); // Double quotes should be escaped
-    assertEquals("\"Discuss \"\"Project X\"\"\"", fields[6]); // Double quotes should be escaped
-    assertEquals("\"Room \"\"42\"\"\"", fields[7]); // Double quotes should be escaped
+    // Double quotes should be escaped
+    assertEquals("\"John's \"\"Important\"\" Meeting\"", fields[0]);
+    // Double quotes should be escaped
+    assertEquals("\"Discuss \"\"Project X\"\"\"", fields[6]);
+    // Double quotes should be escaped
+    assertEquals("\"Room \"\"42\"\"\"", fields[7]);
   }
 }

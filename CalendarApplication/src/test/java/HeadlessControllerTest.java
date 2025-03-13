@@ -13,13 +13,16 @@ import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Test for Headless controller mode.
+ */
 public class HeadlessControllerTest {
 
   private ICalendarController controller;
   private ICalendarModel model;
   private MockView view;
-  private String filepath = System.getProperty("user.dir").contains("CalendarApplication") ?
-      System.getProperty("user.dir") : System.getProperty("user.dir") + "/CalendarApplication";
+  private String filepath = System.getProperty("user.dir").contains("CalendarApplication")
+      ? System.getProperty("user.dir") : System.getProperty("user.dir") + "/CalendarApplication";
 
   @Before
   public void setUp() {
@@ -38,14 +41,14 @@ public class HeadlessControllerTest {
     controller = CalendarControllerFactory.getController("headless",
         filepath + "/src/test/resources/withoutExitCommand.txt",
         model, view);
-    controller.go();
+    controller.start();
   }
 
   @Test
   public void testHeadless2() {
     controller = CalendarControllerFactory.getController("headless",
         filepath + "/src/test/resources/positiveTestcase.txt", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Enter command or enter 'exit' to exit the calendar application.\n" +
             "Processing command: create event test on \"2025-11-11\"\n" +
             "\n" +

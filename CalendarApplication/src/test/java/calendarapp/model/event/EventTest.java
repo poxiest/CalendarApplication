@@ -15,6 +15,9 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * Test class for {@link Event}.
+ */
 public class EventTest {
   private IEvent event1;
   private IEvent event2;
@@ -57,10 +60,10 @@ public class EventTest {
         .isAutoDecline(false)
         .build();
 
-    String expectedToString = "Name: Single Event 1 Start Time: 2025-03-10T10:00 " +
-        "End Time: 2025-03-10T11:00 Description: Some description " +
-        "Location: Some location Visibility: DEFAULT Recurring Days: M " +
-        "Occurrence Count: 3 Recurrence End Date: null Auto Decline: false\n";
+    String expectedToString = "Name: Single Event 1 Start Time: 2025-03-10T10:00 "
+        + "End Time: 2025-03-10T11:00 Description: Some description "
+        + "Location: Some location Visibility: DEFAULT Recurring Days: M "
+        + "Occurrence Count: 3 Recurrence End Date: null Auto Decline: false\n";
     assertEquals(expectedToString, eventWithOptionalField.toString());
   }
 
@@ -77,10 +80,10 @@ public class EventTest {
         .isAutoDecline(false)
         .build();
 
-    String expectedToString = "Name: Single Event 1 Start Time: 2025-03-10T10:00 " +
-        "End Time: 2025-03-10T11:00 Description: Some description " +
-        "Location: Some location Visibility: DEFAULT Recurring Days: M " +
-        "Occurrence Count: null Recurrence End Date: 2025-04-10T00:00 Auto Decline: false\n";
+    String expectedToString = "Name: Single Event 1 Start Time: 2025-03-10T10:00 "
+        + "End Time: 2025-03-10T11:00 Description: Some description "
+        + "Location: Some location Visibility: DEFAULT Recurring Days: M "
+        + "Occurrence Count: null Recurrence End Date: 2025-04-10T00:00 Auto Decline: false\n";
     assertEquals(expectedToString, eventWithOptionalField.toString());
   }
 
@@ -108,9 +111,10 @@ public class EventTest {
         .endTime(null)
         .build();
 
-    String expectedToString = "Name: Event Without End Time Start Time: 2025-03-10T00:00 " +
-        "End Time: 2025-03-11T00:00 Description: null Location: null Visibility: DEFAULT " +
-        "Recurring Days: null Occurrence Count: null Recurrence End Date: null Auto Decline: true\n";
+    String expectedToString = "Name: Event Without End Time Start Time: 2025-03-10T00:00 "
+        + "End Time: 2025-03-11T00:00 Description: null Location: null Visibility: DEFAULT "
+        + "Recurring Days: null Occurrence Count: null Recurrence End Date: null Auto "
+        + "Decline: true\n";
     assertEquals(expectedToString, eventWithoutEndTime.toString());
   }
 
@@ -148,7 +152,8 @@ public class EventTest {
           .recurringDays("K")
           .build();
     } catch (IllegalArgumentException e) {
-      assertEquals("Invalid recurring days format. Use M,T,W,R,F,S,U for days of week", e.getMessage());
+      assertEquals("Invalid recurring days format. Use M,T,W,R,F,S,U for days of week",
+          e.getMessage());
     }
   }
 

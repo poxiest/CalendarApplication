@@ -2,8 +2,7 @@ package calendarapp.model.impl;
 
 import java.time.LocalDateTime;
 import java.time.temporal.Temporal;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.BiConsumer;
 
 import calendarapp.model.EventVisibility;
 import calendarapp.model.IEvent;
@@ -110,10 +109,10 @@ public class Event implements IEvent {
    */
   @Override
   public boolean isActiveAt(Temporal dateTime) {
-    return isEqual(dateTime, this.startTime) ||
-        isEqual(dateTime, this.endTime) ||
-        (isFirstAfterSecond(dateTime, this.startTime) &&
-            isFirstBeforeSecond(dateTime, this.endTime));
+    return isEqual(dateTime, this.startTime)
+        || isEqual(dateTime, this.endTime)
+        || (isFirstAfterSecond(dateTime, this.startTime)
+        && isFirstBeforeSecond(dateTime, this.endTime));
   }
 
   /**
@@ -136,12 +135,12 @@ public class Event implements IEvent {
    */
   @Override
   public boolean isWithinTimeRange(Temporal startDateTime, Temporal endDateTime) {
-    boolean afterStart = startDateTime == null ||
-        isFirstAfterSecond(this.startTime, startDateTime) ||
-        isEqual(this.startTime, startDateTime);
-    boolean beforeEnd = endDateTime == null ||
-        isFirstBeforeSecond(this.endTime, endDateTime) ||
-        isEqual(this.endTime, endDateTime);
+    boolean afterStart = startDateTime == null
+        || isFirstAfterSecond(this.startTime, startDateTime)
+        || isEqual(this.startTime, startDateTime);
+    boolean beforeEnd = endDateTime == null
+        || isFirstBeforeSecond(this.endTime, endDateTime)
+        || isEqual(this.endTime, endDateTime);
     return afterStart && beforeEnd;
   }
 
@@ -156,6 +155,11 @@ public class Event implements IEvent {
    */
   @Override
   public IEvent updateProperty(String property, String value) {
+    BiConsumer<Builder, String> updater = EventPropertyUpdater.getUpdater(property);
+    if (updater == null) {
+      throw new IllegalArgumentException("Cannot edit property: " + property + "\n");
+    }
+
     Builder builder = Event.builder()
         .name(this.name)
         .startTime(this.startTime)
@@ -168,36 +172,7 @@ public class Event implements IEvent {
         .recurrenceEndDate(this.recurrenceEndDate)
         .isAutoDecline(this.isAutoDecline);
 
-    switch (property.toLowerCase()) {
-      case EventConstants.PropertyKeys.NAME:
-        builder.name(value);
-        break;
-
-      case EventConstants.PropertyKeys.START_TIME:
-        builder.startTime(TimeUtil.getTemporalFromString(value));
-        break;
-
-      case EventConstants.PropertyKeys.END_TIME:
-        builder.endTime(TimeUtil.getTemporalFromString(value));
-        break;
-
-      case EventConstants.PropertyKeys.DESCRIPTION:
-        builder.description(value);
-        break;
-
-      case EventConstants.PropertyKeys.LOCATION:
-        builder.location(value);
-        break;
-
-      case EventConstants.PropertyKeys.VISIBILITY:
-        builder.visibility(value);
-        break;
-
-      // TODO: Add logic for changing recurring properties
-      default:
-        throw new IllegalArgumentException("Cannot edit property: " + property + "\n");
-    }
-
+    updater.accept(builder, value);
     return builder.build();
   }
 
@@ -342,8 +317,8 @@ public class Event implements IEvent {
      * @throws IllegalArgumentException if the visibility string is invalid.
      */
     public Builder visibility(String visibility) {
-      this.visibility = visibility != null ?
-          EventVisibility.getVisibility(visibility) : EventVisibility.DEFAULT;
+      this.visibility = visibility != null
+          ? EventVisibility.getVisibility(visibility) : EventVisibility.DEFAULT;
       if (this.visibility == EventVisibility.UNKNOWN) {
         throw new IllegalArgumentException("Unknown Visibility input\n");
       }
@@ -424,13 +399,13 @@ public class Event implements IEvent {
 
       if (recurringDays != null && !recurringDays.isEmpty()) {
         if (!recurringDays.matches("^[MTWRFSU]+$")) {
-          throw new IllegalArgumentException("Invalid recurring days format. Use M,T,W,R,F,S,U for " +
-              "days of week");
+          throw new IllegalArgumentException("Invalid recurring days format. "
+              + "Use M,T,W,R,F,S,U for days of week");
         }
 
         if (occurrenceCount == null && recurrenceEndDate == null) {
-          throw new IllegalArgumentException("Recurring events require either occurrence count or " +
-              "end date");
+          throw new IllegalArgumentException("Recurring events require either occurrence "
+              + "count or end date");
         }
 
         if (occurrenceCount != null && occurrenceCount <= 0) {
@@ -443,7 +418,8 @@ public class Event implements IEvent {
 
         LocalDateTime startDateTime = TimeUtil.getLocalDateTimeFromTemporal(startTime);
         LocalDateTime endDateTime = TimeUtil.getLocalDateTimeFromTemporal(endTime);
-        LocalDateTime nextDayStart = startDateTime.toLocalDate().plusDays(1).atStartOfDay();
+        LocalDateTime nextDayStart = startDateTime.toLocalDate().plusDays(1)
+            .atStartOfDay();
 
         if (endDateTime.isAfter(nextDayStart)) {
           throw new IllegalArgumentException("Recurring events cannot span more than one day");
@@ -466,9 +442,11 @@ public class Event implements IEvent {
     return "Name: " + name + " " + "Start Time: " + startTime + " " + "End Time: " + endTime + " "
         + "Description: " + description + " " + "Location: " + location + " " + "Visibility: "
         + visibility + " " + "Recurring Days: " + recurringDays + " " + "Occurrence Count: "
-        + occurrenceCount + " " + "Recurrence End Date: " + recurrenceEndDate + " " + "Auto Decline: "
-        + isAutoDecline + "\n";
+        + occurrenceCount + " " + "Recurrence End Date: " + recurrenceEndDate + " "
+        + "Auto Decline: " + isAutoDecline + "\n";
   }
+
+  // TODO: Write this better
 
   /**
    * Compares this event with another object for equality.
@@ -478,14 +456,13 @@ public class Event implements IEvent {
    */
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null || getClass() != obj.getClass()) return false;
-
+    if (!(obj instanceof Event)) {
+      return false;
+    }
     Event other = (Event) obj;
-
-    return name.equals(other.name) &&
-        startTime.equals(other.startTime) &&
-        endTime.equals(other.endTime);
+    return name.equals(other.name)
+        && startTime.equals(other.startTime)
+        && endTime.equals(other.endTime);
   }
 
   /**
@@ -518,7 +495,8 @@ public class Event implements IEvent {
    * @return true if there is an overlap, false otherwise.
    */
   private boolean overlapsWith(Temporal otherStartTime, Temporal otherEndTime) {
-    return isFirstBeforeSecond(this.startTime, otherEndTime) && isFirstAfterSecond(this.endTime, otherStartTime);
+    return isFirstBeforeSecond(this.startTime, otherEndTime)
+        && isFirstAfterSecond(this.endTime, otherStartTime);
   }
 
   /**

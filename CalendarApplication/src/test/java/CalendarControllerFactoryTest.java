@@ -13,6 +13,9 @@ import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Test class for {@link CalendarControllerFactory}.
+ */
 public class CalendarControllerFactoryTest {
   private ICalendarController controller;
   private ICalendarView view;

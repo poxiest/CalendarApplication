@@ -1,6 +1,5 @@
 package calendarapp.controller.commands.impl;
 
-import java.io.IOException;
 import java.util.regex.Matcher;
 
 import calendarapp.controller.InvalidCommandException;

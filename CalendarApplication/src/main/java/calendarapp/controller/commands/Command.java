@@ -1,6 +1,7 @@
 package calendarapp.controller.commands;
 
 import calendarapp.controller.InvalidCommandException;
+import calendarapp.model.EventConflictException;
 
 /**
  * Interface representing a command in the calendar application.
@@ -14,5 +15,5 @@ public interface Command {
    *
    * @param command The command string containing instructions and parameters
    */
-  void execute(String command) throws InvalidCommandException;
+  void execute(String command) throws InvalidCommandException, EventConflictException;
 }

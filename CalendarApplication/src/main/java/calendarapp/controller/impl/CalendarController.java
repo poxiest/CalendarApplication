@@ -33,7 +33,7 @@ public class CalendarController extends AbstractCalendarController {
    *                                 without an "exit" command.
    */
   @Override
-  public void go() throws InvalidCommandException {
+  public void start() throws InvalidCommandException {
     String command;
     Scanner scanner = new Scanner(in);
 

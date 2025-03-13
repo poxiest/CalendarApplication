@@ -9,7 +9,19 @@ import calendarapp.model.impl.CalendarModel;
 import calendarapp.view.ICalendarView;
 import calendarapp.view.impl.CLIView;
 
+/**
+ * This is the Main class of this entire application, it serves as the starting point and contains
+ * the main method in it, which initializes the model, controller and view and starts the whole
+ * process.
+ */
 public class Main {
+
+  /**
+   * The entry point of the calendar application. Initializes the model, view, and
+   * controller components, and starts the application.
+   *
+   * @param args command-line arguments taking mode inputs.
+   */
   public static void main(String[] args) {
     TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
 
@@ -25,8 +37,9 @@ public class Main {
 
     ICalendarModel model = new CalendarModel();
     ICalendarView view = new CLIView(System.out);
-    ICalendarController controller = CalendarControllerFactory.getController(mode, filename, model, view);
+    ICalendarController controller = CalendarControllerFactory.getController(mode,
+        filename, model, view);
 
-    controller.go();
+    controller.start();
   }
 }

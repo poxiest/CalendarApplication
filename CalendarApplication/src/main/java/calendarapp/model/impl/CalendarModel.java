@@ -35,6 +35,10 @@ public class CalendarModel implements ICalendarModel {
    */
   private final Map<Character, DayOfWeek> dayMap;
 
+  /**
+   * Default constructor of the class.
+   * It initialises the events object and the dayMap.
+   */
   public CalendarModel() {
     this.events = new ArrayList<>();
 
@@ -66,7 +70,7 @@ public class CalendarModel implements ICalendarModel {
    * @param location          the location of the event (optional).
    * @param visibility        the visibility setting of the event (optional).
    * @param autoDecline       whether to automatically decline conflicting events.
-   * @throws EventConflictException
+   * @throws EventConflictException When two events overlap.
    */
   @Override
   public void createEvent(String eventName, Temporal startTime, Temporal endTime,
@@ -84,7 +88,8 @@ public class CalendarModel implements ICalendarModel {
       if (autoDecline) {
         for (IEvent existingEvent : events) {
           if (event.conflictsWith(existingEvent)) {
-            throw new EventConflictException("Event conflicts with existing event: " + existingEvent);
+            throw new EventConflictException("Event conflicts with existing event: "
+                + existingEvent);
           }
         }
       }
@@ -127,7 +132,8 @@ public class CalendarModel implements ICalendarModel {
       if (updatedEvent.shouldAutoDecline()) {
         for (IEvent existingEvent : events) {
           if (existingEvent != event && updatedEvent.conflictsWith(existingEvent)) {
-            throw new EventConflictException("Event conflicts with existing event: " + existingEvent);
+            throw new EventConflictException("Event conflicts with existing event: "
+                + existingEvent);
           }
         }
       }
@@ -144,7 +150,7 @@ public class CalendarModel implements ICalendarModel {
    *
    * @param startDateTime the start of the time range.
    * @param endDateTime   the end of the time range (if null, defaults to one day after startTime).
-   * @return
+   * @return List of events found.
    */
   @Override
   public List<IEvent> getEventsBetween(Temporal startDateTime, Temporal endDateTime) {
@@ -203,7 +209,7 @@ public class CalendarModel implements ICalendarModel {
    * @param recurrenceEndDate the end date for recurring events
    *                          (can be null if occurrenceCount is provided).
    * @param autoDecline       whether to automatically decline conflicting events.
-   * @return
+   * @return Return new event.
    */
   private IEvent createSingleEvent(String eventName, Temporal startTime, Temporal endTime,
                                    String description, String location, String visibility,
@@ -238,7 +244,7 @@ public class CalendarModel implements ICalendarModel {
    *                          (can be null if recurrenceEndDate is provided).
    * @param recurrenceEndDate the end date for recurring events
    *                          (can be null if occurrenceCount is provided).
-   * @return
+   * @return List of events.
    */
   private List<IEvent> createRecurringEvents(String eventName, Temporal startTime, Temporal endTime,
                                              String description, String location,
@@ -255,8 +261,9 @@ public class CalendarModel implements ICalendarModel {
     int occurrencesCreated = 0;
     Temporal currentStartTime = startTime;
 
-    while ((occurrenceCount != null && occurrencesCreated < occurrenceCount) ||
-        (recurrenceEndDate != null && isFirstBeforeSecond(currentStartTime, recurrenceEndDate))) {
+    while ((occurrenceCount != null && occurrencesCreated < occurrenceCount)
+        || (recurrenceEndDate != null
+        && isFirstBeforeSecond(currentStartTime, recurrenceEndDate))) {
 
       DayOfWeek currentDay = DayOfWeek.of(currentStartTime.get(ChronoField.DAY_OF_WEEK));
 

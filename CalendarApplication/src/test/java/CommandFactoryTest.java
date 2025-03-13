@@ -18,6 +18,9 @@ import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Test class for {@link CommandFactory}.
+ */
 public class CommandFactoryTest {
 
   Command command;
@@ -25,15 +28,22 @@ public class CommandFactoryTest {
   @Test
   public void CreateCommandTest() {
     List<String> createCommands = new ArrayList<>();
-    createCommands.add("create event --autoDecline TestEvent from 2025-11-11t11:00 to 2025-11-11t12:00 repeats <weekdays> until \"2025-11-20t12:00\"");
+    createCommands.add("create event --autoDecline TestEvent from 2025-11-11t11:00 to " +
+        "2025-11-11t12:00 repeats <weekdays> until \"2025-11-20t12:00\"");
     createCommands.add("create event --autoDecline TestEvent on \"2025-11-20t12:00\"");
-    createCommands.add("create event TestEvent on \"2025-11-20T12:00\" repeats \"MRW\" for 5 times");
-    createCommands.add("create event TestEvent on \"2025-11-20T12:00\" repeats MRW until 2025-11-30");
-    createCommands.add("CREATE EVENT --AUTODECLINE TESTEVENT FROM 2025-11-11T11:00 TO 2025-11-11T12:00 REPEATS <WEEKDAYS> UNTIL \"2025-11-20T12:00\"");
+    createCommands.add("create event TestEvent on \"2025-11-20T12:00\" repeats \"MRW\" for " +
+        "5 times");
+    createCommands.add("create event TestEvent on \"2025-11-20T12:00\" repeats MRW until " +
+        "2025-11-30");
+    createCommands.add("CREATE EVENT --AUTODECLINE TESTEVENT FROM 2025-11-11T11:00 TO " +
+        "2025-11-11T12:00 REPEATS <WEEKDAYS> UNTIL \"2025-11-20T12:00\"");
     createCommands.add("CREATE EVENT --AUTODECLINE TESTEVENT ON \"2025-11-20T12:00\"");
-    createCommands.add("CREATE EVENT TESTEVENT ON \"2025-11-20T12:00\" REPEATS \"MRW\" FOR 5 TIMES");
-    createCommands.add("CREATE EVENT TESTEVENT ON \"2025-11-20T12:00\" REPEATS MRW UNTIL 2025-11-30");
-    createCommands.add("Create Event Auto Decline Test Event From 2025-11-11T11:00 To 2025-11-11T12:00 Repeats Weekdays Until 2025-11-20T12:00");
+    createCommands.add("CREATE EVENT TESTEVENT ON \"2025-11-20T12:00\" REPEATS \"MRW\" " +
+        "FOR 5 TIMES");
+    createCommands.add("CREATE EVENT TESTEVENT ON \"2025-11-20T12:00\" REPEATS MRW UNTIL " +
+        "2025-11-30");
+    createCommands.add("Create Event Auto Decline Test Event From 2025-11-11T11:00 To " +
+        "2025-11-11T12:00 Repeats Weekdays Until 2025-11-20T12:00");
     createCommands.add("Create Event Auto Decline Test Event On 2025-11-20T12:00");
     createCommands.add("Create Event Test Event On 2025-11-20T12:00 Repeats MRW For 5 Times");
     createCommands.add("Create Event Test Event On 2025-11-20T12:00 Repeats MRW Until 2025-11-30");
@@ -47,13 +57,16 @@ public class CommandFactoryTest {
   @Test
   public void EditCommandTest() {
     List<String> createCommands = new ArrayList<>();
-    createCommands.add("edit event location teammeeting from 2025-04-01t09:00 to 2025-04-01t10:00 with newlocation");
+    createCommands.add("edit event location teammeeting from 2025-04-01t09:00 to " +
+        "2025-04-01t10:00 with newlocation");
     createCommands.add("edit events location teammeeting from 2025-04-02t11:00 with newlocation");
     createCommands.add("edit events location teammeeting newlocation");
-    createCommands.add("EDIT EVENT LOCATION TEAMMEETING FROM 2025-04-01T09:00 TO 2025-04-01T10:00 WITH NEWLOCATION");
+    createCommands.add("EDIT EVENT LOCATION TEAMMEETING FROM 2025-04-01T09:00 TO " +
+        "2025-04-01T10:00 WITH NEWLOCATION");
     createCommands.add("EDIT EVENTS LOCATION TEAMMEETING FROM 2025-04-02T11:00 WITH NEWLOCATION");
     createCommands.add("EDIT EVENTS LOCATION TEAMMEETING NEWLOCATION");
-    createCommands.add("Edit Event Location TeamMeeting From 2025-04-01T09:00 To 2025-04-01T10:00 With NewLocation");
+    createCommands.add("Edit Event Location TeamMeeting From 2025-04-01T09:00 To " +
+        "2025-04-01T10:00 With NewLocation");
     createCommands.add("Edit Events Location TeamMeeting From 2025-04-02T11:00 With NewLocation");
     createCommands.add("Edit Events Location TeamMeeting NewLocation");
 
@@ -183,11 +196,13 @@ public class CommandFactoryTest {
                             String recurringDays, String occurrenceCount,
                             Temporal recurrenceEndDate, String description, String location,
                             String visibility, boolean autoDecline) {
+      return;
     }
 
     @Override
     public void editEvent(String eventName, Temporal startTime, Temporal endTime,
                           String property, String value) {
+      return;
     }
 
     @Override

@@ -81,11 +81,6 @@ public class CreateCommand extends AbstractCommand {
   private boolean autoDecline;
 
   /**
-   * Whether the event is recurring.
-   */
-  private boolean isRecurring;
-
-  /**
    * Creates a new CreateCommand with the specified model and view.
    *
    * @param model The calendar model to use for creating events.
@@ -104,7 +99,7 @@ public class CreateCommand extends AbstractCommand {
    * @throws EventConflictException  If the new event conflicts with existing events.
    */
   @Override
-  public void execute(String command) throws InvalidCommandException {
+  public void execute(String command) throws InvalidCommandException, EventConflictException {
     parseCommand(command);
     try {
       model.createEvent(eventName, getTemporalFromString(startDateTime),
@@ -145,7 +140,7 @@ public class CreateCommand extends AbstractCommand {
       on = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
     }
 
-    isRecurring = command.toLowerCase().contains(IS_RECURRING_EVENT.toLowerCase());
+    boolean isRecurring = command.toLowerCase().contains(IS_RECURRING_EVENT.toLowerCase());
     matcher = regexMatching(CREATE_REPEATS_F0R_PATTERN, command);
     if (matcher.find()) {
       recurringDays = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
@@ -173,8 +168,8 @@ public class CreateCommand extends AbstractCommand {
       startDateTime = on;
     }
 
-    if (eventName == null || startDateTime == null ||
-        (isRecurring && recurringDays == null)) {
+    if (eventName == null || startDateTime == null
+        || (isRecurring && recurringDays == null)) {
       throw new InvalidCommandException(command + "\nReason : Required fields are missing.\n");
     }
   }

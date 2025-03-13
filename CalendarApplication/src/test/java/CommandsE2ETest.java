@@ -17,6 +17,9 @@ import calendarapp.view.impl.CLIView;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * End 2 end test for the calendar application.
+ */
 public class CommandsE2ETest {
   private ICalendarController controller;
   private ICalendarModel model;
@@ -36,7 +39,7 @@ public class CommandsE2ETest {
     controller = new MockController("create event Standup from \"2025-11-11T11:00\" " +
         "to \"2025-11-11T12:00\"\n" +
         "print events on \"2025-11-11\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Standup - 2025-11-11T11:00 to 2025-11-11T12:00 \n",
         stringOutput.toString());
@@ -44,7 +47,7 @@ public class CommandsE2ETest {
     controller = new MockController("create event Standup from 2025-11-11T11:00 " +
         "to 2025-11-11T12:00\n" +
         "print events on 2025-11-11", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Standup - 2025-11-11T11:00 to 2025-11-11T12:00 \n",
         stringOutput.toString());
@@ -56,7 +59,7 @@ public class CommandsE2ETest {
     controller = new MockController("create event \"Sprint Planning\" from" +
         " \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
         "print events on \"2025-11-11\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 \n",
         stringOutput.toString());
@@ -68,7 +71,7 @@ public class CommandsE2ETest {
     controller = new MockController("create event \"Sprint Planning\" from" +
         " \"2025-11-11T11:00\" to \"2025-11-12T11:00\"\n" +
         "print events on \"2025-11-11\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-12T11:00 \n",
         stringOutput.toString());
@@ -79,7 +82,7 @@ public class CommandsE2ETest {
     controller = new MockController("create event \"Sprint Planning\" from" +
         " \"2025-11-11T11:00\" to \"2025-11-12T11:00\"\n" +
         "print events on \"2025-11-11\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-12T11:00 \n",
         stringOutput.toString());
@@ -93,7 +96,7 @@ public class CommandsE2ETest {
         "from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
         "create event \"Sprint Planning2\" from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
         "print events on \"2025-11-11\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 \n" +
             "• Sprint Planning2 - 2025-11-11T11:00 to 2025-11-11T12:00 \n",
@@ -108,7 +111,7 @@ public class CommandsE2ETest {
         "create event \"Sprint Planning2\" from \"2025-11-11T12:00\" to \"2025-11-11T13:00\"\n" +
         "create event \"Sprint Planning3\" from \"2025-11-11T13:00\" to \"2025-11-11T14:00\"\n" +
         "print events on \"2025-11-11\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 \n" +
             "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T13:00 \n" +
@@ -126,7 +129,7 @@ public class CommandsE2ETest {
         "create event --autoDecline \"Sprint Planning3\" from \"2025-11-11T13:00\" to" +
         " \"2025-11-11T14:00\"\n" +
         "print events on \"2025-11-11\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 \n" +
             "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T13:00 \n" +
@@ -142,7 +145,7 @@ public class CommandsE2ETest {
         "create event --autoDecline \"Sprint Planning2\" from \"2025-11-11T11:00\" to" +
         " \"2025-11-11T12:00\"\n" +
         "print events on \"2025-11-11\"", model, view);
-    controller.go();
+    controller.start();
   }
 
   // Multiple events on same time
@@ -153,7 +156,7 @@ public class CommandsE2ETest {
         "create event --autoDecline \"Sprint Planning2\" from \"2025-11-11T10:00\" to" +
         " \"2025-11-11T11:15\"\n" +
         "print events on \"2025-11-11\"", model, view);
-    controller.go();
+    controller.start();
   }
 
   // Multiple events on same time
@@ -164,14 +167,14 @@ public class CommandsE2ETest {
         "create event --autoDecline \"Sprint Planning2\" from \"2025-11-11T11:30\" to" +
         " \"2025-11-11T12:30\"\n" +
         "print events on \"2025-11-11\"", model, view);
-    controller.go();
+    controller.start();
   }
 
   @Test
   public void AllDayEventTest() {
     controller = new MockController("create event abc on \"2025-12-22\"" +
         "\nprint events on \"2025-12-22\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
         stringOutput.toString());
@@ -182,7 +185,7 @@ public class CommandsE2ETest {
     controller = new MockController("create event \"Sprint Planning\" on" +
         " \"2025-12-22T10:00\"" +
         "\nprint events on \"2025-12-22\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
         stringOutput.toString());
@@ -193,7 +196,7 @@ public class CommandsE2ETest {
     controller = new MockController("create event abc on \"2025-12-22\"\n" +
         "create event abc on \"2025-12-22T10:00\"\n" +
         "print events on \"2025-12-22\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n" +
             "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
@@ -205,7 +208,7 @@ public class CommandsE2ETest {
     controller = new MockController("create event \"Recurring Event\" from " +
         "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" for 3 times\n" +
         "print events from \"2025-11-10\" to \"2025-11-20\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
         "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n" +
         "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
@@ -217,7 +220,7 @@ public class CommandsE2ETest {
     controller = new MockController("create event \"Recurring Event\" from " +
         "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats MTWRFSU for 3 times\n" +
         "print events from \"2025-11-10\" to \"2025-11-20\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
         "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n" +
         "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
@@ -230,7 +233,7 @@ public class CommandsE2ETest {
     controller = new MockController("create event \"Recurring Event\" from " +
         "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" for 6 times\n" +
         "print events from \"2025-11-10\" to \"2025-11-20\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n" +
             "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
@@ -247,7 +250,7 @@ public class CommandsE2ETest {
     controller = new MockController("create event \"Recurring Event\" from " +
         "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MWF\" for 6 times\n" +
         "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
             "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
@@ -265,7 +268,7 @@ public class CommandsE2ETest {
         "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"" +
         " repeats \"MFW\" for 6 times\n" +
         "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-11-12T09:00 to 2025-11-12T10:00 \n" +
             "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
@@ -284,7 +287,7 @@ public class CommandsE2ETest {
         "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"" +
         " repeats \"MFW\" for 6 times\n" +
         "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
             "• Sprint Planning - 2025-11-12T10:30 to 2025-11-12T11:00 \n" +
@@ -303,7 +306,7 @@ public class CommandsE2ETest {
         "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"" +
         " repeats \"MFW\" for 6 times\n" +
         "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
-    controller.go();
+    controller.start();
   }
 
   @Test(expected = EventConflictException.class)
@@ -313,7 +316,7 @@ public class CommandsE2ETest {
         "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"" +
         " repeats \"MFW\" for 6 times\n" +
         "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
-    controller.go();
+    controller.start();
   }
 
   @Test
@@ -321,7 +324,7 @@ public class CommandsE2ETest {
     controller = new MockController("create event \"Recurring Event\" from " +
         "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" until \"2025-11-13\"\n" +
         "print events from \"2025-11-10\" to \"2025-11-20\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
         "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n" +
         "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
@@ -335,7 +338,7 @@ public class CommandsE2ETest {
         "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" until " +
         "\"2025-11-16T20:00\"\n" +
         "print events from \"2025-11-10\" to \"2025-11-20\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n" +
             "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
@@ -353,7 +356,7 @@ public class CommandsE2ETest {
         "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MWF\" " +
         "until \"2025-11-24T20:00\"\n" +
         "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
             "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
@@ -371,7 +374,7 @@ public class CommandsE2ETest {
         "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\" " +
         "repeats \"MFW\" until \"2025-11-24T20:00\"\n" +
         "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-11-12T09:00 to 2025-11-12T10:00 \n" +
             "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
@@ -390,7 +393,7 @@ public class CommandsE2ETest {
         "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\" " +
         "repeats \"MFW\" until \"2025-11-24T20:00\"\n" +
         "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
             "• Sprint Planning - 2025-11-12T10:30 to 2025-11-12T11:00 \n" +
@@ -409,7 +412,7 @@ public class CommandsE2ETest {
         "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\" " +
         "repeats \"MFW\" until \"2025-11-24T20:00\"\n" +
         "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
-    controller.go();
+    controller.start();
   }
 
   @Test(expected = EventConflictException.class)
@@ -419,7 +422,7 @@ public class CommandsE2ETest {
         "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\" " +
         "repeats \"MFW\" until \"2025-11-24T20:00\"\n" +
         "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
-    controller.go();
+    controller.start();
   }
 
   @Test
@@ -427,7 +430,7 @@ public class CommandsE2ETest {
     controller = new MockController("create event \"All Day Recurring\" on \"2025-11-12\"" +
         " repeats \"MWRT\" for 5 times\n" +
         "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
         "• All Day Recurring - 2025-11-12T00:00 to 2025-11-13T00:00 \n" +
         "• All Day Recurring - 2025-11-13T00:00 to 2025-11-14T00:00 \n" +
@@ -442,7 +445,7 @@ public class CommandsE2ETest {
         "\"2025-11-12T10:15\" to \"2025-11-12T11:00\"\n" +
         "create event \"All Day Recurring\" on \"2025-11-12\" repeats \"MWRU\" for 3 times\n" +
         "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
-    controller.go();
+    controller.start();
   }
 
   @Test
@@ -450,7 +453,7 @@ public class CommandsE2ETest {
     controller = new MockController("create event \"All Day Recurring\" on \"2025-11-12\"" +
         " repeats \"MWRT\" until \"2025-11-19\"\n" +
         "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
         "• All Day Recurring - 2025-11-12T00:00 to 2025-11-13T00:00 \n" +
         "• All Day Recurring - 2025-11-13T00:00 to 2025-11-14T00:00 \n" +
@@ -466,7 +469,7 @@ public class CommandsE2ETest {
         "create event \"All Day Recurring\" on \"2025-11-12\" repeats \"MWRU\" " +
         "until \"2025-11-19\"\n" +
         "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
-    controller.go();
+    controller.start();
   }
 
   @Test(expected = InvalidCommandException.class)
@@ -474,7 +477,7 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("create event \"Sprint Planning\" from " +
           "\"2025-11-12T10:15\"", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("create event \"Sprint Planning\" from \"2025-11-12T10:15\"\n" +
           "Reason : Required fields are missing.\n", e.getMessage());
@@ -487,7 +490,7 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("create event from " +
           "\"2025-11-12T10:15\" to \"2025-11-12T11:15\"", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("create event from \"2025-11-12T10:15\" to \"2025-11-12T11:15\"\n" +
           "Reason : Required fields are missing.\n", e.getMessage());
@@ -499,7 +502,7 @@ public class CommandsE2ETest {
   public void RequiredFieldsMissingCreate2() {
     try {
       controller = new MockController("create event \"Sprint Planning\"", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("create event \"Sprint Planning\"\n" +
           "Reason : Required fields are missing.\n", e.getMessage());
@@ -512,7 +515,7 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("create event \"Sprint Planning\" from " +
           "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats \"MTW\" for", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
           " to \"2025-11-11T12:00\" repeats \"MTW\" for\n" +
@@ -526,7 +529,7 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("create event \"Sprint Planning\" from " +
           "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats \"MTW\" for times", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
           " to \"2025-11-11T12:00\" repeats \"MTW\" for times\n" +
@@ -540,7 +543,7 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("create event \"Sprint Planning\" from " +
           "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats \"MTW\" for d times", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
           " to \"2025-11-11T12:00\" repeats \"MTW\" for d times\n" +
@@ -554,7 +557,7 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("create event \"Sprint Planning\" from " +
           "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats for 5 times", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
           " to \"2025-11-11T12:00\" repeats for 5 times\n" +
@@ -568,7 +571,7 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("create event \"Sprint Planning\" from " +
           "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats \"MTW\" until", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
           " to \"2025-11-11T12:00\" repeats \"MTW\" until\n" +
@@ -581,8 +584,9 @@ public class CommandsE2ETest {
   public void RequiredFieldsMissingCreate7() {
     try {
       controller = new MockController("create event \"Sprint Planning\" from " +
-          "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats until \"2025-11-11\"", model, view);
-      controller.go();
+          "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats until \"2025-11-11\""
+          , model, view);
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
           " to \"2025-11-11T12:00\" repeats until \"2025-11-11\"\n" +
@@ -595,7 +599,7 @@ public class CommandsE2ETest {
   public void RequiredFieldsMissingCreate8() {
     try {
       controller = new MockController("create event \"Sprint Planning\" on", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("create event \"Sprint Planning\" on\n" +
           "Reason : Required fields are missing.\n", e.getMessage());
@@ -608,7 +612,7 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("create event \"Sprint Planning\" on " +
           "\"2025-11-11T11:00\" repeats \"MTW\" for", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("create event \"Sprint Planning\" on \"2025-11-11T11:00\" " +
           "repeats \"MTW\" for\n" +
@@ -622,7 +626,7 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("create event \"Sprint Planning\" on " +
           "\"2025-11-11T11:00\" repeats \"MTW\" for times", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("create event \"Sprint Planning\" on \"2025-11-11T11:00\" " +
           "repeats \"MTW\" for times\n" +
@@ -636,7 +640,7 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("create event \"Sprint Planning\" " +
           "on \"2025-11-11T11:00\" repeats for 5 times", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("create event \"Sprint Planning\" on \"2025-11-11T11:00\"" +
           " repeats for 5 times\n" +
@@ -650,7 +654,7 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("create event \"Sprint Planning\" " +
           "on \"2025-11-11T11:00\" repeats \"MTW\" until", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("create event \"Sprint Planning\" on \"2025-11-11T11:00\" " +
           "repeats \"MTW\" until\n" +
@@ -664,7 +668,7 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("create event \"Sprint Planning\" " +
           "on \"2025-11-11T11:00\" repeats until \"2025-11-11\"", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("create event \"Sprint Planning\" " +
           "on \"2025-11-11T11:00\" repeats until \"2025-11-11\"\n" +
@@ -678,9 +682,10 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("create event \"Sprint Planning\" " +
           "from \"2025-11-11T11:00\" to \"2025-11-11T10:00\"", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
-      assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\" to \"2025-11-11T10:00\"\n" +
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\" to " +
+          "\"2025-11-11T10:00\"\n" +
           "Reason : Event end time cannot be before start time", e.getMessage());
       throw new InvalidCommandException(e.getMessage());
     }
@@ -692,7 +697,7 @@ public class CommandsE2ETest {
         "from \"2025-11-11T11:00\" to \"2025-11-11T11:00\"\n" +
         "create event \"Sprint Planning2\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
         "print events on \"2025-11-11\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 \n" +
             "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T12:00 \n",
@@ -705,21 +710,21 @@ public class CommandsE2ETest {
         "from \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
         "create event \"Sprint Planning2\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
         "print events on \"2025-11-11\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
-            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n" +
-            "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T12:00 \n",
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n"
+            + "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T12:00 \n",
         stringOutput.toString());
   }
 
   @Test
   public void CreateCommandWithLocationDescriptionVisibility() {
     controller = new MockController("create event \"Sprint Planning\" " +
-        "from \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\" description " +
-        "\"Longer Desc\" visibility private\n" +
+        "from \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\" description "
+        + "\"Longer Desc\" visibility private\n" +
         "create event \"Sprint Planning2\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
         "print events on \"2025-11-11\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n" +
             "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T12:00 \n",
@@ -736,10 +741,10 @@ public class CommandsE2ETest {
         "show status on \"2025-11-12T11:30\"\n" +
         "show status on \"2025-11-11T12:30\""
         , model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
-            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 - Location: Shillman Hall\n" +
-            "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T13:00 \n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 - Location: Shillman Hall\n"
+            + "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T13:00 \n" +
             "Status: Busy\n" +
             "Status: Available\n" +
             "Status: Busy\n",
@@ -756,10 +761,10 @@ public class CommandsE2ETest {
         "show status on 2025-11-12T11:30\n" +
         "show status on 2025-11-11T12:30"
         , model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
-            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 - Location: Shillman Hall\n" +
-            "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T13:00 \n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 - Location: Shillman Hall\n"
+            + "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T13:00 \n" +
             "Status: Busy\n" +
             "Status: Available\n" +
             "Status: Busy\n",
@@ -770,7 +775,7 @@ public class CommandsE2ETest {
   public void ShowCommandInvalid() {
     try {
       controller = new MockController("show status 2025-11-11T11:00", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("show status 2025-11-11T11:00\n" +
           "Reason : Required fields are missing.\n", e.getMessage());
@@ -782,7 +787,7 @@ public class CommandsE2ETest {
   public void ShowCommandInvalid1() {
     try {
       controller = new MockController("show status on", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("show status on\n" +
           "Reason : Required fields are missing.\n", e.getMessage());
@@ -802,10 +807,10 @@ public class CommandsE2ETest {
         "edit event location Sprint from 2025-11-11T12:00 to" +
         " 2025-11-11T13:00 with \"Shillman Hall\" \n" +
         "print events on \"2025-11-11\"\n", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
-            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n" +
-            "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 \n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n"
+            + "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 \n" +
             "Events:\n" +
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Richard Hall\n" +
             "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 - Location: Shillman Hall\n",
@@ -822,7 +827,7 @@ public class CommandsE2ETest {
         "edit events location \"Sprint Planning\" from \"2025-11-11T10:00\" with" +
         " \"Richard Hall\"\n" +
         "print events on \"2025-11-11\"\n", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n" +
             "• Sprint Planning - 2025-11-11T12:00 to 2025-11-11T12:00 \n" +
@@ -842,7 +847,7 @@ public class CommandsE2ETest {
         "edit events location Sprint from 2025-11-11T10:00 with" +
         " Richard\n" +
         "print events on \"2025-11-11\"\n", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Sprint - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman\n" +
             "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 \n" +
@@ -861,7 +866,7 @@ public class CommandsE2ETest {
         "print events on \"2025-11-11\"\n" +
         "edit events location \"Sprint Planning\" \"Richard Hall\"\n" +
         "print events on \"2025-11-11\"\n", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n" +
             "• Sprint Planning - 2025-11-11T12:00 to 2025-11-11T12:00 \n" +
@@ -880,7 +885,7 @@ public class CommandsE2ETest {
         "print events on \"2025-11-11\"\n" +
         "edit events location Sprint Richard\n" +
         "print events on \"2025-11-11\"\n", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Sprint - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n" +
             "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 \n" +
@@ -894,7 +899,7 @@ public class CommandsE2ETest {
   public void EditCommandInvalid() {
     try {
       controller = new MockController("edit event \"Sprint Meeting\"", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("edit event \"Sprint Meeting\"\n" +
           "Reason : Required fields are missing.\n", e.getMessage());
@@ -906,7 +911,7 @@ public class CommandsE2ETest {
   public void EditCommandInvalid1() {
     try {
       controller = new MockController("edit event location \"Sprint Meeting\"", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("edit event location \"Sprint Meeting\"\n" +
           "Reason : Required fields are missing.\n", e.getMessage());
@@ -919,7 +924,7 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("edit event location \"Sprint Meeting\" from " +
           "\"2025-11-11T10:00\" to with Shillman", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("edit event location \"Sprint Meeting\" from " +
           "\"2025-11-11T10:00\" to with Shillman\n" +
@@ -933,7 +938,7 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("edit event location \"Sprint Meeting\" from " +
           "\"2025-11-11T10:00\" to \"2025-11-11T11:00\" with", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("edit event location \"Sprint Meeting\" from " +
           "\"2025-11-11T10:00\" to \"2025-11-11T11:00\" with\n" +
@@ -947,7 +952,7 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("edit event location \"Sprint Meeting\" from " +
           "\"2025-11-11T10:00\" with Shillam", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("edit event location \"Sprint Meeting\" from " +
           "\"2025-11-11T10:00\" with Shillam\n" +
@@ -961,7 +966,7 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("edit events \"Sprint Meeting\" from " +
           "\"2025-11-11T10:00\" with Shillam", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("edit events \"Sprint Meeting\" from " +
           "\"2025-11-11T10:00\" with Shillam\n" +
@@ -975,7 +980,7 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("edit events location \"Sprint Meeting\" from " +
           "\"2025-11-11T10:00\" with", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("edit events location \"Sprint Meeting\" from " +
           "\"2025-11-11T10:00\" with\n" +
@@ -988,7 +993,7 @@ public class CommandsE2ETest {
   public void EditCommandInvalid7() {
     try {
       controller = new MockController("edit events \"Sprint Meeting\" Shillam", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("edit events \"Sprint Meeting\" Shillam\n" +
           "Reason : Required fields are missing.\n", e.getMessage());
@@ -1000,7 +1005,7 @@ public class CommandsE2ETest {
   public void EditCommandInvalid8() {
     try {
       controller = new MockController("edit events location \"Sprint Meeting\"", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("edit events location \"Sprint Meeting\"\n" +
           "Reason : Required fields are missing.\n", e.getMessage());
@@ -1015,7 +1020,7 @@ public class CommandsE2ETest {
           " \"2025-11-11T11:00\" to \"2025-11-11T12:00\" location \"Shillman Hall\"\n" +
           "edit event to Sprint from 2025-11-11T11:00 to 2025-11-11T12:00 with 2025-11-11T10:00\n"
           , model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("edit event to Sprint from 2025-11-11T11:00 to " +
           "2025-11-11T12:00 with 2025-11-11T10:00\n" +
@@ -1028,7 +1033,7 @@ public class CommandsE2ETest {
   public void PrintCommandInvalid() {
     try {
       controller = new MockController("print events on", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("print events on\n" +
           "Reason : Required fields are missing.\n", e.getMessage());
@@ -1040,7 +1045,7 @@ public class CommandsE2ETest {
   public void PrintCommandInvalid1() {
     try {
       controller = new MockController("print on 2025-11-11T11:00", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("print on 2025-11-11T11:00\n" +
           "Reason : Required fields are missing.\n", e.getMessage());
@@ -1052,7 +1057,7 @@ public class CommandsE2ETest {
   public void PrintCommandInvalid2() {
     try {
       controller = new MockController("print events from \"2025-11-11\" to", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("print events from \"2025-11-11\" to\n" +
           "Reason : Required fields are missing.\n", e.getMessage());
@@ -1063,8 +1068,9 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void PrintCommandInvalid3() {
     try {
-      controller = new MockController("print events \"2025-11-11\" to \"2025-11-12\"", model, view);
-      controller.go();
+      controller = new MockController("print events \"2025-11-11\" to \"2025-11-12\"",
+          model, view);
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("print events \"2025-11-11\" to \"2025-11-12\"\n" +
           "Reason : Required fields are missing.\n", e.getMessage());
@@ -1076,7 +1082,7 @@ public class CommandsE2ETest {
   public void PrintCommandInvalid4() {
     try {
       controller = new MockController("print events from to \"2025-11-12\"", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("print events from to \"2025-11-12\"\n" +
           "Reason : Required fields are missing.\n", e.getMessage());
@@ -1088,7 +1094,7 @@ public class CommandsE2ETest {
   public void ExportCommandInvalid4() {
     try {
       controller = new MockController("export cal", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("export cal\n" +
           "Reason : Required fields are missing.\n", e.getMessage());
@@ -1100,7 +1106,7 @@ public class CommandsE2ETest {
   public void ExportCommandInvalid5() {
     try {
       controller = new MockController("export filename.csv", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("export filename.csv\n" +
           "Reason : Required fields are missing.\n", e.getMessage());
@@ -1111,7 +1117,7 @@ public class CommandsE2ETest {
   @Test
   public void NoEventsPrint() {
     controller = new MockController("print events on \"2025-12-22\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("No events found.\n", stringOutput.toString());
   }
 
@@ -1120,7 +1126,7 @@ public class CommandsE2ETest {
   public void InvalidCommandName() {
     try {
       controller = new MockController("exrt filename.csv", model, view);
-      controller.go();
+      controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("Unknown command: exrt filename.csv\n", e.getMessage());
       throw new InvalidCommandException(e.getMessage());
@@ -1131,7 +1137,7 @@ public class CommandsE2ETest {
   public void testInteractive1() {
     controller = new MockController("CREATE EVENT abc ON \"2025-12-22T10:00\"" +
         "\nPRINT EVENTS ON \"2025-12-22\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
         stringOutput.toString());
@@ -1141,7 +1147,7 @@ public class CommandsE2ETest {
   public void testInteractive2() {
     controller = new MockController("CREATE EVENT ABC ON \"2025-12-22T10:00\"" +
         "\nPRINT EVENTS ON \"2025-12-22\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• ABC - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
         stringOutput.toString());
@@ -1152,7 +1158,7 @@ public class CommandsE2ETest {
   public void testInteractive3() {
     controller = new MockController("Create event \"Happy Event\" ON \"2025-12-22T10:00\"" +
         "\nprint events on \"2025-12-22\"", model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• Happy Event - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
         stringOutput.toString());
@@ -1164,7 +1170,7 @@ public class CommandsE2ETest {
     controller = new MockController("create event abc on \"2025-12-22T10:00\"" +
         "\ncreate event cdb on \"2025-12-22T11:00\"\nprint events on \"2025-12-22\"",
         model, view);
-    controller.go();
+    controller.start();
     assertEquals("Events:\n" +
             "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n" +
             "• cdb - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
@@ -1198,7 +1204,7 @@ public class CommandsE2ETest {
     }
 
     @Override
-    public void go() {
+    public void start() {
       Scanner scanner = new Scanner(in);
       while (scanner.hasNextLine()) {
         processCommand(scanner.nextLine());

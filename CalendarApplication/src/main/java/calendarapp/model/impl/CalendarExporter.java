@@ -71,8 +71,8 @@ public class CalendarExporter {
    *     "FALSE" otherwise).
    */
   private static String determinePrivacyFlag(EventVisibility visibility) {
-    return EventVisibility.PRIVATE.equals(visibility) ?
-        EventConstants.CsvFormat.TRUE_VALUE :
+    return EventVisibility.PRIVATE.equals(visibility)
+        ? EventConstants.CsvFormat.TRUE_VALUE :
         EventConstants.CsvFormat.FALSE_VALUE;
   }
 
