@@ -6,7 +6,6 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -130,7 +129,7 @@ public class CalendarModel implements ICalendarModel {
       throws EventConflictException {
     List<IEvent> recurringEvents = buildRecurringEvents(eventName, startTime, endTime, description,
         location, visibility, recurringDays, occurrenceCount, recurrenceEndDate);
-    validateAndAddEvents(recurringEvents, autoDecline);
+    validateAndAddEvents(recurringEvents);
   }
 
   /**
@@ -198,7 +197,6 @@ public class CalendarModel implements ICalendarModel {
 
       DayOfWeek currentDay = DayOfWeek.of(currentStartTime.get(ChronoField.DAY_OF_WEEK));
       if (daysOfWeek.contains(currentDay)) {
-        Temporal eventEndTime = currentStartTime.plus(eventDuration);
         recurringEvents.add(buildEvent(eventName, currentStartTime,
             currentStartTime.plus(eventDuration), description, location, visibility,
             occurrenceCount, recurringDays, recurrenceEndDate, true));
@@ -233,10 +231,9 @@ public class CalendarModel implements ICalendarModel {
    * Validates and adds a list of recurring events to the calendar.
    *
    * @param newEvents   The list of events to be added.
-   * @param autoDecline Flag indicating whether the events should auto-decline conflicting events.
    * @throws EventConflictException if any of the recurring events conflict with existing events.
    */
-  private void validateAndAddEvents(List<IEvent> newEvents, boolean autoDecline)
+  private void validateAndAddEvents(List<IEvent> newEvents)
       throws EventConflictException {
     for (IEvent newEvent : newEvents) {
       for (IEvent existingEvent : events) {
@@ -312,7 +309,7 @@ public class CalendarModel implements ICalendarModel {
             event.getEndTime(), startDateTime, finalEndDateTime))
         .sorted((event1, event2) ->
             Math.toIntExact(TimeUtil.difference(event2.getStartTime(), event1.getStartTime())))
-        .map(event -> event.formatForDisplay())
+        .map(IEvent::formatForDisplay)
         .collect(Collectors.toList());
   }
 
