@@ -286,8 +286,8 @@ public class CommandsE2ETest {
         "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
     controller.go();
     assertEquals("Events:\n" +
-            "• Sprint Planning - 2025-11-12T10:30 to 2025-11-12T11:00 \n" +
             "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+            "• Sprint Planning - 2025-11-12T10:30 to 2025-11-12T11:00 \n" +
             "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
             "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n" +
             "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
@@ -392,8 +392,8 @@ public class CommandsE2ETest {
         "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
     controller.go();
     assertEquals("Events:\n" +
-            "• Sprint Planning - 2025-11-12T10:30 to 2025-11-12T11:00 \n" +
             "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+            "• Sprint Planning - 2025-11-12T10:30 to 2025-11-12T11:00 \n" +
             "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
             "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n" +
             "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +

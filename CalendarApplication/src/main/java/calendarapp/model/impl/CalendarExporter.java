@@ -13,9 +13,21 @@ import static calendarapp.utils.TimeUtil.formatDate;
 import static calendarapp.utils.TimeUtil.formatTime;
 import static calendarapp.utils.TimeUtil.isAllDayEvent;
 
+/**
+ * Utility class for exporting calendar events to CSV format compatible with Google Calendar.
+ * Provides methods to convert events to formatted CSV strings and write them to a file.
+ */
 public class CalendarExporter {
-  public static String exportEventAsGoogleCalendarCsv(List<IEvent> events, String filePath)
-      throws IOException {
+
+  /**
+   * Exports a list of events to a CSV file in Google Calendar format.
+   *
+   * @param events   The list of events to export.
+   * @param filePath The path where the CSV file should be saved.
+   * @return The absolute path to the created file.
+   * @throws RuntimeException If an I/O error occurs during file writing.
+   */
+  public static String exportEventAsGoogleCalendarCsv(List<IEvent> events, String filePath) {
     try (FileWriter writer = new FileWriter(filePath)) {
       writer.write(String.join(EventConstants.CsvFormat.DELIMITER,
           EventConstants.CsvHeaders.SUBJECT,
@@ -33,24 +45,43 @@ public class CalendarExporter {
         writer.write(formatEventForExport(event));
         writer.write(EventConstants.CsvFormat.LINE_END);
       }
+    } catch (IOException e) {
+      throw new RuntimeException("Error while exporting :" + e.getMessage());
     }
 
     File file = new File(filePath);
     return file.getAbsolutePath();
   }
 
+  /**
+   * Formats an event for export by delegating to the event's own formatting method.
+   *
+   * @param event The event to format.
+   * @return A CSV-formatted string representation of the event.
+   */
   private static String formatEventForExport(IEvent event) {
     return event.formatForExport();
   }
 
-
-  // These utility methods can be moved to the Event class or a utility class
+  /**
+   * Determines the privacy flag value based on event visibility.
+   *
+   * @param visibility The visibility setting of the event.
+   * @return A string representation of the privacy flag ("TRUE" for private events,
+   *     "FALSE" otherwise).
+   */
   private static String determinePrivacyFlag(EventVisibility visibility) {
     return EventVisibility.PRIVATE.equals(visibility) ?
         EventConstants.CsvFormat.TRUE_VALUE :
         EventConstants.CsvFormat.FALSE_VALUE;
   }
 
+  /**
+   * Escapes a field for CSV format by surrounding it with quotes and escaping internal quotes.
+   *
+   * @param field The field content to escape.
+   * @return The escaped field string.
+   */
   private static String escapeField(String field) {
     if (field == null || field.isEmpty()) {
       return "";
@@ -58,6 +89,18 @@ public class CalendarExporter {
     return "\"" + field.replace("\"", "\"\"") + "\"";
   }
 
+  /**
+   * Formats an event as a CSV row using the provided event details.
+   * This is a utility method that can be used when an IEvent instance is not available.
+   *
+   * @param name        The name of the event.
+   * @param startTime   The start time of the event.
+   * @param endTime     The end time of the event.
+   * @param description The description of the event.
+   * @param location    The location of the event.
+   * @param visibility  The visibility setting of the event.
+   * @return A CSV-formatted string containing all event information.
+   */
   public static String formatEventAsCsvRow(String name, Temporal startTime, Temporal endTime,
                                            String description, String location,
                                            EventVisibility visibility) {

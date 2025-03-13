@@ -1,6 +1,5 @@
 import org.junit.Test;
 
-import java.io.IOException;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.List;
@@ -192,12 +191,12 @@ public class CommandFactoryTest {
     }
 
     @Override
-    public List<IEvent> printEvents(Temporal startTime, Temporal endTime) {
+    public List<IEvent> getEventsBetween(Temporal startTime, Temporal endTime) {
       return List.of();
     }
 
     @Override
-    public String export(String filename) throws IOException {
+    public String export(String filename) {
       return "";
     }
 

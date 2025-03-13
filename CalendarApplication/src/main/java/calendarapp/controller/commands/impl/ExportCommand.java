@@ -51,7 +51,7 @@ public class ExportCommand extends AbstractCommand {
 
     try {
       model.export(filename);
-    } catch (IOException e) {
+    } catch (Exception e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     }
   }

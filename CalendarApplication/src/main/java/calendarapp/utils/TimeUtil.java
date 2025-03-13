@@ -85,6 +85,17 @@ public class TimeUtil {
   }
 
   /**
+   * Find the difference between two Temproral values.
+   *
+   * @param temporal1 the first temporal to compare.
+   * @param temporal2 the second temporal to compare.
+   * @return Difference between both in Long.
+   */
+  public static Long difference(Temporal temporal1, Temporal temporal2) {
+    return ChronoUnit.SECONDS.between(temporal1, temporal2);
+  }
+
+  /**
    * Checks if two temporal objects represent the same instant.
    *
    * @param temporal1 the first temporal to compare.

@@ -135,7 +135,7 @@ public class CalendarControllerFactoryTest {
     }
 
     @Override
-    public List<IEvent> printEvents(Temporal startTime, Temporal endTime) {
+    public List<IEvent> getEventsBetween(Temporal startTime, Temporal endTime) {
       return List.of();
     }
 

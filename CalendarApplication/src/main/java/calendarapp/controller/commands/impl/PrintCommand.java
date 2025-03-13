@@ -71,7 +71,7 @@ public class PrintCommand extends AbstractCommand {
       throw new InvalidCommandException(command + "\nReason : Required fields are missing.\n");
     }
 
-    List<IEvent> eventsToShow = model.printEvents(getTemporalFromString(startDateTime),
+    List<IEvent> eventsToShow = model.getEventsBetween(getTemporalFromString(startDateTime),
         getTemporalFromString(endDateTime));
     if (!eventsToShow.isEmpty()) {
       view.displayMessage("Events:\n");
