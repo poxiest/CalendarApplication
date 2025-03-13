@@ -49,7 +49,7 @@ public class ExportCommand extends AbstractCommand {
     }
 
     try {
-      model.export(filename);
+      view.displayMessage("CSV file Location : " + model.export(filename));
     } catch (Exception e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     }

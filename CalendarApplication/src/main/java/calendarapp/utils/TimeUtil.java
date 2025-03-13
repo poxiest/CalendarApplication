@@ -133,11 +133,8 @@ public class TimeUtil {
 
     if (temporal instanceof LocalDate) {
       return ((LocalDate) temporal).format(formatter);
-    } else if (temporal instanceof LocalDateTime) {
-      return ((LocalDateTime) temporal).format(formatter);
     }
-
-    return LocalDate.from(temporal).format(formatter);
+    return ((LocalDateTime) temporal).format(formatter);
   }
 
   /**
@@ -161,18 +158,14 @@ public class TimeUtil {
    * @return true if the event is an all-day event, false otherwise.
    */
   public static boolean isAllDayEvent(Temporal startTime, Temporal endTime) {
-    try {
-      LocalDateTime start = getLocalDateTimeFromTemporal(startTime);
-      LocalDateTime end = getLocalDateTimeFromTemporal(endTime);
-      boolean startsAtMidnight = start.getHour() == 0 && start.getMinute() == .0
-          && start.getSecond() == 0;
-      boolean endsAtStartOfNextDay = end.getHour() == 0 && end.getMinute() == 0
-          && end.getSecond() == 0 &&
-          end.toLocalDate().isEqual(start.toLocalDate().plusDays(1));
-      return startsAtMidnight && endsAtStartOfNextDay;
-    } catch (UnsupportedOperationException e) {
-      return false;
-    }
+    LocalDateTime start = getLocalDateTimeFromTemporal(startTime);
+    LocalDateTime end = getLocalDateTimeFromTemporal(endTime);
+    boolean startsAtMidnight = start.getHour() == 0 && start.getMinute() == .0
+        && start.getSecond() == 0;
+    boolean endsAtStartOfNextDay = end.getHour() == 0 && end.getMinute() == 0
+        && end.getSecond() == 0 &&
+        end.toLocalDate().isEqual(start.toLocalDate().plusDays(1));
+    return startsAtMidnight && endsAtStartOfNextDay;
   }
 
   /**
