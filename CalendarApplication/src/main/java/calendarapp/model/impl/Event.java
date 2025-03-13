@@ -400,6 +400,7 @@ public class Event implements IEvent {
   }
 
   // TODO: Write this better
+
   /**
    * Compares this event with another object for equality.
    *

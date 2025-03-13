@@ -6,6 +6,7 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -18,31 +19,32 @@ import calendarapp.model.IEvent;
 import calendarapp.utils.TimeUtil;
 
 import static calendarapp.model.impl.CalendarExporter.exportEventAsGoogleCalendarCsv;
-import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
 
 /**
- * Concrete implementation of Calendar Model managing {@link IEvent} events.
+ * The CalendarModel class implements the ICalendarModel interface
+ * and is responsible for managing calendar events, including creating, editing,
+ * and displaying events, handling conflicts, and exporting events in a specific format.
  */
 public class CalendarModel implements ICalendarModel {
 
-  /**
-   * List to store all the events in the calendar.
-   */
   private final List<IEvent> events;
-
-  /**
-   * Map to store the recurring days characters to {@link DayOfWeek}.
-   */
   private final Map<Character, DayOfWeek> dayMap;
 
   /**
-   * Default constructor of the class.
-   * It initialises the events object and the dayMap.
+   * Constructs a CalendarModel object, initializing the event list and day mapping.
    */
   public CalendarModel() {
     this.events = new ArrayList<>();
+    this.dayMap = initializeDayMap();
+  }
 
-    this.dayMap = Map.of(
+  /**
+   * Initializes a map to convert characters representing days to DayOfWeek.
+   *
+   * @return A map mapping day characters to DayOfWeek values.
+   */
+  private Map<Character, DayOfWeek> initializeDayMap() {
+    return Map.of(
         'M', DayOfWeek.MONDAY,
         'T', DayOfWeek.TUESDAY,
         'W', DayOfWeek.WEDNESDAY,
@@ -54,23 +56,20 @@ public class CalendarModel implements ICalendarModel {
   }
 
   /**
-   * Concrete implementation of create event. Checks for autodecline, conflict and
-   * all other basic validations to add it into the list.
+   * Creates a new event, either recurring or one-time.
    *
-   * @param eventName         the name of the event.
-   * @param startTime         the start time of the event.
-   * @param endTime           the end time of the event (can be null for all-day events).
-   * @param recurringDays     string representation of days on which the event repeats
-   *                          (e.g., "MWF" for Monday, Wednesday, Friday).
-   * @param occurrenceCount   number of occurrences for recurring events
-   *                          (can be null if recurrenceEndDate is provided).
-   * @param recurrenceEndDate the end date for recurring events
-   *                          (can be null if occurrenceCount is provided).
-   * @param description       the description of the event (optional).
-   * @param location          the location of the event (optional).
-   * @param visibility        the visibility setting of the event (optional).
-   * @param autoDecline       whether to automatically decline conflicting events.
-   * @throws EventConflictException When two events overlap.
+   * @param eventName         The name of the event.
+   * @param startTime         The start time of the event.
+   * @param endTime           The end time of the event.
+   * @param recurringDays     A string of characters representing recurring days.
+   * @param occurrenceCount   The number of occurrences of the event (for recurring events).
+   * @param recurrenceEndDate The end date of the recurrence (for recurring events).
+   * @param description       The description of the event.
+   * @param location          The location of the event.
+   * @param visibility        The visibility of the event.
+   * @param autoDecline       Flag indicating whether the event should auto-decline
+   *                          conflicting events.
+   * @throws EventConflictException if the event conflicts with an existing event.
    */
   @Override
   public void createEvent(String eventName, Temporal startTime, Temporal endTime,
@@ -81,147 +80,78 @@ public class CalendarModel implements ICalendarModel {
     boolean isRecurring = recurringDays != null;
     Integer occurrence = occurrenceCount != null ? Integer.parseInt(occurrenceCount) : null;
 
-    if (!isRecurring) {
-      IEvent event = createSingleEvent(eventName, startTime, endTime, description, location,
-          visibility, recurringDays, occurrence, recurrenceEndDate, autoDecline);
-
-      if (autoDecline) {
-        for (IEvent existingEvent : events) {
-          if (TimeUtil.isConflicting(event.getStartTime(), event.getEndTime(),
-              existingEvent.getStartTime(),
-              existingEvent.getEndTime())) {
-            throw new EventConflictException("Event conflicts with existing event: "
-                + existingEvent);
-          }
-        }
-      }
-      events.add(event);
+    if (isRecurring) {
+      createRecurringEvents(eventName, startTime, endTime, description, location, visibility,
+          recurringDays, occurrence, recurrenceEndDate, autoDecline);
     } else {
-      List<IEvent> recurringEvents = createRecurringEvents(
-          eventName, startTime, endTime, description, location, visibility,
-          recurringDays, occurrence, recurrenceEndDate);
-
-      for (IEvent newEvent : recurringEvents) {
-        for (IEvent existingEvent : events) {
-          if (TimeUtil.isConflicting(newEvent.getStartTime(), newEvent.getEndTime(),
-              existingEvent.getStartTime(), existingEvent.getEndTime())) {
-            throw new EventConflictException("Recurring event conflicts with existing event: "
-                + existingEvent.formatForDisplay());
-          }
-        }
-      }
-      events.addAll(recurringEvents);
-    }
-  }
-
-  /**
-   * Concrete implementation of edit event.
-   *
-   * @param eventName the name of the event(s) to edit.
-   * @param startTime the start time to use for finding matching events (optional).
-   * @param endTime   the end time to use for finding matching events (optional).
-   * @param property  the property to modify (subject, description, location, etc.).
-   * @param value     the new value for the specified property.
-   */
-  @Override
-  public void editEvent(String eventName, Temporal startTime, Temporal endTime, String property,
-                        String value) {
-    List<IEvent> eventsToEdit = findEvents(eventName, startTime, endTime);
-
-    List<IEvent> updatedEvents = new ArrayList<>();
-    for (IEvent event : eventsToEdit) {
-      IEvent updatedEvent = event.updateProperty(property, value);
-
-      if (updatedEvent.isAutoDecline()) {
-        for (IEvent existingEvent : events) {
-          if (existingEvent != event && TimeUtil
-              .isConflicting(updatedEvent.getStartTime(), updatedEvent.getEndTime(),
-                  existingEvent.getStartTime(), existingEvent.getEndTime())) {
-            throw new EventConflictException("Event conflicts with existing event: "
-                + existingEvent);
-          }
-        }
-      }
-      updatedEvents.add(updatedEvent);
-    }
-    events.removeAll(eventsToEdit);
-    events.addAll(updatedEvents);
-  }
-
-  /**
-   * Gets a list of {@link IEvent} between the given timelines sorted in ascending order.
-   *
-   * @param startDateTime the start of the time range.
-   * @param endDateTime   the end of the time range (if null, defaults to one day after startTime).
-   * @return List of events found.
-   */
-  @Override
-  public List<String> getEventsForPrinting(Temporal startDateTime, Temporal endDateTime) {
-    if (endDateTime == null) {
-      endDateTime = (TimeUtil.getLocalDateTimeFromTemporal(startDateTime)
-          .toLocalDate().plusDays(1).atStartOfDay());
-    }
-    Temporal finalEndDateTime = endDateTime;
-    return events.stream()
-        .filter(event -> TimeUtil.isConflicting(event.getStartTime(),
-            event.getEndTime(), startDateTime, finalEndDateTime))
-        .sorted((event1, event2) ->
-            Math.toIntExact(TimeUtil.difference(event2.getStartTime(), event1.getStartTime())))
-        .map(event -> event.formatForDisplay())
-        .collect(Collectors.toList());
-  }
-
-  /**
-   * Exports the calendar events to a CSV file.
-   *
-   * @param filename the base name of the file to export to.
-   * @return Absolute path of the file.
-   */
-  @Override
-  public String export(String filename) {
-    String filePath = filename + ".csv";
-    return exportEventAsGoogleCalendarCsv(events, filePath);
-  }
-
-  /**
-   * Returns the status as Busy/Available of the user.
-   *
-   * @param dateTime the date and time to check.
-   * @return Status of the user at the specified time.
-   */
-  @Override
-  public String showStatus(Temporal dateTime) {
-    boolean isBusy = events.stream().anyMatch(event -> TimeUtil
-        .isActiveAt(dateTime, event.getStartTime(), event.getEndTime()));
-    if (isBusy) {
-      return EventConstants.Status.BUSY;
-    } else {
-      return EventConstants.Status.AVAILABLE;
+      createSingleEvent(eventName, startTime, endTime, description, location, visibility,
+          autoDecline);
     }
   }
 
   /**
    * Creates a single event.
    *
-   * @param eventName         the name of the event.
-   * @param startTime         the start time of the event.
-   * @param endTime           the end time of the event (can be null for all-day events).
-   * @param description       the description of the event (optional).
-   * @param location          the location of the event (optional).
-   * @param visibility        the visibility setting of the event (optional).
-   * @param recurringDays     string representation of days on which the event repeats
-   *                          (e.g., "MWF" for Monday, Wednesday, Friday).
-   * @param occurrenceCount   number of occurrences for recurring events
-   *                          (can be null if recurrenceEndDate is provided).
-   * @param recurrenceEndDate the end date for recurring events
-   *                          (can be null if occurrenceCount is provided).
-   * @param autoDecline       whether to automatically decline conflicting events.
-   * @return Return new event.
+   * @param eventName   The name of the event.
+   * @param startTime   The start time of the event.
+   * @param endTime     The end time of the event.
+   * @param description The description of the event.
+   * @param location    The location of the event.
+   * @param visibility  The visibility of the event.
+   * @param autoDecline Flag indicating whether the event should auto-decline conflicting events.
+   * @throws EventConflictException if the event conflicts with an existing event.
    */
-  private IEvent createSingleEvent(String eventName, Temporal startTime, Temporal endTime,
-                                   String description, String location, String visibility,
-                                   String recurringDays, Integer occurrenceCount,
-                                   Temporal recurrenceEndDate, boolean autoDecline) {
+  private void createSingleEvent(String eventName, Temporal startTime, Temporal endTime,
+                                 String description, String location, String visibility,
+                                 boolean autoDecline) throws EventConflictException {
+    IEvent event = buildEvent(eventName, startTime, endTime, description, location, visibility,
+        null, null, null, autoDecline);
+    validateAndAddEvent(event, autoDecline);
+  }
+
+  /**
+   * Creates recurring events based on the provided parameters.
+   *
+   * @param eventName         The name of the event.
+   * @param startTime         The start time of the event.
+   * @param endTime           The end time of the event.
+   * @param description       The description of the event.
+   * @param location          The location of the event.
+   * @param visibility        The visibility of the event.
+   * @param recurringDays     A string of characters representing recurring days.
+   * @param occurrenceCount   The number of occurrences of the event (for recurring events).
+   * @param recurrenceEndDate The end date of the recurrence (for recurring events).
+   * @throws EventConflictException if any of the recurring events conflict with existing events.
+   */
+  private void createRecurringEvents(String eventName, Temporal startTime, Temporal endTime,
+                                     String description, String location, String visibility,
+                                     String recurringDays, Integer occurrenceCount,
+                                     Temporal recurrenceEndDate, boolean autoDecline)
+      throws EventConflictException {
+    List<IEvent> recurringEvents = buildRecurringEvents(eventName, startTime, endTime, description,
+        location, visibility, recurringDays, occurrenceCount, recurrenceEndDate);
+    validateAndAddEvents(recurringEvents, autoDecline);
+  }
+
+  /**
+   * Builds a single event object.
+   *
+   * @param eventName         The name of the event.
+   * @param startTime         The start time of the event.
+   * @param endTime           The end time of the event.
+   * @param description       The description of the event.
+   * @param location          The location of the event.
+   * @param visibility        The visibility of the event.
+   * @param occurrenceCount   The number of occurrences of the event (for recurring events).
+   * @param recurrenceEndDate The end date of the recurrence (for recurring events).
+   * @param autoDecline       Flag indicating whether the event should auto-decline conflicting
+   *                          events.
+   * @return A newly created event.
+   */
+  private IEvent buildEvent(String eventName, Temporal startTime, Temporal endTime,
+                            String description, String location, String visibility,
+                            Integer occurrenceCount, String recurringDays,
+                            Temporal recurrenceEndDate, boolean autoDecline) {
     return Event.builder()
         .name(eventName)
         .startTime(startTime)
@@ -237,71 +167,188 @@ public class CalendarModel implements ICalendarModel {
   }
 
   /**
-   * Creates single events of recurring condition.
+   * Builds a list of recurring events based on the provided parameters.
    *
-   * @param eventName         the name of the event.
-   * @param startTime         the start time of the event.
-   * @param endTime           the end time of the event (can be null for all-day events).
-   * @param description       the description of the event (optional).
-   * @param location          the location of the event (optional).
-   * @param visibility        the visibility setting of the event (optional).
-   * @param recurringDays     string representation of days on which the event repeats
-   *                          (e.g., "MWF" for Monday, Wednesday, Friday).
-   * @param occurrenceCount   number of occurrences for recurring events
-   *                          (can be null if recurrenceEndDate is provided).
-   * @param recurrenceEndDate the end date for recurring events
-   *                          (can be null if occurrenceCount is provided).
-   * @return List of events.
+   * @param eventName         The name of the event.
+   * @param startTime         The start time of the event.
+   * @param endTime           The end time of the event.
+   * @param description       The description of the event.
+   * @param location          The location of the event.
+   * @param visibility        The visibility of the event.
+   * @param recurringDays     A string of characters representing recurring days.
+   * @param occurrenceCount   The number of occurrences of the event (for recurring events).
+   * @param recurrenceEndDate The end date of the recurrence (for recurring events).
+   * @return A list of recurring events.
    */
-  private List<IEvent> createRecurringEvents(String eventName, Temporal startTime, Temporal endTime,
-                                             String description, String location,
-                                             String visibility, String recurringDays,
-                                             Integer occurrenceCount, Temporal recurrenceEndDate) {
+  private List<IEvent> buildRecurringEvents(String eventName, Temporal startTime, Temporal endTime,
+                                            String description, String location, String visibility,
+                                            String recurringDays, Integer occurrenceCount,
+                                            Temporal recurrenceEndDate) {
+    Set<DayOfWeek> daysOfWeek = parseDaysOfWeek(recurringDays);
+    Duration eventDuration = Duration.between(startTime, endTime == null
+        ? startTime.plus(1, ChronoUnit.DAYS) : endTime);
 
     List<IEvent> recurringEvents = new ArrayList<>();
-    Set<DayOfWeek> daysOfWeek = parseDaysOfWeek(recurringDays);
-    if (endTime == null) {
-      endTime = startTime.plus(1, ChronoUnit.DAYS);
-    }
-    Duration eventDuration = Duration.between(startTime, endTime);
-
-    int occurrencesCreated = 0;
     Temporal currentStartTime = startTime;
+    int occurrencesCreated = 0;
 
     while ((occurrenceCount != null && occurrencesCreated < occurrenceCount)
-        || (recurrenceEndDate != null
-        && isFirstBeforeSecond(currentStartTime, recurrenceEndDate))) {
+        || (recurrenceEndDate != null && TimeUtil.isFirstBeforeSecond(currentStartTime,
+        recurrenceEndDate))) {
 
       DayOfWeek currentDay = DayOfWeek.of(currentStartTime.get(ChronoField.DAY_OF_WEEK));
-
       if (daysOfWeek.contains(currentDay)) {
         Temporal eventEndTime = currentStartTime.plus(eventDuration);
-
-        IEvent event = createSingleEvent(
-            eventName, currentStartTime, eventEndTime,
-            description, location, visibility, recurringDays,
-            occurrenceCount, recurrenceEndDate, true
-        );
-
-        recurringEvents.add(event);
+        recurringEvents.add(buildEvent(eventName, currentStartTime,
+            currentStartTime.plus(eventDuration), description, location, visibility,
+            occurrenceCount, recurringDays, recurrenceEndDate, true));
         occurrencesCreated++;
       }
-
       currentStartTime = currentStartTime.plus(1, ChronoUnit.DAYS);
     }
-
     return recurringEvents;
   }
 
   /**
-   * Parses the recurring days of the recurrence properties.
+   * Validates and adds a single event to the calendar.
    *
-   * @param daysString eg: "MRW", "FSU"
-   * @return Set of {@link DayOfWeek} to calculate the events.
+   * @param event       The event to be added.
+   * @param autoDecline Flag indicating whether the event should auto-decline conflicting events.
+   * @throws EventConflictException if the event conflicts with an existing event.
+   */
+  private void validateAndAddEvent(IEvent event, boolean autoDecline)
+      throws EventConflictException {
+    if (autoDecline) {
+      for (IEvent existingEvent : events) {
+        if (TimeUtil.isConflicting(event.getStartTime(), event.getEndTime(),
+            existingEvent.getStartTime(), existingEvent.getEndTime())) {
+          throw new EventConflictException("Event conflicts with existing event: " + existingEvent);
+        }
+      }
+    }
+    events.add(event);
+  }
+
+  /**
+   * Validates and adds a list of recurring events to the calendar.
+   *
+   * @param newEvents   The list of events to be added.
+   * @param autoDecline Flag indicating whether the events should auto-decline conflicting events.
+   * @throws EventConflictException if any of the recurring events conflict with existing events.
+   */
+  private void validateAndAddEvents(List<IEvent> newEvents, boolean autoDecline)
+      throws EventConflictException {
+    for (IEvent newEvent : newEvents) {
+      for (IEvent existingEvent : events) {
+        if (TimeUtil.isConflicting(newEvent.getStartTime(), newEvent.getEndTime(),
+            existingEvent.getStartTime(), existingEvent.getEndTime())) {
+          throw new EventConflictException("Recurring event conflicts with existing event: "
+              + existingEvent);
+        }
+      }
+    }
+    events.addAll(newEvents);
+  }
+
+  /**
+   * Edits an event based on the specified property and value.
+   *
+   * @param eventName The name of the event.
+   * @param startTime The start time of the event.
+   * @param endTime   The end time of the event.
+   * @param property  The property to be edited.
+   * @param value     The new value of the property.
+   */
+  @Override
+  public void editEvent(String eventName, Temporal startTime, Temporal endTime, String property,
+                        String value) {
+    List<IEvent> eventsToEdit = findEvents(eventName, startTime, endTime);
+    List<IEvent> updatedEvents = new ArrayList<>();
+
+    for (IEvent event : eventsToEdit) {
+      IEvent updatedEvent = event.updateProperty(property, value);
+      if (updatedEvent.isAutoDecline()) {
+        checkForConflicts(updatedEvent);
+      }
+      updatedEvents.add(updatedEvent);
+    }
+
+    events.removeAll(eventsToEdit);
+    events.addAll(updatedEvents);
+  }
+
+  /**
+   * Checks if an event conflicts with existing events in the calendar.
+   *
+   * @param updatedEvent The event to check for conflicts.
+   * @throws EventConflictException if a conflict is found.
+   */
+  private void checkForConflicts(IEvent updatedEvent) {
+    for (IEvent existingEvent : events) {
+      if (TimeUtil.isConflicting(updatedEvent.getStartTime(), updatedEvent.getEndTime(),
+          existingEvent.getStartTime(), existingEvent.getEndTime())) {
+        throw new EventConflictException("Event conflicts with existing event: " + existingEvent);
+      }
+    }
+  }
+
+  /**
+   * Returns a list of events that fall within the given date range, formatted for display.
+   *
+   * @param startDateTime The start date-time for the range.
+   * @param endDateTime   The end date-time for the range.
+   * @return A list of formatted event strings.
+   */
+  @Override
+  public List<String> getEventsForPrinting(Temporal startDateTime, Temporal endDateTime) {
+    if (endDateTime == null) {
+      endDateTime = TimeUtil.getLocalDateTimeFromTemporal(startDateTime).toLocalDate()
+          .plusDays(1).atStartOfDay();
+    }
+
+    Temporal finalEndDateTime = endDateTime;
+    return events.stream()
+        .filter(event -> TimeUtil.isConflicting(event.getStartTime(),
+            event.getEndTime(), startDateTime, finalEndDateTime))
+        .sorted((event1, event2) ->
+            Math.toIntExact(TimeUtil.difference(event2.getStartTime(), event1.getStartTime())))
+        .map(event -> event.formatForDisplay())
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Exports the events to a CSV file.
+   *
+   * @param filename The name of the file to export.
+   * @return The file path of the exported CSV.
+   */
+  @Override
+  public String export(String filename) {
+    String filePath = filename + ".csv";
+    return exportEventAsGoogleCalendarCsv(events, filePath);
+  }
+
+  /**
+   * Checks the availability status of the user for a given date-time.
+   *
+   * @param dateTime The date-time to check.
+   * @return The availability status ("busy" or "available").
+   */
+  @Override
+  public String showStatus(Temporal dateTime) {
+    boolean isBusy = events.stream().anyMatch(event ->
+        TimeUtil.isActiveAt(dateTime, event.getStartTime(), event.getEndTime()));
+    return isBusy ? EventConstants.Status.BUSY : EventConstants.Status.AVAILABLE;
+  }
+
+  /**
+   * Parses a string of day characters into a set of DayOfWeek values.
+   *
+   * @param daysString A string of characters representing the days (e.g., "MWF").
+   * @return A set of DayOfWeek values corresponding to the input string.
    */
   private Set<DayOfWeek> parseDaysOfWeek(String daysString) {
     Set<DayOfWeek> days = new HashSet<>();
-
     for (char day : daysString.toUpperCase().toCharArray()) {
       DayOfWeek dayOfWeek = dayMap.get(day);
       if (dayOfWeek == null) {
@@ -309,23 +356,22 @@ public class CalendarModel implements ICalendarModel {
       }
       days.add(dayOfWeek);
     }
-
     return days;
   }
 
   /**
-   * Method used to find {@link IEvent}.
+   * Finds events matching the specified name and time range.
    *
-   * @param eventName Name of the event.
-   * @param startTime Start time of the event.
-   * @param endTime   End time of the event.
-   * @return List of found {@link IEvent}.
+   * @param eventName The name of the event to search for.
+   * @param startTime The start time for the search range.
+   * @param endTime   The end time for the search range.
+   * @return A list of events matching the criteria.
    */
   private List<IEvent> findEvents(String eventName, Temporal startTime, Temporal endTime) {
     return events.stream()
         .filter(event -> event.getName().equals(eventName))
-        .filter(event -> TimeUtil
-            .isWithinTimeRange(startTime, endTime, event.getStartTime(), event.getEndTime()))
+        .filter(event -> TimeUtil.isWithinTimeRange(startTime, endTime,
+            event.getStartTime(), event.getEndTime()))
         .collect(Collectors.toList());
   }
 }
