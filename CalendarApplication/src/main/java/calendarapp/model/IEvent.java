@@ -1,6 +1,7 @@
 package calendarapp.model;
 
 import java.time.temporal.Temporal;
+import java.util.List;
 
 /**
  * Interface for calendar events in the calendar application.
@@ -89,4 +90,6 @@ public interface IEvent {
    * @return Difference between two times in int.
    */
   int getDifference(IEvent event);
+
+  List<IEvent> createRecurringEvents();
 }

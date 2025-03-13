@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import calendarapp.model.EventVisibility;
 import calendarapp.utils.TimeUtil;
 
 /**
@@ -24,7 +25,7 @@ public class EventPropertyUpdater {
   static {
     // Register all property updaters
     UPDATERS.put(EventConstants.PropertyKeys.NAME,
-        (builder, value) -> builder.name(value));
+        Event.Builder::name);
 
     UPDATERS.put(EventConstants.PropertyKeys.START_TIME,
         (builder, value) ->
@@ -34,13 +35,22 @@ public class EventPropertyUpdater {
         (builder, value) -> builder.endTime(TimeUtil.getTemporalFromString(value)));
 
     UPDATERS.put(EventConstants.PropertyKeys.DESCRIPTION,
-        (builder, value) -> builder.description(value));
+        Event.Builder::description);
 
     UPDATERS.put(EventConstants.PropertyKeys.LOCATION,
-        (builder, value) -> builder.location(value));
+        Event.Builder::location);
 
     UPDATERS.put(EventConstants.PropertyKeys.VISIBILITY,
-        (builder, value) -> builder.visibility(value));
+        (builder, value) -> builder.visibility(EventVisibility.DEFAULT));
+
+    UPDATERS.put(EventConstants.PropertyKeys.RECURRING_DAYS,
+        Event.Builder::recurringDays);
+
+    UPDATERS.put(EventConstants.PropertyKeys.OCCURRENCE_COUNT,
+        (builder, value) -> builder.occurrenceCount(Integer.parseInt(value)));
+
+    UPDATERS.put(EventConstants.PropertyKeys.RECURRENCE_END_DATE,
+        (builder, value) -> builder.recurrenceEndDate(TimeUtil.getTemporalFromString(value)));
   }
 
   /**

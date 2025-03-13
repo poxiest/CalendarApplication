@@ -1,7 +1,16 @@
 package calendarapp.model.impl;
 
+import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 import calendarapp.model.EventVisibility;
@@ -31,7 +40,7 @@ public class Event implements IEvent {
   /**
    * The end time of the event.
    */
-  private final Temporal endTime;
+  private Temporal endTime;
 
   /**
    * The description of the event.
@@ -69,6 +78,11 @@ public class Event implements IEvent {
   private final boolean isAutoDecline;
 
   /**
+   * Map to store the recurring days characters to {@link DayOfWeek}.
+   */
+  private final Map<Character, DayOfWeek> dayMap;
+
+  /**
    * Private constructor used by the Builder.
    *
    * @param builder the builder containing event parameters
@@ -84,6 +98,16 @@ public class Event implements IEvent {
     this.occurrenceCount = builder.occurrenceCount;
     this.recurrenceEndDate = builder.recurrenceEndDate;
     this.isAutoDecline = builder.isAutoDecline;
+
+    this.dayMap = Map.of(
+        'M', DayOfWeek.MONDAY,
+        'T', DayOfWeek.TUESDAY,
+        'W', DayOfWeek.WEDNESDAY,
+        'R', DayOfWeek.THURSDAY,
+        'F', DayOfWeek.FRIDAY,
+        'S', DayOfWeek.SATURDAY,
+        'U', DayOfWeek.SUNDAY
+    );
   }
 
   /**
@@ -166,7 +190,7 @@ public class Event implements IEvent {
         .endTime(this.endTime)
         .description(this.description)
         .location(this.location)
-        .visibility(this.visibility.getValue())
+        .visibility(this.visibility)
         .recurringDays(this.recurringDays)
         .occurrenceCount(this.occurrenceCount)
         .recurrenceEndDate(this.recurrenceEndDate)
@@ -174,6 +198,74 @@ public class Event implements IEvent {
 
     updater.accept(builder, value);
     return builder.build();
+  }
+
+  private List<IEvent> updateRecurringProperties(String property, String value) {
+    BiConsumer<Builder, String> updater = EventPropertyUpdater.getUpdater(property);
+    if (updater == null) {
+      throw new IllegalArgumentException("Cannot edit property: " + property + "\n");
+    }
+
+    Builder builder = Event.builder()
+        .name(this.name)
+        .startTime(this.startTime)
+        .endTime(this.endTime)
+        .description(this.description)
+        .location(this.location)
+        .visibility(this.visibility)
+        .recurringDays(this.recurringDays)
+        .occurrenceCount(this.occurrenceCount)
+        .recurrenceEndDate(this.recurrenceEndDate)
+        .isAutoDecline(this.isAutoDecline);
+
+    updater.accept(builder, value);
+
+    IEvent event = builder.build();
+    return event.createRecurringEvents();
+  }
+
+  @Override
+  public List<IEvent> createRecurringEvents() {
+    List<IEvent> recurringEvents = new ArrayList<>();
+    Set<DayOfWeek> daysOfWeek = parseDaysOfWeek(recurringDays);
+    if (endTime == null) {
+      endTime = startTime.plus(1, ChronoUnit.DAYS);
+    }
+    Duration eventDuration = Duration.between(startTime, endTime);
+
+    int occurrencesCreated = 0;
+    Temporal currentStartTime = startTime;
+
+    while ((occurrenceCount != null && occurrencesCreated < occurrenceCount)
+        || (recurrenceEndDate != null
+        && isFirstBeforeSecond(currentStartTime, recurrenceEndDate))) {
+
+      DayOfWeek currentDay = DayOfWeek.of(currentStartTime.get(ChronoField.DAY_OF_WEEK));
+
+      if (daysOfWeek.contains(currentDay)) {
+        Temporal eventEndTime = currentStartTime.plus(eventDuration);
+
+        IEvent event = Event.builder()
+            .name(name)
+            .startTime(startTime)
+            .endTime(endTime)
+            .description(description)
+            .location(location)
+            .visibility(visibility)
+            .recurringDays(recurringDays)
+            .occurrenceCount(occurrenceCount)
+            .recurrenceEndDate(recurrenceEndDate)
+            .isAutoDecline(isAutoDecline)
+            .build();
+
+        recurringEvents.add(event);
+        occurrencesCreated++;
+      }
+
+      currentStartTime = currentStartTime.plus(1, ChronoUnit.DAYS);
+    }
+
+    return recurringEvents;
   }
 
   /**
@@ -316,12 +408,8 @@ public class Event implements IEvent {
      * @return this Builder instance.
      * @throws IllegalArgumentException if the visibility string is invalid.
      */
-    public Builder visibility(String visibility) {
-      this.visibility = visibility != null
-          ? EventVisibility.getVisibility(visibility) : EventVisibility.DEFAULT;
-      if (this.visibility == EventVisibility.UNKNOWN) {
-        throw new IllegalArgumentException("Unknown Visibility input\n");
-      }
+    public Builder visibility(EventVisibility visibility) {
+      this.visibility = visibility;
       return this;
     }
 
@@ -509,7 +597,26 @@ public class Event implements IEvent {
     if (!(event instanceof Event)) {
       return 0;
     }
-    event = (Event) event;
     return Math.toIntExact(TimeUtil.difference(this.startTime, ((Event) event).startTime));
+  }
+
+  /**
+   * Parses the recurring days of the recurrence properties.
+   *
+   * @param daysString eg: "MRW", "FSU"
+   * @return Set of {@link DayOfWeek} to calculate the events.
+   */
+  private Set<DayOfWeek> parseDaysOfWeek(String daysString) {
+    Set<DayOfWeek> days = new HashSet<>();
+
+    for (char day : daysString.toUpperCase().toCharArray()) {
+      DayOfWeek dayOfWeek = dayMap.get(day);
+      if (dayOfWeek == null) {
+        throw new IllegalArgumentException("Invalid day character: " + day);
+      }
+      days.add(dayOfWeek);
+    }
+
+    return days;
   }
 }
