@@ -31,6 +31,101 @@ To run the application in headless mode:
 java -jar target/calendar-app.jar --mode headless res/commands/validCommands.txt
 ```
 
+## Supported Commands
+
+The application supports the following commands:
+
+### Creating Events
+
+```
+create event --autoDecline <eventName> from <dateStringTtimeString> to <dateStringTtimeString>
+```
+Creates a single event in the calendar. The `--autoDecline` option is optional and indicates if the event should be rejected in case of a conflict.
+
+### Creating Recurring Events
+
+```
+create event --autoDecline <eventName> from <dateStringTtimeString> to <dateStringTtimeString> repeats <weekdays> for <N> times
+```
+Creates a recurring event that repeats N times on specific weekdays.
+
+```
+create event --autoDecline <eventName> from <dateStringTtimeString> to <dateStringTtimeString> repeats <weekdays> until <dateStringTtimeString>
+```
+Creates a recurring event until a specific date (inclusive).
+
+### Creating All-Day Events
+
+```
+create event --autoDecline <eventName> on <dateString>
+```
+Creates a single all-day event.
+
+```
+create event <eventName> on <dateString> repeats <weekdays> for <N> times
+```
+Creates a recurring all-day event that repeats N times on specific weekdays.
+Weekdays can have the following possible values: 
+'M' is Monday, 'T' is Tuesday, 'W' is Wednesday, 'R' is Thursday, 'F' is Friday, 'S' is Saturday, and 'U' is Sunday.
+
+```
+create event <eventName> on <dateString> repeats <weekdays> until <dateString>
+```
+Creates a recurring all-day event until a specific date (inclusive).
+
+### Editing Events
+
+```
+edit event <property> <eventName> from <dateStringTtimeString> to <dateStringTtimeString> with <NewPropertyValue>
+```
+Changes the property (e.g., name) of the given event.
+Property can take the following values:
+1. eventname
+2. from
+3. to
+4. description
+5. location
+6. visibility
+7. recurring_days
+8. occurrence_count
+9. recurrence_end_date
+
+```
+edit events <property> <eventName> from <dateStringTtimeString> with <NewPropertyValue>
+```
+Changes the property (e.g., name) of all events starting at a specific date/time and have the same event name.
+
+```
+edit events <property> <eventName> with <NewPropertyValue>
+```
+Change the property (e.g., name) of all events with the same event name.
+
+### Viewing Events
+
+```
+print events on <dateString>
+```
+Prints a bulleted list of all events on that day along with their start and end time and location (if any).
+
+```
+print events from <dateStringTtimeString> to <dateStringTtimeString>
+```
+Prints a bulleted list of all events in the given interval including their start and end times and location (if any).
+
+### Exporting Calendar
+
+```
+export cal fileName.csv
+```
+Exports the calendar as a CSV file that can be imported to Google Calendar app. The command also prints the absolute path of the generated CSV file.
+
+### Checking Status
+
+```
+show status on <dateStringTtimeString>
+```
+Prints busy status if the user has events scheduled on a given day and time, otherwise, available.
+
 For a complete list of supported commands, please refer to the file `res/commands/validCommands.txt` included with the application.
 
 ## Features
