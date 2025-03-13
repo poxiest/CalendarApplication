@@ -1,5 +1,8 @@
 package calendarapp.controller.commands.impl;
 
+/**
+ * This class contains the regex patterns used to validate commands.
+ */
 public class RegexPatternConstants {
 
   /*
