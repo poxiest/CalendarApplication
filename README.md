@@ -21,75 +21,29 @@ java -jar target/calendar-app.jar --mode interactive
 ```
 
 Once the application starts, you can enter commands directly in the console.
-For reference use res/validCommands.txt file.
+For reference use res/commands/validCommands.txt file.
 
 ### Headless Mode
 
 To run the application in headless mode:
 
 ```bash
-java -jar target/calendar-app.jar --mode headless res/validCommands.txt
+java -jar target/calendar-app.jar --mode headless res/commands/validCommands.txt
 ```
 
-Replace `res/validCommands.txt` with the path to your own file containing calendar commands.
+For a complete list of supported commands, please refer to the file `res/commands/validCommands.txt` included with the application.
 
-## Command Examples
+## Features
+All the Required Features are working.
 
-The application supports the following types of commands:
+<b>Major Features:</b>
+1. Create a single and recurring event (with and without autoDecline)
+2. Edit all the event properties for single and recurring events (with and without autoDecline)
+3. Print Events
+4. Export Calendar as CSV compatible with Google Calendar
+5. Show status
 
-### Creating Events
+## Contribution
 
-```
-create event "Event Name" from 2025-03-10T10:00 to 2025-03-10T11:00
-create event --autoDecline "Event Name" from 2025-03-10T10:00 to 2025-03-10T11:00
-create event "Event Name" from 2025-03-10T10:00 to 2025-03-10T11:00 description "Meeting details" location "Conference Room" visibility private
-```
-
-### Creating Recurring Events
-
-```
-create event "Event Name" from 2025-03-10T10:00 to 2025-03-10T11:00 repeats MW for 5 times
-create event "Event Name" from 2025-03-10T10:00 to 2025-03-10T11:00 repeats TR until 2025-04-10T11:00
-```
-
-### Creating All-Day Events
-
-```
-create event "Event Name" on 2025-03-10
-create event "Event Name" on 2025-03-10 description "Holiday"
-create event "Event Name" on 2025-03-10 repeats MWF for 3 times
-```
-
-### Editing Events
-
-```
-edit event eventname "Event Name" from 2025-03-10T10:00 to 2025-03-10T11:00 with "New Event Name"
-edit event from "Event Name" from 2025-03-10T10:00 to 2025-03-10T11:00 with 2025-03-10T11:00
-edit event description "Event Name" from 2025-03-10T10:00 to 2025-03-10T11:00 with "Updated description"
-```
-
-### Viewing Events
-
-```
-print events on 2025-03-10
-print events from 2025-03-10T09:00 to 2025-03-10T12:00
-```
-
-### Exporting Calendar
-
-```
-export cal filename.csv
-```
-
-### Checking Status
-
-```
-show status on 2025-03-10T10:00
-```
 
 ## Notes
-
-- The `--autoDecline` flag indicates if an event should be automatically declined in case of a conflict.
-- Weekday codes: 'M' (Monday), 'T' (Tuesday), 'W' (Wednesday), 'R' (Thursday), 'F' (Friday), 'S' (Saturday), 'U' (Sunday).
-
-For a complete list of supported commands, please refer to the file `res/validCommands.txt` included with the application.
