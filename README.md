@@ -17,7 +17,13 @@ The application can run in two modes:
 To run the application in interactive mode:
 
 ```bash
-java -jar target/calendar-app.jar --mode interactive
+java cd src/main/java
+```
+```bash
+javac calendarapp/Main.java
+```
+```bash
+java calendarapp.Main --mode interactive
 ```
 
 Once the application starts, you can enter commands directly in the console.
@@ -25,10 +31,10 @@ For reference use res/commands/validCommands.txt file.
 
 ### Headless Mode
 
-To run the application in headless mode:
+To run the application in headless mode compile the java main file similar to interactive and:
 
 ```bash
-java -jar target/calendar-app.jar --mode headless res/commands/validCommands.txt
+java calendarapp.Main --mode headless C:\Users\nhari\IdeaProjects\group-assignments\CalendarApplication\CalendarApplication\res\commands\validCommands.txt
 ```
 
 ## Supported Commands
