@@ -145,5 +145,12 @@ All the Required Features are working.
 5. Show status
 
 ## Contribution
+1. Sri Vishaak Ramesh Babu - 
+i. Designed and implemented controller and view
+ii. Integrated Controller with Model
+iii. E2E test cases for the Calendar Application
 
+2. Harikrishna Nagarajan -
+i. Designed and implemented Model
+ii. Unit test cases for Model
 ## Notes
