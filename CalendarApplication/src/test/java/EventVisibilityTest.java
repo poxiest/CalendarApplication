@@ -1,9 +1,8 @@
-
 import org.junit.Test;
 
 import calendarapp.model.EventVisibility;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test class for Enum {@link EventVisibility}.

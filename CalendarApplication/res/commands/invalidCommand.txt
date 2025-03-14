@@ -1,1 +1,0 @@
-create eventss "Event 1" from 2025-03-10T10:00 to 2025-03-10T11:00

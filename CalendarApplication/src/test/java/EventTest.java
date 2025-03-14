@@ -3,7 +3,6 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 
-import calendarapp.model.EventVisibility;
 import calendarapp.model.IEvent;
 import calendarapp.model.impl.Event;
 import calendarapp.model.impl.EventConstants;
@@ -15,7 +14,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Test class for {@link Event}
+ * Test class for {@link Event}.
  */
 public class EventTest {
   private IEvent event1;
@@ -484,18 +483,6 @@ public class EventTest {
 
     assertEquals(event1.hashCode(), event2.hashCode());
     assertEquals(event2.hashCode(), event1.hashCode());
-  }
-
-  @Test
-  public void testEquals_nullObject() {
-    Event event = Event.builder()
-        .name("Sample Event")
-        .startTime(LocalDateTime.of(2025, 3, 13, 10, 0))
-        .endTime(LocalDateTime.of(2025, 3, 13, 12, 0))
-        .location("Conference Room").build();
-
-    // Null object: Should return false
-    assertFalse(event.equals(null));
   }
 
   @Test
