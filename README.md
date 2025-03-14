@@ -116,14 +116,14 @@ Property can take the following values:
 edit events <property> <eventName> from <dateStringTtimeString> with <NewPropertyValue>
 ```
 
-Changes the property (e.g., name) of all events starting at a specific date/time and have the same
+"events" Changes the property (e.g., name) of all recurring events starting at a specific date/time and have the same
 event name.
 
 ```
 edit events <property> <eventName> with <NewPropertyValue>
 ```
 
-Change the property (e.g., name) of all events with the same event name.
+Change the property (e.g., name) of all recurring events with the same event name.
 
 ### Viewing Events
 
@@ -183,5 +183,3 @@ All the Required Features are working.
 2. Harikrishna Nagarajan -
    i. Designed and implemented Model
    ii. Unit test cases for Model
-
-## Notes

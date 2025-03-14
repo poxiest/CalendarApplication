@@ -153,17 +153,20 @@ public class TimeUtilsTest {
     LocalDateTime eventEnd = LocalDateTime.of(2025, 3, 13, 12, 0);
 
     assertTrue(TimeUtil.isWithinTimeRange(rangeStart, rangeEnd, eventStart, eventEnd));
-    assertFalse(TimeUtil.isWithinTimeRange(rangeStart, rangeEnd, eventStart, eventEnd.plusHours(8)));
+    assertFalse(TimeUtil.isWithinTimeRange(rangeStart, rangeEnd, eventStart,
+        eventEnd.plusHours(8)));
   }
 
   @Test
   public void testIsActiveAt() {
     // Event active at a specific time
     LocalDateTime checkTime = LocalDateTime.of(2025, 3, 13, 10, 0);
-    assertTrue(TimeUtil.isActiveAt(checkTime, sampleDateTime.minusHours(6), sampleDateTime.plusHours(1)));
+    assertTrue(TimeUtil.isActiveAt(checkTime, sampleDateTime.minusHours(6),
+        sampleDateTime.plusHours(1)));
 
     // Event not active at a specific time
     checkTime = LocalDateTime.of(2025, 3, 13, 8, 0);
-    assertFalse(TimeUtil.isActiveAt(checkTime, sampleDateTime.minusHours(1), sampleDateTime.plusHours(1)));
+    assertFalse(TimeUtil.isActiveAt(checkTime, sampleDateTime.minusHours(1),
+        sampleDateTime.plusHours(1)));
   }
 }
