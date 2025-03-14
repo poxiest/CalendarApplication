@@ -34,9 +34,9 @@ For reference use res/commands/validCommands.txt file.
 To run the application in headless mode compile the java main file similar to interactive and:
 
 ```bash
-java calendarapp.Main --mode headless C:\Users\nhari\IdeaProjects\group-assignments\CalendarApplication\CalendarApplication\res\commands\validCommands.txt
+java calendarapp.Main --mode headless {absolute_path}
 ```
-
+The commands file is present inside res/commands/validCommands.txt
 ## Supported Commands
 
 The application supports the following commands:
