@@ -41,6 +41,16 @@ public class EventPropertyUpdater {
 
     UPDATERS.put(EventConstants.PropertyKeys.VISIBILITY,
         (builder, value) -> builder.visibility(value));
+
+    UPDATERS.put(EventConstants.PropertyKeys.RECURRING_DAYS,
+        (builder, value) -> builder.recurringDays(value));
+
+    UPDATERS.put(EventConstants.PropertyKeys.OCCURRENCE_COUNT,
+        (builder, value) -> builder.occurrenceCount(Integer.parseInt(value)));
+
+    UPDATERS.put(EventConstants.PropertyKeys.RECURRENCE_END_DATE,
+        (builder, value) -> builder.recurrenceEndDate(TimeUtil.getTemporalFromString(value)));
+
   }
 
   /**

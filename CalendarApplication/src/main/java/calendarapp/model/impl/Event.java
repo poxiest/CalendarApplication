@@ -2,6 +2,7 @@ package calendarapp.model.impl;
 
 import java.time.LocalDateTime;
 import java.time.temporal.Temporal;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import calendarapp.model.EventVisibility;
@@ -399,32 +400,56 @@ public class Event implements IEvent {
         + "Auto Decline: " + isAutoDecline + "\n";
   }
 
-  // TODO: Write this better
-
-  /**
-   * Compares this event with another object for equality.
-   *
-   * @param obj the object to compare with.
-   * @return true if the events are equal, false otherwise.
-   */
   @Override
   public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+
     if (!(obj instanceof Event)) {
       return false;
     }
+
     Event other = (Event) obj;
-    return name.equals(other.name)
-        && startTime.equals(other.startTime)
-        && endTime.equals(other.endTime);
+
+    if (!name.equals(other.name)) {
+      return false;
+    }
+    if (!startTime.equals(other.startTime)) {
+      return false;
+    }
+    if (!endTime.equals(other.endTime)) {
+      return false;
+    }
+
+    if (description != null ? !description.equals(other.description) : other.description != null) {
+      return false;
+    }
+    if (location != null ? !location.equals(other.location) : other.location != null) {
+      return false;
+    }
+    if (visibility != null ? !visibility.equals(other.visibility)
+        : other.visibility != null) {
+      return false;
+    }
+    if (recurringDays != null ? !recurringDays.equals(other.recurringDays)
+        : other.recurringDays != null) {
+      return false;
+    }
+    if (occurrenceCount != null ? !occurrenceCount.equals(other.occurrenceCount)
+        : other.occurrenceCount != null) {
+      return false;
+    }
+    if (recurrenceEndDate != null ? !recurrenceEndDate.equals(other.recurrenceEndDate)
+        : other.recurrenceEndDate != null) {
+      return false;
+    }
+    return isAutoDecline == other.isAutoDecline;
   }
 
-  /**
-   * Returns a hash code value for this event.
-   *
-   * @return a hash code based on name, start time, and end time.
-   */
   @Override
   public int hashCode() {
-    return name.hashCode() + startTime.hashCode() + endTime.hashCode();
+    return Objects.hash(name, startTime, endTime, description, location, visibility,
+        recurringDays, occurrenceCount, recurrenceEndDate, isAutoDecline);
   }
 }
