@@ -260,17 +260,14 @@ public class CalendarModel implements ICalendarModel {
    */
   @Override
   public void editEvent(String eventName, Temporal startTime, Temporal endTime, String property,
-                        String value) {
-    boolean isRecurringProperty = property.equals(EventConstants.PropertyKeys.RECURRING_DAYS) ||
-        property.equals(EventConstants.PropertyKeys.OCCURRENCE_COUNT) ||
-        property.equals(EventConstants.PropertyKeys.RECURRENCE_END_DATE);
-
-    List<IEvent> eventsToEdit = findEvents(eventName, startTime, endTime, isRecurringProperty);
+                        String value, boolean isRecurringEvents) {
+    List<IEvent> eventsToEdit = findEvents(eventName, startTime, endTime, isRecurringEvents);
     List<IEvent> updatedEvents = new ArrayList<>();
 
-    if (!isRecurringProperty) {
+    if (!isRecurringEvents) {
       for (IEvent event : eventsToEdit) {
         IEvent updatedEvent = event.updateProperty(property, value);
+        events.remove(event);
         if (updatedEvent.isAutoDecline()) {
           checkForConflicts(updatedEvent);
         }
@@ -281,8 +278,10 @@ public class CalendarModel implements ICalendarModel {
       IEvent firstEvent = eventsToEdit.get(0);
       firstEvent = firstEvent.updateProperty(property, value);
       createEvent(firstEvent.getName(), firstEvent.getStartTime(), firstEvent.getEndTime(),
-          firstEvent.getRecurringDays(), Integer.toString(firstEvent.getOccurrenceCount()), firstEvent.getRecurrenceEndDate(),
-          firstEvent.getDescription(), firstEvent.getLocation(), firstEvent.getVisibility().getValue(),
+          firstEvent.getRecurringDays(), firstEvent.getOccurrenceCount() == null ? null
+              : Integer.toString(firstEvent.getOccurrenceCount()),
+          firstEvent.getRecurrenceEndDate(), firstEvent.getDescription(),
+          firstEvent.getLocation(), firstEvent.getVisibility().getValue(),
           firstEvent.isAutoDecline());
     }
     events.removeAll(eventsToEdit);

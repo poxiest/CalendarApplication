@@ -45,7 +45,7 @@ public interface ICalendarModel {
    *                                events and auto-decline is enabled.
    */
   void editEvent(String eventName, Temporal startTime, Temporal endTime, String property,
-                 String value) throws EventConflictException;
+                 String value, boolean isRecurringEvent) throws EventConflictException;
 
   /**
    * Retrieves events that occur within the specified time range sorted in ascending order.

@@ -10,6 +10,7 @@ import calendarapp.view.ICalendarView;
 import static calendarapp.controller.commands.impl.RegexPatternConstants.EDIT_EVENT_NAME_PATTERN;
 import static calendarapp.controller.commands.impl.RegexPatternConstants.EDIT_FROM_PATTERN;
 import static calendarapp.controller.commands.impl.RegexPatternConstants.EDIT_FROM_TO_PATTERN;
+import static calendarapp.controller.commands.impl.RegexPatternConstants.IS_RECURRING_EVENTS;
 import static calendarapp.utils.TimeUtil.getTemporalFromString;
 
 /**
@@ -65,9 +66,10 @@ public class EditCommand extends AbstractCommand {
   @Override
   public void execute(String command) throws InvalidCommandException, EventConflictException {
     parseCommand(command);
+    boolean isRecurringEvent = command.toLowerCase().contains(IS_RECURRING_EVENTS);
     try {
       model.editEvent(eventName, getTemporalFromString(startDateTime),
-          getTemporalFromString(endDateTime), propertyName, newPropertyValue);
+          getTemporalFromString(endDateTime), propertyName, newPropertyValue, isRecurringEvent);
     } catch (IllegalArgumentException e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     } catch (EventConflictException e) {

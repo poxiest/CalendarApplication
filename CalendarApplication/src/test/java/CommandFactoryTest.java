@@ -200,7 +200,7 @@ public class CommandFactoryTest {
 
     @Override
     public void editEvent(String eventName, Temporal startTime, Temporal endTime,
-                          String property, String value) {
+                          String property, String value, boolean isRecurringEvents) {
       return;
     }
 
