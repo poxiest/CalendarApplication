@@ -38,7 +38,7 @@ public class HeadlessControllerTest {
   @Test(expected = InvalidCommandException.class)
   public void testHeadless1() {
     controller = CalendarControllerFactory.getController("headless",
-        filepath + "/src/test/resources/withoutExitCommand.txt",
+        filepath + "/src/test/java/withoutExitCommand.txt",
         model, view);
     controller.start();
   }
@@ -46,7 +46,7 @@ public class HeadlessControllerTest {
   @Test
   public void testHeadless2() {
     controller = CalendarControllerFactory.getController("headless",
-        filepath + "/src/test/resources/positiveTestcase.txt", model, view);
+        filepath + "/src/test/java/positiveTestcase.txt", model, view);
     controller.start();
     assertEquals("Enter command or enter 'exit' to exit the calendar application.\n" +
             "Processing command: create event test on \"2025-11-11\"\n" +

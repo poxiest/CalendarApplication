@@ -53,7 +53,7 @@ public class CalendarControllerFactoryTest {
   public void testControllerFactory3() {
     controller = CalendarControllerFactory.getController("headless",
         filepath +
-            "/src/test/resources/positiveTestcase.txt", model,
+            "/src/test/java/positiveTestcase.txt", model,
         view);
     assertEquals(CalendarController.class, controller.getClass());
   }
@@ -68,7 +68,7 @@ public class CalendarControllerFactoryTest {
   public void testControllerFactory5() {
     controller = CalendarControllerFactory.getController("HEADLESS",
         filepath +
-            "/src/test/resources/positiveTestcase.txt", model,
+            "/src/test/java/positiveTestcase.txt", model,
         view);
     assertEquals(CalendarController.class, controller.getClass());
   }
@@ -131,7 +131,7 @@ public class CalendarControllerFactoryTest {
 
     @Override
     public void editEvent(String eventName, Temporal startTime, Temporal endTime, String property,
-                          String value) {
+                          String value, boolean isRecurringEvents) {
       System.out.println("message");
 
     }

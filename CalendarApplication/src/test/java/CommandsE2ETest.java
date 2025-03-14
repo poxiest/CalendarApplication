@@ -368,6 +368,74 @@ public class CommandsE2ETest {
         , stringOutput.toString());
   }
 
+  // Recurring on all days for 6 times
+  @Test
+  public void RecurringEventsUntil1EditUntil() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" until " +
+        "\"2025-11-16T20:00\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"\n"
+        + "edit events recurrence_end_date \"Recurring Event\" \"2025-11-20T20:00\"\n"
+        + "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+            + "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n"
+            + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+            + "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n"
+            + "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n"
+            + "• Recurring Event - 2025-11-15T10:00 to 2025-11-15T10:30 \n"
+            + "• Recurring Event - 2025-11-16T10:00 to 2025-11-16T10:30 \n"
+            + "Events:\n"
+            + "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n"
+            + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+            + "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n"
+            + "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n"
+            + "• Recurring Event - 2025-11-15T10:00 to 2025-11-15T10:30 \n"
+            + "• Recurring Event - 2025-11-16T10:00 to 2025-11-16T10:30 \n"
+            + "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n"
+            + "• Recurring Event - 2025-11-18T10:00 to 2025-11-18T10:30 \n"
+            + "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n"
+            + "• Recurring Event - 2025-11-20T10:00 to 2025-11-20T10:30 \n"
+        , stringOutput.toString());
+  }
+
+  // Recurring on all days for 6 times
+  @Test
+  public void RecurringEventsUntil1EditFrom() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" until " +
+        "\"2025-11-16T20:00\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"\n"
+        + "edit events to \"Recurring Event\" \"2025-11-11T11:00\"\n"
+        + "print events from \"2025-11-10\" to \"2025-11-30\"\n"
+        + "edit events from \"Recurring Event\" \"2025-11-11T10:15\"\n"
+        + "print events from \"2025-11-10\" to \"2025-11-30\""
+        , model, view);
+    controller.start();
+    assertEquals("Events:\n"
+            + "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n"
+            + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+            + "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n"
+            + "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n"
+            + "• Recurring Event - 2025-11-15T10:00 to 2025-11-15T10:30 \n"
+            + "• Recurring Event - 2025-11-16T10:00 to 2025-11-16T10:30 \n"
+            + "Events:\n"
+            + "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T11:00 \n"
+            + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T11:00 \n"
+            + "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T11:00 \n"
+            + "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T11:00 \n"
+            + "• Recurring Event - 2025-11-15T10:00 to 2025-11-15T11:00 \n"
+            + "• Recurring Event - 2025-11-16T10:00 to 2025-11-16T11:00 \n"
+            + "Events:\n"
+            + "• Recurring Event - 2025-11-11T10:15 to 2025-11-11T11:00 \n"
+            + "• Recurring Event - 2025-11-12T10:15 to 2025-11-12T11:00 \n"
+            + "• Recurring Event - 2025-11-13T10:15 to 2025-11-13T11:00 \n"
+            + "• Recurring Event - 2025-11-14T10:15 to 2025-11-14T11:00 \n"
+            + "• Recurring Event - 2025-11-15T10:15 to 2025-11-15T11:00 \n"
+            + "• Recurring Event - 2025-11-16T10:15 to 2025-11-16T11:00 \n"
+        , stringOutput.toString());
+  }
+
   // Recurring on Monday, wednesday and friday
   @Test
   public void RecurringEventsUntil2() {
@@ -841,18 +909,20 @@ public class CommandsE2ETest {
   public void EditCommandWithLocation1() {
     controller = new MockController("create event \"Sprint Planning\" from" +
         " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
-        "create event \"Sprint Planning\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+        "create event \"Sprint Planning2\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
         "print events on \"2025-11-11\"\n" +
-        "edit events location \"Sprint Planning\" from \"2025-11-11T10:00\" with" +
-        " \"Richard Hall\"\n" +
+        "edit event location \"Sprint Planning\" from \"2025-11-11T10:00\" to \"2025-11-11T11:00\""
+        + " with \"Richard Hall\"\n" +
+        "edit event location \"Sprint Planning2\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\""
+        + " with \"Richard Hall\"\n" +
         "print events on \"2025-11-11\"\n", model, view);
     controller.start();
     assertEquals("Events:\n" +
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n" +
-            "• Sprint Planning - 2025-11-11T12:00 to 2025-11-11T12:00 \n" +
+            "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T12:00 \n" +
             "Events:\n" +
             "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Richard Hall\n" +
-            "• Sprint Planning - 2025-11-11T12:00 to 2025-11-11T12:00 - Location: Richard Hall\n",
+            "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T12:00 - Location: Richard Hall\n",
         stringOutput.toString());
   }
 
@@ -863,54 +933,16 @@ public class CommandsE2ETest {
         " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location Shillman\n" +
         "create event Sprint from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
         "print events on \"2025-11-11\"\n" +
-        "edit events location Sprint from 2025-11-11T10:00 with" +
+        "edit event location Sprint from 2025-11-11T10:00 to 2025-11-11T11:00 with" +
         " Richard\n" +
         "print events on \"2025-11-11\"\n", model, view);
     controller.start();
-    assertEquals("Events:\n" +
-            "• Sprint - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman\n" +
-            "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 \n" +
-            "Events:\n" +
-            "• Sprint - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Richard\n" +
-            "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 - Location: Richard\n",
-        stringOutput.toString());
-  }
-
-  // Edit multiple events property with eventname
-  @Test
-  public void EditCommandWithLocation2() {
-    controller = new MockController("create event \"Sprint Planning\" from" +
-        " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
-        "create event \"Sprint Planning\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
-        "print events on \"2025-11-11\"\n" +
-        "edit events location \"Sprint Planning\" \"Richard Hall\"\n" +
-        "print events on \"2025-11-11\"\n", model, view);
-    controller.start();
-    assertEquals("Events:\n" +
-            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n" +
-            "• Sprint Planning - 2025-11-11T12:00 to 2025-11-11T12:00 \n" +
-            "Events:\n" +
-            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Richard Hall\n" +
-            "• Sprint Planning - 2025-11-11T12:00 to 2025-11-11T12:00 - Location: Richard Hall\n",
-        stringOutput.toString());
-  }
-
-  // Edit multiple events property with eventname
-  @Test
-  public void EditCommandWithLocation3() {
-    controller = new MockController("create event Sprint from" +
-        " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
-        "create event Sprint from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
-        "print events on \"2025-11-11\"\n" +
-        "edit events location Sprint Richard\n" +
-        "print events on \"2025-11-11\"\n", model, view);
-    controller.start();
-    assertEquals("Events:\n" +
-            "• Sprint - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n" +
-            "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 \n" +
-            "Events:\n" +
-            "• Sprint - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Richard\n" +
-            "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 - Location: Richard\n",
+    assertEquals("Events:\n"
+            + "• Sprint - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman\n"
+            + "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 \n"
+            + "Events:\n"
+            + "• Sprint - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Richard\n"
+            + "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 \n",
         stringOutput.toString());
   }
 

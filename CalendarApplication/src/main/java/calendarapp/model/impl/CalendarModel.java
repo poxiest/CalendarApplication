@@ -6,7 +6,6 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -240,7 +239,7 @@ public class CalendarModel implements ICalendarModel {
       for (IEvent existingEvent : events) {
         if (newEvent.getName() != existingEvent.getName() &&
             TimeUtil.isConflicting(newEvent.getStartTime(), newEvent.getEndTime(),
-            existingEvent.getStartTime(), existingEvent.getEndTime())) {
+                existingEvent.getStartTime(), existingEvent.getEndTime())) {
           throw new EventConflictException("Recurring event conflicts with existing event: "
               + existingEvent);
         }
@@ -260,17 +259,14 @@ public class CalendarModel implements ICalendarModel {
    */
   @Override
   public void editEvent(String eventName, Temporal startTime, Temporal endTime, String property,
-                        String value) {
-    boolean isRecurringProperty = property.equals(EventConstants.PropertyKeys.RECURRING_DAYS) ||
-        property.equals(EventConstants.PropertyKeys.OCCURRENCE_COUNT) ||
-        property.equals(EventConstants.PropertyKeys.RECURRENCE_END_DATE);
-
-    List<IEvent> eventsToEdit = findEvents(eventName, startTime, endTime, isRecurringProperty);
+                        String value, boolean isRecurringEvents) {
+    List<IEvent> eventsToEdit = findEvents(eventName, startTime, endTime, isRecurringEvents);
     List<IEvent> updatedEvents = new ArrayList<>();
 
-    if (!isRecurringProperty) {
+    if (!isRecurringEvents) {
       for (IEvent event : eventsToEdit) {
         IEvent updatedEvent = event.updateProperty(property, value);
+        events.remove(event);
         if (updatedEvent.isAutoDecline()) {
           checkForConflicts(updatedEvent);
         }
@@ -281,8 +277,10 @@ public class CalendarModel implements ICalendarModel {
       IEvent firstEvent = eventsToEdit.get(0);
       firstEvent = firstEvent.updateProperty(property, value);
       createEvent(firstEvent.getName(), firstEvent.getStartTime(), firstEvent.getEndTime(),
-          firstEvent.getRecurringDays(), Integer.toString(firstEvent.getOccurrenceCount()), firstEvent.getRecurrenceEndDate(),
-          firstEvent.getDescription(), firstEvent.getLocation(), firstEvent.getVisibility().getValue(),
+          firstEvent.getRecurringDays(), firstEvent.getOccurrenceCount() == null ? null
+              : Integer.toString(firstEvent.getOccurrenceCount()),
+          firstEvent.getRecurrenceEndDate(), firstEvent.getDescription(),
+          firstEvent.getLocation(), firstEvent.getVisibility().getValue(),
           firstEvent.isAutoDecline());
     }
     events.removeAll(eventsToEdit);
@@ -377,7 +375,8 @@ public class CalendarModel implements ICalendarModel {
    * @param endTime   The end time for the search range.
    * @return A list of events matching the criteria.
    */
-  private List<IEvent> findEvents(String eventName, Temporal startTime, Temporal endTime, boolean isRecurring) {
+  private List<IEvent> findEvents(String eventName, Temporal startTime,
+                                  Temporal endTime, boolean isRecurring) {
     return events.stream()
         .filter(event -> event.getName().equals(eventName))
         .filter(event -> TimeUtil.isWithinTimeRange(startTime, endTime,
