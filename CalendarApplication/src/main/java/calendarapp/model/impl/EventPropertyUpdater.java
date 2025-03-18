@@ -1,6 +1,5 @@
 package calendarapp.model.impl;
 
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -18,10 +17,11 @@ public class EventPropertyUpdater {
   /**
    * A map that associates property keys with their corresponding updater functions.
    */
-  private static final Map<String, BiConsumer<Event.Builder, String>> UPDATERS = new HashMap<>();
+  private static final Map<String, BiConsumer<Event.Builder, String>> UPDATERS;
 
   // Static initializer block to register all property updaters
   static {
+    UPDATERS = new HashMap<>();
     // Register all property updaters
     UPDATERS.put(EventConstants.PropertyKeys.NAME,
         (builder, value) -> builder.name(value));
