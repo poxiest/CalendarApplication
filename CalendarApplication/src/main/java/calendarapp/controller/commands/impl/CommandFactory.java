@@ -30,6 +30,7 @@ public class CommandFactory {
     Pattern pattern = Pattern.compile(commandPattern);
     Matcher matcher = pattern.matcher(command);
 
+    // TODO : Put the commands in map as BiFunction of model, view and returning command int.
     String cmd = matcher.find() ? matcher.group(1) : "";
     switch (Objects.requireNonNull(CommandProperties.getCommand(cmd.toLowerCase()))) {
       case CREATE:

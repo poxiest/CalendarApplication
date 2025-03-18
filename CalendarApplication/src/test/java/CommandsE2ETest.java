@@ -318,6 +318,38 @@ public class CommandsE2ETest {
         , stringOutput.toString());
   }
 
+  // edit events from
+  @Test
+  public void RecurringEventsForNTimesWithExistingEvent2() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-12T10:30\" to \"2025-11-12T11:00\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"" +
+        " repeats \"MFW\" for 6 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"\n" +
+        "edit events location \"Recurring Event\" from \"2025-11-10T10:00\" with Richard\n"
+        + "edit event location \"Sprint Planning\" from \"2025-11-12T10:30\" to "
+        + "\"2025-11-12T11:00\"  with \"Shillman Hall\"\n"
+        + "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+            + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+            + "• Sprint Planning - 2025-11-12T10:30 to 2025-11-12T11:00 \n"
+            + "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n"
+            + "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n"
+            + "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n"
+            + "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n"
+            + "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
+            + "Events:\n"
+            + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 - Location: Richard\n"
+            + "• Sprint Planning - 2025-11-12T10:30 to 2025-11-12T11:00 - Location: Shillman Hall\n"
+            + "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 - Location: Richard\n"
+            + "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 - Location: Richard\n"
+            + "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 - Location: Richard\n"
+            + "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 - Location: Richard\n"
+            + "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 - Location: Richard\n"
+        , stringOutput.toString());
+  }
+
   @Test(expected = EventConflictException.class)
   public void RecurringEventsForNTimesConflict() {
     controller = new MockController("create event \"Sprint Planning\" from" +

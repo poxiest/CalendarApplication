@@ -11,7 +11,8 @@ import calendarapp.utils.TimeUtil;
 
 import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
 
-
+// TODO: Refactor event to have List<Events> - basically as a datastore and functions together
+// TODO: Remove the interface, because it is a data class
 /**
  * Implementation of the {@link IEvent} interface representing a calendar event.
  */
@@ -22,6 +23,7 @@ public class Event implements IEvent {
    */
   private final String name;
 
+  // TODO: Append timezone at the end for both starttime and endtime
   /**
    * The start time of the event.
    */

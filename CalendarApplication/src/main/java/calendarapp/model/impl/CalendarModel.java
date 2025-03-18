@@ -263,6 +263,7 @@ public class CalendarModel implements ICalendarModel {
     List<IEvent> eventsToEdit = findEvents(eventName, startTime, endTime, isRecurringEvents);
     List<IEvent> updatedEvents = new ArrayList<>();
 
+    // TODO: Edit events should work for all events both single/recurring
     if (!isRecurringEvents) {
       for (IEvent event : eventsToEdit) {
         IEvent updatedEvent = event.updateProperty(property, value);

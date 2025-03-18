@@ -20,6 +20,7 @@ import static calendarapp.utils.TimeUtil.isAllDayEvent;
  */
 public class CalendarExporter {
 
+  // TODO: try to move as a interface
   /**
    * Exports a list of events to a CSV file in Google Calendar format.
    *
