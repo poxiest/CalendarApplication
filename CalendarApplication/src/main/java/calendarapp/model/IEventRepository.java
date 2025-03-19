@@ -1,6 +1,7 @@
 package calendarapp.model;
 
 import java.time.temporal.Temporal;
+import java.util.List;
 
 public interface IEventRepository {
   void create(String eventName, Temporal startTime, Temporal endTime,
@@ -12,4 +13,8 @@ public interface IEventRepository {
               String value, boolean isRecurring);
 
   IEventRepository get(String eventName, Temporal startTime, Temporal endTime);
+
+  List<String> getFormattedEvents(Temporal startTime, Temporal endTime);
+
+  boolean isActiveAt(Temporal time);
 }

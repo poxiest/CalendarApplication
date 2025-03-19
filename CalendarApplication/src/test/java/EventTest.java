@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
  * Test class for {@link Event}.
  */
 public class EventTest {
-  private IEvent event1;
+  private Event event1;
 
   @Before
   public void setUp() {
@@ -40,7 +40,7 @@ public class EventTest {
 
   @Test
   public void testEventCreationWithOptionalFieldsWithOccurrenceCount() {
-    IEvent eventWithOptionalField = Event.builder()
+    Event eventWithOptionalField = Event.builder()
         .name("Single Event 1")
         .startTime(LocalDateTime.of(2025, 3, 10, 10, 0))
         .endTime(LocalDateTime.of(2025, 3, 10, 11, 0))
@@ -61,7 +61,7 @@ public class EventTest {
   @Test(expected = IllegalArgumentException.class)
   public void testEVentWithWrongVisibility() {
     try {
-      IEvent eventWithOptionalField = Event.builder()
+      Event eventWithOptionalField = Event.builder()
           .name("Single Event 1")
           .startTime(LocalDateTime.of(2025, 3, 10, 10, 0))
           .endTime(LocalDateTime.of(2025, 3, 10, 11, 0))
@@ -76,7 +76,7 @@ public class EventTest {
   @Test(expected = IllegalArgumentException.class)
   public void testOcurrenceWithZero() {
     try {
-      IEvent eventWithOptionalField = Event.builder()
+      Event eventWithOptionalField = Event.builder()
           .name("Single Event 1")
           .startTime(LocalDateTime.of(2025, 3, 10, 10, 0))
           .endTime(LocalDateTime.of(2025, 3, 10, 11, 0))
@@ -92,7 +92,7 @@ public class EventTest {
   @Test(expected = IllegalArgumentException.class)
   public void updateWrongProperty() {
     try {
-      IEvent eventWithOptionalField = Event.builder()
+      Event eventWithOptionalField = Event.builder()
           .name("Single Event 1")
           .startTime(LocalDateTime.of(2025, 3, 10, 10, 0))
           .endTime(LocalDateTime.of(2025, 3, 10, 11, 0))
@@ -106,7 +106,7 @@ public class EventTest {
 
   @Test
   public void testEventCreationWithOptionalFieldsWithRecurrenceEndDate() {
-    IEvent eventWithOptionalField = Event.builder()
+    Event eventWithOptionalField = Event.builder()
         .name("Single Event 1")
         .startTime(LocalDateTime.of(2025, 3, 10, 10, 0))
         .endTime(LocalDateTime.of(2025, 3, 10, 11, 0))
@@ -142,7 +142,7 @@ public class EventTest {
 
   @Test
   public void testEventCreationWithoutEndTime() {
-    IEvent eventWithoutEndTime = Event.builder()
+    Event eventWithoutEndTime = Event.builder()
         .name("Event Without End Time")
         .startTime(LocalDateTime.of(2025, 3, 10, 10, 0))
         .endTime(null)
@@ -261,7 +261,7 @@ public class EventTest {
         .endTime(LocalDateTime.of(2025, 3, 15, 11, 0))
         .build();
 
-    IEvent updatedEvent = event.updateProperty(EventConstants.PropertyKeys.NAME, "Updated Event");
+    Event updatedEvent = event.updateProperty(EventConstants.PropertyKeys.NAME, "Updated Event");
 
     assertTrue(updatedEvent.toString().contains("Updated Event"));
   }
@@ -275,7 +275,7 @@ public class EventTest {
         .build();
 
     LocalDateTime newStartTime = LocalDateTime.of(2025, 3, 15, 9, 0);
-    IEvent updatedEvent = event.updateProperty(
+    Event updatedEvent = event.updateProperty(
         EventConstants.PropertyKeys.START_TIME,
         newStartTime.toString()
     );
@@ -292,7 +292,7 @@ public class EventTest {
         .build();
 
     LocalDateTime newEndTime = LocalDateTime.of(2025, 3, 15, 12, 0);
-    IEvent updatedEvent = event.updateProperty(
+    Event updatedEvent = event.updateProperty(
         EventConstants.PropertyKeys.END_TIME,
         newEndTime.toString()
     );
@@ -309,7 +309,7 @@ public class EventTest {
         .description("Original description")
         .build();
 
-    IEvent updatedEvent = event.updateProperty(
+    Event updatedEvent = event.updateProperty(
         EventConstants.PropertyKeys.DESCRIPTION,
         "Updated description"
     );
@@ -326,7 +326,7 @@ public class EventTest {
         .location("Original location")
         .build();
 
-    IEvent updatedEvent = event.updateProperty(
+    Event updatedEvent = event.updateProperty(
         EventConstants.PropertyKeys.LOCATION,
         "Updated location"
     );
@@ -342,7 +342,7 @@ public class EventTest {
         .endTime(LocalDateTime.of(2025, 3, 15, 11, 0))
         .build();
 
-    IEvent updatedEvent = event.updateProperty(
+    Event updatedEvent = event.updateProperty(
         EventConstants.PropertyKeys.VISIBILITY,
         "PRIVATE"
     );

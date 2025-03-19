@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import calendarapp.model.EventConflictException;
+import calendarapp.model.ICalendar;
 import calendarapp.model.ICalendarModel;
-import calendarapp.model.IEvent;
+import calendarapp.model.IEventRepository;
 import calendarapp.utils.TimeUtil;
 
 import static calendarapp.model.impl.CalendarExporter.exportEventAsGoogleCalendarCsv;
@@ -17,14 +18,14 @@ import static calendarapp.model.impl.CalendarExporter.exportEventAsGoogleCalenda
  * and displaying events, handling conflicts, and exporting events in a specific format.
  */
 public class CalendarModel implements ICalendarModel {
-
-  private final List<IEvent> events;
+  private final ICalendar activeCalendar;
 
   /**
    * Constructs a CalendarModel object, initializing the event list and day mapping.
    */
   public CalendarModel() {
-    this.events = new ArrayList<>();
+    IEventRepository eventRepository = new EventRepository(new ArrayList<>());
+    this.activeCalendar = new Calendar("Default", "America/New_York", eventRepository);
   }
 
   /**
@@ -49,7 +50,8 @@ public class CalendarModel implements ICalendarModel {
                           String description, String location, String visibility,
                           boolean autoDecline) throws EventConflictException {
 
-    // TODO: Call Event Repository to create Event
+    activeCalendar.getEventRepository().create(eventName, startTime, endTime, description, location,
+        visibility, recurringDays, occurrenceCount, recurrenceEndDate, true);
   }
 
   /**
@@ -65,7 +67,8 @@ public class CalendarModel implements ICalendarModel {
   public void editEvent(String eventName, Temporal startTime, Temporal endTime, String property,
                         String value, boolean isRecurringEvents) {
 
-    // TODO: Call Event Repository to edit events
+    activeCalendar.getEventRepository().update(eventName, startTime, endTime, property, value,
+        isRecurringEvents);
   }
 
   /**
@@ -82,8 +85,7 @@ public class CalendarModel implements ICalendarModel {
           .plusDays(1).atStartOfDay();
     }
 
-    // TODO: Call findEvents function to get all the events, and write format logic
-    return null;
+    return activeCalendar.getEventRepository().getFormattedEvents(startDateTime, endDateTime);
   }
 
   /**
@@ -94,7 +96,8 @@ public class CalendarModel implements ICalendarModel {
    */
   @Override
   public String export(String filename) {
-    return exportEventAsGoogleCalendarCsv(events, filename);
+    // TODO: Fix this
+    return "";
   }
 
   /**
@@ -105,8 +108,7 @@ public class CalendarModel implements ICalendarModel {
    */
   @Override
   public String showStatus(Temporal dateTime) {
-    boolean isBusy = events.stream().anyMatch(event ->
-        TimeUtil.isActiveAt(dateTime, event.getStartTime(), event.getEndTime()));
+    boolean isBusy = activeCalendar.getEventRepository().isActiveAt(dateTime);
     return isBusy ? EventConstants.Status.BUSY : EventConstants.Status.AVAILABLE;
   }
 }

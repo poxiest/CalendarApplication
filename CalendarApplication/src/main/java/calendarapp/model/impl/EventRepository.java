@@ -20,7 +20,6 @@ import static calendarapp.model.impl.EventConstants.DaysOfWeek.parseDaysOfWeek;
 public class EventRepository implements IEventRepository {
   private final List<Event> events;
 
-  // TODO: Should the constructor accept a list of events.
   public EventRepository(List<Event> events) {
     this.events = new ArrayList<>(events);
   }
@@ -74,6 +73,19 @@ public class EventRepository implements IEventRepository {
   @Override
   public IEventRepository get(String eventName, Temporal startTime, Temporal endTime) {
     return new EventRepository(findEvents(eventName, startTime, endTime, false));
+  }
+
+  @Override
+  public List<String> getFormattedEvents(Temporal startTime, Temporal endTime) {
+    List<Event> requiredEvents = findEvents(null, startTime, endTime, false);
+    return requiredEvents.stream()
+        .map(this::formatEventForDisplay)
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public boolean isActiveAt(Temporal time) {
+    return !findEvents(null, time, time, false).isEmpty();
   }
 
   /**
@@ -196,5 +208,15 @@ public class EventRepository implements IEventRepository {
         .sorted((event1, event2) ->
             Math.toIntExact(TimeUtil.difference(event2.getStartTime(), event1.getStartTime())))
         .collect(Collectors.toList());
+  }
+
+  private String formatEventForDisplay(Event event) {
+    return String.format("• %s - %s to %s %s",
+        event.getName(),
+        event.getStartTime(),
+        event.getEndTime(),
+        event.getLocation() != null && !event.getLocation().isEmpty()
+            ? "- Location: " + event.getLocation()
+            : "");
   }
 }
