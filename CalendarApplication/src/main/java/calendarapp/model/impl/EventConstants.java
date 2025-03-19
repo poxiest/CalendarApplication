@@ -1,5 +1,11 @@
 package calendarapp.model.impl;
 
+import java.time.DayOfWeek;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Contains constant values used throughout the calendar application.
  */
@@ -51,5 +57,31 @@ public class EventConstants {
   public static final class Status {
     public static final String BUSY = "Busy";
     public static final String AVAILABLE = "Available";
+  }
+
+  public static final class DaysOfWeek {
+    public static final Map<Character, DayOfWeek> dayMap = new HashMap<>();
+
+    static {
+      dayMap.put('M', DayOfWeek.MONDAY);
+      dayMap.put('T', DayOfWeek.TUESDAY);
+      dayMap.put('W', DayOfWeek.WEDNESDAY);
+      dayMap.put('R', DayOfWeek.THURSDAY);
+      dayMap.put('F', DayOfWeek.FRIDAY);
+      dayMap.put('S', DayOfWeek.SATURDAY);
+      dayMap.put('U', DayOfWeek.SUNDAY);
+    }
+
+    public static Set<DayOfWeek> parseDaysOfWeek(String daysString) {
+      Set<DayOfWeek> days = new HashSet<>();
+      for (char day : daysString.toUpperCase().toCharArray()) {
+        DayOfWeek dayOfWeek = dayMap.get(day);
+        if (dayOfWeek == null) {
+          throw new IllegalArgumentException("Invalid day character: " + day);
+        }
+        days.add(dayOfWeek);
+      }
+      return days;
+    }
   }
 }

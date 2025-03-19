@@ -21,6 +21,7 @@ import static calendarapp.utils.TimeUtil.isAllDayEvent;
 public class CalendarExporter {
 
   // TODO: try to move as a interface
+
   /**
    * Exports a list of events to a CSV file in Google Calendar format.
    *
@@ -83,7 +84,7 @@ public class CalendarExporter {
    *
    * @param visibility The visibility setting of the event.
    * @return A string representation of the privacy flag ("TRUE" for private events,
-   *     "FALSE" otherwise).
+   * "FALSE" otherwise).
    */
   private static String determinePrivacyFlag(EventVisibility visibility) {
     return EventVisibility.PRIVATE.equals(visibility)

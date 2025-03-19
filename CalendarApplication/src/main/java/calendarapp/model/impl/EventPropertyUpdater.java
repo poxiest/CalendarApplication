@@ -58,7 +58,7 @@ public class EventPropertyUpdater {
    *
    * @param property the property key for which to retrieve the updater.
    * @return the {@link BiConsumer} updater function associated with the property,
-   *     or {@code null} if no updater is found for the given key.
+   * or {@code null} if no updater is found for the given key.
    */
   public static BiConsumer<Event.Builder, String> getUpdater(String property) {
     return UPDATERS.get(property.toLowerCase());
