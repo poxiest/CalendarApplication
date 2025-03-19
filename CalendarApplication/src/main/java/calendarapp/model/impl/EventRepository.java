@@ -50,7 +50,7 @@ public class EventRepository implements IEventRepository {
   @Override
   public void update(String eventName, Temporal startTime, Temporal endTime, String property,
                      String value, boolean isRecurringEvents) {
-    List<Event> eventsToUpdate = findEvents(eventName, startTime, endTime, isRecurringEvents);
+    List<Event> eventsToUpdate = searchMatchingEvents(eventName, startTime, endTime, isRecurringEvents);
     List<Event> updatedEvents = new ArrayList<>();
 
     if (!isRecurringEvents) {
@@ -72,12 +72,12 @@ public class EventRepository implements IEventRepository {
 
   @Override
   public IEventRepository get(String eventName, Temporal startTime, Temporal endTime) {
-    return new EventRepository(findEvents(eventName, startTime, endTime, false));
+    return new EventRepository(searchMatchingEvents(eventName, startTime, endTime, false));
   }
 
   @Override
   public List<String> getFormattedEvents(Temporal startTime, Temporal endTime) {
-    List<Event> requiredEvents = findEvents(null, startTime, endTime, false);
+    List<Event> requiredEvents = findOverlappingEvents(startTime, endTime);
     return requiredEvents.stream()
         .map(this::formatEventForDisplay)
         .collect(Collectors.toList());
@@ -85,7 +85,7 @@ public class EventRepository implements IEventRepository {
 
   @Override
   public boolean isActiveAt(Temporal time) {
-    return !findEvents(null, time, time, false).isEmpty();
+    return !findOverlappingEvents(time, time).isEmpty();
   }
 
   /**
@@ -198,13 +198,22 @@ public class EventRepository implements IEventRepository {
    * @param endTime   The end time for the search range.
    * @return A list of events matching the criteria.
    */
-  private List<Event> findEvents(String eventName, Temporal startTime,
-                                 Temporal endTime, boolean isRecurring) {
+  private List<Event> searchMatchingEvents(String eventName, Temporal startTime,
+                                           Temporal endTime, boolean isRecurring) {
     return events.stream()
         .filter(event -> eventName == null || event.getName().equals(eventName))
         .filter(event -> TimeUtil.isWithinTimeRange(startTime, endTime,
             event.getStartTime(), event.getEndTime()))
         .filter(event -> !isRecurring || (event.getRecurringDays() != null))
+        .sorted((event1, event2) ->
+            Math.toIntExact(TimeUtil.difference(event2.getStartTime(), event1.getStartTime())))
+        .collect(Collectors.toList());
+  }
+
+  private List<Event> findOverlappingEvents(Temporal startTime, Temporal endTime) {
+    return events.stream()
+        .filter(event -> TimeUtil.isConflicting(event.getStartTime(),
+            event.getEndTime(), startTime, endTime))
         .sorted((event1, event2) ->
             Math.toIntExact(TimeUtil.difference(event2.getStartTime(), event1.getStartTime())))
         .collect(Collectors.toList());
