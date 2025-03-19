@@ -10,8 +10,6 @@ import calendarapp.model.ICalendarModel;
 import calendarapp.model.IEventRepository;
 import calendarapp.utils.TimeUtil;
 
-import static calendarapp.model.impl.CalendarExporter.exportEventAsGoogleCalendarCsv;
-
 /**
  * The CalendarModel class implements the ICalendarModel interface
  * and is responsible for managing calendar events, including creating, editing,
