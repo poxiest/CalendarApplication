@@ -5,9 +5,10 @@ import java.time.ZoneId;
 import java.time.zone.ZoneRulesException;
 
 import calendarapp.controller.InvalidCommandException;
+import calendarapp.model.ICalendar;
 import calendarapp.model.IEventRepository;
 
-public class Calendar {
+public class Calendar implements ICalendar {
   private String name;
   private ZoneId zoneId;
   private IEventRepository eventRepository;
@@ -18,15 +19,18 @@ public class Calendar {
     this.eventRepository = eventRepository;
   }
 
-  String getName() {
+  @Override
+  public String getName() {
     return name;
   }
 
-  ZoneId getZoneId() {
+  @Override
+  public ZoneId getZoneId() {
     return zoneId;
   }
 
-  IEventRepository getEventRepository() {
+  @Override
+  public IEventRepository getEventRepository() {
     return eventRepository;
   }
 

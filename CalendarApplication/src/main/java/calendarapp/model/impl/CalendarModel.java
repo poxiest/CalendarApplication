@@ -25,7 +25,6 @@ import static calendarapp.model.impl.CalendarExporter.exportEventAsGoogleCalenda
  * and displaying events, handling conflicts, and exporting events in a specific format.
  */
 public class CalendarModel implements ICalendarModel {
-
   private final List<IEvent> events;
   private final Map<Character, DayOfWeek> dayMap;
 
