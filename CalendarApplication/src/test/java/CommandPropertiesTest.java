@@ -11,14 +11,26 @@ public class CommandPropertiesTest {
 
   @Test
   public void testCreateCommand() {
-    CommandProperties command = CommandProperties.getCommand("create");
-    assertEquals(CommandProperties.CREATE, command);
+    CommandProperties command = CommandProperties.getCommand("create event");
+    assertEquals(CommandProperties.CREATE_EVENT, command);
+  }
+
+  @Test
+  public void testCreateCommand1() {
+    CommandProperties command = CommandProperties.getCommand("create calendar");
+    assertEquals(CommandProperties.CREATE_CALENDAR, command);
   }
 
   @Test
   public void testEditCommand() {
-    CommandProperties command = CommandProperties.getCommand("edit");
-    assertEquals(CommandProperties.EDIT, command);
+    CommandProperties command = CommandProperties.getCommand("edit event");
+    assertEquals(CommandProperties.EDIT_EVENT, command);
+  }
+
+  @Test
+  public void testEditCommand1() {
+    CommandProperties command = CommandProperties.getCommand("edit events");
+    assertEquals(CommandProperties.EDIT_EVENTS, command);
   }
 
   @Test
@@ -40,6 +52,19 @@ public class CommandPropertiesTest {
   }
 
   @Test
+  public void testUseCommand() {
+    CommandProperties command = CommandProperties.getCommand("use");
+    assertEquals(CommandProperties.USE, command);
+  }
+
+  @Test
+  public void testCopyCommand() {
+    CommandProperties command = CommandProperties.getCommand("copy");
+    assertEquals(CommandProperties.COPY, command);
+  }
+
+
+  @Test
   public void testUnknownCommand() {
     CommandProperties command = CommandProperties.getCommand("unknownCommand");
     assertEquals(CommandProperties.UNKNOWN, command);
@@ -47,11 +72,11 @@ public class CommandPropertiesTest {
 
   @Test
   public void testCaseInsensitiveCommand() {
-    CommandProperties command = CommandProperties.getCommand("CREATE");
-    assertEquals(CommandProperties.CREATE, command);
+    CommandProperties command = CommandProperties.getCommand("CREATE EVENT");
+    assertEquals(CommandProperties.CREATE_EVENT, command);
 
-    command = CommandProperties.getCommand("EdIt");
-    assertEquals(CommandProperties.EDIT, command);
+    command = CommandProperties.getCommand("EdIt evEnt");
+    assertEquals(CommandProperties.EDIT_EVENT, command);
 
     command = CommandProperties.getCommand("PRINT");
     assertEquals(CommandProperties.PRINT, command);

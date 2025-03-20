@@ -23,7 +23,7 @@ import static calendarapp.utils.TimeUtil.getTemporalFromString;
  * Parses the input command and creates events with various properties including
  * recurring events with different recurrence patterns.
  */
-public class CreateCommand extends AbstractCommand {
+public class CreateEventCommand extends AbstractCommand {
 
   /**
    * The name of the event to be created.
@@ -86,7 +86,7 @@ public class CreateCommand extends AbstractCommand {
    * @param model The calendar model to use for creating events.
    * @param view  The view to use for displaying information.
    */
-  CreateCommand(ICalendarModel model, ICalendarView view) {
+  CreateEventCommand(ICalendarModel model, ICalendarView view) {
     super(model, view);
   }
 

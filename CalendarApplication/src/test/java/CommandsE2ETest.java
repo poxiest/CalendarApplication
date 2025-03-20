@@ -7,7 +7,8 @@ import java.util.Scanner;
 
 import calendarapp.controller.ICalendarController;
 import calendarapp.controller.InvalidCommandException;
-import calendarapp.controller.impl.AbstractCalendarController;
+import calendarapp.controller.commands.Command;
+import calendarapp.controller.commands.impl.CommandFactory;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.impl.CalendarModel;
@@ -1319,17 +1320,30 @@ public class CommandsE2ETest {
     }
   }
 
-  private static class MockController extends AbstractCalendarController {
+  private static class MockController implements ICalendarController {
+    private ICalendarModel model;
+    private Readable in;
+    private ICalendarView view;
+
     public MockController(String input, ICalendarModel calendarApplication,
                           ICalendarView calendarView) {
-      super(new StringReader(input), calendarApplication, calendarView);
+      this.model = calendarApplication;
+      this.view = calendarView;
+      this.in = new StringReader(input);
     }
 
     @Override
     public void start() {
       Scanner scanner = new Scanner(in);
       while (scanner.hasNextLine()) {
-        processCommand(scanner.nextLine());
+        String commandString = scanner.nextLine();
+        Command command;
+        try {
+          command = CommandFactory.getCommand(commandString, model, view);
+        } catch (InvalidCommandException e) {
+          throw e;
+        }
+        command.execute(commandString);
       }
     }
   }

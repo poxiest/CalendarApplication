@@ -18,7 +18,7 @@ import static calendarapp.utils.TimeUtil.getTemporalFromString;
  * Allows modification of various event properties by parsing the
  * command string and applying changes to the specified event.
  */
-public class EditCommand extends AbstractCommand {
+public class EditEventCommand extends AbstractCommand {
 
   /**
    * The name of the property to edit.
@@ -51,7 +51,7 @@ public class EditCommand extends AbstractCommand {
    * @param model The calendar model to use for editing events.
    * @param view  The view to use for displaying information.
    */
-  EditCommand(ICalendarModel model, ICalendarView view) {
+  EditEventCommand(ICalendarModel model, ICalendarView view) {
     super(model, view);
   }
 

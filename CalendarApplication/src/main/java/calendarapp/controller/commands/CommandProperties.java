@@ -7,12 +7,27 @@ public enum CommandProperties {
   /**
    * Command to create new events.
    */
-  CREATE("create"),
+  CREATE_EVENT("create event"),
+
+  /**
+   * Command to create new calendar.
+   */
+  CREATE_CALENDAR("create calendar"),
+
+  /**
+   * Command to edit existing event.
+   */
+  EDIT_EVENT("edit event"),
+
+  /**
+   * Command to edit existing event.
+   */
+  EDIT_EVENTS("edit events"),
 
   /**
    * Command to edit existing events.
    */
-  EDIT("edit"),
+  EDIT_CALENDAR("edit calendar"),
 
   /**
    * Command to print calendar information.
@@ -28,6 +43,16 @@ public enum CommandProperties {
    * Command to export calendar data.
    */
   EXPORT("export"),
+
+  /**
+   * Command to copy calendar data.
+   */
+  COPY("copy"),
+
+  /**
+   * Command to use calendar.
+   */
+  USE("use"),
 
   /**
    * Represents an unrecognized command.
