@@ -22,20 +22,32 @@ public class CalendarRepository implements ICalendarRepository {
     if (getCalendar(name) != null) {
       throw new IllegalArgumentException("Calendar already exists.\n");
     }
-    calendars.add(new Calendar(name, zoneId, eventRepository));
+    calendars.add(Calendar.builder()
+        .name(name)
+        .zoneId(zoneId)
+        .eventRepository(eventRepository).build());
   }
 
   @Override
   public void editCalendar(String name, String propertyName, String propertyValue) {
-    BiConsumer<Calendar, String> updater = CalendarPropertyUpdater.getUpdater(propertyName);
+    BiConsumer<Calendar.Builder, String> updater = CalendarPropertyUpdater.getUpdater(propertyName);
     if (propertyValue == null) {
       throw new IllegalArgumentException("Invalid property value.\n");
     }
-//    updater.accept(getCalendar(name), propertyValue);
+
+    ICalendar calendar = getCalendar(name);
+    Calendar.Builder calendarBuilder = Calendar.builder()
+        .name(calendar.getName())
+        .zoneId(calendar.getZoneId())
+        .eventRepository(calendar.getEventRepository());
+    updater.accept(calendarBuilder, propertyValue);
+    calendars.remove(calendar);
+    calendars.add(calendarBuilder.build());
   }
 
   @Override
-  public void copyEvents(String calendarFrom, String calendarTo, Temporal startTime, Temporal endTime) {
+  public void copyEvents(String calendarFrom, String calendarTo, Temporal startTime,
+                         Temporal endTime) {
 
   }
 
