@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.ICalendar;
 import calendarapp.model.ICalendarRepository;
 import calendarapp.model.IEventRepository;
@@ -20,7 +21,7 @@ public class CalendarRepository implements ICalendarRepository {
   @Override
   public void addCalendar(String name, String zoneId, IEventRepository eventRepository) {
     if (getCalendar(name) != null) {
-      throw new IllegalArgumentException("Calendar already exists.\n");
+      throw new InvalidCommandException("Calendar already exists.\n");
     }
     calendars.add(Calendar.builder()
         .name(name)

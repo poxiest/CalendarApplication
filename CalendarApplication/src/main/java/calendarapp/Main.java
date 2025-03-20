@@ -1,7 +1,5 @@
 package calendarapp;
 
-import java.util.TimeZone;
-
 import calendarapp.controller.ICalendarController;
 import calendarapp.controller.impl.CalendarControllerFactory;
 import calendarapp.model.ICalendarModel;
@@ -23,8 +21,6 @@ public class Main {
    * @param args command-line arguments taking mode inputs.
    */
   public static void main(String[] args) {
-    TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
-
     if (args.length < 2 || !args[0].equalsIgnoreCase("--mode")) {
       throw new IllegalArgumentException("--mode argument required for the application to run.");
     }

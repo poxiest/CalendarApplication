@@ -7,7 +7,6 @@ import java.util.List;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendar;
 import calendarapp.model.ICalendarModel;
-import calendarapp.model.IEventRepository;
 import calendarapp.utils.TimeUtil;
 
 /**
@@ -22,8 +21,9 @@ public class CalendarModel implements ICalendarModel {
    * Constructs a CalendarModel object, initializing the event list and day mapping.
    */
   public CalendarModel() {
-    IEventRepository eventRepository = new EventRepository(new ArrayList<>());
-    this.activeCalendar = new Calendar("Default", "America/New_York", eventRepository);
+    this.activeCalendar = Calendar.builder()
+        .name("Default")
+        .eventRepository(new EventRepository(new ArrayList<>())).build();
   }
 
   /**

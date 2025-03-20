@@ -116,7 +116,8 @@ Property can take the following values:
 edit events <property> <eventName> from <dateStringTtimeString> with <NewPropertyValue>
 ```
 
-"events" Changes the property (e.g., name) of all recurring events starting at a specific date/time and have the same
+"events" Changes the property (e.g., name) of all recurring events starting at a specific date/time
+and have the same
 event name.
 
 ```

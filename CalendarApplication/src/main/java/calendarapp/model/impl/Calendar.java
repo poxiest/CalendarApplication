@@ -40,7 +40,7 @@ public class Calendar implements ICalendar {
 
   public static class Builder {
     private String name;
-    private ZoneId zoneId;
+    private ZoneId zoneId = ZoneId.of("America/New_York");
     private IEventRepository eventRepository;
 
     public Builder name(String name) {
