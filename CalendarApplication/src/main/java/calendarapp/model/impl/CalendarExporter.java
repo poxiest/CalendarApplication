@@ -84,7 +84,7 @@ public class CalendarExporter {
    *
    * @param visibility The visibility setting of the event.
    * @return A string representation of the privacy flag ("TRUE" for private events,
-   *     "FALSE" otherwise).
+   * "FALSE" otherwise).
    */
   private static String determinePrivacyFlag(EventVisibility visibility) {
     return EventVisibility.PRIVATE.equals(visibility)

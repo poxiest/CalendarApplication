@@ -17,7 +17,7 @@ import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
 /**
  * Implementation of the {@link IEvent} interface representing a calendar event.
  */
-public class Event implements IEvent {
+public class Event {
 
   /**
    * The name of the event.
@@ -352,8 +352,7 @@ public class Event implements IEvent {
    * @return a new Event instance with the updated property.
    * @throws IllegalArgumentException if the property is not supported or the value is invalid.
    */
-  @Override
-  public IEvent updateProperty(String property, String value) {
+  public Event updateProperty(String property, String value) {
     BiConsumer<Builder, String> updater = EventPropertyUpdater.getUpdater(property);
     if (updater == null) {
       throw new IllegalArgumentException("Cannot edit property: " + property + "\n");
@@ -380,7 +379,6 @@ public class Event implements IEvent {
    *
    * @return a formatted string representation of the event suitable for display.
    */
-  @Override
   public String formatForDisplay() {
     return String.format("• %s - %s to %s %s",
         name,
@@ -425,26 +423,22 @@ public class Event implements IEvent {
       return false;
     }
 
-    if (description != null ? !description.equals(other.description) : other.description != null) {
+    if (!Objects.equals(description, other.description)) {
       return false;
     }
-    if (location != null ? !location.equals(other.location) : other.location != null) {
+    if (!Objects.equals(location, other.location)) {
       return false;
     }
-    if (visibility != null ? !visibility.equals(other.visibility)
-        : other.visibility != null) {
+    if (!Objects.equals(visibility, other.visibility)) {
       return false;
     }
-    if (recurringDays != null ? !recurringDays.equals(other.recurringDays)
-        : other.recurringDays != null) {
+    if (!Objects.equals(recurringDays, other.recurringDays)) {
       return false;
     }
-    if (occurrenceCount != null ? !occurrenceCount.equals(other.occurrenceCount)
-        : other.occurrenceCount != null) {
+    if (!Objects.equals(occurrenceCount, other.occurrenceCount)) {
       return false;
     }
-    if (recurrenceEndDate != null ? !recurrenceEndDate.equals(other.recurrenceEndDate)
-        : other.recurrenceEndDate != null) {
+    if (!Objects.equals(recurrenceEndDate, other.recurrenceEndDate)) {
       return false;
     }
     return isAutoDecline == other.isAutoDecline;
