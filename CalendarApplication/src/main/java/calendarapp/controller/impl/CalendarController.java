@@ -2,7 +2,10 @@ package calendarapp.controller.impl;
 
 import java.util.Scanner;
 
+import calendarapp.controller.ICalendarController;
 import calendarapp.controller.InvalidCommandException;
+import calendarapp.controller.commands.Command;
+import calendarapp.controller.commands.impl.CommandFactory;
 import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
@@ -11,7 +14,22 @@ import calendarapp.view.ICalendarView;
  * from an input source and displays results through a view.
  * Supports interactive command processing with continuous input until exit.
  */
-public class CalendarController extends AbstractCalendarController {
+public class CalendarController implements ICalendarController {
+
+  /**
+   * The calendar model that stores and manages calendar data.
+   */
+  private ICalendarModel model;
+
+  /**
+   * The input source for reading commands.
+   */
+  private Readable in;
+
+  /**
+   * The view used for displaying information to the user.
+   */
+  private ICalendarView view;
 
   /**
    * Creates a new calendar controller with the specified input, model, and view.
@@ -21,7 +39,9 @@ public class CalendarController extends AbstractCalendarController {
    * @param view  The view to display information.
    */
   public CalendarController(Readable in, ICalendarModel model, ICalendarView view) {
-    super(in, model, view);
+    this.in = in;
+    this.view = view;
+    this.model = model;
   }
 
   /**
@@ -51,5 +71,22 @@ public class CalendarController extends AbstractCalendarController {
       processCommand(command);
       view.displayMessage("\n");
     }
+  }
+
+  /**
+   * Processes a command string by creating the appropriate {@link Command} object
+   * using the {@link CommandFactory} and executing it.
+   *
+   * @param commandString The command string to process.
+   * @throws InvalidCommandException If the command is invalid or cannot be executed.
+   */
+  private void processCommand(String commandString) throws InvalidCommandException {
+    Command command;
+    try {
+      command = CommandFactory.getCommand(commandString, model, view);
+    } catch (InvalidCommandException e) {
+      throw e;
+    }
+    command.execute(commandString);
   }
 }
