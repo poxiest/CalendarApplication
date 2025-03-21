@@ -49,18 +49,22 @@ public class Calendar implements ICalendar {
     }
 
     public Builder zoneId(String zoneId) {
-      try {
-        this.zoneId = ZoneId.of(zoneId);
-      } catch (ZoneRulesException e) {
-        throw new InvalidCommandException("Cannot find zone id : " + zoneId + "\n");
-      } catch (DateTimeException e) {
-        throw new InvalidCommandException("Invalid zone id : " + zoneId + "\n");
+      if (zoneId != null) {
+        try {
+          this.zoneId = ZoneId.of(zoneId);
+        } catch (ZoneRulesException e) {
+          throw new InvalidCommandException("Cannot find zone id : " + zoneId + "\n");
+        } catch (DateTimeException e) {
+          throw new InvalidCommandException("Invalid zone id : " + zoneId + "\n");
+        }
       }
       return this;
     }
 
     public Builder zoneId(ZoneId zoneId) {
-      this.zoneId = zoneId;
+      if (zoneId != null) {
+        this.zoneId = zoneId;
+      }
       return this;
     }
 

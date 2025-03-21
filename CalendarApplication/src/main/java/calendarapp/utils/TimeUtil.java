@@ -56,10 +56,7 @@ public class TimeUtil {
       return null;
     }
     Temporal time = getTemporalFromString(dateTime);
-    if (!dateTime.contains("T")) {
-      time = time.plus(1, ChronoUnit.DAYS);
-    }
-    return time;
+    return getLocalDateTimeFromTemporal(time).plusDays(1).toLocalDate().atStartOfDay();
   }
 
   /**

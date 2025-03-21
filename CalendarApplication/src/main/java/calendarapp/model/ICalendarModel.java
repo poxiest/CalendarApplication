@@ -3,6 +3,8 @@ package calendarapp.model;
 import java.time.temporal.Temporal;
 import java.util.List;
 
+import calendarapp.model.dto.CopyEventDTO;
+
 /**
  * Interface for the calendar model component.
  * This interface defines the core functionality for managing events in the calendar application.
@@ -78,7 +80,5 @@ public interface ICalendarModel {
 
   void setCalendar(String calendarName);
 
-  void copyEvent(String eventName, Temporal startTime, String copyCalendarName, Temporal toDate);
-
-  void copyEvents(Temporal startTime, Temporal endTime, String copyCalendarName, Temporal toDate);
+  void copyEvent(CopyEventDTO copyEventDTO);
 }

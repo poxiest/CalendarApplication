@@ -17,6 +17,7 @@ import calendarapp.controller.commands.impl.PrintCommand;
 import calendarapp.controller.commands.impl.ShowCommand;
 import calendarapp.controller.commands.impl.UseCommand;
 import calendarapp.model.ICalendarModel;
+import calendarapp.model.dto.CopyEventDTO;
 import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
@@ -311,12 +312,7 @@ public class CommandFactoryTest {
     }
 
     @Override
-    public void copyEvent(String eventName, Temporal startTime, String copyCalendarName, Temporal toDate) {
-
-    }
-
-    @Override
-    public void copyEvents(Temporal startTime, Temporal endTime, String copyCalendarName, Temporal toDate) {
+    public void copyEvent(CopyEventDTO copyEventDTO) {
 
     }
   }

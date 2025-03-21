@@ -8,6 +8,7 @@ import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendar;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.ICalendarRepository;
+import calendarapp.model.dto.CopyEventDTO;
 import calendarapp.utils.TimeUtil;
 
 /**
@@ -25,7 +26,7 @@ public class CalendarModel implements ICalendarModel {
    */
   public CalendarModel() {
     calendarRepository = new CalendarRepository();
-    calendarRepository.addCalendar("default", new EventRepository());
+    calendarRepository.addCalendar("default", null, new EventRepository());
     activeCalendar = calendarRepository.getCalendar("default");
   }
 
@@ -133,12 +134,7 @@ public class CalendarModel implements ICalendarModel {
   }
 
   @Override
-  public void copyEvent(String eventName, Temporal startTime, String copyCalendarName, Temporal toDate) {
-
-  }
-
-  @Override
-  public void copyEvents(Temporal startTime, Temporal endTime, String copyCalendarName, Temporal toDate) {
-
+  public void copyEvent(CopyEventDTO copyEventDTO) {
+    calendarRepository.copyEvents(activeCalendar.getName(), copyEventDTO);
   }
 }

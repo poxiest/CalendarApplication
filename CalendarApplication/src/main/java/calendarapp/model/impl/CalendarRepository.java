@@ -9,6 +9,7 @@ import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.ICalendar;
 import calendarapp.model.ICalendarRepository;
 import calendarapp.model.IEventRepository;
+import calendarapp.model.dto.CopyEventDTO;
 
 public class CalendarRepository implements ICalendarRepository {
 
@@ -19,16 +20,6 @@ public class CalendarRepository implements ICalendarRepository {
   }
 
   @Override
-  public void addCalendar(String name, IEventRepository eventRepository) {
-    if (getCalendar(name) != null) {
-      throw new InvalidCommandException("Calendar already exists.\n");
-    }
-    calendars.add(Calendar.builder()
-        .name(name)
-        .eventRepository(eventRepository).build());
-  }
-
-  @Override
   public void addCalendar(String name, String zoneId, IEventRepository eventRepository) {
     if (getCalendar(name) != null) {
       throw new InvalidCommandException("Calendar already exists.\n");
@@ -36,7 +27,8 @@ public class CalendarRepository implements ICalendarRepository {
     calendars.add(Calendar.builder()
         .name(name)
         .zoneId(zoneId)
-        .eventRepository(eventRepository).build());
+        .eventRepository(eventRepository)
+        .build());
   }
 
   @Override
@@ -61,9 +53,19 @@ public class CalendarRepository implements ICalendarRepository {
   }
 
   @Override
-  public void copyEvents(String calendarFrom, String calendarTo, Temporal startTime,
-                         Temporal endTime) {
+  public void copyEvents(String currentCalendarName, CopyEventDTO copyEventDTO) {
+    ICalendar currentCalendar = getCalendar(currentCalendarName);
+    ICalendar toCalendar = getCalendar(copyEventDTO.getCopyCalendarName());
 
+    if (currentCalendar == null || toCalendar == null) {
+      throw new InvalidCommandException("Calendar does not exist.\n");
+    }
+
+    IEventRepository currentEventRepository = currentCalendar.getEventRepository();
+    IEventRepository toEventRepository = toCalendar.getEventRepository();
+
+    IEventRepository dataToCopy = currentEventRepository.get(copyEventDTO.getEventName(),
+        copyEventDTO.getStartTime(), copyEventDTO.getEndTime());
   }
 
   @Override

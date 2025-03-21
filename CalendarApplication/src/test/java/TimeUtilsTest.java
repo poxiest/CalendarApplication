@@ -49,13 +49,14 @@ public class TimeUtilsTest {
 
   @Test
   public void testGetEndOfDayFromString() {
+    Temporal expected = sampleDate.atStartOfDay().plusDays(1);
     // Date only (should return end of day)
     Temporal result = TimeUtil.getEndOfDayFromString("2025-03-13");
-    assertEquals(sampleDate.atStartOfDay().plusDays(1), result);
+    assertEquals(expected, result);
 
     // Date and time
     result = TimeUtil.getEndOfDayFromString("2025-03-13T14:30");
-    assertEquals(sampleDateTime, result);
+    assertEquals(expected, result);
   }
 
   @Test

@@ -1,16 +1,14 @@
 package calendarapp.model;
 
-import java.time.temporal.Temporal;
+import calendarapp.model.dto.CopyEventDTO;
 
 public interface ICalendarRepository {
-
-  void addCalendar(String name, IEventRepository eventRepository);
 
   void addCalendar(String name, String zoneId, IEventRepository eventRepository);
 
   void editCalendar(String name, String propertyName, String propertyValue);
 
-  void copyEvents(String calendarFrom, String calendarTo, Temporal startTime, Temporal endTime);
+  void copyEvents(String currentCalendarName, CopyEventDTO copyEventDTO);
 
   ICalendar getCalendar(String name);
 }

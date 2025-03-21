@@ -8,6 +8,7 @@ import calendarapp.controller.ICalendarController;
 import calendarapp.controller.impl.CalendarController;
 import calendarapp.controller.impl.CalendarControllerFactory;
 import calendarapp.model.ICalendarModel;
+import calendarapp.model.dto.CopyEventDTO;
 import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
@@ -168,12 +169,7 @@ public class CalendarControllerFactoryTest {
     }
 
     @Override
-    public void copyEvent(String eventName, Temporal startTime, String copyCalendarName, Temporal toDate) {
-
-    }
-
-    @Override
-    public void copyEvents(Temporal startTime, Temporal endTime, String copyCalendarName, Temporal toDate) {
+    public void copyEvent(CopyEventDTO copyEventDTO) {
 
     }
   }

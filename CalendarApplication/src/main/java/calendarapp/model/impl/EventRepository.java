@@ -79,11 +79,6 @@ public class EventRepository implements IEventRepository {
   }
 
   @Override
-  public IEventRepository get() {
-    return new EventRepository(searchMatchingEvents(null, null, null, false));
-  }
-
-  @Override
   public IEventRepository get(String eventName, Temporal startTime, Temporal endTime) {
     return new EventRepository(searchMatchingEvents(eventName, startTime, endTime, false));
   }
