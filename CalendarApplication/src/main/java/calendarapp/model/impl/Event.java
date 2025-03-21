@@ -17,7 +17,7 @@ import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
 /**
  * Implementation of the {@link IEvent} interface representing a calendar event.
  */
-public class Event {
+public class Event implements IEvent {
 
   /**
    * The name of the event.

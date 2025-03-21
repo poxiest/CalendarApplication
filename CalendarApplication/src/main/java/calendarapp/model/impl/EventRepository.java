@@ -12,19 +12,20 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import calendarapp.model.EventConflictException;
+import calendarapp.model.IEvent;
 import calendarapp.model.IEventRepository;
 import calendarapp.utils.TimeUtil;
 
 import static calendarapp.model.impl.Constants.DaysOfWeek.parseDaysOfWeek;
 
 public class EventRepository implements IEventRepository {
-  private final List<Event> events;
+  private final List<IEvent> events;
 
   public EventRepository() {
     this.events = new ArrayList<>();
   }
 
-  private EventRepository(List<Event> events) {
+  private EventRepository(List<IEvent> events) {
     this.events = new ArrayList<>(events);
   }
 
@@ -38,13 +39,13 @@ public class EventRepository implements IEventRepository {
     Integer occurrence = occurrenceCount != null ? Integer.parseInt(occurrenceCount) : null;
 
     if (!isRecurring) {
-      Event event = createSingleEvent(eventName, startTime, endTime, description, location,
+      IEvent event = createSingleEvent(eventName, startTime, endTime, description, location,
           visibility,
           recurringDays, occurrence, recurrenceEndDate);
       validateEvents(List.of(event), null);
       events.add(event);
     } else {
-      List<Event> recurringEvents = createRecurringEvents(eventName, startTime, endTime,
+      List<IEvent> recurringEvents = createRecurringEvents(eventName, startTime, endTime,
           description,
           location, visibility, recurringDays, occurrence, recurrenceEndDate);
       validateEvents(recurringEvents, null);
@@ -56,17 +57,17 @@ public class EventRepository implements IEventRepository {
   @Override
   public void update(String eventName, Temporal startTime, Temporal endTime, String property,
                      String value, boolean isRecurringEvents) {
-    List<Event> eventsToUpdate = searchMatchingEvents(eventName, startTime, endTime,
+    List<IEvent> eventsToUpdate = searchMatchingEvents(eventName, startTime, endTime,
         isRecurringEvents);
-    List<Event> updatedEvents = new ArrayList<>();
+    List<IEvent> updatedEvents = new ArrayList<>();
 
     if (!isRecurringEvents) {
-      for (Event event : eventsToUpdate) {
-        Event updatedEvent = event.updateProperty(property, value);
+      for (IEvent event : eventsToUpdate) {
+        IEvent updatedEvent = event.updateProperty(property, value);
         updatedEvents.add(updatedEvent);
       }
     } else {
-      Event firstEvent = eventsToUpdate.get(0).updateProperty(property, value);
+      IEvent firstEvent = eventsToUpdate.get(0).updateProperty(property, value);
       updatedEvents = createRecurringEvents(firstEvent.getName(), firstEvent.getStartTime(),
           firstEvent.getEndTime(), firstEvent.getDescription(), firstEvent.getLocation(),
           firstEvent.getVisibility().getValue(), firstEvent.getRecurringDays(),
@@ -79,13 +80,13 @@ public class EventRepository implements IEventRepository {
   }
 
   @Override
-  public IEventRepository get(String eventName, Temporal startTime, Temporal endTime) {
-    return new EventRepository(searchMatchingEvents(eventName, startTime, endTime, false));
+  public List<IEvent> get(String eventName, Temporal startTime, Temporal endTime) {
+    return new EventRepository(searchMatchingEvents(eventName, startTime, endTime, false)).events;
   }
 
   @Override
   public List<String> getFormattedEvents(Temporal startTime, Temporal endTime) {
-    List<Event> requiredEvents = findOverlappingEvents(startTime, endTime);
+    List<IEvent> requiredEvents = findOverlappingEvents(startTime, endTime);
     return requiredEvents.stream()
         .map(this::formatEventForDisplay)
         .collect(Collectors.toList());
@@ -109,7 +110,7 @@ public class EventRepository implements IEventRepository {
    * @param recurrenceEndDate The end date of the recurrence (for recurring events).
    * @return A newly created event.
    */
-  private Event createSingleEvent(String eventName, Temporal startTime, Temporal endTime,
+  private IEvent createSingleEvent(String eventName, Temporal startTime, Temporal endTime,
                                   String description, String location, String visibility,
                                   String recurringDays, Integer occurrenceCount,
                                   Temporal recurrenceEndDate) {
@@ -141,7 +142,7 @@ public class EventRepository implements IEventRepository {
    * @param recurrenceEndDate The end date of the recurrence (for recurring events).
    * @return A list of recurring events.
    */
-  private List<Event> createRecurringEvents(String eventName, Temporal startTime, Temporal endTime,
+  private List<IEvent> createRecurringEvents(String eventName, Temporal startTime, Temporal endTime,
                                             String description, String location, String visibility,
                                             String recurringDays, Integer occurrenceCount,
                                             Temporal recurrenceEndDate) {
@@ -150,7 +151,7 @@ public class EventRepository implements IEventRepository {
     Duration eventDuration = Duration.between(startTime, endTime == null
         ? startTime.plus(1, ChronoUnit.DAYS) : endTime);
 
-    List<Event> recurringEvents = new ArrayList<>();
+    List<IEvent> recurringEvents = new ArrayList<>();
     Temporal currentStartTime = startTime;
     int occurrencesCreated = 0;
 
@@ -177,14 +178,14 @@ public class EventRepository implements IEventRepository {
    * @param oldEvents contains list of old events that are to be updated if present
    * @throws EventConflictException if there is conflict while adding a new event
    */
-  private void validateEvents(List<Event> newEvents, List<Event> oldEvents)
+  private void validateEvents(List<IEvent> newEvents, List<IEvent> oldEvents)
       throws EventConflictException {
     if (oldEvents != null) {
       events.removeAll(oldEvents);
     }
 
-    for (Event newEvent : newEvents) {
-      for (Event existingEvent : events) {
+    for (IEvent newEvent : newEvents) {
+      for (IEvent existingEvent : events) {
         if (!Objects.equals(newEvent.getName(), existingEvent.getName()) &&
             TimeUtil.isConflicting(newEvent.getStartTime(), newEvent.getEndTime(),
                 existingEvent.getStartTime(), existingEvent.getEndTime())) {
@@ -206,7 +207,7 @@ public class EventRepository implements IEventRepository {
    * @param endTime   The end time for the search range.
    * @return A list of events matching the criteria.
    */
-  private List<Event> searchMatchingEvents(String eventName, Temporal startTime,
+  private List<IEvent> searchMatchingEvents(String eventName, Temporal startTime,
                                            Temporal endTime, boolean isRecurring) {
     return events.stream()
         .filter(event -> eventName == null || event.getName().equals(eventName))
@@ -218,7 +219,7 @@ public class EventRepository implements IEventRepository {
         .collect(Collectors.toList());
   }
 
-  private List<Event> findOverlappingEvents(Temporal startTime, Temporal endTime) {
+  private List<IEvent> findOverlappingEvents(Temporal startTime, Temporal endTime) {
     return events.stream()
         .filter(event -> TimeUtil.isConflicting(event.getStartTime(),
             event.getEndTime(), startTime, endTime))
@@ -227,7 +228,7 @@ public class EventRepository implements IEventRepository {
         .collect(Collectors.toList());
   }
 
-  private String formatEventForDisplay(Event event) {
+  private String formatEventForDisplay(IEvent event) {
     return String.format("• %s - %s to %s %s",
         event.getName(),
         event.getStartTime(),

@@ -12,7 +12,7 @@ public interface IEventRepository {
   void update(String eventName, Temporal startTime, Temporal endTime, String property,
               String value, boolean isRecurring);
 
-  IEventRepository get(String eventName, Temporal startTime, Temporal endTime);
+  List<IEvent> get(String eventName, Temporal startTime, Temporal endTime);
 
   List<String> getFormattedEvents(Temporal startTime, Temporal endTime);
 
