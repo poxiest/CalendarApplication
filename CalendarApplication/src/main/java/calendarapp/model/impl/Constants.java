@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * Contains constant values used throughout the calendar application.
  */
-public class EventConstants {
+public class Constants {
 
   /**
    * Constants representing CSV header field names for calendar export.
@@ -84,4 +84,6 @@ public class EventConstants {
       return days;
     }
   }
+
+  public static final String DEFAULT_TIME_ZONE = "America/New_York";
 }

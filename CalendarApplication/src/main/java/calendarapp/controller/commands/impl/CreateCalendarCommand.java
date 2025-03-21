@@ -30,7 +30,7 @@ public class CreateCalendarCommand extends AbstractCommand {
   public void execute(String command) throws InvalidCommandException, EventConflictException {
     parseCommand(command);
     try {
-      // TODO: make the create calendar call
+      model.createCalendar(calendarName, timeZone);
     } catch (IllegalArgumentException e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     } catch (EventConflictException e) {

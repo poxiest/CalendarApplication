@@ -345,7 +345,7 @@ public class Event {
 
   /**
    * Creates a new event with the specified property updated to the given value.
-   * Supported properties are defined in {@link EventConstants.PropertyKeys}.
+   * Supported properties are defined in {@link Constants.PropertyKeys}.
    *
    * @param property the property to update.
    * @param value    the new value for the property.

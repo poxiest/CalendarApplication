@@ -19,6 +19,16 @@ public class CalendarRepository implements ICalendarRepository {
   }
 
   @Override
+  public void addCalendar(String name, IEventRepository eventRepository) {
+    if (getCalendar(name) != null) {
+      throw new InvalidCommandException("Calendar already exists.\n");
+    }
+    calendars.add(Calendar.builder()
+        .name(name)
+        .eventRepository(eventRepository).build());
+  }
+
+  @Override
   public void addCalendar(String name, String zoneId, IEventRepository eventRepository) {
     if (getCalendar(name) != null) {
       throw new InvalidCommandException("Calendar already exists.\n");
@@ -31,12 +41,16 @@ public class CalendarRepository implements ICalendarRepository {
 
   @Override
   public void editCalendar(String name, String propertyName, String propertyValue) {
-    BiConsumer<Calendar.Builder, String> updater = CalendarPropertyUpdater.getUpdater(propertyName);
-    if (propertyValue == null) {
-      throw new IllegalArgumentException("Invalid property value.\n");
+    ICalendar calendar = getCalendar(name);
+    if (calendar == null) {
+      throw new InvalidCommandException("Calendar does not exist.\n");
     }
 
-    ICalendar calendar = getCalendar(name);
+    BiConsumer<Calendar.Builder, String> updater = CalendarPropertyUpdater.getUpdater(propertyName);
+    if (updater == null) {
+      throw new InvalidCommandException("Invalid property name.\n");
+    }
+
     Calendar.Builder calendarBuilder = Calendar.builder()
         .name(calendar.getName())
         .zoneId(calendar.getZoneId())

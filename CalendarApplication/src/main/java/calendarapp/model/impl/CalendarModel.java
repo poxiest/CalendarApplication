@@ -1,12 +1,13 @@
 package calendarapp.model.impl;
 
 import java.time.temporal.Temporal;
-import java.util.ArrayList;
 import java.util.List;
 
+import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendar;
 import calendarapp.model.ICalendarModel;
+import calendarapp.model.ICalendarRepository;
 import calendarapp.utils.TimeUtil;
 
 /**
@@ -15,15 +16,17 @@ import calendarapp.utils.TimeUtil;
  * and displaying events, handling conflicts, and exporting events in a specific format.
  */
 public class CalendarModel implements ICalendarModel {
-  private final ICalendar activeCalendar;
+
+  private final ICalendarRepository calendarRepository;
+  private ICalendar activeCalendar;
 
   /**
    * Constructs a CalendarModel object, initializing the event list and day mapping.
    */
   public CalendarModel() {
-    this.activeCalendar = Calendar.builder()
-        .name("Default")
-        .eventRepository(new EventRepository(new ArrayList<>())).build();
+    calendarRepository = new CalendarRepository();
+    calendarRepository.addCalendar("default", new EventRepository());
+    activeCalendar = calendarRepository.getCalendar("default");
   }
 
   /**
@@ -107,6 +110,35 @@ public class CalendarModel implements ICalendarModel {
   @Override
   public String showStatus(Temporal dateTime) {
     boolean isBusy = activeCalendar.getEventRepository().isActiveAt(dateTime);
-    return isBusy ? EventConstants.Status.BUSY : EventConstants.Status.AVAILABLE;
+    return isBusy ? Constants.Status.BUSY : Constants.Status.AVAILABLE;
+  }
+
+  @Override
+  public void createCalendar(String calendarName, String timezone) {
+    calendarRepository.addCalendar(calendarName, timezone, new EventRepository());
+  }
+
+  @Override
+  public void editCalendar(String calendarName, String propertyName, String propertyValue) {
+    calendarRepository.editCalendar(calendarName, propertyName, propertyValue);
+  }
+
+  @Override
+  public void setCalendar(String calendarName) {
+    ICalendar temp = calendarRepository.getCalendar(calendarName);
+    if (temp == null) {
+      throw new InvalidCommandException("Calendar does not exist.\n");
+    }
+    activeCalendar = temp;
+  }
+
+  @Override
+  public void copyEvent(String eventName, Temporal startTime, String copyCalendarName, Temporal toDate) {
+
+  }
+
+  @Override
+  public void copyEvents(Temporal startTime, Temporal endTime, String copyCalendarName, Temporal toDate) {
+
   }
 }

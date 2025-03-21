@@ -51,12 +51,10 @@ public class TimeUtilsTest {
   public void testGetEndOfDayFromString() {
     // Date only (should return end of day)
     Temporal result = TimeUtil.getEndOfDayFromString("2025-03-13");
-    assertTrue(result instanceof LocalDateTime);
     assertEquals(sampleDate.atStartOfDay().plusDays(1), result);
 
     // Date and time
     result = TimeUtil.getEndOfDayFromString("2025-03-13T14:30");
-    assertTrue(result instanceof LocalDateTime);
     assertEquals(sampleDateTime, result);
   }
 

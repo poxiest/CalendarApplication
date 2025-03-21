@@ -151,5 +151,30 @@ public class CalendarControllerFactoryTest {
     public String showStatus(Temporal dateTime) {
       return "";
     }
+
+    @Override
+    public void createCalendar(String calendarName, String timezone) {
+
+    }
+
+    @Override
+    public void editCalendar(String calendarName, String propertyName, String propertyValue) {
+
+    }
+
+    @Override
+    public void setCalendar(String calendarName) {
+
+    }
+
+    @Override
+    public void copyEvent(String eventName, Temporal startTime, String copyCalendarName, Temporal toDate) {
+
+    }
+
+    @Override
+    public void copyEvents(Temporal startTime, Temporal endTime, String copyCalendarName, Temporal toDate) {
+
+    }
   }
 }

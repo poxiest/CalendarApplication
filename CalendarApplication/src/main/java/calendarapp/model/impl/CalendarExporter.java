@@ -38,21 +38,21 @@ public class CalendarExporter {
     }
 
     try (FileWriter writer = new FileWriter(filePath)) {
-      writer.write(String.join(EventConstants.CsvFormat.DELIMITER,
-          EventConstants.CsvHeaders.SUBJECT,
-          EventConstants.CsvHeaders.START_DATE,
-          EventConstants.CsvHeaders.START_TIME,
-          EventConstants.CsvHeaders.END_DATE,
-          EventConstants.CsvHeaders.END_TIME,
-          EventConstants.CsvHeaders.ALL_DAY_EVENT,
-          EventConstants.CsvHeaders.DESCRIPTION,
-          EventConstants.CsvHeaders.LOCATION,
-          EventConstants.CsvHeaders.PRIVATE));
-      writer.write(EventConstants.CsvFormat.LINE_END);
+      writer.write(String.join(Constants.CsvFormat.DELIMITER,
+          Constants.CsvHeaders.SUBJECT,
+          Constants.CsvHeaders.START_DATE,
+          Constants.CsvHeaders.START_TIME,
+          Constants.CsvHeaders.END_DATE,
+          Constants.CsvHeaders.END_TIME,
+          Constants.CsvHeaders.ALL_DAY_EVENT,
+          Constants.CsvHeaders.DESCRIPTION,
+          Constants.CsvHeaders.LOCATION,
+          Constants.CsvHeaders.PRIVATE));
+      writer.write(Constants.CsvFormat.LINE_END);
 
       for (IEvent event : events) {
         writer.write(formatEventForExport(event));
-        writer.write(EventConstants.CsvFormat.LINE_END);
+        writer.write(Constants.CsvFormat.LINE_END);
       }
     } catch (IOException e) {
       throw new RuntimeException("Error while exporting :" + e.getMessage());
@@ -84,12 +84,12 @@ public class CalendarExporter {
    *
    * @param visibility The visibility setting of the event.
    * @return A string representation of the privacy flag ("TRUE" for private events,
-   * "FALSE" otherwise).
+   *     "FALSE" otherwise).
    */
   private static String determinePrivacyFlag(EventVisibility visibility) {
     return EventVisibility.PRIVATE.equals(visibility)
-        ? EventConstants.CsvFormat.TRUE_VALUE :
-        EventConstants.CsvFormat.FALSE_VALUE;
+        ? Constants.CsvFormat.TRUE_VALUE :
+        Constants.CsvFormat.FALSE_VALUE;
   }
 
   /**
@@ -124,15 +124,15 @@ public class CalendarExporter {
 
     boolean isAllDay = isAllDayEvent(startTime, endTime);
 
-    row.append(escapeField(name)).append(EventConstants.CsvFormat.DELIMITER);
-    row.append(formatDate(startTime)).append(EventConstants.CsvFormat.DELIMITER);
-    row.append(isAllDay ? "" : formatTime(startTime)).append(EventConstants.CsvFormat.DELIMITER);
-    row.append(formatDate(endTime)).append(EventConstants.CsvFormat.DELIMITER);
-    row.append(isAllDay ? "" : formatTime(endTime)).append(EventConstants.CsvFormat.DELIMITER);
-    row.append(isAllDay ? EventConstants.CsvFormat.TRUE_VALUE :
-        EventConstants.CsvFormat.FALSE_VALUE).append(EventConstants.CsvFormat.DELIMITER);
-    row.append(escapeField(description)).append(EventConstants.CsvFormat.DELIMITER);
-    row.append(escapeField(location)).append(EventConstants.CsvFormat.DELIMITER);
+    row.append(escapeField(name)).append(Constants.CsvFormat.DELIMITER);
+    row.append(formatDate(startTime)).append(Constants.CsvFormat.DELIMITER);
+    row.append(isAllDay ? "" : formatTime(startTime)).append(Constants.CsvFormat.DELIMITER);
+    row.append(formatDate(endTime)).append(Constants.CsvFormat.DELIMITER);
+    row.append(isAllDay ? "" : formatTime(endTime)).append(Constants.CsvFormat.DELIMITER);
+    row.append(isAllDay ? Constants.CsvFormat.TRUE_VALUE :
+        Constants.CsvFormat.FALSE_VALUE).append(Constants.CsvFormat.DELIMITER);
+    row.append(escapeField(description)).append(Constants.CsvFormat.DELIMITER);
+    row.append(escapeField(location)).append(Constants.CsvFormat.DELIMITER);
     row.append(determinePrivacyFlag(visibility));
 
     return row.toString();

@@ -71,4 +71,14 @@ public interface ICalendarModel {
    * @return a status string ("Busy" or "Available").
    */
   String showStatus(Temporal dateTime);
+
+  void createCalendar(String calendarName, String timezone);
+
+  void editCalendar(String calendarName, String propertyName, String propertyValue);
+
+  void setCalendar(String calendarName);
+
+  void copyEvent(String eventName, Temporal startTime, String copyCalendarName, Temporal toDate);
+
+  void copyEvents(Temporal startTime, Temporal endTime, String copyCalendarName, Temporal toDate);
 }

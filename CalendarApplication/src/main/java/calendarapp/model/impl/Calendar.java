@@ -9,9 +9,9 @@ import calendarapp.model.ICalendar;
 import calendarapp.model.IEventRepository;
 
 public class Calendar implements ICalendar {
-  private String name;
-  private ZoneId zoneId;
-  private IEventRepository eventRepository;
+  private final String name;
+  private final ZoneId zoneId;
+  private final IEventRepository eventRepository;
 
   Calendar(String name, ZoneId zoneId, IEventRepository eventRepository) {
     this.name = name;
@@ -40,7 +40,7 @@ public class Calendar implements ICalendar {
 
   public static class Builder {
     private String name;
-    private ZoneId zoneId = ZoneId.of("America/New_York");
+    private ZoneId zoneId = ZoneId.of(Constants.DEFAULT_TIME_ZONE);
     private IEventRepository eventRepository;
 
     public Builder name(String name) {
@@ -70,6 +70,12 @@ public class Calendar implements ICalendar {
     }
 
     public Calendar build() {
+      if (name == null) {
+        throw new InvalidCommandException("Calendar name cannot be null or empty.\n");
+      }
+      if (eventRepository == null) {
+        throw new InvalidCommandException("Event repository cannot be null.\n");
+      }
       return new Calendar(name, zoneId, eventRepository);
     }
   }

@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
+import calendarapp.utils.TimeUtil;
 import calendarapp.view.ICalendarView;
 
 import static calendarapp.controller.commands.impl.RegexPatternConstants.COPY_EVENTS_BETWEEN_COMMAND;
@@ -52,11 +53,13 @@ public class CopyCommand extends AbstractCommand {
     copyCalendarName = matcher.group(5) != null ? matcher.group(5) : matcher.group(6);
     copyStartDate = matcher.group(7) != null ? matcher.group(7) : matcher.group(8);
 
-    if (eventName != null || eventStartDate != null || copyCalendarName != null || copyStartDate != null) {
+    if (eventName != null || eventStartDate != null || copyCalendarName != null
+        || copyStartDate != null) {
       throw new InvalidCommandException("Required fields are missing.\n");
     }
 
-    // TODO: make copy call
+    model.copyEvent(eventName, TimeUtil.getTemporalFromString(eventStartDate),
+        copyCalendarName, TimeUtil.getTemporalFromString(copyStartDate));
   }
 
   private void copyEventsOn(Matcher matcher) {
@@ -72,7 +75,9 @@ public class CopyCommand extends AbstractCommand {
       throw new InvalidCommandException("Required fields are missing.\n");
     }
 
-    // TODO: make copy call
+    model.copyEvents(TimeUtil.getTemporalFromString(fromStartDate),
+        TimeUtil.getEndOfDayFromString(fromStartDate), copyCalendarName,
+        TimeUtil.getTemporalFromString(copyStartDate));
   }
 
   private void copyEventsBetween(Matcher matcher) {
@@ -86,10 +91,13 @@ public class CopyCommand extends AbstractCommand {
     copyCalendarName = matcher.group(4) != null ? matcher.group(5) : matcher.group(6);
     copyStartDate = matcher.group(7) != null ? matcher.group(7) : matcher.group(8);
 
-    if (fromStartDate != null || copyCalendarName != null || copyStartDate != null || toEndDate != null) {
+    if (fromStartDate != null || copyCalendarName != null || copyStartDate != null
+        || toEndDate != null) {
       throw new InvalidCommandException("Required fields are missing.\n");
     }
 
-    // TODO: make copy call
+    model.copyEvents(TimeUtil.getTemporalFromString(fromStartDate),
+        TimeUtil.getEndOfDayFromString(toEndDate), copyCalendarName,
+        TimeUtil.getTemporalFromString(copyStartDate));
   }
 }

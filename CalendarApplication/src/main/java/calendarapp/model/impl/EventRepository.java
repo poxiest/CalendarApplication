@@ -15,12 +15,16 @@ import calendarapp.model.EventConflictException;
 import calendarapp.model.IEventRepository;
 import calendarapp.utils.TimeUtil;
 
-import static calendarapp.model.impl.EventConstants.DaysOfWeek.parseDaysOfWeek;
+import static calendarapp.model.impl.Constants.DaysOfWeek.parseDaysOfWeek;
 
 public class EventRepository implements IEventRepository {
   private final List<Event> events;
 
-  public EventRepository(List<Event> events) {
+  public EventRepository() {
+    this.events = new ArrayList<>();
+  }
+
+  private EventRepository(List<Event> events) {
     this.events = new ArrayList<>(events);
   }
 
@@ -34,12 +38,14 @@ public class EventRepository implements IEventRepository {
     Integer occurrence = occurrenceCount != null ? Integer.parseInt(occurrenceCount) : null;
 
     if (!isRecurring) {
-      Event event = createSingleEvent(eventName, startTime, endTime, description, location, visibility,
+      Event event = createSingleEvent(eventName, startTime, endTime, description, location,
+          visibility,
           recurringDays, occurrence, recurrenceEndDate);
       validateEvents(List.of(event), null);
       events.add(event);
     } else {
-      List<Event> recurringEvents = createRecurringEvents(eventName, startTime, endTime, description,
+      List<Event> recurringEvents = createRecurringEvents(eventName, startTime, endTime,
+          description,
           location, visibility, recurringDays, occurrence, recurrenceEndDate);
       validateEvents(recurringEvents, null);
       events.addAll(recurringEvents);
@@ -50,7 +56,8 @@ public class EventRepository implements IEventRepository {
   @Override
   public void update(String eventName, Temporal startTime, Temporal endTime, String property,
                      String value, boolean isRecurringEvents) {
-    List<Event> eventsToUpdate = searchMatchingEvents(eventName, startTime, endTime, isRecurringEvents);
+    List<Event> eventsToUpdate = searchMatchingEvents(eventName, startTime, endTime,
+        isRecurringEvents);
     List<Event> updatedEvents = new ArrayList<>();
 
     if (!isRecurringEvents) {
@@ -62,7 +69,8 @@ public class EventRepository implements IEventRepository {
       Event firstEvent = eventsToUpdate.get(0).updateProperty(property, value);
       updatedEvents = createRecurringEvents(firstEvent.getName(), firstEvent.getStartTime(),
           firstEvent.getEndTime(), firstEvent.getDescription(), firstEvent.getLocation(),
-          firstEvent.getVisibility().getValue(), firstEvent.getRecurringDays(), firstEvent.getOccurrenceCount(),
+          firstEvent.getVisibility().getValue(), firstEvent.getRecurringDays(),
+          firstEvent.getOccurrenceCount(),
           firstEvent.getRecurrenceEndDate());
     }
     validateEvents(updatedEvents, eventsToUpdate);

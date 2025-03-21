@@ -4,6 +4,8 @@ import java.time.temporal.Temporal;
 
 public interface ICalendarRepository {
 
+  void addCalendar(String name, IEventRepository eventRepository);
+
   void addCalendar(String name, String zoneId, IEventRepository eventRepository);
 
   void editCalendar(String name, String propertyName, String propertyValue);

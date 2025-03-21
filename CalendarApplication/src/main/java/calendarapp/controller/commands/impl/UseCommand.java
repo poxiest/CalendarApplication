@@ -34,7 +34,7 @@ public class UseCommand extends AbstractCommand {
     }
 
     try {
-      // TODO: Make use calendar call to model.
+      model.setCalendar(calendarName);
     } catch (Exception e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     }

@@ -31,7 +31,7 @@ public class EditCalendarCommand extends AbstractCommand {
   public void execute(String command) throws InvalidCommandException, EventConflictException {
     parseCommand(command);
     try {
-      // TODO: make the edit calendar call
+      model.editCalendar(calendarName, propertyName, propertyValue);
     } catch (IllegalArgumentException e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     }

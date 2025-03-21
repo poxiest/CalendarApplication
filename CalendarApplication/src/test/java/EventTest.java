@@ -3,9 +3,8 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 
-import calendarapp.model.IEvent;
 import calendarapp.model.impl.Event;
-import calendarapp.model.impl.EventConstants;
+import calendarapp.model.impl.Constants;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -261,7 +260,7 @@ public class EventTest {
         .endTime(LocalDateTime.of(2025, 3, 15, 11, 0))
         .build();
 
-    Event updatedEvent = event.updateProperty(EventConstants.PropertyKeys.NAME, "Updated Event");
+    Event updatedEvent = event.updateProperty(Constants.PropertyKeys.NAME, "Updated Event");
 
     assertTrue(updatedEvent.toString().contains("Updated Event"));
   }
@@ -276,7 +275,7 @@ public class EventTest {
 
     LocalDateTime newStartTime = LocalDateTime.of(2025, 3, 15, 9, 0);
     Event updatedEvent = event.updateProperty(
-        EventConstants.PropertyKeys.START_TIME,
+        Constants.PropertyKeys.START_TIME,
         newStartTime.toString()
     );
 
@@ -293,7 +292,7 @@ public class EventTest {
 
     LocalDateTime newEndTime = LocalDateTime.of(2025, 3, 15, 12, 0);
     Event updatedEvent = event.updateProperty(
-        EventConstants.PropertyKeys.END_TIME,
+        Constants.PropertyKeys.END_TIME,
         newEndTime.toString()
     );
 
@@ -310,7 +309,7 @@ public class EventTest {
         .build();
 
     Event updatedEvent = event.updateProperty(
-        EventConstants.PropertyKeys.DESCRIPTION,
+        Constants.PropertyKeys.DESCRIPTION,
         "Updated description"
     );
 
@@ -327,7 +326,7 @@ public class EventTest {
         .build();
 
     Event updatedEvent = event.updateProperty(
-        EventConstants.PropertyKeys.LOCATION,
+        Constants.PropertyKeys.LOCATION,
         "Updated location"
     );
 
@@ -343,7 +342,7 @@ public class EventTest {
         .build();
 
     Event updatedEvent = event.updateProperty(
-        EventConstants.PropertyKeys.VISIBILITY,
+        Constants.PropertyKeys.VISIBILITY,
         "PRIVATE"
     );
 

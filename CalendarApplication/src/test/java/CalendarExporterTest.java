@@ -19,7 +19,7 @@
 //
 //import static org.junit.Assert.assertEquals;
 //
-///**
+/// **
 // * Test class for {@link CalendarExporter}.
 // */
 //public class CalendarExporterTest {
