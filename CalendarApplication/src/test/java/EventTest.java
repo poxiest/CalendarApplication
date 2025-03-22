@@ -3,8 +3,8 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 
-import calendarapp.model.impl.Event;
 import calendarapp.model.impl.Constants;
+import calendarapp.model.impl.Event;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

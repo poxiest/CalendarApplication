@@ -1,8 +1,10 @@
 package calendarapp.utils;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
@@ -25,6 +27,8 @@ public class TimeUtil {
    * @throws IllegalArgumentException if the date/time string cannot be parsed.
    */
   public static Temporal getTemporalFromString(String dateTime) {
+    DateTimeFormatter zonedDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmXXX"
+        + "['['VV']']");
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -33,12 +37,16 @@ public class TimeUtil {
     }
 
     try {
-      return LocalDateTime.parse(dateTime, dateTimeFormatter);
+      return ZonedDateTime.parse(dateTime, zonedDateTimeFormatter).toLocalDateTime();
     } catch (DateTimeParseException e1) {
       try {
-        return LocalDate.parse(dateTime, dateFormatter).atStartOfDay();
+        return LocalDateTime.parse(dateTime, dateTimeFormatter);
       } catch (DateTimeParseException e2) {
-        throw new IllegalArgumentException("Invalid date format: " + dateTime);
+        try {
+          return LocalDate.parse(dateTime, dateFormatter).atStartOfDay();
+        } catch (DateTimeParseException e3) {
+          throw new IllegalArgumentException("Invalid date format: " + dateTime);
+        }
       }
     }
   }
@@ -112,11 +120,19 @@ public class TimeUtil {
    */
   public static LocalDateTime getLocalDateTimeFromTemporal(Temporal temporal) {
     if (temporal instanceof LocalDateTime) {
-      return ((LocalDateTime) temporal).atZone(ZoneId.systemDefault()).toLocalDateTime();
+      return ((LocalDateTime) temporal);
     } else {
       throw new UnsupportedOperationException("Cannot convert to LocalDateTime: "
           + temporal.getClass());
     }
+  }
+
+  public static Temporal GetStartOfNextDay(Temporal temporal) {
+    return getLocalDateTimeFromTemporal(temporal).toLocalDate().plusDays(1).atStartOfDay();
+  }
+
+  public static Temporal GetStartOfDay(Temporal temporal) {
+    return getLocalDateTimeFromTemporal(temporal).toLocalDate().atStartOfDay();
   }
 
   /**
@@ -215,5 +231,29 @@ public class TimeUtil {
         || isEqual(dateTime, eventEndTime)
         || (isFirstAfterSecond(dateTime, eventStartTime)
         && isFirstBeforeSecond(dateTime, eventEndTime));
+  }
+
+  public static Temporal ChangeZone(Temporal temporal, ZoneId fromZoneId, ZoneId toZoneId) {
+    return getLocalDateTimeFromTemporal(temporal).atZone(fromZoneId)
+        .withZoneSameInstant(toZoneId).toLocalDateTime();
+  }
+
+  public static Temporal AddDuration(Temporal temporal, Duration duration) {
+    return temporal.plus(duration);
+  }
+
+  public static Duration getDurationDifference(Temporal start, Temporal end) {
+    if (start instanceof LocalDateTime && end instanceof LocalDateTime) {
+      return Duration.between(start, end);
+
+    } else if (start instanceof LocalDateTime && end instanceof LocalDate) {
+      LocalDateTime endDateTime = ((LocalDate) end).atTime(((LocalDateTime) start).getHour(),
+          ((LocalDateTime) start).getMinute());
+      return Duration.between(start, endDateTime);
+
+    } else {
+      throw new UnsupportedOperationException("Unsupported Temporal types: "
+          + start.getClass() + " and " + end.getClass());
+    }
   }
 }

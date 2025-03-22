@@ -1,6 +1,5 @@
 package calendarapp.model.impl;
 
-import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -12,7 +11,6 @@ import calendarapp.model.IEventRepository;
 import calendarapp.model.dto.CopyEventDTO;
 
 public class CalendarRepository implements ICalendarRepository {
-
   private List<ICalendar> calendars;
 
   CalendarRepository() {
@@ -33,8 +31,8 @@ public class CalendarRepository implements ICalendarRepository {
 
   @Override
   public void editCalendar(String name, String propertyName, String propertyValue) {
-    ICalendar calendar = getCalendar(name);
-    if (calendar == null) {
+    ICalendar calendarToEdit = getCalendar(name);
+    if (calendarToEdit == null) {
       throw new InvalidCommandException("Calendar does not exist.\n");
     }
 
@@ -44,16 +42,22 @@ public class CalendarRepository implements ICalendarRepository {
     }
 
     Calendar.Builder calendarBuilder = Calendar.builder()
-        .name(calendar.getName())
-        .zoneId(calendar.getZoneId())
-        .eventRepository(calendar.getEventRepository());
+        .name(calendarToEdit.getName())
+        .zoneId(calendarToEdit.getZoneId())
+        .eventRepository(calendarToEdit.getEventRepository());
     updater.accept(calendarBuilder, propertyValue);
-    calendars.remove(calendar);
-    calendars.add(calendarBuilder.build());
+
+    ICalendar newCalendar = calendarBuilder.build();
+    if (propertyName.equals(Constants.Calendar.CALENDAR_TIME_ZONE)) {
+      newCalendar.getEventRepository().changeTimeZone(calendarToEdit.getZoneId(),
+          newCalendar.getZoneId());
+    }
+    calendars.add(newCalendar);
+    calendars.remove(calendarToEdit);
   }
 
   @Override
-  public void copyEvents(String currentCalendarName, CopyEventDTO copyEventDTO) {
+  public void copyCalendarEvents(String currentCalendarName, CopyEventDTO copyEventDTO) {
     ICalendar currentCalendar = getCalendar(currentCalendarName);
     ICalendar toCalendar = getCalendar(copyEventDTO.getCopyCalendarName());
 
@@ -61,10 +65,10 @@ public class CalendarRepository implements ICalendarRepository {
       throw new InvalidCommandException("Calendar does not exist.\n");
     }
 
-    IEventRepository currentEventRepository = currentCalendar.getEventRepository();
-    IEventRepository toEventRepository = toCalendar.getEventRepository();
-
-
+    toCalendar.getEventRepository().copyEvents(currentCalendar.getEventRepository()
+            .get(copyEventDTO.getEventName(), copyEventDTO.getStartTime(),
+                copyEventDTO.getEndTime()),
+        copyEventDTO, currentCalendar.getZoneId(), toCalendar.getZoneId());
   }
 
   @Override

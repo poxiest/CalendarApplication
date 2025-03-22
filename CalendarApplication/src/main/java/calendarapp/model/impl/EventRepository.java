@@ -2,6 +2,8 @@ package calendarapp.model.impl;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.IEvent;
 import calendarapp.model.IEventRepository;
+import calendarapp.model.dto.CopyEventDTO;
 import calendarapp.utils.TimeUtil;
 
 import static calendarapp.model.impl.Constants.DaysOfWeek.parseDaysOfWeek;
@@ -81,7 +84,51 @@ public class EventRepository implements IEventRepository {
 
   @Override
   public List<IEvent> get(String eventName, Temporal startTime, Temporal endTime) {
-    return new EventRepository(searchMatchingEvents(eventName, startTime, endTime, false)).events;
+    // TODO: return deepcopy of Ievent
+    return searchMatchingEvents(eventName, startTime, endTime, false);
+  }
+
+  @Override
+  public void copyEvents(List<IEvent> eventsToCopy, CopyEventDTO copyEventDTO, ZoneId fromZoneId,
+                         ZoneId toZoneId) {
+    if (eventsToCopy.size() == 0) {
+      return;
+    }
+
+    Duration differenceBetween = TimeUtil.getDurationDifference(
+        TimeUtil.ChangeZone(eventsToCopy.get(0).getStartTime(), fromZoneId, toZoneId),
+        copyEventDTO.getCopyToDate());
+
+    List<IEvent> updatedEvents = new ArrayList<>();
+    for (IEvent event : eventsToCopy) {
+      Temporal startTime = TimeUtil.AddDuration(TimeUtil.ChangeZone(event.getStartTime(),
+          fromZoneId, toZoneId), differenceBetween);
+      Temporal endTime = TimeUtil.AddDuration(TimeUtil.ChangeZone(event.getEndTime(), fromZoneId,
+          toZoneId), differenceBetween);
+      create(event.getName(), startTime, endTime, event.getDescription(), event.getLocation(),
+          event.getVisibility().getValue(), null, null, null, true);
+    }
+  }
+
+  @Override
+  public void changeTimeZone(ZoneId fromZoneId, ZoneId toZoneId) {
+    List<IEvent> updatedEvents = new ArrayList<>();
+    for (IEvent event : events) {
+      Temporal startTime = TimeUtil.ChangeZone(event.getStartTime(),
+          fromZoneId, toZoneId);
+      Temporal endTime = TimeUtil.ChangeZone(event.getEndTime(), fromZoneId,
+          toZoneId);
+      Temporal recurrenceEndDate = null;
+      if (event.getRecurrenceEndDate() != null) {
+        recurrenceEndDate = TimeUtil.ChangeZone(event.getRecurrenceEndDate(), fromZoneId,
+            toZoneId);
+      }
+      updatedEvents.add(createSingleEvent(event.getName(), startTime, endTime, event.getDescription(),
+          event.getLocation(), event.getVisibility().getValue(), event.getRecurringDays(),
+          event.getOccurrenceCount(), recurrenceEndDate));
+    }
+    events.clear();
+    events.addAll(updatedEvents);
   }
 
   @Override
@@ -111,9 +158,9 @@ public class EventRepository implements IEventRepository {
    * @return A newly created event.
    */
   private IEvent createSingleEvent(String eventName, Temporal startTime, Temporal endTime,
-                                  String description, String location, String visibility,
-                                  String recurringDays, Integer occurrenceCount,
-                                  Temporal recurrenceEndDate) {
+                                   String description, String location, String visibility,
+                                   String recurringDays, Integer occurrenceCount,
+                                   Temporal recurrenceEndDate) {
     return Event.builder()
         .name(eventName)
         .startTime(startTime)
@@ -143,9 +190,9 @@ public class EventRepository implements IEventRepository {
    * @return A list of recurring events.
    */
   private List<IEvent> createRecurringEvents(String eventName, Temporal startTime, Temporal endTime,
-                                            String description, String location, String visibility,
-                                            String recurringDays, Integer occurrenceCount,
-                                            Temporal recurrenceEndDate) {
+                                             String description, String location, String visibility,
+                                             String recurringDays, Integer occurrenceCount,
+                                             Temporal recurrenceEndDate) {
 
     Set<DayOfWeek> daysOfWeek = parseDaysOfWeek(recurringDays);
     Duration eventDuration = Duration.between(startTime, endTime == null
@@ -172,7 +219,7 @@ public class EventRepository implements IEventRepository {
   }
 
   /**
-   * validateEvents checks for conflicts before adding a new event
+   * validateEvents checks for conflicts before adding a new event.
    *
    * @param newEvents contains list of new events that needs to be added
    * @param oldEvents contains list of old events that are to be updated if present
@@ -208,7 +255,7 @@ public class EventRepository implements IEventRepository {
    * @return A list of events matching the criteria.
    */
   private List<IEvent> searchMatchingEvents(String eventName, Temporal startTime,
-                                           Temporal endTime, boolean isRecurring) {
+                                            Temporal endTime, boolean isRecurring) {
     return events.stream()
         .filter(event -> eventName == null || event.getName().equals(eventName))
         .filter(event -> TimeUtil.isWithinTimeRange(startTime, endTime,

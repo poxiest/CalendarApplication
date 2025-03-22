@@ -8,7 +8,7 @@ public interface ICalendarRepository {
 
   void editCalendar(String name, String propertyName, String propertyValue);
 
-  void copyEvents(String currentCalendarName, CopyEventDTO copyEventDTO);
+  void copyCalendarEvents(String currentCalendarName, CopyEventDTO copyEventDTO);
 
   ICalendar getCalendar(String name);
 }

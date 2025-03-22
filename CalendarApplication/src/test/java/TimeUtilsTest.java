@@ -89,7 +89,7 @@ public class TimeUtilsTest {
   }
 
   @Test
-  public void testGetLocalDateTimeFromTemporal() {
+  public void testGetZonedDateTime() {
     assertEquals(sampleDateTime, TimeUtil.getLocalDateTimeFromTemporal(sampleDateTime));
     try {
       TimeUtil.getLocalDateTimeFromTemporal(sampleDate);
