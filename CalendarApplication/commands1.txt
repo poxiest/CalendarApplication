@@ -1,0 +1,22 @@
+create event test on 2025-11-11T10:00
+create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00
+print events from 2025-11-10 to 2025-11-12
+create calendar --name workcal --timezone "America/New_York"
+use calendar --name workcal
+print events from 2025-11-10 to 2025-11-12
+create event inworkcal on 2025-11-12
+print events on 2025-11-12
+copy events on 2025-11-12 --target default to 2025-11-12
+copy events on 2025-11-12 --target default to 2025-11-13
+use calendar --name default
+print events from 2025-11-10 to 2025-11-20
+create calendar --name officecal --timezone "Asia/Calcutta"
+use calendar --name default
+copy events between 2025-11-10 and 2025-11-20 --target officecal to 2025-11-10
+copy event propertime on 2025-11-10T11:00 --target officecal to 2025-11-20T11:00
+use calendar --name officecal
+print events from 2025-11-10 to 2025-11-21
+edit calendar --name officecal --property timezone America/Los_Angeles
+print events from 2025-11-08 to 2025-11-21
+exit
+

@@ -32,7 +32,7 @@ public class EditCalendarCommand extends AbstractCommand {
     parseCommand(command);
     try {
       model.editCalendar(calendarName, propertyName, propertyValue);
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException | InvalidCommandException e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     }
   }

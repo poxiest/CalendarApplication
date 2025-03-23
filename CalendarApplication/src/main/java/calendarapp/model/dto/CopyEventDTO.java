@@ -10,14 +10,14 @@ public class CopyEventDTO {
   private final Temporal startTime;
   private final Temporal endTime;
   private final String copyCalendarName;
-  private final Temporal toDate;
+  private final Temporal copyToDate;
 
   private CopyEventDTO(Builder builder) {
     this.eventName = builder.eventName;
     this.startTime = builder.startTime;
     this.endTime = builder.endTime;
     this.copyCalendarName = builder.copyCalendarName;
-    this.toDate = builder.toDate;
+    this.copyToDate = builder.toDate;
   }
 
   public String getEventName() {
@@ -36,8 +36,8 @@ public class CopyEventDTO {
     return copyCalendarName;
   }
 
-  public Temporal getToDate() {
-    return toDate;
+  public Temporal getCopyToDate() {
+    return copyToDate;
   }
 
   public static Builder builder() {
@@ -91,7 +91,7 @@ public class CopyEventDTO {
         ", startTime=" + startTime +
         ", endTime=" + endTime +
         ", copyCalendarName='" + copyCalendarName + '\'' +
-        ", toDate=" + toDate +
+        ", toDate=" + copyToDate +
         '}';
   }
 }

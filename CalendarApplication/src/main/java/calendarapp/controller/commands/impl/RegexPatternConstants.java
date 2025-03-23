@@ -62,7 +62,7 @@ public class RegexPatternConstants {
   /*
   Use calendar command regex pattern constant.
    */
-  public static final String USE_COMMAND = "(?i)\\s+--name\\s+(?:\"([^\"]+)\"|(\\S+))$";
+  public static final String USE_COMMAND = "(?i)\\s+calendar\\s+--name\\s+(?:\"([^\"]+)\"|(\\S+))$";
 
   /*
   Copy command regex pattern constants.
@@ -72,7 +72,5 @@ public class RegexPatternConstants {
       + "([^\"]+)\"|(\\S+))$";
   public static final String COPY_EVENTS_ON_COMMAND = "(?i)\\s+events\\s+on\\s+(?:\"([^\"]+)\"|"
       + "(\\S+))\\s+--target\\s+(?:\"([^\"]+)\"|(\\S+))\\s+to\\s+(?:\"([^\"]+)\"|(\\S+))$";
-  public static final String COPY_EVENTS_BETWEEN_COMMAND = "(?i)\\s+events\\s+between\\s+(?:\""
-      + "([^\"]+)\"|(\\S+))\\s+and\\s+(?:\"([^\"]+)\"|(\\S+))\\s+to\\s+--target\\s+(?:\"([^\"]+)"
-      + "\"|(\\S+))\\s+(?:\"([^\"]+)\"|(\\S+))$";
+  public static final String COPY_EVENTS_BETWEEN_COMMAND = "(?i)\\s+events\\s+between\\s+(?:\"([^\"]+)\"|(\\S+))\\s+and\\s+(?:\"([^\"]+)\"|(\\S+))\\s+--target\\s+(?:\"([^\"]+)\"|(\\S+))\\s+to\\s+(?:\"([^\"]+)\"|(\\S+))$";
 }

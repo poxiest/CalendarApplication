@@ -1,6 +1,5 @@
 package calendarapp.model.impl;
 
-import java.time.LocalDateTime;
 import java.time.temporal.Temporal;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -9,6 +8,8 @@ import calendarapp.model.EventVisibility;
 import calendarapp.model.IEvent;
 import calendarapp.utils.TimeUtil;
 
+import static calendarapp.utils.TimeUtil.GetStartOfNextDay;
+import static calendarapp.utils.TimeUtil.isFirstAfterSecond;
 import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
 
 // TODO: Refactor event to have List<Events> - basically as a datastore and functions together
@@ -188,10 +189,8 @@ public class Event implements IEvent {
         throw new IllegalStateException("Set startTime before setting endTime.\n");
       }
       if (endTime == null) {
-        this.startTime = (TimeUtil.getLocalDateTimeFromTemporal(startTime)
-            .toLocalDate().atStartOfDay());
-        this.endTime = (TimeUtil.getLocalDateTimeFromTemporal(startTime)
-            .toLocalDate().plusDays(1).atStartOfDay());
+        this.startTime = TimeUtil.GetStartOfDay(startTime);
+        this.endTime = TimeUtil.GetStartOfNextDay(startTime);
       } else {
         this.endTime = endTime;
       }
@@ -327,12 +326,7 @@ public class Event implements IEvent {
           throw new IllegalArgumentException("Recurrence end date must be after end date");
         }
 
-        LocalDateTime startDateTime = TimeUtil.getLocalDateTimeFromTemporal(startTime);
-        LocalDateTime endDateTime = TimeUtil.getLocalDateTimeFromTemporal(endTime);
-        LocalDateTime nextDayStart = startDateTime.toLocalDate().plusDays(1)
-            .atStartOfDay();
-
-        if (endDateTime.isAfter(nextDayStart)) {
+        if (isFirstAfterSecond(endTime, GetStartOfNextDay(startTime))) {
           throw new IllegalArgumentException("Recurring events cannot span more than one day");
         }
       } else {

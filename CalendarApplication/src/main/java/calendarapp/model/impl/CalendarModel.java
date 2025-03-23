@@ -52,7 +52,6 @@ public class CalendarModel implements ICalendarModel {
                           String recurringDays, String occurrenceCount, Temporal recurrenceEndDate,
                           String description, String location, String visibility,
                           boolean autoDecline) throws EventConflictException {
-
     activeCalendar.getEventRepository().create(eventName, startTime, endTime, description, location,
         visibility, recurringDays, occurrenceCount, recurrenceEndDate, true);
   }
@@ -69,7 +68,6 @@ public class CalendarModel implements ICalendarModel {
   @Override
   public void editEvent(String eventName, Temporal startTime, Temporal endTime, String property,
                         String value, boolean isRecurringEvents) {
-
     activeCalendar.getEventRepository().update(eventName, startTime, endTime, property, value,
         isRecurringEvents);
   }
@@ -84,8 +82,7 @@ public class CalendarModel implements ICalendarModel {
   @Override
   public List<String> getEventsForPrinting(Temporal startDateTime, Temporal endDateTime) {
     if (endDateTime == null) {
-      endDateTime = TimeUtil.getLocalDateTimeFromTemporal(startDateTime).toLocalDate()
-          .plusDays(1).atStartOfDay();
+      endDateTime = TimeUtil.GetStartOfNextDay(startDateTime);
     }
 
     return activeCalendar.getEventRepository().getFormattedEvents(startDateTime, endDateTime);
@@ -141,7 +138,7 @@ public class CalendarModel implements ICalendarModel {
 
   @Override
   public void copyEvent(CopyEventDTO copyEventDTO) {
-    calendarRepository.copyEvents(activeCalendar.getName(), copyEventDTO);
+    calendarRepository.copyCalendarEvents(activeCalendar.getName(), copyEventDTO);
   }
 
   private String getFileExtension(String filePath) {
