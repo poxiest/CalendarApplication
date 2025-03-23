@@ -8,7 +8,7 @@ calendar to another
 - copy calendar events - should adjust for the new calendar's timezone
 - make sure about conflict
 - refactor exporter
-- try move io to controller
+------ try move io to controller
 - write readme for all the changes with justification
 - write testcases and check mutation
 - create a jar file for submission

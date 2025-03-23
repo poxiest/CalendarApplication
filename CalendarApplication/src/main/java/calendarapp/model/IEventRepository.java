@@ -22,6 +22,7 @@ public interface IEventRepository {
 
   void changeTimeZone(ZoneId from, ZoneId to);
 
+  // TODO: Add DTO here for printing
   List<String> getFormattedEvents(Temporal startTime, Temporal endTime);
 
   boolean isActiveAt(Temporal time);
