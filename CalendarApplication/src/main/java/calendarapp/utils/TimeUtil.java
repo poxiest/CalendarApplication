@@ -51,6 +51,18 @@ public class TimeUtil {
     }
   }
 
+  public static Temporal getLocalDateFromString(String dateTime) {
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    if (dateTime == null) {
+      return null;
+    }
+    try {
+      return LocalDate.parse(dateTime, dateFormatter);
+    } catch (DateTimeParseException e3) {
+      throw new IllegalArgumentException("Invalid date format: " + dateTime);
+    }
+  }
+
   /**
    * Gets the end of day or exact time from a string representation.
    *

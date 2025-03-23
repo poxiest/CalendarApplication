@@ -99,7 +99,6 @@ public class EventRepository implements IEventRepository {
         TimeUtil.ChangeZone(eventsToCopy.get(0).getStartTime(), fromZoneId, toZoneId),
         copyEventDTO.getCopyToDate());
 
-    List<IEvent> updatedEvents = new ArrayList<>();
     for (IEvent event : eventsToCopy) {
       Temporal startTime = TimeUtil.AddDuration(TimeUtil.ChangeZone(event.getStartTime(),
           fromZoneId, toZoneId), differenceBetween);
