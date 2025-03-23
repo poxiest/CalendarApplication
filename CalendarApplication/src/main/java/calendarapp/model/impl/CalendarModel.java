@@ -70,8 +70,8 @@ public class CalendarModel implements ICalendarModel {
   @Override
   public void editEvent(String eventName, Temporal startTime, Temporal endTime, String property,
                         String value, boolean isRecurringEvents) {
-    activeCalendar.getEventRepository().update(eventName, startTime, endTime, property, value,
-        isRecurringEvents);
+    activeCalendar.getEventRepository().update(eventName, startTime, endTime, property, value
+    );
   }
 
   /**

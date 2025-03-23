@@ -13,7 +13,7 @@ public interface IEventRepository {
               boolean autoDecline) throws EventConflictException;
 
   void update(String eventName, Temporal startTime, Temporal endTime, String property,
-              String value, boolean isRecurring);
+              String value);
 
   List<IEvent> get(String eventName, Temporal startTime, Temporal endTime);
 
