@@ -470,6 +470,38 @@ public class CommandsE2ETest {
         , stringOutput.toString());
   }
 
+  @Test
+  public void RecurringAndSingleEventsEditTogether() {
+    controller = new MockController("create event \"Same Event Name\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" until " +
+        "\"2025-11-16T20:00\"\n" +
+        "create event \"Same Event Name\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"\n" +
+        "edit events to \"Same Event Name\" \"2025-11-11T11:00\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"",
+        model, view);
+    controller.start();
+
+    assertEquals("Events:\n"
+            + "• Same Event Name - 2025-11-11T10:00 to 2025-11-11T10:30 \n"
+            + "• Same Event Name - 2025-11-11T10:00 to 2025-11-11T10:30 \n"
+            + "• Same Event Name - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+            + "• Same Event Name - 2025-11-13T10:00 to 2025-11-13T10:30 \n"
+            + "• Same Event Name - 2025-11-14T10:00 to 2025-11-14T10:30 \n"
+            + "• Same Event Name - 2025-11-15T10:00 to 2025-11-15T10:30 \n"
+            + "• Same Event Name - 2025-11-16T10:00 to 2025-11-16T10:30 \n"
+            + "Events:\n"
+            + "• Same Event Name - 2025-11-11T10:00 to 2025-11-11T11:00 \n"
+            + "• Same Event Name - 2025-11-11T10:00 to 2025-11-11T11:00 \n"
+            + "• Same Event Name - 2025-11-12T10:00 to 2025-11-12T11:00 \n"
+            + "• Same Event Name - 2025-11-13T10:00 to 2025-11-13T11:00 \n"
+            + "• Same Event Name - 2025-11-14T10:00 to 2025-11-14T11:00 \n"
+            + "• Same Event Name - 2025-11-15T10:00 to 2025-11-15T11:00 \n"
+            + "• Same Event Name - 2025-11-16T10:00 to 2025-11-16T11:00 \n",
+        stringOutput.toString());
+  }
+
+
   // Recurring on Monday, wednesday and friday
   @Test
   public void RecurringEventsUntil2() {
