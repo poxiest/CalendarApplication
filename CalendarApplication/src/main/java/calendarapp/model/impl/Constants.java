@@ -36,6 +36,11 @@ public class Constants {
     public static final String FALSE_VALUE = "FALSE";
   }
 
+  public static final class SupportExportFormats {
+    public static final String CSV = "csv";
+    public static final Set<String> SUPPORTED_EXPORT_FORMATS = Set.of(CSV);
+  }
+
   /**
    * Constants representing property keys used for event creation and modification.
    */

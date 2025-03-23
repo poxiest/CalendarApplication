@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import calendarapp.model.EventConflictException;
+import calendarapp.model.ICalendarExporter;
 import calendarapp.model.IEvent;
 import calendarapp.model.IEventRepository;
 import calendarapp.utils.TimeUtil;
@@ -95,6 +96,12 @@ public class EventRepository implements IEventRepository {
   @Override
   public boolean isActiveAt(Temporal time) {
     return !findOverlappingEvents(time, time).isEmpty();
+  }
+
+  @Override
+  public String export(String fileName, ICalendarExporter exporter) {
+    exporter.export(events, fileName);
+    return fileName;
   }
 
   /**

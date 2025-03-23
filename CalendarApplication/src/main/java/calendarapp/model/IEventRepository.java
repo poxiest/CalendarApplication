@@ -17,4 +17,6 @@ public interface IEventRepository {
   List<String> getFormattedEvents(Temporal startTime, Temporal endTime);
 
   boolean isActiveAt(Temporal time);
+
+  String export(String fileName, ICalendarExporter exporter);
 }
