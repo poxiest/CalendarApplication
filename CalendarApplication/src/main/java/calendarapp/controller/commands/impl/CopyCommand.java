@@ -49,8 +49,7 @@ public class CopyCommand extends AbstractCommand {
         copyCalendarName = matcher.group(3) != null ? matcher.group(3) : matcher.group(4);
         copyStartDate = matcher.group(5) != null ? matcher.group(5) : matcher.group(6);
 
-        builder = builder.startTime(TimeUtil.getTemporalFromString(fromStartDate))
-            .endTime(TimeUtil.getEndOfDayFromString(fromStartDate))
+        builder = builder.startTime(TimeUtil.getStartOfDayFromString(fromStartDate))
             .copyCalendarName(copyCalendarName)
             .copyStartDate(TimeUtil.getLocalDateFromString(copyStartDate));
       }
@@ -62,7 +61,7 @@ public class CopyCommand extends AbstractCommand {
         copyCalendarName = matcher.group(5) != null ? matcher.group(5) : matcher.group(6);
         copyStartDate = matcher.group(7) != null ? matcher.group(7) : matcher.group(8);
 
-        builder = builder.startTime(TimeUtil.getTemporalFromString(fromStartDate))
+        builder = builder.startTime(TimeUtil.getStartOfDayFromString(fromStartDate))
             .endTime(TimeUtil.getEndOfDayFromString(toEndDate))
             .copyCalendarName(copyCalendarName)
             .copyStartDate(TimeUtil.getLocalDateFromString(copyStartDate));
@@ -73,7 +72,7 @@ public class CopyCommand extends AbstractCommand {
       }
 
       model.copyEvent(builder.build());
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException | InvalidCommandException e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     } catch (EventConflictException e) {
       throw new EventConflictException(command + "\nReason : " + e.getMessage());

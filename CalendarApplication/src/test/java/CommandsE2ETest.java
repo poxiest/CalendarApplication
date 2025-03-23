@@ -1288,6 +1288,480 @@ public class CommandsE2ETest {
         stringOutput.toString());
   }
 
+  // Create calendar command tests
+  @Test
+  public void testCreateCalendarController() {
+    controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"", model, view);
+    controller.start();
+    assertEquals("", stringOutput.toString());
+  }
+
+  // invalid timezone
+  @Test(expected = InvalidCommandException.class)
+  public void testCreateCalendarController1() {
+    try {
+      controller = new MockController("create calendar --name personalcal --timezone \"America/ABC\"", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create calendar --name personalcal --timezone \"America/ABC\"\n"
+          + "Reason : Cannot find zone id : America/ABC\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  // invalid command without calendar
+  @Test(expected = InvalidCommandException.class)
+  public void testCreateCalendarController2() {
+    try {
+      controller = new MockController("create --name personalcal --timezone \"America/New_York\"", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("Unknown command: create --name personalcal --timezone \"America/New_York\"\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  // invalid create command
+  @Test(expected = InvalidCommandException.class)
+  public void testCreateCalendarController3() {
+    try {
+      controller = new MockController("cree calendar --name personalcal --timezone \"America/New_York\"", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("Unknown command: cree calendar --name personalcal --timezone \"America/New_York\"\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testCreateCalendarControllerDuplicate() {
+    try {
+      controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+          + "create calendar --name personalcal --timezone \"America/Los_Angeles\"", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create calendar --name personalcal --timezone \"America/Los_Angeles\"\n"
+          + "Reason : Calendar already exists.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  // edit calendar timezone
+  @Test
+  public void testEditCalendarTimezone() {
+    controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "print events from 2025-11-10 to 2025-11-12\n"
+        + "edit calendar --name personalcal --property timezone America/Los_Angeles\n"
+        + "print events from 2025-11-10 to 2025-11-12\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "Events:\n"
+        + "• propertime - 2025-11-10T08:00 to 2025-11-10T09:00 \n", stringOutput.toString());
+  }
+
+  // edit calendar name
+  @Test
+  public void testEditCalendarName() {
+    controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "print events from 2025-11-10 to 2025-11-12\n"
+        + "edit calendar --name personalcal --property name PersonalCal\n"
+        + "use calendar --name PersonalCal\n"
+        + "print events from 2025-11-10 to 2025-11-12\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n", stringOutput.toString());
+  }
+
+  // edit calendar name and call use calendar with old name
+  @Test(expected = InvalidCommandException.class)
+  public void testEditCalendarName1() {
+    try {
+      controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+          + "use calendar --name personalcal\n"
+          + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+          + "print events from 2025-11-10 to 2025-11-12\n"
+          + "edit calendar --name personalcal --property name PersonalCal\n"
+          + "use calendar --name personalcal\n", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("use calendar --name personalcal\n"
+          + "Reason : Calendar does not exist.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  // copy command with specific event name and same timezone
+  @Test
+  public void testCopyCalendarCommand1() {
+    controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+        + "create calendar --name workcal --timezone \"America/New_York\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "print events from 2025-11-10 to 2025-11-12\n"
+        + "copy event propertime on 2025-11-10T11:00 --target workcal to 2025-11-11T12:00\n"
+        + "use calendar --name workcal\n"
+        + "print events from 2025-11-10 to 2025-11-12\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "Events:\n"
+        + "• propertime - 2025-11-11T12:00 to 2025-11-11T13:00 \n", stringOutput.toString());
+  }
+
+  // copy command with specific event name and different timezone
+  @Test
+  public void testCopyCalendarCommand1_1() {
+    controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+        + "create calendar --name workcal --timezone \"America/Los_Angeles\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "print events from 2025-11-10 to 2025-11-12\n"
+        + "copy event propertime on 2025-11-10T11:00 --target workcal to 2025-11-11T12:00\n"
+        + "use calendar --name workcal\n"
+        + "print events from 2025-11-10 to 2025-11-12\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "Events:\n"
+        + "• propertime - 2025-11-11T12:00 to 2025-11-11T13:00 \n", stringOutput.toString());
+  }
+
+  // copy command on a day and same timezone
+  @Test
+  public void testCopyCalendarCommand2() {
+    controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+        + "create calendar --name workcal --timezone \"America/New_York\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "create event secondevent from 2025-11-10T13:00 to 2025-11-11T10:00\n"
+        + "print events from 2025-11-10 to 2025-11-12\n"
+        + "copy events on 2025-11-10 --target workcal to 2025-11-10\n"
+        + "use calendar --name workcal\n"
+        + "print events from 2025-11-10 to 2025-11-13\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "• secondevent - 2025-11-10T13:00 to 2025-11-11T10:00 \n"
+        + "Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "• secondevent - 2025-11-10T13:00 to 2025-11-11T10:00 \n", stringOutput.toString());
+  }
+
+  // copy command on a day and different timezone
+  @Test
+  public void testCopyCalendarCommand2_1() {
+    controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+        + "create calendar --name workcal --timezone \"America/Los_Angeles\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "create event secondevent from 2025-11-10T13:00 to 2025-11-11T10:00\n"
+        + "print events from 2025-11-10 to 2025-11-12\n"
+        + "copy events on 2025-11-10 --target workcal to 2025-11-10\n"
+        + "use calendar --name workcal\n"
+        + "print events from 2025-11-10 to 2025-11-13\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "• secondevent - 2025-11-10T13:00 to 2025-11-11T10:00 \n"
+        + "Events:\n"
+        + "• propertime - 2025-11-10T08:00 to 2025-11-10T09:00 \n"
+        + "• secondevent - 2025-11-10T10:00 to 2025-11-11T07:00 \n", stringOutput.toString());
+  }
+
+  // copy command between on same timezone
+  @Test
+  public void testCopyCalendarCommand3() {
+    controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+        + "create calendar --name workcal --timezone \"America/New_York\"\n"
+        + "create calendar --name officecal --timezone \"America/New_York\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "create event secondevent from 2025-11-10T13:00 to 2025-11-11T10:00\n"
+        + "create event thirdevent from 2025-11-12T10:00 to 2025-11-12T10:30\n"
+        + "print events from 2025-11-10 to 2025-11-13\n"
+        + "copy events between 2025-11-10 and 2025-11-11 --target workcal to 2025-11-10\n"
+        + "copy events between 2025-11-12 and 2025-11-12 --target officecal to 2025-11-13\n"
+        + "use calendar --name workcal\n"
+        + "print events from 2025-11-10 to 2025-11-14\n"
+        + "use calendar --name officecal\n"
+        + "print events from 2025-11-10 to 2025-11-14\n"
+        , model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "• secondevent - 2025-11-10T13:00 to 2025-11-11T10:00 \n"
+        + "• thirdevent - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+        + "Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "• secondevent - 2025-11-10T13:00 to 2025-11-11T10:00 \n"
+        + "Events:\n"
+        + "• thirdevent - 2025-11-13T10:00 to 2025-11-13T10:30 \n", stringOutput.toString());
+  }
+
+  // copy command between on different timezone
+  @Test
+  public void testCopyCalendarCommand3_1() {
+    controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+        + "create calendar --name workcal --timezone \"America/Los_Angeles\"\n"
+        + "create calendar --name officecal --timezone \"Asia/Calcutta\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "create event secondevent from 2025-11-10T13:00 to 2025-11-11T10:00\n"
+        + "create event thirdevent from 2025-11-12T10:00 to 2025-11-12T10:30\n"
+        + "print events from 2025-11-10 to 2025-11-13\n"
+        + "copy events between 2025-11-10 and 2025-11-11 --target workcal to 2025-11-10\n"
+        + "copy events between 2025-11-12 and 2025-11-12 --target officecal to 2025-11-13\n"
+        + "use calendar --name workcal\n"
+        + "print events from 2025-11-10 to 2025-11-14\n"
+        + "use calendar --name officecal\n"
+        + "print events from 2025-11-10 to 2025-11-14\n"
+        , model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "• secondevent - 2025-11-10T13:00 to 2025-11-11T10:00 \n"
+        + "• thirdevent - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+        + "Events:\n"
+        + "• propertime - 2025-11-10T08:00 to 2025-11-10T09:00 \n"
+        + "• secondevent - 2025-11-10T10:00 to 2025-11-11T07:00 \n"
+        + "Events:\n"
+        + "• thirdevent - 2025-11-13T20:30 to 2025-11-13T21:00 \n", stringOutput.toString());
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy() {
+    try {
+      controller = new MockController("copy event EventName on 2025-11-11T11:00 --target to 2025-11-11T10:00" , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy event EventName on 2025-11-11T11:00 --target to 2025-11-11T10:00\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy1() {
+    try {
+      controller = new MockController("copy event EventName on 2025-11-11T11:00 --target default to" , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy event EventName on 2025-11-11T11:00 --target default to\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy2() {
+    try {
+      controller = new MockController("copy events on 2025-11-11 --target default to 2025-11-11T13:00" , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy events on 2025-11-11 --target default to 2025-11-11T13:00\n"
+          + "Reason : Invalid date format: 2025-11-11T13:00", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy3() {
+    try {
+      controller = new MockController("copy events on 2025-11-11 --target to 2025-11-11" , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy events on 2025-11-11 --target to 2025-11-11\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy4() {
+    try {
+      controller = new MockController("copy events between 2025-11-11 and --target default to 2025-11-11" , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy events between 2025-11-11 and --target default to 2025-11-11\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy5() {
+    try {
+      controller = new MockController("copy events between and 2025-11-15 --target default to 2025-11-11" , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy events between and 2025-11-15 --target default to 2025-11-11\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy6() {
+    try {
+      controller = new MockController("copy events between 2025-11-11 and 2025-11-15 --target to 2025-11-11" , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy events between 2025-11-11 and 2025-11-15 --target to 2025-11-11\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidUseCommand() {
+    try {
+      controller = new MockController("use calendar Default" , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("use calendar Default\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidUseCommand1() {
+    try {
+      controller = new MockController("use calendar --name Default" , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("use calendar --name Default\n"
+          + "Reason : Calendar does not exist.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidUseCommand2() {
+    try {
+      controller = new MockController("use --name Default" , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("use --name Default\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidUseCommand3() {
+    try {
+      controller = new MockController("us calendar --name Default" , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("Unknown command: us calendar --name Default\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  // Edit calendar invalid property name
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidEditCommand() {
+    try {
+      controller = new MockController("create calendar --name workcal --timezone America/New_York\n"
+          + "edit calendar --name workcal --property timne Asia/Calcutta"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit calendar --name workcal --property timne Asia/Calcutta\n"
+          + "Reason : Invalid property name.\n", e.getMessage());
+      throw e;
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
+  // Edit calendar invalid timezone
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidEditCommand1() {
+    try {
+      controller = new MockController("create calendar --name workcal --timezone America/New_York\n"
+          + "edit calendar --name workcal --property timezone Asia/ABC"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit calendar --name workcal --property timezone Asia/ABC\n"
+          + "Reason : Cannot find zone id : Asia/ABC\n", e.getMessage());
+      throw e;
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
+  // Edit calendar invalid command
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidEditCommand2() {
+    try {
+      controller = new MockController("edit caldar --name workcal --property timezone Asia/New_York"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("Unknown command: edit caldar --name workcal --property timezone Asia/New_York\n", e.getMessage());
+      throw e;
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
+  // Edit calendar invalid command
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidEditCommand3() {
+    try {
+      controller = new MockController("edt calendar --name workcal --property timezone Asia/New_York"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("Unknown command: edt calendar --name workcal --property timezone Asia/New_York\n", e.getMessage());
+      throw e;
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
+  // Edit calendar invalid command
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidEditCommand4() {
+    try {
+      controller = new MockController("edit calendar --name --property timezone Asia/New_York"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit calendar --name --property timezone Asia/New_York\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
+  // Edit calendar invalid command
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidEditCommand5() {
+    try {
+      controller = new MockController("edit calendar --name default --property Asia/New_York"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit calendar --name default --property Asia/New_York\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
 // TODO: This test no longer works bcs auto decline is true by default
 //  // Create two events
 //  @Test

@@ -62,7 +62,7 @@ public class RegexPatternConstants {
   /*
   Use calendar command regex pattern constant.
    */
-  public static final String USE_COMMAND = "(?i)\\s+--name\\s+(?:\"([^\"]+)\"|(\\S+))$";
+  public static final String USE_COMMAND = "(?i)\\s+calendar\\s+--name\\s+(?:\"([^\"]+)\"|(\\S+))$";
 
   /*
   Copy command regex pattern constants.

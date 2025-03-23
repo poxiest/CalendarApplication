@@ -79,6 +79,14 @@ public class TimeUtil {
     return getLocalDateTimeFromTemporal(time).plusDays(1).toLocalDate().atStartOfDay();
   }
 
+  public static Temporal getStartOfDayFromString(String dateTime) throws IllegalArgumentException {
+    if (dateTime == null) {
+      return null;
+    }
+    Temporal time = getTemporalFromString(dateTime);
+    return getLocalDateTimeFromTemporal(time).toLocalDate().atStartOfDay();
+  }
+
   /**
    * Checks if the first temporal is chronologically before the second temporal.
    *

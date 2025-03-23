@@ -2,7 +2,6 @@ package calendarapp.model.impl;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
@@ -20,6 +19,9 @@ import calendarapp.model.dto.CopyEventDTO;
 import calendarapp.utils.TimeUtil;
 
 import static calendarapp.model.impl.Constants.DaysOfWeek.parseDaysOfWeek;
+import static calendarapp.utils.TimeUtil.isEqual;
+import static calendarapp.utils.TimeUtil.isFirstAfterSecond;
+import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
 
 public class EventRepository implements IEventRepository {
   private final List<IEvent> events;
@@ -122,7 +124,8 @@ public class EventRepository implements IEventRepository {
         recurrenceEndDate = TimeUtil.ChangeZone(event.getRecurrenceEndDate(), fromZoneId,
             toZoneId);
       }
-      updatedEvents.add(createSingleEvent(event.getName(), startTime, endTime, event.getDescription(),
+      updatedEvents.add(createSingleEvent(event.getName(), startTime, endTime,
+          event.getDescription(),
           event.getLocation(), event.getVisibility().getValue(), event.getRecurringDays(),
           event.getOccurrenceCount(), recurrenceEndDate));
     }
@@ -202,7 +205,7 @@ public class EventRepository implements IEventRepository {
     int occurrencesCreated = 0;
 
     while ((occurrenceCount != null && occurrencesCreated < occurrenceCount)
-        || (recurrenceEndDate != null && TimeUtil.isFirstBeforeSecond(currentStartTime,
+        || (recurrenceEndDate != null && isFirstBeforeSecond(currentStartTime,
         recurrenceEndDate))) {
 
       DayOfWeek currentDay = DayOfWeek.of(currentStartTime.get(ChronoField.DAY_OF_WEEK));
@@ -257,8 +260,8 @@ public class EventRepository implements IEventRepository {
                                             Temporal endTime, boolean isRecurring) {
     return events.stream()
         .filter(event -> eventName == null || event.getName().equals(eventName))
-        .filter(event -> TimeUtil.isWithinTimeRange(startTime, endTime,
-            event.getStartTime(), event.getEndTime()))
+        .filter(event -> startTime == null || isFirstAfterSecond(event.getStartTime(), startTime) || isEqual(event.getStartTime(), startTime))
+        .filter(event -> endTime == null || isFirstBeforeSecond(event.getEndTime(), endTime) || isEqual(event.getEndTime(), endTime))
         .filter(event -> !isRecurring || (event.getRecurringDays() != null))
         .sorted((event1, event2) ->
             Math.toIntExact(TimeUtil.difference(event2.getStartTime(), event1.getStartTime())))
