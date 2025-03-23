@@ -1213,7 +1213,7 @@ public class CommandsE2ETest {
         "create event \"Sprint Planning\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
         "export cal exportTest.csv", model, view);
     controller.start();
-    assertTrue(stringOutput.toString().contains("/exportTest.csv"));
+    assertTrue(stringOutput.toString().contains("exportTest.csv"));
   }
 
   @Test(expected = InvalidCommandException.class)
@@ -1226,7 +1226,7 @@ public class CommandsE2ETest {
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("export cal exportTest.xlsx\n"
-          + "Reason : Only CSV files are supported.", e.getMessage());
+          + "Reason : Unsupported export format: xlsx. Supported formats are: [csv]", e.getMessage());
       throw e;
     }
   }
@@ -1241,7 +1241,7 @@ public class CommandsE2ETest {
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("export cal exportTest\n"
-          + "Reason : Only CSV files are supported.", e.getMessage());
+          + "Reason : Unsupported export format: . Supported formats are: [csv]", e.getMessage());
       throw e;
     }
   }

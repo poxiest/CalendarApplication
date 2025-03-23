@@ -1,6 +1,5 @@
 package calendarapp.model.impl;
 
-import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.EventVisibility;
 import calendarapp.model.ICalendarExporter;
 import calendarapp.model.IEvent;

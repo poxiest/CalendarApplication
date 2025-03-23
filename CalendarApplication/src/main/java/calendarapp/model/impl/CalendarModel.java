@@ -12,6 +12,8 @@ import calendarapp.model.ICalendarRepository;
 import calendarapp.model.dto.CopyEventDTO;
 import calendarapp.utils.TimeUtil;
 
+import static calendarapp.model.impl.Constants.EXPORTER_MAP;
+
 /**
  * The CalendarModel class implements the ICalendarModel interface
  * and is responsible for managing calendar events, including creating, editing,
@@ -99,9 +101,14 @@ public class CalendarModel implements ICalendarModel {
     String fileExtension = getFileExtension(fileName);
     if (!Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS.contains(fileExtension)) {
       throw new IllegalArgumentException("Unsupported export format: " + fileExtension
-      + "Supported formats are: " + Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS);
+      + ". Supported formats are: " + Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS);
     }
-    ICalendarExporter exporter = new CsvCalendarExporter();
+    ICalendarExporter exporter = EXPORTER_MAP.get(fileExtension);
+
+    if (exporter == null) {
+      throw new IllegalStateException("No exporter for format: " + fileExtension);
+    }
+
     return activeCalendar.getEventRepository().export(fileName, exporter);
   }
 
