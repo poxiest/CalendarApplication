@@ -6,6 +6,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import calendarapp.model.ICalendarExporter;
+
+import static calendarapp.model.impl.Constants.SupportExportFormats.CSV;
+
 /**
  * Contains constant values used throughout the calendar application.
  */
@@ -35,6 +39,15 @@ public class Constants {
     public static final String TRUE_VALUE = "TRUE";
     public static final String FALSE_VALUE = "FALSE";
   }
+
+  public static final class SupportExportFormats {
+    public static final String CSV = "csv";
+    public static final Set<String> SUPPORTED_EXPORT_FORMATS = Set.of(CSV);
+  }
+
+  public static final Map<String, ICalendarExporter> EXPORTER_MAP = Map.of(
+      CSV, new CsvCalendarExporter()
+  );
 
   /**
    * Constants representing property keys used for event creation and modification.

@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import calendarapp.model.EventConflictException;
+import calendarapp.model.ICalendarExporter;
 import calendarapp.model.IEvent;
 import calendarapp.model.IEventRepository;
 import calendarapp.model.dto.CopyEventDTO;
@@ -61,23 +62,28 @@ public class EventRepository implements IEventRepository {
 
   @Override
   public void update(String eventName, Temporal startTime, Temporal endTime, String property,
-                     String value, boolean isRecurringEvents) {
+                     String value) {
     List<IEvent> eventsToUpdate = searchMatchingEvents(eventName, startTime, endTime,
-        isRecurringEvents);
+        isRecurringProperty(property));
     List<IEvent> updatedEvents = new ArrayList<>();
 
-    if (!isRecurringEvents) {
+    if (!isRecurringProperty(property)) {
+      boolean isFirstRecurringEventUpdated = false;
       for (IEvent event : eventsToUpdate) {
+        if (event.getRecurringDays() != null) {
+          if (!isFirstRecurringEventUpdated) {
+            IEvent firstEvent = event.updateProperty(property, value);
+            updatedEvents.addAll(getUpdatedRecurringEvents(firstEvent));
+            isFirstRecurringEventUpdated = true;
+          }
+          continue;
+        }
         IEvent updatedEvent = event.updateProperty(property, value);
         updatedEvents.add(updatedEvent);
       }
     } else {
       IEvent firstEvent = eventsToUpdate.get(0).updateProperty(property, value);
-      updatedEvents = createRecurringEvents(firstEvent.getName(), firstEvent.getStartTime(),
-          firstEvent.getEndTime(), firstEvent.getDescription(), firstEvent.getLocation(),
-          firstEvent.getVisibility().getValue(), firstEvent.getRecurringDays(),
-          firstEvent.getOccurrenceCount(),
-          firstEvent.getRecurrenceEndDate());
+      updatedEvents = getUpdatedRecurringEvents(firstEvent);
     }
     validateEvents(updatedEvents, eventsToUpdate);
     events.addAll(updatedEvents);
@@ -144,6 +150,12 @@ public class EventRepository implements IEventRepository {
   @Override
   public boolean isActiveAt(Temporal time) {
     return !findOverlappingEvents(time, time).isEmpty();
+  }
+
+  @Override
+  public String export(String fileName, ICalendarExporter exporter) {
+    exporter.export(events, fileName);
+    return fileName;
   }
 
   /**
@@ -285,5 +297,20 @@ public class EventRepository implements IEventRepository {
         event.getLocation() != null && !event.getLocation().isEmpty()
             ? "- Location: " + event.getLocation()
             : "");
+  }
+
+  private boolean isRecurringProperty(String property) {
+    String lowerCaseProperty = property.toLowerCase();
+    return lowerCaseProperty.equals(Constants.PropertyKeys.RECURRING_DAYS) ||
+        lowerCaseProperty.equals(Constants.PropertyKeys.OCCURRENCE_COUNT) ||
+        lowerCaseProperty.equals(Constants.PropertyKeys.RECURRENCE_END_DATE);
+  }
+
+  private List<IEvent> getUpdatedRecurringEvents(IEvent firstEvent) {
+    return createRecurringEvents(firstEvent.getName(), firstEvent.getStartTime(),
+        firstEvent.getEndTime(), firstEvent.getDescription(), firstEvent.getLocation(),
+        firstEvent.getVisibility().getValue(), firstEvent.getRecurringDays(),
+        firstEvent.getOccurrenceCount(),
+        firstEvent.getRecurrenceEndDate());
   }
 }

@@ -13,7 +13,7 @@ public interface IEventRepository {
               boolean autoDecline) throws EventConflictException;
 
   void update(String eventName, Temporal startTime, Temporal endTime, String property,
-              String value, boolean isRecurring);
+              String value);
 
   List<IEvent> get(String eventName, Temporal startTime, Temporal endTime);
 
@@ -25,4 +25,6 @@ public interface IEventRepository {
   List<String> getFormattedEvents(Temporal startTime, Temporal endTime);
 
   boolean isActiveAt(Temporal time);
+
+  String export(String fileName, ICalendarExporter exporter);
 }

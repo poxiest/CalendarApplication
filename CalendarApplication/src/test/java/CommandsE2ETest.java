@@ -470,6 +470,38 @@ public class CommandsE2ETest {
         , stringOutput.toString());
   }
 
+  @Test
+  public void RecurringAndSingleEventsEditTogether() {
+    controller = new MockController("create event \"Same Event Name\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" until " +
+        "\"2025-11-16T20:00\"\n" +
+        "create event \"Same Event Name\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"\n" +
+        "edit events to \"Same Event Name\" \"2025-11-11T11:00\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"",
+        model, view);
+    controller.start();
+
+    assertEquals("Events:\n"
+            + "• Same Event Name - 2025-11-11T10:00 to 2025-11-11T10:30 \n"
+            + "• Same Event Name - 2025-11-11T10:00 to 2025-11-11T10:30 \n"
+            + "• Same Event Name - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+            + "• Same Event Name - 2025-11-13T10:00 to 2025-11-13T10:30 \n"
+            + "• Same Event Name - 2025-11-14T10:00 to 2025-11-14T10:30 \n"
+            + "• Same Event Name - 2025-11-15T10:00 to 2025-11-15T10:30 \n"
+            + "• Same Event Name - 2025-11-16T10:00 to 2025-11-16T10:30 \n"
+            + "Events:\n"
+            + "• Same Event Name - 2025-11-11T10:00 to 2025-11-11T11:00 \n"
+            + "• Same Event Name - 2025-11-11T10:00 to 2025-11-11T11:00 \n"
+            + "• Same Event Name - 2025-11-12T10:00 to 2025-11-12T11:00 \n"
+            + "• Same Event Name - 2025-11-13T10:00 to 2025-11-13T11:00 \n"
+            + "• Same Event Name - 2025-11-14T10:00 to 2025-11-14T11:00 \n"
+            + "• Same Event Name - 2025-11-15T10:00 to 2025-11-15T11:00 \n"
+            + "• Same Event Name - 2025-11-16T10:00 to 2025-11-16T11:00 \n",
+        stringOutput.toString());
+  }
+
+
   // Recurring on Monday, wednesday and friday
   @Test
   public void RecurringEventsUntil2() {
@@ -1213,7 +1245,7 @@ public class CommandsE2ETest {
         "create event \"Sprint Planning\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
         "export cal exportTest.csv", model, view);
     controller.start();
-    assertTrue(stringOutput.toString().contains("/exportTest.csv"));
+    assertTrue(stringOutput.toString().contains("exportTest.csv"));
   }
 
   @Test(expected = InvalidCommandException.class)
@@ -1226,7 +1258,7 @@ public class CommandsE2ETest {
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("export cal exportTest.xlsx\n"
-          + "Reason : Only CSV files are supported.", e.getMessage());
+          + "Reason : Unsupported export format: xlsx. Supported formats are: [csv]", e.getMessage());
       throw e;
     }
   }
@@ -1241,7 +1273,7 @@ public class CommandsE2ETest {
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("export cal exportTest\n"
-          + "Reason : Only CSV files are supported.", e.getMessage());
+          + "Reason : Unsupported export format: . Supported formats are: [csv]", e.getMessage());
       throw e;
     }
   }

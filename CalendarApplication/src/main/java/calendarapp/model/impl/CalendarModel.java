@@ -6,10 +6,13 @@ import java.util.List;
 import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendar;
+import calendarapp.model.ICalendarExporter;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.ICalendarRepository;
 import calendarapp.model.dto.CopyEventDTO;
 import calendarapp.utils.TimeUtil;
+
+import static calendarapp.model.impl.Constants.EXPORTER_MAP;
 
 /**
  * The CalendarModel class implements the ICalendarModel interface
@@ -67,8 +70,8 @@ public class CalendarModel implements ICalendarModel {
   @Override
   public void editEvent(String eventName, Temporal startTime, Temporal endTime, String property,
                         String value, boolean isRecurringEvents) {
-    activeCalendar.getEventRepository().update(eventName, startTime, endTime, property, value,
-        isRecurringEvents);
+    activeCalendar.getEventRepository().update(eventName, startTime, endTime, property, value
+    );
   }
 
   /**
@@ -90,13 +93,23 @@ public class CalendarModel implements ICalendarModel {
   /**
    * Exports the events to a CSV file.
    *
-   * @param filename The name of the file to export.
+   * @param fileName The name of the file to export.
    * @return The file path of the exported CSV.
    */
   @Override
-  public String export(String filename) {
-    // TODO: Fix this
-    return "";
+  public String export(String fileName) {
+    String fileExtension = getFileExtension(fileName);
+    if (!Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS.contains(fileExtension)) {
+      throw new IllegalArgumentException("Unsupported export format: " + fileExtension
+      + ". Supported formats are: " + Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS);
+    }
+    ICalendarExporter exporter = EXPORTER_MAP.get(fileExtension);
+
+    if (exporter == null) {
+      throw new IllegalStateException("No exporter for format: " + fileExtension);
+    }
+
+    return activeCalendar.getEventRepository().export(fileName, exporter);
   }
 
   /**
@@ -134,4 +147,13 @@ public class CalendarModel implements ICalendarModel {
   public void copyEvent(CopyEventDTO copyEventDTO) {
     calendarRepository.copyCalendarEvents(activeCalendar.getName(), copyEventDTO);
   }
+
+  private String getFileExtension(String filePath) {
+    int lastDot = filePath.lastIndexOf(".");
+    if (lastDot == -1 || lastDot == filePath.length() - 1) {
+      return "";
+    }
+    return filePath.substring(lastDot + 1);
+  }
+
 }
