@@ -15,6 +15,7 @@ calendar to another
 - create a jar file for submission
 - use DTO for edit
 - write missed test cases from a4
+- write tests from controller to model and controller to view.
 
 - check a4 results and make the changes in a5
 - make calendarmodel a singleton class
