@@ -2,6 +2,7 @@ package calendarapp.model.impl;
 
 import java.time.temporal.Temporal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.EventConflictException;
@@ -10,6 +11,7 @@ import calendarapp.model.ICalendarExporter;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.ICalendarRepository;
 import calendarapp.model.dto.CopyEventDTO;
+import calendarapp.model.dto.PrintEventsDTO;
 import calendarapp.utils.TimeUtil;
 
 import static calendarapp.model.impl.Constants.EXPORTER_MAP;
@@ -82,12 +84,17 @@ public class CalendarModel implements ICalendarModel {
    * @return A list of formatted event strings.
    */
   @Override
-  public List<String> getEventsForPrinting(Temporal startDateTime, Temporal endDateTime) {
+  public List<PrintEventsDTO> getEventsForPrinting(Temporal startDateTime, Temporal endDateTime) {
     if (endDateTime == null) {
       endDateTime = TimeUtil.GetStartOfNextDay(startDateTime);
     }
-
-    return activeCalendar.getEventRepository().getFormattedEvents(startDateTime, endDateTime);
+    return activeCalendar.getEventRepository().getOverlappingEvents(startDateTime, endDateTime)
+        .stream().map(event -> new PrintEventsDTO.Builder()
+            .eventName(event.getName())
+            .startTime(event.getStartTime())
+            .endTime(event.getEndTime())
+            .location(event.getLocation())
+            .build()).collect(Collectors.toList());
   }
 
   /**
@@ -101,7 +108,7 @@ public class CalendarModel implements ICalendarModel {
     String fileExtension = getFileExtension(fileName);
     if (!Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS.contains(fileExtension)) {
       throw new IllegalArgumentException("Unsupported export format: " + fileExtension
-      + ". Supported formats are: " + Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS);
+          + ". Supported formats are: " + Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS);
     }
     ICalendarExporter exporter = EXPORTER_MAP.get(fileExtension);
 
@@ -155,5 +162,4 @@ public class CalendarModel implements ICalendarModel {
     }
     return filePath.substring(lastDot + 1);
   }
-
 }

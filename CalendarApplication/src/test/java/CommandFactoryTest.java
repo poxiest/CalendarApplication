@@ -18,6 +18,7 @@ import calendarapp.controller.commands.impl.ShowCommand;
 import calendarapp.controller.commands.impl.UseCommand;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.dto.CopyEventDTO;
+import calendarapp.model.dto.PrintEventsDTO;
 import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
@@ -282,7 +283,7 @@ public class CommandFactoryTest {
     }
 
     @Override
-    public List<String> getEventsForPrinting(Temporal startTime, Temporal endTime) {
+    public List<PrintEventsDTO> getEventsForPrinting(Temporal startTime, Temporal endTime) {
       return List.of();
     }
 

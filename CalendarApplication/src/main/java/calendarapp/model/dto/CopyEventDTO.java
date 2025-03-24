@@ -83,15 +83,4 @@ public class CopyEventDTO {
       return new CopyEventDTO(this);
     }
   }
-
-  @Override
-  public String toString() {
-    return "CopyEventRequest{" +
-        "eventName='" + eventName + '\'' +
-        ", startTime=" + startTime +
-        ", endTime=" + endTime +
-        ", copyCalendarName='" + copyCalendarName + '\'' +
-        ", toDate=" + copyToDate +
-        '}';
-  }
 }

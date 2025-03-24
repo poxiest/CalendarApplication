@@ -15,15 +15,14 @@ public interface IEventRepository {
   void update(String eventName, Temporal startTime, Temporal endTime, String property,
               String value);
 
-  List<IEvent> get(String eventName, Temporal startTime, Temporal endTime);
+  List<IEvent> getInBetweenEvents(String eventName, Temporal startTime, Temporal endTime);
+
+  List<IEvent> getOverlappingEvents(Temporal startTime, Temporal endTime);
 
   void copyEvents(List<IEvent> eventsToCopy, CopyEventDTO copyEventDTO,
                   ZoneId fromZoneId, ZoneId toZoneId);
 
   void changeTimeZone(ZoneId from, ZoneId to);
-
-  // TODO: Add DTO here for printing
-  List<String> getFormattedEvents(Temporal startTime, Temporal endTime);
 
   boolean isActiveAt(Temporal time);
 

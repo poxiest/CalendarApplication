@@ -4,6 +4,7 @@ import java.time.temporal.Temporal;
 import java.util.List;
 
 import calendarapp.model.dto.CopyEventDTO;
+import calendarapp.model.dto.PrintEventsDTO;
 
 /**
  * Interface for the calendar model component.
@@ -56,7 +57,7 @@ public interface ICalendarModel {
    * @param endTime   the end of the time range (if null, defaults to one day after startTime).
    * @return a list of events that intersect with the specified time range.
    */
-  List<String> getEventsForPrinting(Temporal startTime, Temporal endTime);
+  List<PrintEventsDTO> getEventsForPrinting(Temporal startTime, Temporal endTime);
 
   /**
    * Exports calendar events to a CSV file compatible with Google Calendar.

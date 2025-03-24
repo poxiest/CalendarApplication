@@ -217,42 +217,6 @@ public class TimeUtil {
         && isFirstAfterSecond(endTime1, startTime2);
   }
 
-  /**
-   * Determines if an event falls within a specified time range.
-   *
-   * @param startDateTime  the start of the time range, or null for no start constraint.
-   * @param endDateTime    the end of the time range, or null for no end constraint.
-   * @param eventStartTime the start time of the event.
-   * @param eventEndTime   the end time of the event.
-   * @return true if the event is entirely within the specified time range, false otherwise.
-   */
-  public static boolean isWithinTimeRange(Temporal startDateTime, Temporal endDateTime,
-                                          Temporal eventStartTime, Temporal eventEndTime) {
-    boolean afterStart = startDateTime == null
-        || isFirstAfterSecond(eventStartTime, startDateTime)
-        || isEqual(eventStartTime, startDateTime);
-    boolean beforeEnd = endDateTime == null
-        || isFirstBeforeSecond(eventEndTime, endDateTime)
-        || isEqual(eventEndTime, endDateTime);
-    return afterStart && beforeEnd;
-  }
-
-  /**
-   * Determines if an event is active at a specific date and time.
-   *
-   * @param dateTime       the date and time to check.
-   * @param eventStartTime the start time of the event.
-   * @param eventEndTime   the end time of the event.
-   * @return true if the event is active at the specified time, false otherwise.
-   */
-  public static boolean isActiveAt(Temporal dateTime, Temporal eventStartTime,
-                                   Temporal eventEndTime) {
-    return isEqual(dateTime, eventStartTime)
-        || isEqual(dateTime, eventEndTime)
-        || (isFirstAfterSecond(dateTime, eventStartTime)
-        && isFirstBeforeSecond(dateTime, eventEndTime));
-  }
-
   public static Temporal ChangeZone(Temporal temporal, ZoneId fromZoneId, ZoneId toZoneId) {
     return getLocalDateTimeFromTemporal(temporal).atZone(fromZoneId)
         .withZoneSameInstant(toZoneId).toLocalDateTime();

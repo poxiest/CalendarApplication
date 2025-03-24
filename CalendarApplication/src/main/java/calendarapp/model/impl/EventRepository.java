@@ -31,10 +31,6 @@ public class EventRepository implements IEventRepository {
     this.events = new ArrayList<>();
   }
 
-  private EventRepository(List<IEvent> events) {
-    this.events = new ArrayList<>(events);
-  }
-
   @Override
   public void create(String eventName, Temporal startTime, Temporal endTime,
                      String description, String location, String visibility,
@@ -91,7 +87,7 @@ public class EventRepository implements IEventRepository {
   }
 
   @Override
-  public List<IEvent> get(String eventName, Temporal startTime, Temporal endTime) {
+  public List<IEvent> getInBetweenEvents(String eventName, Temporal startTime, Temporal endTime) {
     // TODO: return deepcopy of Ievent
     return searchMatchingEvents(eventName, startTime, endTime, false);
   }
@@ -140,16 +136,8 @@ public class EventRepository implements IEventRepository {
   }
 
   @Override
-  public List<String> getFormattedEvents(Temporal startTime, Temporal endTime) {
-    List<IEvent> requiredEvents = findOverlappingEvents(startTime, endTime);
-    return requiredEvents.stream()
-        .map(this::formatEventForDisplay)
-        .collect(Collectors.toList());
-  }
-
-  @Override
   public boolean isActiveAt(Temporal time) {
-    return !findOverlappingEvents(time, time).isEmpty();
+    return !getOverlappingEvents(time, time).isEmpty();
   }
 
   @Override
@@ -280,23 +268,14 @@ public class EventRepository implements IEventRepository {
         .collect(Collectors.toList());
   }
 
-  private List<IEvent> findOverlappingEvents(Temporal startTime, Temporal endTime) {
+  @Override
+  public List<IEvent> getOverlappingEvents(Temporal startTime, Temporal endTime) {
     return events.stream()
         .filter(event -> TimeUtil.isConflicting(event.getStartTime(),
             event.getEndTime(), startTime, endTime))
         .sorted((event1, event2) ->
             Math.toIntExact(TimeUtil.difference(event2.getStartTime(), event1.getStartTime())))
         .collect(Collectors.toList());
-  }
-
-  private String formatEventForDisplay(IEvent event) {
-    return String.format("• %s - %s to %s %s",
-        event.getName(),
-        event.getStartTime(),
-        event.getEndTime(),
-        event.getLocation() != null && !event.getLocation().isEmpty()
-            ? "- Location: " + event.getLocation()
-            : "");
   }
 
   private boolean isRecurringProperty(String property) {

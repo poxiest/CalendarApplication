@@ -66,7 +66,7 @@ public class CalendarRepository implements ICalendarRepository {
     }
 
     toCalendar.getEventRepository().copyEvents(currentCalendar.getEventRepository()
-            .get(copyEventDTO.getEventName(), copyEventDTO.getStartTime(),
+            .getInBetweenEvents(copyEventDTO.getEventName(), copyEventDTO.getStartTime(),
                 copyEventDTO.getEndTime()),
         copyEventDTO, currentCalendar.getZoneId(), toCalendar.getZoneId());
   }
