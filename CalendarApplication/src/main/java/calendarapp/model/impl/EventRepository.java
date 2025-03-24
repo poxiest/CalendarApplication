@@ -242,7 +242,7 @@ public class EventRepository implements IEventRepository {
             events.addAll(oldEvents);
           }
           throw new EventConflictException("Event conflicts with existing event: "
-              + existingEvent);
+              + existingEvent.getName());
         }
       }
     }

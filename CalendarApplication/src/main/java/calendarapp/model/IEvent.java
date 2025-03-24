@@ -82,13 +82,6 @@ public interface IEvent {
   boolean isAutoDecline();
 
   /**
-   * Formats the event details into a user-friendly string for display.
-   *
-   * @return a formatted string representing the event, suitable for display in the UI.
-   */
-  String formatForDisplay();
-
-  /**
    * Updates the property of the event.
    * The property name and value are passed as strings, and the event is updated accordingly.
    *

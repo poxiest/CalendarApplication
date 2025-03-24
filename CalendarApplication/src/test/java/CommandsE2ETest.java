@@ -625,6 +625,16 @@ public class CommandsE2ETest {
     controller.start();
   }
 
+  @Test(expected = EventConflictException.class)
+  public void RecurringEventsConflict() {
+    controller = new MockController(
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to "
+            + "\"2025-11-11T10:30\" repeats \"MFW\" for 6 times\n"
+            + "create event \"New Recurring Event\" from \"2025-11-11T10:15\" to "
+            + "\"2025-11-11T11:15\" repeats \"MFW\" until \"2025-11-24T20:00\"\n", model, view);
+    controller.start();
+  }
+
   @Test(expected = InvalidCommandException.class)
   public void RequiredFieldsMissingCreate() {
     try {
@@ -1258,7 +1268,8 @@ public class CommandsE2ETest {
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("export cal exportTest.xlsx\n"
-          + "Reason : Unsupported export format: xlsx. Supported formats are: [csv]", e.getMessage());
+              + "Reason : Unsupported export format: xlsx. Supported formats are: [csv]",
+          e.getMessage());
       throw e;
     }
   }
@@ -1323,7 +1334,8 @@ public class CommandsE2ETest {
   // Create calendar command tests
   @Test
   public void testCreateCalendarController() {
-    controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"", model, view);
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"", model, view);
     controller.start();
     assertEquals("", stringOutput.toString());
   }
@@ -1332,7 +1344,8 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testCreateCalendarController1() {
     try {
-      controller = new MockController("create calendar --name personalcal --timezone \"America/ABC\"", model, view);
+      controller = new MockController("create calendar --name personalcal --timezone "
+          + "\"America/ABC\"", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("create calendar --name personalcal --timezone \"America/ABC\"\n"
@@ -1345,10 +1358,12 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testCreateCalendarController2() {
     try {
-      controller = new MockController("create --name personalcal --timezone \"America/New_York\"", model, view);
+      controller = new MockController("create --name personalcal --timezone \"America/New_York\""
+          , model, view);
       controller.start();
     } catch (InvalidCommandException e) {
-      assertEquals("Unknown command: create --name personalcal --timezone \"America/New_York\"\n", e.getMessage());
+      assertEquals("Unknown command: create --name personalcal --timezone \"America/New_York\"\n"
+          , e.getMessage());
       throw e;
     }
   }
@@ -1357,10 +1372,12 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testCreateCalendarController3() {
     try {
-      controller = new MockController("cree calendar --name personalcal --timezone \"America/New_York\"", model, view);
+      controller = new MockController("cree calendar --name personalcal --timezone "
+          + "\"America/New_York\"", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
-      assertEquals("Unknown command: cree calendar --name personalcal --timezone \"America/New_York\"\n", e.getMessage());
+      assertEquals("Unknown command: cree calendar --name personalcal --timezone "
+          + "\"America/New_York\"\n", e.getMessage());
       throw e;
     }
   }
@@ -1368,7 +1385,8 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testCreateCalendarControllerDuplicate() {
     try {
-      controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+      controller = new MockController("create calendar --name personalcal --timezone "
+          + "\"America/New_York\"\n"
           + "create calendar --name personalcal --timezone \"America/Los_Angeles\"", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
@@ -1381,7 +1399,8 @@ public class CommandsE2ETest {
   // edit calendar timezone
   @Test
   public void testEditCalendarTimezone() {
-    controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
         + "use calendar --name personalcal\n"
         + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
         + "print events from 2025-11-10 to 2025-11-12\n"
@@ -1397,7 +1416,8 @@ public class CommandsE2ETest {
   // edit calendar name
   @Test
   public void testEditCalendarName() {
-    controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
         + "use calendar --name personalcal\n"
         + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
         + "print events from 2025-11-10 to 2025-11-12\n"
@@ -1415,7 +1435,8 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testEditCalendarName1() {
     try {
-      controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+      controller = new MockController("create calendar --name personalcal --timezone "
+          + "\"America/New_York\"\n"
           + "use calendar --name personalcal\n"
           + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
           + "print events from 2025-11-10 to 2025-11-12\n"
@@ -1432,7 +1453,8 @@ public class CommandsE2ETest {
   // copy command with specific event name and same timezone
   @Test
   public void testCopyCalendarCommand1() {
-    controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
         + "create calendar --name workcal --timezone \"America/New_York\"\n"
         + "use calendar --name personalcal\n"
         + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
@@ -1450,7 +1472,8 @@ public class CommandsE2ETest {
   // copy command with specific event name and different timezone
   @Test
   public void testCopyCalendarCommand1_1() {
-    controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
         + "create calendar --name workcal --timezone \"America/Los_Angeles\"\n"
         + "use calendar --name personalcal\n"
         + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
@@ -1468,7 +1491,8 @@ public class CommandsE2ETest {
   // copy command on a day and same timezone
   @Test
   public void testCopyCalendarCommand2() {
-    controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
         + "create calendar --name workcal --timezone \"America/New_York\"\n"
         + "use calendar --name personalcal\n"
         + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
@@ -1489,7 +1513,8 @@ public class CommandsE2ETest {
   // copy command on a day and different timezone
   @Test
   public void testCopyCalendarCommand2_1() {
-    controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
         + "create calendar --name workcal --timezone \"America/Los_Angeles\"\n"
         + "use calendar --name personalcal\n"
         + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
@@ -1510,7 +1535,8 @@ public class CommandsE2ETest {
   // copy command between on same timezone
   @Test
   public void testCopyCalendarCommand3() {
-    controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
         + "create calendar --name workcal --timezone \"America/New_York\"\n"
         + "create calendar --name officecal --timezone \"America/New_York\"\n"
         + "use calendar --name personalcal\n"
@@ -1540,7 +1566,8 @@ public class CommandsE2ETest {
   // copy command between on different timezone
   @Test
   public void testCopyCalendarCommand3_1() {
-    controller = new MockController("create calendar --name personalcal --timezone \"America/New_York\"\n"
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
         + "create calendar --name workcal --timezone \"America/Los_Angeles\"\n"
         + "create calendar --name officecal --timezone \"Asia/Calcutta\"\n"
         + "use calendar --name personalcal\n"
@@ -1570,7 +1597,8 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testInvalidCopy() {
     try {
-      controller = new MockController("copy event EventName on 2025-11-11T11:00 --target to 2025-11-11T10:00" , model, view);
+      controller = new MockController("copy event EventName on 2025-11-11T11:00 --target to "
+          + "2025-11-11T10:00", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("copy event EventName on 2025-11-11T11:00 --target to 2025-11-11T10:00\n"
@@ -1582,7 +1610,8 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testInvalidCopy1() {
     try {
-      controller = new MockController("copy event EventName on 2025-11-11T11:00 --target default to" , model, view);
+      controller = new MockController("copy event EventName on 2025-11-11T11:00 --target default "
+          + "to", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("copy event EventName on 2025-11-11T11:00 --target default to\n"
@@ -1594,7 +1623,8 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testInvalidCopy2() {
     try {
-      controller = new MockController("copy events on 2025-11-11 --target default to 2025-11-11T13:00" , model, view);
+      controller = new MockController("copy events on 2025-11-11 --target default to "
+          + "2025-11-11T13:00", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("copy events on 2025-11-11 --target default to 2025-11-11T13:00\n"
@@ -1606,7 +1636,8 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testInvalidCopy3() {
     try {
-      controller = new MockController("copy events on 2025-11-11 --target to 2025-11-11" , model, view);
+      controller = new MockController("copy events on 2025-11-11 --target to 2025-11-11", model,
+          view);
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("copy events on 2025-11-11 --target to 2025-11-11\n"
@@ -1618,7 +1649,8 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testInvalidCopy4() {
     try {
-      controller = new MockController("copy events between 2025-11-11 and --target default to 2025-11-11" , model, view);
+      controller = new MockController("copy events between 2025-11-11 and --target default to "
+          + "2025-11-11", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("copy events between 2025-11-11 and --target default to 2025-11-11\n"
@@ -1630,7 +1662,8 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testInvalidCopy5() {
     try {
-      controller = new MockController("copy events between and 2025-11-15 --target default to 2025-11-11" , model, view);
+      controller = new MockController("copy events between and 2025-11-15 --target default to "
+          + "2025-11-11", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("copy events between and 2025-11-15 --target default to 2025-11-11\n"
@@ -1642,7 +1675,8 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testInvalidCopy6() {
     try {
-      controller = new MockController("copy events between 2025-11-11 and 2025-11-15 --target to 2025-11-11" , model, view);
+      controller = new MockController("copy events between 2025-11-11 and 2025-11-15 --target to "
+          + "2025-11-11", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("copy events between 2025-11-11 and 2025-11-15 --target to 2025-11-11\n"
@@ -1654,7 +1688,7 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testInvalidUseCommand() {
     try {
-      controller = new MockController("use calendar Default" , model, view);
+      controller = new MockController("use calendar Default", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("use calendar Default\n"
@@ -1666,7 +1700,7 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testInvalidUseCommand1() {
     try {
-      controller = new MockController("use calendar --name Default" , model, view);
+      controller = new MockController("use calendar --name Default", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("use calendar --name Default\n"
@@ -1678,7 +1712,7 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testInvalidUseCommand2() {
     try {
-      controller = new MockController("use --name Default" , model, view);
+      controller = new MockController("use --name Default", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("use --name Default\n"
@@ -1690,7 +1724,7 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testInvalidUseCommand3() {
     try {
-      controller = new MockController("us calendar --name Default" , model, view);
+      controller = new MockController("us calendar --name Default", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("Unknown command: us calendar --name Default\n", e.getMessage());
@@ -1740,7 +1774,8 @@ public class CommandsE2ETest {
           , model, view);
       controller.start();
     } catch (InvalidCommandException e) {
-      assertEquals("Unknown command: edit caldar --name workcal --property timezone Asia/New_York\n", e.getMessage());
+      assertEquals("Unknown command: edit caldar --name workcal --property timezone "
+          + "Asia/New_York\n", e.getMessage());
       throw e;
     } catch (Exception e) {
       throw e;
@@ -1751,11 +1786,13 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testInvalidEditCommand3() {
     try {
-      controller = new MockController("edt calendar --name workcal --property timezone Asia/New_York"
+      controller = new MockController("edt calendar --name workcal --property timezone "
+          + "Asia/New_York"
           , model, view);
       controller.start();
     } catch (InvalidCommandException e) {
-      assertEquals("Unknown command: edt calendar --name workcal --property timezone Asia/New_York\n", e.getMessage());
+      assertEquals("Unknown command: edt calendar --name workcal --property timezone "
+          + "Asia/New_York\n", e.getMessage());
       throw e;
     } catch (Exception e) {
       throw e;
@@ -1793,6 +1830,8 @@ public class CommandsE2ETest {
       throw e;
     }
   }
+
+
 
 // TODO: This test no longer works bcs auto decline is true by default
 //  // Create two events

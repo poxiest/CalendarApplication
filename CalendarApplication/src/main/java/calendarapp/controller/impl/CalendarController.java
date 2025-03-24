@@ -82,11 +82,7 @@ public class CalendarController implements ICalendarController {
    */
   private void processCommand(String commandString) throws InvalidCommandException {
     Command command;
-    try {
-      command = CommandFactory.getCommand(commandString, model, view);
-    } catch (InvalidCommandException e) {
-      throw e;
-    }
+    command = CommandFactory.getCommand(commandString, model, view);
     command.execute(commandString);
   }
 }

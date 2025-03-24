@@ -43,6 +43,14 @@ public class HeadlessControllerTest {
     controller.start();
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void testHeadless1_1() {
+    controller = CalendarControllerFactory.getController("headless",
+        filepath + "/src/test/java/withoutExitCommand",
+        model, view);
+    controller.start();
+  }
+
   @Test
   public void testHeadless2() {
     controller = CalendarControllerFactory.getController("headless",

@@ -51,7 +51,7 @@ public class TimeUtil {
     }
   }
 
-  public static Temporal getLocalDateFromString(String dateTime) {
+  public static Temporal getDateFromString(String dateTime) {
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     if (dateTime == null) {
       return null;

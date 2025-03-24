@@ -36,14 +36,14 @@
                     </targetClasses>
                     <targetTests>
                         <param>CalendarControllerFactoryTest</param>
-                        <param>CommandsE2ETest</param>
-                        <param>CommandFactoryTest</param>
-                        <param>HeadlessControllerTest</param>
                         <param>CalendarExporterTest</param>
-                        <param>EventTest</param>
-                        <param>TimeUtilsTest</param>
+                        <param>CommandFactoryTest</param>
                         <param>CommandPropertiesTest</param>
+                        <param>CommandsE2ETest</param>
+                        <param>EventTest</param>
                         <param>EventVisibilityTest</param>
+                        <param>HeadlessControllerTest</param>
+                        <param>TimeUtilsTest</param>
                     </targetTests>
                 </configuration>
             </plugin>

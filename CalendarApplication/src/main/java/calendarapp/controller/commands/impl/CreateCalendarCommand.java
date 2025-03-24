@@ -33,8 +33,6 @@ public class CreateCalendarCommand extends AbstractCommand {
       model.createCalendar(calendarName, timeZone);
     } catch (IllegalArgumentException | InvalidCommandException e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
-    } catch (EventConflictException e) {
-      throw new EventConflictException(command + "\nReason : " + e.getMessage());
     }
   }
 

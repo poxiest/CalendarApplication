@@ -366,23 +366,11 @@ public class Event implements IEvent {
   }
 
   /**
-   * Formats the event details for display in the user interface.
-   *
-   * @return a formatted string representation of the event suitable for display.
-   */
-  public String formatForDisplay() {
-    return String.format("• %s - %s to %s %s",
-        name,
-        startTime,
-        endTime,
-        location != null && !location.isEmpty() ? "- Location: " + location : "");
-  }
-
-  /**
    * Returns a string representation of this event.
    *
    * @return a string representation of all event properties.
    */
+  // TODO : Remove this.
   @Override
   public String toString() {
     return "Name: " + name + " " + "Start Time: " + startTime + " " + "End Time: " + endTime + " "

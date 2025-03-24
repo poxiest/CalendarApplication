@@ -89,7 +89,7 @@ public class CalendarModel implements ICalendarModel {
       endDateTime = TimeUtil.GetStartOfNextDay(startDateTime);
     }
     return activeCalendar.getEventRepository().getOverlappingEvents(startDateTime, endDateTime)
-        .stream().map(event -> new PrintEventsDTO.Builder()
+        .stream().map(event -> PrintEventsDTO.builder()
             .eventName(event.getName())
             .startTime(event.getStartTime())
             .endTime(event.getEndTime())

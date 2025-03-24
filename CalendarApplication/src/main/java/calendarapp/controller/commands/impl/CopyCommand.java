@@ -51,7 +51,7 @@ public class CopyCommand extends AbstractCommand {
 
         builder = builder.startTime(TimeUtil.getStartOfDayFromString(fromStartDate))
             .copyCalendarName(copyCalendarName)
-            .copyStartDate(TimeUtil.getLocalDateFromString(copyStartDate));
+            .copyStartDate(TimeUtil.getDateFromString(copyStartDate));
       }
 
       matcher = regexMatching(COPY_EVENTS_BETWEEN_COMMAND, command);
@@ -64,7 +64,7 @@ public class CopyCommand extends AbstractCommand {
         builder = builder.startTime(TimeUtil.getStartOfDayFromString(fromStartDate))
             .endTime(TimeUtil.getEndOfDayFromString(toEndDate))
             .copyCalendarName(copyCalendarName)
-            .copyStartDate(TimeUtil.getLocalDateFromString(copyStartDate));
+            .copyStartDate(TimeUtil.getDateFromString(copyStartDate));
       }
 
       if (copyCalendarName == null || copyStartDate == null) {
