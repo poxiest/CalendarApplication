@@ -841,6 +841,21 @@ public class CommandsE2ETest {
   }
 
   @Test(expected = InvalidCommandException.class)
+  public void RecurringEventsCantSpanMoreThanOneDay() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" " +
+          "from \"2025-11-11T11:00\" to \"2025-11-12T11:00\" repeats MWR for 7 times"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\" to"
+          + " \"2025-11-12T11:00\" repeats MWR for 7 times\n"
+          + "Reason : Recurring events cannot span more than one day", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
   public void EndDateLessThanStartDate() {
     try {
       controller = new MockController("create event \"Sprint Planning\" " +
@@ -1152,6 +1167,25 @@ public class CommandsE2ETest {
       assertEquals("edit event to Sprint from 2025-11-11T11:00 to " +
           "2025-11-11T12:00 with 2025-11-11T10:00\n" +
           "Reason : Event end time cannot be before start time", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid10() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from" +
+          " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
+          "create event Sprint from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+          "print events on \"2025-11-11\"\n" +
+          "edit event unknownproperty \"Sprint Planning\" from \"2025-11-11T11:00\" to" +
+          " \"2025-11-11T11:00\" with \"Richard Hall\" \n"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit event unknownproperty \"Sprint Planning\" from "
+          + "\"2025-11-11T11:00\" to \"2025-11-11T11:00\" with \"Richard Hall\" \n"
+          + "Reason : Cannot edit property: unknownproperty\n", e.getMessage());
       throw new InvalidCommandException(e.getMessage());
     }
   }
@@ -1825,6 +1859,23 @@ public class CommandsE2ETest {
     } catch (InvalidCommandException e) {
       assertEquals("edit calendar --name default --property Asia/New_York\n"
           + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidRecurringDaysCommand() {
+    try {
+      controller = new MockController("create event \"Recurring Event\" from " +
+          "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"A\" for 3 times\n"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Recurring Event\" from \"2025-11-11T10:00\" "
+          + "to \"2025-11-11T10:30\" repeats \"A\" for 3 times\n"
+          + "Reason : Invalid day character: A", e.getMessage());
       throw e;
     } catch (Exception e) {
       throw e;
