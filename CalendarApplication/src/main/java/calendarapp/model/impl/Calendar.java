@@ -40,7 +40,7 @@ public class Calendar implements ICalendar {
 
   public static class Builder {
     private String name;
-    private ZoneId zoneId = ZoneId.of(Constants.DEFAULT_TIME_ZONE);
+    private ZoneId zoneId = ZoneId.of(Constants.Calendar.DEFAULT_TIME_ZONE);
     private IEventRepository eventRepository;
 
     public Builder name(String name) {

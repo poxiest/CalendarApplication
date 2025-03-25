@@ -37,7 +37,7 @@ public class CalendarControllerFactory {
         try {
           String[] filenameSplit = filename.split("\\.");
           if (filenameSplit.length <= 1
-              || !filenameSplit[filenameSplit.length-1].equalsIgnoreCase("txt")) {
+              || !filenameSplit[filenameSplit.length - 1].equalsIgnoreCase("txt")) {
             throw new IllegalArgumentException("Only txt files are supported.");
           }
           return new CalendarController(new BufferedReader(new FileReader(filename)),

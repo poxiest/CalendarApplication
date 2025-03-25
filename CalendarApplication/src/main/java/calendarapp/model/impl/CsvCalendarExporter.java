@@ -1,15 +1,17 @@
 package calendarapp.model.impl;
 
-import calendarapp.model.EventVisibility;
-import calendarapp.model.ICalendarExporter;
-import calendarapp.model.IEvent;
-import static calendarapp.utils.TimeUtil.*;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.temporal.Temporal;
 import java.util.List;
+
+import calendarapp.model.EventVisibility;
+import calendarapp.model.ICalendarExporter;
+import calendarapp.model.IEvent;
+
+import static calendarapp.utils.TimeUtil.formatDate;
+import static calendarapp.utils.TimeUtil.formatTime;
+import static calendarapp.utils.TimeUtil.isAllDayEvent;
 
 public class CsvCalendarExporter implements ICalendarExporter {
   @Override
@@ -28,7 +30,7 @@ public class CsvCalendarExporter implements ICalendarExporter {
       writer.write(Constants.CsvFormat.LINE_END);
 
       for (IEvent event : events) {
-        writer.write(formatEvent(event));
+        writer.write(formatEventAsCsvRow(event));
         writer.write(Constants.CsvFormat.LINE_END);
       }
     } catch (IOException e) {
@@ -36,17 +38,6 @@ public class CsvCalendarExporter implements ICalendarExporter {
     }
 
     return new File(filePath).getAbsolutePath();
-  }
-
-  private String formatEvent(IEvent event) {
-    return formatEventAsCsvRow(
-        event.getName(),
-        event.getStartTime(),
-        event.getEndTime(),
-        event.getDescription(),
-        event.getLocation(),
-        event.getVisibility()
-    );
   }
 
   private String determinePrivacyFlag(EventVisibility visibility) {
@@ -60,19 +51,18 @@ public class CsvCalendarExporter implements ICalendarExporter {
     return "\"" + field.replace("\"", "\"\"") + "\"";
   }
 
-  private String formatEventAsCsvRow(String name, Temporal startTime, Temporal endTime,
-                                     String description, String location, EventVisibility visibility) {
-    boolean isAllDay = isAllDayEvent(startTime, endTime);
+  private String formatEventAsCsvRow(IEvent event) {
+    boolean isAllDay = isAllDayEvent(event.getStartTime(), event.getEndTime());
     return String.join(Constants.CsvFormat.DELIMITER,
-        escapeField(name),
-        formatDate(startTime),
-        isAllDay ? "" : formatTime(startTime),
-        formatDate(endTime),
-        isAllDay ? "" : formatTime(endTime),
+        escapeField(event.getName()),
+        formatDate(event.getStartTime()),
+        isAllDay ? "" : formatTime(event.getStartTime()),
+        formatDate(event.getEndTime()),
+        isAllDay ? "" : formatTime(event.getEndTime()),
         isAllDay ? Constants.CsvFormat.TRUE_VALUE : Constants.CsvFormat.FALSE_VALUE,
-        escapeField(description),
-        escapeField(location),
-        determinePrivacyFlag(visibility)
+        escapeField(event.getDescription()),
+        escapeField(event.getLocation()),
+        determinePrivacyFlag(event.getVisibility())
     );
   }
 }

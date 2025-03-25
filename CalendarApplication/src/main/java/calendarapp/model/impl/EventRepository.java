@@ -88,13 +88,13 @@ public class EventRepository implements IEventRepository {
 
   @Override
   public List<IEvent> getInBetweenEvents(String eventName, Temporal startTime, Temporal endTime) {
-    // TODO: return deepcopy of Ievent
-    return searchMatchingEvents(eventName, startTime, endTime, false);
+    return searchMatchingEvents(eventName, startTime, endTime, false)
+        .stream().map(IEvent::deepCopyEvent).collect(Collectors.toList());
   }
 
   @Override
-  public void copyEvents(List<IEvent> eventsToCopy, CopyEventRequestDTO copyEventRequestDTO, ZoneId fromZoneId,
-                         ZoneId toZoneId) {
+  public void copyEvents(List<IEvent> eventsToCopy, CopyEventRequestDTO copyEventRequestDTO,
+                         ZoneId fromZoneId, ZoneId toZoneId) {
     if (eventsToCopy.size() == 0) {
       return;
     }
@@ -144,6 +144,17 @@ public class EventRepository implements IEventRepository {
   public String export(String fileName, ICalendarExporter exporter) {
     exporter.export(events, fileName);
     return fileName;
+  }
+
+  @Override
+  public List<IEvent> getOverlappingEvents(Temporal startTime, Temporal endTime) {
+    return events.stream()
+        .filter(event -> TimeUtil.isConflicting(event.getStartTime(),
+            event.getEndTime(), startTime, endTime))
+        .sorted((event1, event2) ->
+            Math.toIntExact(TimeUtil.difference(event2.getStartTime(), event1.getStartTime())))
+        .map(IEvent::deepCopyEvent)
+        .collect(Collectors.toList());
   }
 
   /**
@@ -263,16 +274,6 @@ public class EventRepository implements IEventRepository {
         .filter(event -> startTime == null || isFirstAfterSecond(event.getStartTime(), startTime) || isEqual(event.getStartTime(), startTime))
         .filter(event -> endTime == null || isFirstBeforeSecond(event.getEndTime(), endTime) || isEqual(event.getEndTime(), endTime))
         .filter(event -> !isRecurring || (event.getRecurringDays() != null))
-        .sorted((event1, event2) ->
-            Math.toIntExact(TimeUtil.difference(event2.getStartTime(), event1.getStartTime())))
-        .collect(Collectors.toList());
-  }
-
-  @Override
-  public List<IEvent> getOverlappingEvents(Temporal startTime, Temporal endTime) {
-    return events.stream()
-        .filter(event -> TimeUtil.isConflicting(event.getStartTime(),
-            event.getEndTime(), startTime, endTime))
         .sorted((event1, event2) ->
             Math.toIntExact(TimeUtil.difference(event2.getStartTime(), event1.getStartTime())))
         .collect(Collectors.toList());
