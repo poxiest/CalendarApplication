@@ -1,8 +1,6 @@
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
-
 import calendarapp.controller.ICalendarController;
 import calendarapp.controller.InvalidCommandException;
 import calendarapp.controller.impl.CalendarControllerFactory;
@@ -75,13 +73,6 @@ public class HeadlessControllerTest {
     @Override
     public void displayMessage(String message) {
       resultBuilder.append(message);
-    }
-
-    @Override
-    public void displayEvents(List<String> events) {
-      for (String event : events) {
-        displayMessage(event + "\n");
-      }
     }
 
     public String getResult() {

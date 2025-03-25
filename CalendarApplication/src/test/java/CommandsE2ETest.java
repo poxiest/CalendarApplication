@@ -2,7 +2,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.StringReader;
-import java.util.List;
 import java.util.Scanner;
 
 import calendarapp.controller.ICalendarController;
@@ -1897,7 +1896,6 @@ public class CommandsE2ETest {
   }
 
 
-
 // TODO: This test no longer works bcs auto decline is true by default
 //  // Create two events
 //  @Test
@@ -1918,13 +1916,6 @@ public class CommandsE2ETest {
     @Override
     public void displayMessage(String message) {
       resultBuilder.append(message);
-    }
-
-    @Override
-    public void displayEvents(List<String> events) {
-      for (String event : events) {
-        resultBuilder.append(event);
-      }
     }
 
     public String getResult() {

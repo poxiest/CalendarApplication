@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import calendarapp.model.IEvent;
 import calendarapp.model.EventVisibility;
 import calendarapp.model.ICalendarExporter;
+import calendarapp.model.IEvent;
+import calendarapp.model.impl.Constants;
 import calendarapp.model.impl.CsvCalendarExporter;
 import calendarapp.model.impl.Event;
-import calendarapp.model.impl.Constants;
 
 import static org.junit.Assert.assertEquals;
 
