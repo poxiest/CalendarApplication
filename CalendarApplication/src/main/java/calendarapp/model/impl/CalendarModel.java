@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendar;
-import calendarapp.model.ICalendarExporter;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.ICalendarRepository;
 import calendarapp.model.dto.CalendarExporterDTO;
@@ -15,7 +14,6 @@ import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.model.dto.PrintEventsResponseDTO;
 import calendarapp.utils.TimeUtil;
 
-import static calendarapp.model.impl.Constants.EXPORTER_MAP;
 import static calendarapp.utils.TimeUtil.getEndOfDayFromString;
 import static calendarapp.utils.TimeUtil.getTemporalFromString;
 
@@ -55,12 +53,13 @@ public class CalendarModel implements ICalendarModel {
    * @throws EventConflictException if the event conflicts with an existing event.
    */
   @Override
-  public void createEvent(String eventName, Temporal startTime, Temporal endTime,
-                          String recurringDays, String occurrenceCount, Temporal recurrenceEndDate,
+  public void createEvent(String eventName, String startTime, String endTime,
+                          String recurringDays, String occurrenceCount, String recurrenceEndDate,
                           String description, String location, String visibility,
                           boolean autoDecline) throws EventConflictException {
-    activeCalendar.getEventRepository().create(eventName, startTime, endTime, description, location,
-        visibility, recurringDays, occurrenceCount, recurrenceEndDate, true);
+    activeCalendar.getEventRepository().create(eventName, getTemporalFromString(startTime),
+        getTemporalFromString(endTime), description, location, visibility, recurringDays,
+        occurrenceCount, getEndOfDayFromString(recurrenceEndDate), true);
   }
 
   /**

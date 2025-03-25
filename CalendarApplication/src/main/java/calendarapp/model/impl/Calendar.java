@@ -20,8 +20,8 @@ public class Calendar implements ICalendar {
   /**
    * Constructs a Calendar instance with the given name, time zone, and event repository.
    *
-   * @param name the name of the calendar
-   * @param zoneId the time zone of the calendar
+   * @param name            the name of the calendar
+   * @param zoneId          the time zone of the calendar
    * @param eventRepository the event repository associated with the calendar
    */
   Calendar(String name, ZoneId zoneId, IEventRepository eventRepository) {

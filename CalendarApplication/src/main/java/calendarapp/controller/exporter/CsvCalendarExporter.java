@@ -1,4 +1,4 @@
-package calendarapp.controller.impl;
+package calendarapp.controller.exporter;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -7,7 +7,6 @@ import java.util.List;
 
 import calendarapp.controller.ICalendarExporter;
 import calendarapp.model.EventVisibility;
-import calendarapp.model.IEvent;
 import calendarapp.model.dto.CalendarExporterDTO;
 
 import static calendarapp.utils.TimeUtil.formatDate;

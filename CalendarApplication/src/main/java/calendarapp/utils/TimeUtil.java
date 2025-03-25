@@ -239,9 +239,9 @@ public class TimeUtil {
   /**
    * Converts a temporal value from one time zone to another.
    *
-   * @param temporal the temporal value to convert
+   * @param temporal   the temporal value to convert
    * @param fromZoneId the original time zone
-   * @param toZoneId the target time zone
+   * @param toZoneId   the target time zone
    * @return the temporal value in the target time zone
    */
   public static Temporal ChangeZone(Temporal temporal, ZoneId fromZoneId, ZoneId toZoneId) {
@@ -265,7 +265,7 @@ public class TimeUtil {
    * Supports comparisons between LocalDateTime and LocalDate.
    *
    * @param start the start temporal value
-   * @param end the end temporal value
+   * @param end   the end temporal value
    * @return the duration between the two values
    * @throws UnsupportedOperationException if the input types are not supported
    */

@@ -1,17 +1,15 @@
 package calendarapp.controller.commands.impl;
 
-import java.util.List;
 import java.util.regex.Matcher;
 
 import calendarapp.controller.ICalendarExporter;
 import calendarapp.controller.InvalidCommandException;
+import calendarapp.controller.exporter.Constants;
 import calendarapp.model.ICalendarModel;
-import calendarapp.controller.impl.Constants;
 import calendarapp.view.ICalendarView;
-import calendarapp.model.dto.CalendarExporterDTO;
 
 import static calendarapp.controller.commands.impl.RegexPatternConstants.EXPORT_FILENAME_PATTERN;
-import static calendarapp.controller.impl.Constants.EXPORTER_MAP;
+import static calendarapp.controller.exporter.Constants.EXPORTER_MAP;
 
 /**
  * Export Command implementation for exporting calendar data to a file.
@@ -65,9 +63,8 @@ public class ExportCommand extends AbstractCommand {
         throw new IllegalStateException("No exporter for format: " + fileExtension);
       }
 
-      List<CalendarExporterDTO> eventsToExport = model.getEventsForExport();
-
-      view.displayMessage("CSV file Location : " + exporter.export(eventsToExport, filename));
+      view.displayMessage("CSV file Location : "
+          + exporter.export(model.getEventsForExport(), filename));
     } catch (Exception e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     }

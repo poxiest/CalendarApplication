@@ -15,17 +15,17 @@ public interface IEventRepository {
   /**
    * Creates a new event with the specified details.
    *
-   * @param eventName the name of the event
-   * @param startTime the start time of the event
-   * @param endTime the end time of the event
-   * @param description the description of the event
-   * @param location the location of the event
-   * @param visibility the visibility of the event (Public/Private)
-   * @param recurringDays the days of recurrence (if any)
-   * @param occurrenceCount the number of occurrences (optional)
+   * @param eventName         the name of the event
+   * @param startTime         the start time of the event
+   * @param endTime           the end time of the event
+   * @param description       the description of the event
+   * @param location          the location of the event
+   * @param visibility        the visibility of the event (Public/Private)
+   * @param recurringDays     the days of recurrence (if any)
+   * @param occurrenceCount   the number of occurrences (optional)
    * @param recurrenceEndDate the end date of recurrence (optional)
-   * @param autoDecline whether to decline creation on*
-  */
+   * @param autoDecline       whether to decline creation on*
+   */
   void create(String eventName, Temporal startTime, Temporal endTime,
               String description, String location, String visibility,
               String recurringDays, String occurrenceCount, Temporal recurrenceEndDate,
@@ -36,9 +36,9 @@ public interface IEventRepository {
    *
    * @param eventName the name of the event
    * @param startTime the start time of the event
-   * @param endTime the end time of the event
-   * @param property the property to update (e.g., description, location)
-   * @param value the new value to set for the property
+   * @param endTime   the end time of the event
+   * @param property  the property to update (e.g., description, location)
+   * @param value     the new value to set for the property
    */
   void update(String eventName, Temporal startTime, Temporal endTime, String property,
               String value);
@@ -48,7 +48,7 @@ public interface IEventRepository {
    *
    * @param eventName the name of the event
    * @param startTime the start time of the range
-   * @param endTime the end time of the range
+   * @param endTime   the end time of the range
    * @return list of matching events
    */
   List<IEvent> getInBetweenEvents(String eventName, Temporal startTime, Temporal endTime);
@@ -57,7 +57,7 @@ public interface IEventRepository {
    * Returns all events that overlap with the specified time range.
    *
    * @param startTime the start of the range
-   * @param endTime the end of the range
+   * @param endTime   the end of the range
    * @return list of overlapping events
    */
   List<IEvent> getOverlappingEvents(Temporal startTime, Temporal endTime);
@@ -65,10 +65,10 @@ public interface IEventRepository {
   /**
    * Copies the given events to a new calendar based on the copy request.
    *
-   * @param eventsToCopy the events to copy
+   * @param eventsToCopy        the events to copy
    * @param copyEventRequestDTO the details for copying
-   * @param fromZoneId the original time zone
-   * @param toZoneId the target time zone
+   * @param fromZoneId          the original time zone
+   * @param toZoneId            the target time zone
    */
   void copyEvents(List<IEvent> eventsToCopy, CopyEventRequestDTO copyEventRequestDTO,
                   ZoneId fromZoneId, ZoneId toZoneId);
@@ -77,7 +77,7 @@ public interface IEventRepository {
    * Updates all event times to a new time zone.
    *
    * @param from the current time zone
-   * @param to the new time zone
+   * @param to   the new time zone
    */
   void changeTimeZone(ZoneId from, ZoneId to);
 

@@ -135,7 +135,8 @@ public class EventTest {
     assertEquals("default", eventWithOptionalField.getVisibility().getValue());
     assertEquals("M", eventWithOptionalField.getRecurringDays());
     assertNull(eventWithOptionalField.getOccurrenceCount());
-    assertEquals(LocalDateTime.parse("2025-04-10T00:00"), eventWithOptionalField.getRecurrenceEndDate());
+    assertEquals(LocalDateTime.parse("2025-04-10T00:00"),
+        eventWithOptionalField.getRecurrenceEndDate());
   }
 
   @Test(expected = IllegalArgumentException.class)

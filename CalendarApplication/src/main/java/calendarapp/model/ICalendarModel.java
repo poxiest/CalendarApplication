@@ -73,15 +73,15 @@ public interface ICalendarModel {
    * Creates a new calendar with the given name and time zone.
    *
    * @param calendarName the name of the calendar to create
-   * @param timezone the time zone of the new calendar
+   * @param timezone     the time zone of the new calendar
    */
   void createCalendar(String calendarName, String timezone);
 
   /**
    * Edits a property of the specified calendar.
    *
-   * @param calendarName the name of the calendar to edit
-   * @param propertyName the name of the property to change
+   * @param calendarName  the name of the calendar to edit
+   * @param propertyName  the name of the property to change
    * @param propertyValue the new value of the property
    */
   void editCalendar(String calendarName, String propertyName, String propertyValue);

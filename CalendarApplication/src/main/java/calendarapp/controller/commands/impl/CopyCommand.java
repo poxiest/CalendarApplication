@@ -34,8 +34,9 @@ public class CopyCommand extends AbstractCommand {
    * Parses the command, builds the request, and sends it to the model for processing.
    *
    * @param command the full user input command
-   * @throws InvalidCommandException if the command format is incorrect or required fields are missing
-   * @throws EventConflictException if there is a conflict when copying events
+   * @throws InvalidCommandException if the command format is incorrect or required fields are
+   *                                 missing
+   * @throws EventConflictException  if there is a conflict when copying events
    */
   @Override
   public void execute(String command) throws InvalidCommandException, EventConflictException {

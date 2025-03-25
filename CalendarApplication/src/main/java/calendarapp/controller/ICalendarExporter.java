@@ -2,7 +2,6 @@ package calendarapp.controller;
 
 import java.util.List;
 
-import calendarapp.model.IEvent;
 import calendarapp.model.dto.CalendarExporterDTO;
 
 /**

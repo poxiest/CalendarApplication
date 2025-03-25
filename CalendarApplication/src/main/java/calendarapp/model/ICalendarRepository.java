@@ -11,8 +11,8 @@ public interface ICalendarRepository {
   /**
    * Adds a new calendar with the given name, time zone, and event repository.
    *
-   * @param name the name of the calendar
-   * @param zoneId the time zone of the calendar
+   * @param name            the name of the calendar
+   * @param zoneId          the time zone of the calendar
    * @param eventRepository the event repository for the calendar
    */
   void addCalendar(String name, String zoneId, IEventRepository eventRepository);
@@ -20,8 +20,8 @@ public interface ICalendarRepository {
   /**
    * Edits a property of the specified calendar.
    *
-   * @param name the name of the calendar to edit
-   * @param propertyName the property to update
+   * @param name          the name of the calendar to edit
+   * @param propertyName  the property to update
    * @param propertyValue the new value for the property
    */
   void editCalendar(String name, String propertyName, String propertyValue);

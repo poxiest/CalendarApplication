@@ -9,6 +9,7 @@ import calendarapp.controller.InvalidCommandException;
 import calendarapp.controller.impl.CalendarController;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
+import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.model.dto.PrintEventsResponseDTO;
 import calendarapp.utils.TimeUtil;
@@ -229,19 +230,6 @@ public class ControllerModelIntergationTest {
   }
 
   @Test
-  public void testExportCommandsIntegration() {
-    controller = new CalendarController(new StringReader("export cal fileName.csv\nexit"),
-        model, view);
-    controller.start();
-    assertEquals("Filename: fileName.csv\n", log.toString());
-    assertEquals("Enter command or enter 'exit' to exit the calendar application.\n"
-        + "Processing command: export cal fileName.csv\n"
-        + "CSV file Location : String from Export\n"
-        + "Enter command or enter 'exit' to exit the calendar application.\n"
-        + "Exiting application.\n", output.toString());
-  }
-
-  @Test
   public void testShowCommandsIntegration() {
     controller = new CalendarController(new StringReader("show status on "
         + "\"2025-11-11T11:00\"\nexit"),
@@ -249,8 +237,9 @@ public class ControllerModelIntergationTest {
     controller.start();
     assertEquals("Status on Time: 2025-11-11T11:00\n", log.toString());
     assertEquals("Enter command or enter 'exit' to exit the calendar application.\n"
-        + "Processing command: export cal fileName.csv\n"
-        + "CSV file Location : String from Export\n"
+        + "Processing command: show status on \"2025-11-11T11:00\"\n"
+        + "Status: Status Available/Busy!\n"
+        + "\n"
         + "Enter command or enter 'exit' to exit the calendar application.\n"
         + "Exiting application.\n", output.toString());
   }
@@ -321,17 +310,17 @@ public class ControllerModelIntergationTest {
   @Test
   public void testCopyCommandsIntegration1() {
     controller = new CalendarController(new StringReader("copy events on "
-        + "\"2025-11-11T11:00\" --target NewCal to \"2025-12-12\"\nexit"),
+        + "\"2025-11-11\" --target NewCal to \"2025-12-12\"\nexit"),
         model, view);
     controller.start();
     assertEquals("Event Name: null\n"
-        + "Start Time: 2025-11-11T11:00\n"
+        + "Start Time: 2025-11-11T00:00\n"
         + "End Time: null\n"
         + "Calendar Name: NewCal\n"
         + "Copy to: 2025-12-12\n", log.toString());
     assertEquals("Enter command or enter 'exit' to exit the calendar application.\n"
-        + "Processing command: copy event Standup on \"2025-11-11T11:00\" --target NewCal to "
-        + "\"2025-12-12T09:00\"\n"
+        + "Processing command: copy events on \"2025-11-11\" --target NewCal to "
+        + "\"2025-12-12\"\n"
         + "\n"
         + "Enter command or enter 'exit' to exit the calendar application.\n"
         + "Exiting application.\n", output.toString());
@@ -403,9 +392,8 @@ public class ControllerModelIntergationTest {
     }
 
     @Override
-    public String export(String filename) {
-      log.append("Filename: ").append(filename).append("\n");
-      return "String from Export";
+    public List<CalendarExporterDTO> getEventsForExport() {
+      return List.of();
     }
 
     @Override
