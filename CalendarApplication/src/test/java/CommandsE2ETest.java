@@ -24,7 +24,6 @@ public class CommandsE2ETest {
   private ICalendarController controller;
   private ICalendarModel model;
   private ICalendarView view;
-  private MockView viewMock;
   private StringBuilder stringOutput;
 
   @Before

@@ -127,7 +127,7 @@ public class CalendarControllerFactoryTest {
 
     @Override
     public void editEvent(String eventName, Temporal startTime, Temporal endTime, String property,
-                          String value, boolean isRecurringEvents) {
+                          String value) {
       System.out.println("message");
 
     }
