@@ -8,8 +8,8 @@ import calendarapp.controller.ICalendarController;
 import calendarapp.controller.impl.CalendarController;
 import calendarapp.controller.impl.CalendarControllerFactory;
 import calendarapp.model.ICalendarModel;
-import calendarapp.model.dto.CopyEventDTO;
-import calendarapp.model.dto.PrintEventsDTO;
+import calendarapp.model.dto.CopyEventRequestDTO;
+import calendarapp.model.dto.PrintEventsResponseDTO;
 import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
@@ -139,7 +139,7 @@ public class CalendarControllerFactoryTest {
     }
 
     @Override
-    public List<PrintEventsDTO> getEventsForPrinting(Temporal startTime, Temporal endTime) {
+    public List<PrintEventsResponseDTO> getEventsForPrinting(Temporal startTime, Temporal endTime) {
       return List.of();
     }
 
@@ -170,7 +170,7 @@ public class CalendarControllerFactoryTest {
     }
 
     @Override
-    public void copyEvent(CopyEventDTO copyEventDTO) {
+    public void copyEvent(CopyEventRequestDTO copyEventRequestDTO) {
 
     }
   }

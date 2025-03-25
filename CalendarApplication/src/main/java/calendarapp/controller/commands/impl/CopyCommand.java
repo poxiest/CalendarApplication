@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
-import calendarapp.model.dto.CopyEventDTO;
+import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.utils.TimeUtil;
 import calendarapp.view.ICalendarView;
 
@@ -27,7 +27,7 @@ public class CopyCommand extends AbstractCommand {
 
   @Override
   public void execute(String command) throws InvalidCommandException, EventConflictException {
-    CopyEventDTO.Builder builder = CopyEventDTO.builder();
+    CopyEventRequestDTO.Builder builder = CopyEventRequestDTO.builder();
 
     try {
       Matcher matcher = regexMatching(COPY_EVENT_COMMAND, command);

@@ -1,6 +1,6 @@
 package calendarapp.model;
 
-import calendarapp.model.dto.CopyEventDTO;
+import calendarapp.model.dto.CopyEventRequestDTO;
 
 public interface ICalendarRepository {
 
@@ -8,7 +8,7 @@ public interface ICalendarRepository {
 
   void editCalendar(String name, String propertyName, String propertyValue);
 
-  void copyCalendarEvents(String currentCalendarName, CopyEventDTO copyEventDTO);
+  void copyCalendarEvents(String currentCalendarName, CopyEventRequestDTO copyEventRequestDTO);
 
   ICalendar getCalendar(String name);
 }

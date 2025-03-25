@@ -5,13 +5,13 @@ import java.time.temporal.Temporal;
 /**
  * DTO class representing events print request.
  */
-public class PrintEventsDTO {
+public class PrintEventsResponseDTO {
   private final String eventName;
   private final Temporal startTime;
   private final Temporal endTime;
   private final String location;
 
-  private PrintEventsDTO(PrintEventsDTO.Builder builder) {
+  private PrintEventsResponseDTO(PrintEventsResponseDTO.Builder builder) {
     this.eventName = builder.eventName;
     this.startTime = builder.startTime;
     this.endTime = builder.endTime;
@@ -34,8 +34,8 @@ public class PrintEventsDTO {
     return location;
   }
 
-  public static PrintEventsDTO.Builder builder() {
-    return new PrintEventsDTO.Builder();
+  public static PrintEventsResponseDTO.Builder builder() {
+    return new PrintEventsResponseDTO.Builder();
   }
 
   /**
@@ -47,28 +47,28 @@ public class PrintEventsDTO {
     private Temporal endTime;
     private String location;
 
-    public PrintEventsDTO.Builder eventName(String eventName) {
+    public PrintEventsResponseDTO.Builder eventName(String eventName) {
       this.eventName = eventName;
       return this;
     }
 
-    public PrintEventsDTO.Builder startTime(Temporal startTime) {
+    public PrintEventsResponseDTO.Builder startTime(Temporal startTime) {
       this.startTime = startTime;
       return this;
     }
 
-    public PrintEventsDTO.Builder endTime(Temporal endTime) {
+    public PrintEventsResponseDTO.Builder endTime(Temporal endTime) {
       this.endTime = endTime;
       return this;
     }
 
-    public PrintEventsDTO.Builder location(String location) {
+    public PrintEventsResponseDTO.Builder location(String location) {
       this.location = location;
       return this;
     }
 
-    public PrintEventsDTO build() {
-      return new PrintEventsDTO(this);
+    public PrintEventsResponseDTO build() {
+      return new PrintEventsResponseDTO(this);
     }
   }
 }

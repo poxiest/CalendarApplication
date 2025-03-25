@@ -16,7 +16,7 @@ import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarExporter;
 import calendarapp.model.IEvent;
 import calendarapp.model.IEventRepository;
-import calendarapp.model.dto.CopyEventDTO;
+import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.utils.TimeUtil;
 
 import static calendarapp.model.impl.Constants.DaysOfWeek.parseDaysOfWeek;
@@ -93,7 +93,7 @@ public class EventRepository implements IEventRepository {
   }
 
   @Override
-  public void copyEvents(List<IEvent> eventsToCopy, CopyEventDTO copyEventDTO, ZoneId fromZoneId,
+  public void copyEvents(List<IEvent> eventsToCopy, CopyEventRequestDTO copyEventRequestDTO, ZoneId fromZoneId,
                          ZoneId toZoneId) {
     if (eventsToCopy.size() == 0) {
       return;
@@ -101,7 +101,7 @@ public class EventRepository implements IEventRepository {
 
     Duration differenceBetween = TimeUtil.getDurationDifference(
         TimeUtil.ChangeZone(eventsToCopy.get(0).getStartTime(), fromZoneId, toZoneId),
-        copyEventDTO.getCopyToDate());
+        copyEventRequestDTO.getCopyToDate());
 
     for (IEvent event : eventsToCopy) {
       Temporal startTime = TimeUtil.AddDuration(TimeUtil.ChangeZone(event.getStartTime(),

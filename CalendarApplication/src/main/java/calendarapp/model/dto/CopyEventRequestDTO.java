@@ -5,14 +5,14 @@ import java.time.temporal.Temporal;
 /**
  * DTO class representing an event copy request.
  */
-public class CopyEventDTO {
+public class CopyEventRequestDTO {
   private final String eventName;
   private final Temporal startTime;
   private final Temporal endTime;
   private final String copyCalendarName;
   private final Temporal copyToDate;
 
-  private CopyEventDTO(Builder builder) {
+  private CopyEventRequestDTO(Builder builder) {
     this.eventName = builder.eventName;
     this.startTime = builder.startTime;
     this.endTime = builder.endTime;
@@ -79,8 +79,8 @@ public class CopyEventDTO {
       return this;
     }
 
-    public CopyEventDTO build() {
-      return new CopyEventDTO(this);
+    public CopyEventRequestDTO build() {
+      return new CopyEventRequestDTO(this);
     }
   }
 }

@@ -10,8 +10,8 @@ import calendarapp.model.ICalendar;
 import calendarapp.model.ICalendarExporter;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.ICalendarRepository;
-import calendarapp.model.dto.CopyEventDTO;
-import calendarapp.model.dto.PrintEventsDTO;
+import calendarapp.model.dto.CopyEventRequestDTO;
+import calendarapp.model.dto.PrintEventsResponseDTO;
 import calendarapp.utils.TimeUtil;
 
 import static calendarapp.model.impl.Constants.EXPORTER_MAP;
@@ -84,12 +84,12 @@ public class CalendarModel implements ICalendarModel {
    * @return A list of formatted event strings.
    */
   @Override
-  public List<PrintEventsDTO> getEventsForPrinting(Temporal startDateTime, Temporal endDateTime) {
+  public List<PrintEventsResponseDTO> getEventsForPrinting(Temporal startDateTime, Temporal endDateTime) {
     if (endDateTime == null) {
       endDateTime = TimeUtil.GetStartOfNextDay(startDateTime);
     }
     return activeCalendar.getEventRepository().getOverlappingEvents(startDateTime, endDateTime)
-        .stream().map(event -> PrintEventsDTO.builder()
+        .stream().map(event -> PrintEventsResponseDTO.builder()
             .eventName(event.getName())
             .startTime(event.getStartTime())
             .endTime(event.getEndTime())
@@ -151,8 +151,8 @@ public class CalendarModel implements ICalendarModel {
   }
 
   @Override
-  public void copyEvent(CopyEventDTO copyEventDTO) {
-    calendarRepository.copyCalendarEvents(activeCalendar.getName(), copyEventDTO);
+  public void copyEvent(CopyEventRequestDTO copyEventRequestDTO) {
+    calendarRepository.copyCalendarEvents(activeCalendar.getName(), copyEventRequestDTO);
   }
 
   private String getFileExtension(String filePath) {

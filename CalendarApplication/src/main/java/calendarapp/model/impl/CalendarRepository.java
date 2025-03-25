@@ -8,7 +8,7 @@ import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.ICalendar;
 import calendarapp.model.ICalendarRepository;
 import calendarapp.model.IEventRepository;
-import calendarapp.model.dto.CopyEventDTO;
+import calendarapp.model.dto.CopyEventRequestDTO;
 
 public class CalendarRepository implements ICalendarRepository {
   private List<ICalendar> calendars;
@@ -57,18 +57,18 @@ public class CalendarRepository implements ICalendarRepository {
   }
 
   @Override
-  public void copyCalendarEvents(String currentCalendarName, CopyEventDTO copyEventDTO) {
+  public void copyCalendarEvents(String currentCalendarName, CopyEventRequestDTO copyEventRequestDTO) {
     ICalendar currentCalendar = getCalendar(currentCalendarName);
-    ICalendar toCalendar = getCalendar(copyEventDTO.getCopyCalendarName());
+    ICalendar toCalendar = getCalendar(copyEventRequestDTO.getCopyCalendarName());
 
     if (currentCalendar == null || toCalendar == null) {
       throw new InvalidCommandException("Calendar does not exist.\n");
     }
 
     toCalendar.getEventRepository().copyEvents(currentCalendar.getEventRepository()
-            .getInBetweenEvents(copyEventDTO.getEventName(), copyEventDTO.getStartTime(),
-                copyEventDTO.getEndTime()),
-        copyEventDTO, currentCalendar.getZoneId(), toCalendar.getZoneId());
+            .getInBetweenEvents(copyEventRequestDTO.getEventName(), copyEventRequestDTO.getStartTime(),
+                copyEventRequestDTO.getEndTime()),
+        copyEventRequestDTO, currentCalendar.getZoneId(), toCalendar.getZoneId());
   }
 
   @Override
