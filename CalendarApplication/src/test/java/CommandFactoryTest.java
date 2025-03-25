@@ -1,6 +1,5 @@
 import org.junit.Test;
 
-import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -264,21 +263,21 @@ public class CommandFactoryTest {
 
   private static class MockModel implements ICalendarModel {
     @Override
-    public void createEvent(String eventName, Temporal startTime, Temporal endTime,
+    public void createEvent(String eventName, String startTime, String endTime,
                             String recurringDays, String occurrenceCount,
-                            Temporal recurrenceEndDate, String description, String location,
+                            String recurrenceEndDate, String description, String location,
                             String visibility, boolean autoDecline) {
       return;
     }
 
     @Override
-    public void editEvent(String eventName, Temporal startTime, Temporal endTime,
+    public void editEvent(String eventName, String startTime, String endTime,
                           String property, String value) {
       return;
     }
 
     @Override
-    public List<PrintEventsResponseDTO> getEventsForPrinting(Temporal startTime, Temporal endTime) {
+    public List<PrintEventsResponseDTO> getEventsForPrinting(String startTime, String endTime) {
       return List.of();
     }
 
@@ -288,7 +287,7 @@ public class CommandFactoryTest {
     }
 
     @Override
-    public String showStatus(Temporal dateTime) {
+    public String showStatus(String dateTime) {
       return "";
     }
 

@@ -15,6 +15,8 @@ import calendarapp.model.dto.PrintEventsResponseDTO;
 import calendarapp.utils.TimeUtil;
 
 import static calendarapp.model.impl.Constants.EXPORTER_MAP;
+import static calendarapp.utils.TimeUtil.getEndOfDayFromString;
+import static calendarapp.utils.TimeUtil.getTemporalFromString;
 
 /**
  * The CalendarModel class implements the ICalendarModel interface
@@ -52,12 +54,14 @@ public class CalendarModel implements ICalendarModel {
    * @throws EventConflictException if the event conflicts with an existing event.
    */
   @Override
-  public void createEvent(String eventName, Temporal startTime, Temporal endTime,
-                          String recurringDays, String occurrenceCount, Temporal recurrenceEndDate,
+  public void createEvent(String eventName, String startTime, String endTime,
+                          String recurringDays, String occurrenceCount, String recurrenceEndDate,
                           String description, String location, String visibility,
                           boolean autoDecline) throws EventConflictException {
-    activeCalendar.getEventRepository().create(eventName, startTime, endTime, description, location,
-        visibility, recurringDays, occurrenceCount, recurrenceEndDate, true);
+    Object getEndOfDayFromString;
+    activeCalendar.getEventRepository().create(eventName, getTemporalFromString(startTime),
+        getTemporalFromString(endTime), description, location, visibility, recurringDays,
+        occurrenceCount, getEndOfDayFromString(recurrenceEndDate), true);
   }
 
   /**
@@ -70,10 +74,10 @@ public class CalendarModel implements ICalendarModel {
    * @param value     The new value of the property.
    */
   @Override
-  public void editEvent(String eventName, Temporal startTime, Temporal endTime, String property,
+  public void editEvent(String eventName, String startTime, String endTime, String property,
                         String value) {
-    activeCalendar.getEventRepository().update(eventName, startTime, endTime, property, value
-    );
+    activeCalendar.getEventRepository().update(eventName, getTemporalFromString(startTime),
+        getTemporalFromString(endTime), property, value);
   }
 
   /**
@@ -84,12 +88,17 @@ public class CalendarModel implements ICalendarModel {
    * @return A list of formatted event strings.
    */
   @Override
-  public List<PrintEventsResponseDTO> getEventsForPrinting(Temporal startDateTime,
-                                                           Temporal endDateTime) {
+  public List<PrintEventsResponseDTO> getEventsForPrinting(String startDateTime,
+                                                           String endDateTime) {
+    Temporal startTemporal = getTemporalFromString(startDateTime);
+    Temporal endTemporal;
     if (endDateTime == null) {
-      endDateTime = TimeUtil.GetStartOfNextDay(startDateTime);
+      endTemporal = TimeUtil.GetStartOfNextDay(startTemporal);
+    } else {
+      endTemporal = getTemporalFromString(endDateTime);
     }
-    return activeCalendar.getEventRepository().getOverlappingEvents(startDateTime, endDateTime)
+    return activeCalendar.getEventRepository()
+        .getOverlappingEvents(startTemporal, endTemporal)
         .stream().map(event -> PrintEventsResponseDTO.builder()
             .eventName(event.getName())
             .startTime(event.getStartTime())
@@ -127,8 +136,9 @@ public class CalendarModel implements ICalendarModel {
    * @return The availability status ("busy" or "available").
    */
   @Override
-  public String showStatus(Temporal dateTime) {
-    boolean isBusy = activeCalendar.getEventRepository().isActiveAt(dateTime);
+  public String showStatus(String dateTime) {
+    boolean isBusy = activeCalendar.getEventRepository()
+        .isActiveAt(getTemporalFromString(dateTime));
     return isBusy ? Constants.Status.BUSY : Constants.Status.AVAILABLE;
   }
 

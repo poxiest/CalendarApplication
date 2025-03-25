@@ -1,6 +1,5 @@
 package calendarapp.model;
 
-import java.time.temporal.Temporal;
 import java.util.List;
 
 import calendarapp.model.dto.CopyEventRequestDTO;
@@ -31,8 +30,8 @@ public interface ICalendarModel {
    * @throws EventConflictException if autoDecline is true and the event
    *                                conflicts with an existing event.
    */
-  void createEvent(String eventName, Temporal startTime, Temporal endTime, String recurringDays,
-                   String occurrenceCount, Temporal recurrenceEndDate, String description,
+  void createEvent(String eventName, String startTime, String endTime, String recurringDays,
+                   String occurrenceCount, String recurrenceEndDate, String description,
                    String location, String visibility,
                    boolean autoDecline) throws EventConflictException;
 
@@ -47,7 +46,7 @@ public interface ICalendarModel {
    * @throws EventConflictException if the edited event would conflict with existing
    *                                events and auto-decline is enabled.
    */
-  void editEvent(String eventName, Temporal startTime, Temporal endTime, String property,
+  void editEvent(String eventName, String startTime, String endTime, String property,
                  String value) throws EventConflictException;
 
   /**
@@ -57,7 +56,7 @@ public interface ICalendarModel {
    * @param endTime   the end of the time range (if null, defaults to one day after startTime).
    * @return a list of events that intersect with the specified time range.
    */
-  List<PrintEventsResponseDTO> getEventsForPrinting(Temporal startTime, Temporal endTime);
+  List<PrintEventsResponseDTO> getEventsForPrinting(String startTime, String endTime);
 
   /**
    * Exports calendar events to a CSV file compatible with Google Calendar.
@@ -73,7 +72,7 @@ public interface ICalendarModel {
    * @param dateTime the date and time to check.
    * @return a status string ("Busy" or "Available").
    */
-  String showStatus(Temporal dateTime);
+  String showStatus(String dateTime);
 
   void createCalendar(String calendarName, String timezone);
 

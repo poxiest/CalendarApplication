@@ -5,7 +5,6 @@ import java.util.regex.Matcher;
 import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
-import calendarapp.utils.TimeUtil;
 import calendarapp.view.ICalendarView;
 
 import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_AUTO_DECLINE_PATTERN;
@@ -16,7 +15,6 @@ import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_
 import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_REPEATS_F0R_PATTERN;
 import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_REPEATS_UNTIL_PATTERN;
 import static calendarapp.controller.commands.impl.RegexPatternConstants.IS_RECURRING_EVENT;
-import static calendarapp.utils.TimeUtil.getTemporalFromString;
 
 /**
  * Create Command implementation for creating calendar events.
@@ -102,10 +100,8 @@ public class CreateEventCommand extends AbstractCommand {
   public void execute(String command) throws InvalidCommandException, EventConflictException {
     parseCommand(command);
     try {
-      model.createEvent(eventName, getTemporalFromString(startDateTime),
-          getTemporalFromString(endDateTime), recurringDays, occurrenceCount,
-          TimeUtil.getEndOfDayFromString(recurrenceEndDate),
-          description, location, visibility, autoDecline);
+      model.createEvent(eventName, startDateTime, endDateTime, recurringDays, occurrenceCount,
+          recurrenceEndDate, description, location, visibility, autoDecline);
     } catch (IllegalArgumentException e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     } catch (EventConflictException e) {
