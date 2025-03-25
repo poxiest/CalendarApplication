@@ -7,7 +7,6 @@ import java.time.temporal.Temporal;
  * Includes the event name, original time range, destination calendar name,
  * and target date.
  */
-
 public class CopyEventRequestDTO {
   private final String eventName;
   private final Temporal startTime;

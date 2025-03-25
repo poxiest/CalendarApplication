@@ -88,20 +88,19 @@ public class CommandsE2ETest {
   }
 
 
-// TODO: This test no longer works bcs auto decline is true by default
-//  // Multiple events on same time
-//  @Test
-//  public void MultipleEventsOnSameTime() {
-//    controller = new MockController("create event \"Sprint Planning\" " +
-//        "from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
-//        "create event \"Sprint Planning2\" from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
-//        "print events on \"2025-11-11\"", model, view);
-//    controller.start();
-//    assertEquals("Events:\n" +
-//            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 \n" +
-//            "• Sprint Planning2 - 2025-11-11T11:00 to 2025-11-11T12:00 \n",
-//        stringOutput.toString());
-//  }
+  // Multiple events on same time
+  @Test(expected = EventConflictException.class)
+  public void MultipleEventsOnSameTime() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
+        "create event \"Sprint Planning2\" from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 \n" +
+            "• Sprint Planning2 - 2025-11-11T11:00 to 2025-11-11T12:00 \n",
+        stringOutput.toString());
+  }
 
   // Multiple events on Different time same day
   @Test
@@ -1895,19 +1894,18 @@ public class CommandsE2ETest {
   }
 
 
-// TODO: This test no longer works bcs auto decline is true by default
-//  // Create two events
-//  @Test
-//  public void testInteractive4() {
-//    controller = new MockController("create event abc on \"2025-12-22T10:00\"" +
-//        "\ncreate event cdb on \"2025-12-22T11:00\"\nprint events on \"2025-12-22\"",
-//        model, view);
-//    controller.start();
-//    assertEquals("Events:\n" +
-//            "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n" +
-//            "• cdb - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
-//        stringOutput.toString());
-//  }
+  // Create two events
+  @Test(expected = EventConflictException.class)
+  public void testInteractive4() {
+    controller = new MockController("create event abc on \"2025-12-22T10:00\"" +
+        "\ncreate event cdb on \"2025-12-22T11:00\"\nprint events on \"2025-12-22\"",
+        model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n" +
+            "• cdb - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
+        stringOutput.toString());
+  }
 
   private static class MockView implements ICalendarView {
     private final StringBuilder resultBuilder = new StringBuilder();

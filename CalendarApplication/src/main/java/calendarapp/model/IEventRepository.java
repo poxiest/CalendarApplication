@@ -89,5 +89,10 @@ public interface IEventRepository {
    */
   boolean isActiveAt(Temporal time);
 
+  /**
+   * Converts all events to a list of CalendarExporterDTOs for exporting.
+   *
+   * @return a list of export-ready event DTOs
+   */
   List<CalendarExporterDTO> getEventsForExport();
 }
