@@ -66,10 +66,9 @@ public class EditEventCommand extends AbstractCommand {
   @Override
   public void execute(String command) throws InvalidCommandException, EventConflictException {
     parseCommand(command);
-    boolean isRecurringEvent = command.toLowerCase().contains(IS_RECURRING_EVENTS);
     try {
       model.editEvent(eventName, getTemporalFromString(startDateTime),
-          getTemporalFromString(endDateTime), propertyName, newPropertyValue, isRecurringEvent);
+          getTemporalFromString(endDateTime), propertyName, newPropertyValue);
     } catch (IllegalArgumentException e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     } catch (EventConflictException e) {
