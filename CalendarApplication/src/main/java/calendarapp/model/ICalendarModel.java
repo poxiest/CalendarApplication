@@ -3,6 +3,7 @@ package calendarapp.model;
 import java.time.temporal.Temporal;
 import java.util.List;
 
+import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.model.dto.PrintEventsResponseDTO;
 
@@ -59,13 +60,7 @@ public interface ICalendarModel {
    */
   List<PrintEventsResponseDTO> getEventsForPrinting(Temporal startTime, Temporal endTime);
 
-  /**
-   * Exports calendar events to a CSV file compatible with Google Calendar.
-   *
-   * @param filename the base name of the file to export to.
-   * @return the full path to the exported file.
-   */
-  String export(String filename);
+  List<CalendarExporterDTO> getEventsForExport();
 
   /**
    * Checks the availability status at a specific time.

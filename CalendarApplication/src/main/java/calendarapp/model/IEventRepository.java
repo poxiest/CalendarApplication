@@ -4,6 +4,7 @@ import java.time.ZoneId;
 import java.time.temporal.Temporal;
 import java.util.List;
 
+import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
 
 /**
@@ -88,12 +89,5 @@ public interface IEventRepository {
    */
   boolean isActiveAt(Temporal time);
 
-  /**
-   * Exports the calendar events using the given exporter and file name.
-   *
-   * @param fileName the name of the output file
-   * @param exporter the exporter to use
-   * @return the absolute path of the exported file
-   */
-  String export(String fileName, ICalendarExporter exporter);
+  List<CalendarExporterDTO> getEventsForExport();
 }

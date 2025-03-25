@@ -11,14 +11,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import calendarapp.model.EventVisibility;
-import calendarapp.model.ICalendarExporter;
+import calendarapp.controller.ICalendarExporter;
 import calendarapp.model.IEvent;
-import calendarapp.model.impl.Constants;
-import calendarapp.model.impl.CsvCalendarExporter;
+import calendarapp.controller.impl.Constants;
+import calendarapp.controller.impl.CsvCalendarExporter;
+import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.impl.Event;
 
+import static calendarapp.utils.TimeUtil.isAllDayEvent;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -49,7 +52,7 @@ public class CalendarExporterTest {
 
   @Test
   public void testExportEmptyEventList() throws IOException {
-    exporter.export(events, csvFile.getAbsolutePath());
+    exporter.export(getEventsForExport(events), csvFile.getAbsolutePath());
     List<String> lines = Files.readAllLines(csvFile.toPath());
 
     assertEquals(1, lines.size());
@@ -77,7 +80,7 @@ public class CalendarExporterTest {
         .build();
     events.add(event);
 
-    exporter.export(events, csvFile.getAbsolutePath());
+    exporter.export(getEventsForExport(events), csvFile.getAbsolutePath());
     List<String> lines = Files.readAllLines(csvFile.toPath());
 
     assertEquals(2, lines.size());
@@ -104,7 +107,7 @@ public class CalendarExporterTest {
         .build();
     events.add(allDayEvent);
 
-    exporter.export(events, csvFile.getAbsolutePath());
+    exporter.export(getEventsForExport(events), csvFile.getAbsolutePath());
     List<String> lines = Files.readAllLines(csvFile.toPath());
 
     String[] fields = lines.get(1).split(Constants.CsvFormat.DELIMITER, -1);
@@ -126,7 +129,7 @@ public class CalendarExporterTest {
         .build();
     events.add(privateEvent);
 
-    exporter.export(events, csvFile.getAbsolutePath());
+    exporter.export(getEventsForExport(events), csvFile.getAbsolutePath());
     List<String> lines = Files.readAllLines(csvFile.toPath());
 
     String[] fields = lines.get(1).split(Constants.CsvFormat.DELIMITER, -1);
@@ -158,7 +161,7 @@ public class CalendarExporterTest {
 
     events.addAll(Arrays.asList(event1, event2, event3));
 
-    exporter.export(events, csvFile.getAbsolutePath());
+    exporter.export(getEventsForExport(events), csvFile.getAbsolutePath());
     List<String> lines = Files.readAllLines(csvFile.toPath());
 
     assertEquals(4, lines.size()); // 1 header + 3 events
@@ -176,7 +179,7 @@ public class CalendarExporterTest {
         .build();
     events.add(specialEvent);
 
-    exporter.export(events, csvFile.getAbsolutePath());
+    exporter.export(getEventsForExport(events), csvFile.getAbsolutePath());
     List<String> lines = Files.readAllLines(csvFile.toPath());
 
     String[] fields = lines.get(1).split(Constants.CsvFormat.DELIMITER, -1);
@@ -185,6 +188,20 @@ public class CalendarExporterTest {
     assertEquals("\"John's \"\"Important\"\" Meeting\"", fields[0]);
     assertEquals("\"Discuss \"\"Project X\"\"\"", fields[6]);
     assertEquals("\"Room \"\"42\"\"\"", fields[7]);
+  }
+
+  private List<CalendarExporterDTO> getEventsForExport(List<IEvent> events) {
+    return events.stream()
+        .map(event -> CalendarExporterDTO.builder()
+            .subject(event.getName())
+            .startDate(event.getStartTime())
+            .endDate(event.getEndTime())
+            .isAllDayEvent(isAllDayEvent(event.getStartTime(), event.getEndTime()))
+            .description(event.getDescription())
+            .location(event.getLocation())
+            .visibility(event.getVisibility() != null ? event.getVisibility().getValue() : null)
+            .build())
+        .collect(Collectors.toList());
   }
 
 }

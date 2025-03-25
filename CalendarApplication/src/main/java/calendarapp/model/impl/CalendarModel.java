@@ -7,14 +7,13 @@ import java.util.stream.Collectors;
 import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendar;
-import calendarapp.model.ICalendarExporter;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.ICalendarRepository;
+import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.model.dto.PrintEventsResponseDTO;
 import calendarapp.utils.TimeUtil;
 
-import static calendarapp.model.impl.Constants.EXPORTER_MAP;
 
 /**
  * The CalendarModel class implements the ICalendarModel interface
@@ -98,26 +97,9 @@ public class CalendarModel implements ICalendarModel {
             .build()).collect(Collectors.toList());
   }
 
-  /**
-   * Exports the events to a CSV file.
-   *
-   * @param fileName The name of the file to export.
-   * @return The file path of the exported CSV.
-   */
   @Override
-  public String export(String fileName) {
-    String fileExtension = getFileExtension(fileName);
-    if (!Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS.contains(fileExtension)) {
-      throw new IllegalArgumentException("Unsupported export format: " + fileExtension
-          + ". Supported formats are: " + Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS);
-    }
-    ICalendarExporter exporter = EXPORTER_MAP.get(fileExtension);
-
-    if (exporter == null) {
-      throw new IllegalStateException("No exporter for format: " + fileExtension);
-    }
-
-    return activeCalendar.getEventRepository().export(fileName, exporter);
+  public List<CalendarExporterDTO> getEventsForExport() {
+    return activeCalendar.getEventRepository().getEventsForExport();
   }
 
   /**
@@ -154,19 +136,5 @@ public class CalendarModel implements ICalendarModel {
   @Override
   public void copyEvent(CopyEventRequestDTO copyEventRequestDTO) {
     calendarRepository.copyCalendarEvents(activeCalendar.getName(), copyEventRequestDTO);
-  }
-
-  /**
-   * Extracts and returns the file extension from a given file path.
-   *
-   * @param filePath the full file path or name
-   * @return the file extension, or an empty string if none found
-   */
-  private String getFileExtension(String filePath) {
-    int lastDot = filePath.lastIndexOf(".");
-    if (lastDot == -1 || lastDot == filePath.length() - 1) {
-      return "";
-    }
-    return filePath.substring(lastDot + 1);
   }
 }

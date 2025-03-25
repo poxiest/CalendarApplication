@@ -1,13 +1,14 @@
-package calendarapp.model.impl;
+package calendarapp.controller.impl;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+import calendarapp.controller.ICalendarExporter;
 import calendarapp.model.EventVisibility;
-import calendarapp.model.ICalendarExporter;
 import calendarapp.model.IEvent;
+import calendarapp.model.dto.CalendarExporterDTO;
 
 import static calendarapp.utils.TimeUtil.formatDate;
 import static calendarapp.utils.TimeUtil.formatTime;
@@ -19,7 +20,7 @@ import static calendarapp.utils.TimeUtil.isAllDayEvent;
  */
 public class CsvCalendarExporter implements ICalendarExporter {
   @Override
-  public String export(List<IEvent> events, String filePath) {
+  public String export(List<CalendarExporterDTO> events, String filePath) {
     try (FileWriter writer = new FileWriter(filePath)) {
       writer.write(String.join(Constants.CsvFormat.DELIMITER,
           Constants.CsvHeaders.SUBJECT,
@@ -33,7 +34,7 @@ public class CsvCalendarExporter implements ICalendarExporter {
           Constants.CsvHeaders.PRIVATE));
       writer.write(Constants.CsvFormat.LINE_END);
 
-      for (IEvent event : events) {
+      for (CalendarExporterDTO event : events) {
         writer.write(formatEventAsCsvRow(event));
         writer.write(Constants.CsvFormat.LINE_END);
       }
@@ -44,8 +45,8 @@ public class CsvCalendarExporter implements ICalendarExporter {
     return new File(filePath).getAbsolutePath();
   }
 
-  private String determinePrivacyFlag(EventVisibility visibility) {
-    return EventVisibility.PRIVATE.equals(visibility)
+  private String determinePrivacyFlag(String visibility) {
+    return visibility.equals(EventVisibility.PRIVATE.toString().toLowerCase())
         ? Constants.CsvFormat.TRUE_VALUE
         : Constants.CsvFormat.FALSE_VALUE;
   }
@@ -67,15 +68,15 @@ public class CsvCalendarExporter implements ICalendarExporter {
    * @param event is an IEvent instance
    * @return the formatted CSV row
    */
-  private String formatEventAsCsvRow(IEvent event) {
-    boolean isAllDay = isAllDayEvent(event.getStartTime(), event.getEndTime());
+  private String formatEventAsCsvRow(CalendarExporterDTO event) {
+    boolean isAllDay = isAllDayEvent(event.getStartDate(), event.getEndDate());
 
     return String.join(Constants.CsvFormat.DELIMITER,
-        escapeField(event.getName()),
-        formatDate(event.getStartTime()),
-        isAllDay ? "" : formatTime(event.getStartTime()),
-        formatDate(event.getEndTime()),
-        isAllDay ? "" : formatTime(event.getEndTime()),
+        escapeField(event.getSubject()),
+        formatDate(event.getStartDate()),
+        isAllDay ? "" : formatTime(event.getStartDate()),
+        formatDate(event.getEndDate()),
+        isAllDay ? "" : formatTime(event.getEndDate()),
         isAllDay ? Constants.CsvFormat.TRUE_VALUE : Constants.CsvFormat.FALSE_VALUE,
         escapeField(event.getDescription()),
         escapeField(event.getLocation()),
@@ -83,3 +84,4 @@ public class CsvCalendarExporter implements ICalendarExporter {
     );
   }
 }
+

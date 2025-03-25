@@ -17,6 +17,7 @@ import calendarapp.controller.commands.impl.PrintCommand;
 import calendarapp.controller.commands.impl.ShowCommand;
 import calendarapp.controller.commands.impl.UseCommand;
 import calendarapp.model.ICalendarModel;
+import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.model.dto.PrintEventsResponseDTO;
 import calendarapp.view.ICalendarView;
@@ -283,8 +284,8 @@ public class CommandFactoryTest {
     }
 
     @Override
-    public String export(String filename) {
-      return "";
+    public List<CalendarExporterDTO> getEventsForExport() {
+      return List.of();
     }
 
     @Override

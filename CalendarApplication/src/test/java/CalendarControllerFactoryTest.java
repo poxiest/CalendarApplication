@@ -2,12 +2,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.temporal.Temporal;
+import java.util.ArrayList;
 import java.util.List;
 
 import calendarapp.controller.ICalendarController;
 import calendarapp.controller.impl.CalendarController;
 import calendarapp.controller.impl.CalendarControllerFactory;
 import calendarapp.model.ICalendarModel;
+import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.model.dto.PrintEventsResponseDTO;
 import calendarapp.view.ICalendarView;
@@ -138,9 +140,8 @@ public class CalendarControllerFactoryTest {
     }
 
     @Override
-    public String export(String filename) {
-      System.out.println("message");
-      return filename;
+    public List<CalendarExporterDTO> getEventsForExport() {
+      return new ArrayList<>();
     }
 
     @Override

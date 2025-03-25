@@ -13,13 +13,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import calendarapp.model.EventConflictException;
-import calendarapp.model.ICalendarExporter;
 import calendarapp.model.IEvent;
 import calendarapp.model.IEventRepository;
+import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.utils.TimeUtil;
 
 import static calendarapp.model.impl.Constants.DaysOfWeek.parseDaysOfWeek;
+import static calendarapp.utils.TimeUtil.isAllDayEvent;
 import static calendarapp.utils.TimeUtil.isEqual;
 import static calendarapp.utils.TimeUtil.isFirstAfterSecond;
 import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
@@ -148,9 +149,18 @@ public class EventRepository implements IEventRepository {
   }
 
   @Override
-  public String export(String fileName, ICalendarExporter exporter) {
-    exporter.export(events, fileName);
-    return fileName;
+  public List<CalendarExporterDTO> getEventsForExport() {
+    return events.stream()
+        .map(event -> CalendarExporterDTO.builder()
+            .subject(event.getName())
+            .startDate(event.getStartTime())
+            .endDate(event.getEndTime())
+            .isAllDayEvent(isAllDayEvent(event.getStartTime(), event.getEndTime()))
+            .description(event.getDescription())
+            .location(event.getLocation())
+            .visibility(event.getVisibility() != null ? event.getVisibility().getValue() : null)
+            .build())
+        .collect(Collectors.toList());
   }
 
   @Override

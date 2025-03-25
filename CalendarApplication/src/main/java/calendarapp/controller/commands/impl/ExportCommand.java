@@ -1,12 +1,17 @@
 package calendarapp.controller.commands.impl;
 
+import java.util.List;
 import java.util.regex.Matcher;
 
+import calendarapp.controller.ICalendarExporter;
 import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.ICalendarModel;
+import calendarapp.controller.impl.Constants;
 import calendarapp.view.ICalendarView;
+import calendarapp.model.dto.CalendarExporterDTO;
 
 import static calendarapp.controller.commands.impl.RegexPatternConstants.EXPORT_FILENAME_PATTERN;
+import static calendarapp.controller.impl.Constants.EXPORTER_MAP;
 
 /**
  * Export Command implementation for exporting calendar data to a file.
@@ -49,9 +54,36 @@ public class ExportCommand extends AbstractCommand {
     }
 
     try {
-      view.displayMessage("CSV file Location : " + model.export(filename));
+      String fileExtension = getFileExtension(filename);
+      if (!Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS.contains(fileExtension)) {
+        throw new IllegalArgumentException("Unsupported export format: " + fileExtension
+            + ". Supported formats are: " + Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS);
+      }
+      ICalendarExporter exporter = EXPORTER_MAP.get(fileExtension);
+
+      if (exporter == null) {
+        throw new IllegalStateException("No exporter for format: " + fileExtension);
+      }
+
+      List<CalendarExporterDTO> eventsToExport = model.getEventsForExport();
+
+      view.displayMessage("CSV file Location : " + exporter.export(eventsToExport, filename));
     } catch (Exception e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     }
+  }
+
+  /**
+   * Extracts and returns the file extension from a given file path.
+   *
+   * @param filePath the full file path or name
+   * @return the file extension, or an empty string if none found
+   */
+  private String getFileExtension(String filePath) {
+    int lastDot = filePath.lastIndexOf(".");
+    if (lastDot == -1 || lastDot == filePath.length() - 1) {
+      return "";
+    }
+    return filePath.substring(lastDot + 1);
   }
 }
