@@ -9,6 +9,10 @@ import calendarapp.view.ICalendarView;
 
 import static calendarapp.controller.commands.impl.RegexPatternConstants.EDIT_CALENDAR_PATTERN;
 
+/**
+ * Command to edit a calendar's property such as name or time zone.
+ * It parses the input command and updates the calendar using the model.
+ */
 public class EditCalendarCommand extends AbstractCommand {
 
   private String calendarName;
@@ -37,6 +41,13 @@ public class EditCalendarCommand extends AbstractCommand {
     }
   }
 
+  /**
+   * Parses the edit calendar command and extracts the calendar name,
+   * the property to change, and the new value.
+   *
+   * @param command the full user input command
+   * @throws InvalidCommandException if any required field is missing
+   */
   private void parseCommand(String command) {
     Matcher matcher = regexMatching(EDIT_CALENDAR_PATTERN, command);
     if (matcher.find()) {

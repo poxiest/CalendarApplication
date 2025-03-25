@@ -8,6 +8,11 @@ import calendarapp.view.ICalendarView;
 
 import static calendarapp.controller.commands.impl.RegexPatternConstants.USE_COMMAND;
 
+/**
+ * Command to switch the active calendar to the specified one.
+ * Parses the input and updates the model to use the selected calendar.
+ */
+
 public class UseCommand extends AbstractCommand {
 
   private String calendarName;

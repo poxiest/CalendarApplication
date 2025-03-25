@@ -40,11 +40,17 @@ public class Constants {
     public static final String FALSE_VALUE = "FALSE";
   }
 
+  /**
+   * Defines supported file formats for exporting calendar data.
+   */
   public static final class SupportExportFormats {
     public static final String CSV = "csv";
     public static final Set<String> SUPPORTED_EXPORT_FORMATS = Set.of(CSV);
   }
 
+  /**
+   * A map of supported export formats to their corresponding calendar exporter.
+   */
   public static final Map<String, ICalendarExporter> EXPORTER_MAP = Map.of(
       CSV, new CsvCalendarExporter()
   );
@@ -72,7 +78,13 @@ public class Constants {
     public static final String AVAILABLE = "Available";
   }
 
+  /**
+   * Provides utilities for parsing characters into DayOfWeek values.
+   */
   public static final class DaysOfWeek {
+    /**
+     * Maps characters to corresponding DayOfWeek values.
+     */
     public static final Map<Character, DayOfWeek> dayMap = new HashMap<>();
 
     static {
@@ -85,6 +97,13 @@ public class Constants {
       dayMap.put('U', DayOfWeek.SUNDAY);
     }
 
+    /**
+     * Parses a string of day characters into a set of DayOfWeek values.
+     *
+     * @param daysString the string containing day characters (e.g., "MWF")
+     * @return a set of corresponding DayOfWeek values
+     * @throws IllegalArgumentException if any character is invalid
+     */
     public static Set<DayOfWeek> parseDaysOfWeek(String daysString) {
       Set<DayOfWeek> days = new HashSet<>();
       for (char day : daysString.toUpperCase().toCharArray()) {
@@ -98,8 +117,14 @@ public class Constants {
     }
   }
 
+  /**
+   * The default time zone used in the application.
+   */
   public static final String DEFAULT_TIME_ZONE = "America/New_York";
 
+  /**
+   * Defines property keys for calendar attributes.
+   */
   public static final class Calendar {
     public static final String CALENDAR_NAME = "name";
     public static final String CALENDAR_TIME_ZONE = "timezone";

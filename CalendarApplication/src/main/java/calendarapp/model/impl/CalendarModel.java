@@ -155,6 +155,12 @@ public class CalendarModel implements ICalendarModel {
     calendarRepository.copyCalendarEvents(activeCalendar.getName(), copyEventRequestDTO);
   }
 
+  /**
+   * Extracts and returns the file extension from a given file path.
+   *
+   * @param filePath the full file path or name
+   * @return the file extension, or an empty string if none found
+   */
   private String getFileExtension(String filePath) {
     int lastDot = filePath.lastIndexOf(".");
     if (lastDot == -1 || lastDot == filePath.length() - 1) {

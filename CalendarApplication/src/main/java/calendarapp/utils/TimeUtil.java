@@ -79,6 +79,13 @@ public class TimeUtil {
     return getLocalDateTimeFromTemporal(time).plusDays(1).toLocalDate().atStartOfDay();
   }
 
+  /**
+   * Returns the start of the day (00:00) for the given date string.
+   *
+   * @param dateTime the date string to parse
+   * @return the Temporal representing the start of the day
+   * @throws IllegalArgumentException if the input cannot be parsed
+   */
   public static Temporal getStartOfDayFromString(String dateTime) throws IllegalArgumentException {
     if (dateTime == null) {
       return null;
@@ -147,10 +154,22 @@ public class TimeUtil {
     }
   }
 
+  /**
+   * Returns the start of the next day (00:00) for the given temporal value.
+   *
+   * @param temporal the input temporal
+   * @return the start of the next day
+   */
   public static Temporal GetStartOfNextDay(Temporal temporal) {
     return getLocalDateTimeFromTemporal(temporal).toLocalDate().plusDays(1).atStartOfDay();
   }
 
+  /**
+   * Returns the start of the same day (00:00) for the given temporal value.
+   *
+   * @param temporal the input temporal
+   * @return the start of the day
+   */
   public static Temporal GetStartOfDay(Temporal temporal) {
     return getLocalDateTimeFromTemporal(temporal).toLocalDate().atStartOfDay();
   }
@@ -217,15 +236,39 @@ public class TimeUtil {
         && isFirstAfterSecond(endTime1, startTime2);
   }
 
+  /**
+   * Converts a temporal value from one time zone to another.
+   *
+   * @param temporal the temporal value to convert
+   * @param fromZoneId the original time zone
+   * @param toZoneId the target time zone
+   * @return the temporal value in the target time zone
+   */
   public static Temporal ChangeZone(Temporal temporal, ZoneId fromZoneId, ZoneId toZoneId) {
     return getLocalDateTimeFromTemporal(temporal).atZone(fromZoneId)
         .withZoneSameInstant(toZoneId).toLocalDateTime();
   }
 
+  /**
+   * Adds a duration to the given temporal value.
+   *
+   * @param temporal the original temporal value
+   * @param duration the duration to add
+   * @return the updated temporal value
+   */
   public static Temporal AddDuration(Temporal temporal, Duration duration) {
     return temporal.plus(duration);
   }
 
+  /**
+   * Calculates the duration between two temporal values.
+   * Supports comparisons between LocalDateTime and LocalDate.
+   *
+   * @param start the start temporal value
+   * @param end the end temporal value
+   * @return the duration between the two values
+   * @throws UnsupportedOperationException if the input types are not supported
+   */
   public static Duration getDurationDifference(Temporal start, Temporal end) {
     if (start instanceof LocalDateTime && end instanceof LocalDateTime) {
       return Duration.between(start, end);

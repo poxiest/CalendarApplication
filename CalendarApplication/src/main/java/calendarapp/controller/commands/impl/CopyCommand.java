@@ -13,6 +13,10 @@ import static calendarapp.controller.commands.impl.RegexPatternConstants.COPY_EV
 import static calendarapp.controller.commands.impl.RegexPatternConstants.COPY_EVENTS_ON_COMMAND;
 import static calendarapp.controller.commands.impl.RegexPatternConstants.COPY_EVENT_COMMAND;
 
+/**
+ * Command to copy events from the current calendar to another calendar.
+ * It supports copying a specific event, all events on a day, or events between dates.
+ */
 public class CopyCommand extends AbstractCommand {
   private String eventName;
   private String eventStartDate;
@@ -25,6 +29,14 @@ public class CopyCommand extends AbstractCommand {
     super(model, view);
   }
 
+  /**
+   * Executes the copy command based on the input string.
+   * Parses the command, builds the request, and sends it to the model for processing.
+   *
+   * @param command the full user input command
+   * @throws InvalidCommandException if the command format is incorrect or required fields are missing
+   * @throws EventConflictException if there is a conflict when copying events
+   */
   @Override
   public void execute(String command) throws InvalidCommandException, EventConflictException {
     CopyEventRequestDTO.Builder builder = CopyEventRequestDTO.builder();

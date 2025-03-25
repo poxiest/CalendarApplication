@@ -2,6 +2,10 @@ package calendarapp.model;
 
 import java.util.List;
 
+/**
+ * Interface for CalendarExporter. CalendarExporter supports multiple file
+ * formats.
+ */
 public interface ICalendarExporter {
   /**
    * Exports the provided list of events to a file.

@@ -11,6 +11,10 @@ import java.io.IOException;
 import java.time.temporal.Temporal;
 import java.util.List;
 
+/**
+ * Exports calendar events to a CSV file format.
+ * Implements the ICalendarExporter interface.
+ */
 public class CsvCalendarExporter implements ICalendarExporter {
   @Override
   public String export(List<IEvent> events, String filePath) {
@@ -38,6 +42,12 @@ public class CsvCalendarExporter implements ICalendarExporter {
     return new File(filePath).getAbsolutePath();
   }
 
+  /**
+   * Converts a single event into a formatted CSV row string.
+   *
+   * @param event the event to format
+   * @return the formatted CSV row
+   */
   private String formatEvent(IEvent event) {
     return formatEventAsCsvRow(
         event.getName(),
@@ -49,17 +59,40 @@ public class CsvCalendarExporter implements ICalendarExporter {
     );
   }
 
+  /**
+   * Determines the privacy flag value based on event visibility.
+   *
+   * @param visibility the visibility of the event
+   * @return "TRUE" if private, otherwise "FALSE"
+   */
   private String determinePrivacyFlag(EventVisibility visibility) {
     return EventVisibility.PRIVATE.equals(visibility)
         ? Constants.CsvFormat.TRUE_VALUE
         : Constants.CsvFormat.FALSE_VALUE;
   }
 
+  /**
+   * Escapes a CSV field by wrapping it in quotes and handling internal quotes.
+   *
+   * @param field the field to escape
+   * @return the escaped field
+   */
   private String escapeField(String field) {
     if (field == null || field.isEmpty()) return "";
     return "\"" + field.replace("\"", "\"\"") + "\"";
   }
 
+  /**
+   * Formats event details as a CSV row string.
+   *
+   * @param name the name of the event
+   * @param startTime the start time of the event
+   * @param endTime the end time of the event
+   * @param description the description of the event
+   * @param location the location of the event
+   * @param visibility the visibility of the event
+   * @return the formatted CSV row
+   */
   private String formatEventAsCsvRow(String name, Temporal startTime, Temporal endTime,
                                      String description, String location, EventVisibility visibility) {
     boolean isAllDay = isAllDayEvent(startTime, endTime);
