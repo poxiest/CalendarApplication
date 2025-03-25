@@ -2,6 +2,7 @@ package calendarapp.model;
 
 import java.util.List;
 
+import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.model.dto.PrintEventsResponseDTO;
 
@@ -58,13 +59,7 @@ public interface ICalendarModel {
    */
   List<PrintEventsResponseDTO> getEventsForPrinting(String startTime, String endTime);
 
-  /**
-   * Exports calendar events to a CSV file compatible with Google Calendar.
-   *
-   * @param filename the base name of the file to export to.
-   * @return the full path to the exported file.
-   */
-  String export(String filename);
+  List<CalendarExporterDTO> getEventsForExport();
 
   /**
    * Checks the availability status at a specific time.
@@ -74,11 +69,34 @@ public interface ICalendarModel {
    */
   String showStatus(String dateTime);
 
+  /**
+   * Creates a new calendar with the given name and time zone.
+   *
+   * @param calendarName the name of the calendar to create
+   * @param timezone the time zone of the new calendar
+   */
   void createCalendar(String calendarName, String timezone);
 
+  /**
+   * Edits a property of the specified calendar.
+   *
+   * @param calendarName the name of the calendar to edit
+   * @param propertyName the name of the property to change
+   * @param propertyValue the new value of the property
+   */
   void editCalendar(String calendarName, String propertyName, String propertyValue);
 
+  /**
+   * Sets the active calendar to the one with the specified name.
+   *
+   * @param calendarName the name of the calendar to set as active
+   */
   void setCalendar(String calendarName);
 
+  /**
+   * Copies event(s) to another calendar based on the provided copy request.
+   *
+   * @param copyEventRequestDTO the request containing details for copying the event
+   */
   void copyEvent(CopyEventRequestDTO copyEventRequestDTO);
 }

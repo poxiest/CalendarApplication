@@ -36,6 +36,12 @@ public class CreateCalendarCommand extends AbstractCommand {
     }
   }
 
+  /**
+   * Parses the create calendar command and extracts the calendar name and time zone.
+   *
+   * @param command the full user input command
+   * @throws InvalidCommandException if calendar name or time zone is missing
+   */
   private void parseCommand(String command) {
     Matcher matcher = regexMatching(CREATE_NEW_CALENDAR, command);
     if (matcher.find()) {

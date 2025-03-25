@@ -13,20 +13,28 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import calendarapp.model.EventConflictException;
-import calendarapp.model.ICalendarExporter;
 import calendarapp.model.IEvent;
 import calendarapp.model.IEventRepository;
+import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.utils.TimeUtil;
 
 import static calendarapp.model.impl.Constants.DaysOfWeek.parseDaysOfWeek;
+import static calendarapp.utils.TimeUtil.isAllDayEvent;
 import static calendarapp.utils.TimeUtil.isEqual;
 import static calendarapp.utils.TimeUtil.isFirstAfterSecond;
 import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
 
+/**
+ * Implements IEventRepository to manage creation, updating, copying,
+ * and retrieval of events including handling recurring events and conflicts.
+ */
 public class EventRepository implements IEventRepository {
   private final List<IEvent> events;
 
+  /**
+   * Constructs an empty EventRepository.
+   */
   public EventRepository() {
     this.events = new ArrayList<>();
   }
@@ -141,9 +149,18 @@ public class EventRepository implements IEventRepository {
   }
 
   @Override
-  public String export(String fileName, ICalendarExporter exporter) {
-    exporter.export(events, fileName);
-    return fileName;
+  public List<CalendarExporterDTO> getEventsForExport() {
+    return events.stream()
+        .map(event -> CalendarExporterDTO.builder()
+            .subject(event.getName())
+            .startDate(event.getStartTime())
+            .endDate(event.getEndTime())
+            .isAllDayEvent(isAllDayEvent(event.getStartTime(), event.getEndTime()))
+            .description(event.getDescription())
+            .location(event.getLocation())
+            .visibility(event.getVisibility() != null ? event.getVisibility().getValue() : null)
+            .build())
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -279,6 +296,12 @@ public class EventRepository implements IEventRepository {
         .collect(Collectors.toList());
   }
 
+  /**
+   * Checks if the given property is related to event recurrence.
+   *
+   * @param property the name of the property
+   * @return true if it is a recurring-related property, false otherwise
+   */
   private boolean isRecurringProperty(String property) {
     String lowerCaseProperty = property.toLowerCase();
     return lowerCaseProperty.equals(Constants.PropertyKeys.RECURRING_DAYS) ||
@@ -286,6 +309,12 @@ public class EventRepository implements IEventRepository {
         lowerCaseProperty.equals(Constants.PropertyKeys.RECURRENCE_END_DATE);
   }
 
+  /**
+   * Reconstructs the list of recurring events based on the updated first event.
+   *
+   * @param firstEvent the modified base event
+   * @return the list of updated recurring events
+   */
   private List<IEvent> getUpdatedRecurringEvents(IEvent firstEvent) {
     return createRecurringEvents(firstEvent.getName(), firstEvent.getStartTime(),
         firstEvent.getEndTime(), firstEvent.getDescription(), firstEvent.getLocation(),

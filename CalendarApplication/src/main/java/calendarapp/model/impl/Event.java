@@ -370,21 +370,6 @@ public class Event implements IEvent {
     return builder.build();
   }
 
-  /**
-   * Returns a string representation of this event.
-   *
-   * @return a string representation of all event properties.
-   */
-  // TODO : Remove this.
-  @Override
-  public String toString() {
-    return "Name: " + name + " " + "Start Time: " + startTime + " " + "End Time: " + endTime + " "
-        + "Description: " + description + " " + "Location: " + location + " " + "Visibility: "
-        + visibility + " " + "Recurring Days: " + recurringDays + " " + "Occurrence Count: "
-        + occurrenceCount + " " + "Recurrence End Date: " + recurrenceEndDate + " "
-        + "Auto Decline: " + isAutoDecline + "\n";
-  }
-
   @Override
   public boolean equals(Object obj) {
     if (this == obj) {

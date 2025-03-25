@@ -3,8 +3,11 @@ package calendarapp.model.dto;
 import java.time.temporal.Temporal;
 
 /**
- * DTO class representing an event copy request.
+ * Represents a request to copy an event or set of events to another calendar.
+ * Includes the event name, original time range, destination calendar name,
+ * and target date.
  */
+
 public class CopyEventRequestDTO {
   private final String eventName;
   private final Temporal startTime;
@@ -45,7 +48,8 @@ public class CopyEventRequestDTO {
   }
 
   /**
-   * Builder class for constructing a CopyEventRequest object.
+   * Builder for creating instances of CopyEventRequestDTO.
+   * Allows setting each property step by step before building the final object.
    */
   public static class Builder {
     private String eventName;
@@ -54,31 +58,66 @@ public class CopyEventRequestDTO {
     private String copyCalendarName;
     private Temporal toDate;
 
+    /**
+     * Sets the name of the event.
+     *
+     * @param eventName the event name to copy.
+     * @return this Builder instance.
+     */
     public Builder eventName(String eventName) {
       this.eventName = eventName;
       return this;
     }
 
+    /**
+     * Sets the start time of the event or event range.
+     *
+     * @param startTime the original start time.
+     * @return this Builder instance.
+     */
     public Builder startTime(Temporal startTime) {
       this.startTime = startTime;
       return this;
     }
 
+    /**
+     * Sets the end time of the event or event range.
+     *
+     * @param endTime the original end time.
+     * @return this Builder instance.
+     */
     public Builder endTime(Temporal endTime) {
       this.endTime = endTime;
       return this;
     }
 
+    /**
+     * Sets the name of the calendar to copy the event(s) to.
+     *
+     * @param copyCalendarName the name of the target calendar.
+     * @return this Builder instance.
+     */
     public Builder copyCalendarName(String copyCalendarName) {
       this.copyCalendarName = copyCalendarName;
       return this;
     }
 
+    /**
+     * Sets the date to copy the event(s) to.
+     *
+     * @param toDate the destination date.
+     * @return this Builder instance.
+     */
     public Builder copyStartDate(Temporal toDate) {
       this.toDate = toDate;
       return this;
     }
 
+    /**
+     * Builds and returns the final CopyEventRequestDTO instance.
+     *
+     * @return the constructed CopyEventRequestDTO object.
+     */
     public CopyEventRequestDTO build() {
       return new CopyEventRequestDTO(this);
     }

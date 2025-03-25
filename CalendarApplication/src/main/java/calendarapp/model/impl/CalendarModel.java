@@ -10,6 +10,7 @@ import calendarapp.model.ICalendar;
 import calendarapp.model.ICalendarExporter;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.ICalendarRepository;
+import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.model.dto.PrintEventsResponseDTO;
 import calendarapp.utils.TimeUtil;
@@ -54,14 +55,12 @@ public class CalendarModel implements ICalendarModel {
    * @throws EventConflictException if the event conflicts with an existing event.
    */
   @Override
-  public void createEvent(String eventName, String startTime, String endTime,
-                          String recurringDays, String occurrenceCount, String recurrenceEndDate,
+  public void createEvent(String eventName, Temporal startTime, Temporal endTime,
+                          String recurringDays, String occurrenceCount, Temporal recurrenceEndDate,
                           String description, String location, String visibility,
                           boolean autoDecline) throws EventConflictException {
-    Object getEndOfDayFromString;
-    activeCalendar.getEventRepository().create(eventName, getTemporalFromString(startTime),
-        getTemporalFromString(endTime), description, location, visibility, recurringDays,
-        occurrenceCount, getEndOfDayFromString(recurrenceEndDate), true);
+    activeCalendar.getEventRepository().create(eventName, startTime, endTime, description, location,
+        visibility, recurringDays, occurrenceCount, recurrenceEndDate, true);
   }
 
   /**
@@ -107,26 +106,9 @@ public class CalendarModel implements ICalendarModel {
             .build()).collect(Collectors.toList());
   }
 
-  /**
-   * Exports the events to a CSV file.
-   *
-   * @param fileName The name of the file to export.
-   * @return The file path of the exported CSV.
-   */
   @Override
-  public String export(String fileName) {
-    String fileExtension = getFileExtension(fileName);
-    if (!Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS.contains(fileExtension)) {
-      throw new IllegalArgumentException("Unsupported export format: " + fileExtension
-          + ". Supported formats are: " + Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS);
-    }
-    ICalendarExporter exporter = EXPORTER_MAP.get(fileExtension);
-
-    if (exporter == null) {
-      throw new IllegalStateException("No exporter for format: " + fileExtension);
-    }
-
-    return activeCalendar.getEventRepository().export(fileName, exporter);
+  public List<CalendarExporterDTO> getEventsForExport() {
+    return activeCalendar.getEventRepository().getEventsForExport();
   }
 
   /**
@@ -164,13 +146,5 @@ public class CalendarModel implements ICalendarModel {
   @Override
   public void copyEvent(CopyEventRequestDTO copyEventRequestDTO) {
     calendarRepository.copyCalendarEvents(activeCalendar.getName(), copyEventRequestDTO);
-  }
-
-  private String getFileExtension(String filePath) {
-    int lastDot = filePath.lastIndexOf(".");
-    if (lastDot == -1 || lastDot == filePath.length() - 1) {
-      return "";
-    }
-    return filePath.substring(lastDot + 1);
   }
 }

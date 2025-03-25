@@ -10,9 +10,16 @@ import calendarapp.model.ICalendarRepository;
 import calendarapp.model.IEventRepository;
 import calendarapp.model.dto.CopyEventRequestDTO;
 
+/**
+ * Implementation of ICalendarRepository that manages a list of calendars.
+ * Supports adding, editing, retrieving, and copying events between calendars.
+ */
 public class CalendarRepository implements ICalendarRepository {
   private List<ICalendar> calendars;
 
+  /**
+   * Constructs a CalendarRepository with an empty list of calendars.
+   */
   CalendarRepository() {
     this.calendars = new ArrayList<>();
   }

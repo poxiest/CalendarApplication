@@ -10,6 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -30,11 +31,15 @@ public class EventTest {
   @Test
   public void testEventCreationWithRequiredFields() {
     assertNotNull(event1);
-    String expectedToString = "Name: Single Event 1 Start Time: 2025-03-10T10:00 " +
-        "End Time: 2025-03-10T11:00 Description: null " +
-        "Location: null Visibility: DEFAULT Recurring Days: null " +
-        "Occurrence Count: null Recurrence End Date: null Auto Decline: true\n";
-    assertEquals(expectedToString, event1.toString());
+    assertEquals("Single Event 1", event1.getName());
+    assertEquals(LocalDateTime.parse("2025-03-10T10:00"), event1.getStartTime());
+    assertEquals(LocalDateTime.parse("2025-03-10T11:00"), event1.getEndTime());
+    assertNull(event1.getDescription());
+    assertNull(event1.getLocation());
+    assertEquals("default", event1.getVisibility().getValue());
+    assertNull(event1.getRecurringDays());
+    assertNull(event1.getOccurrenceCount());
+    assertNull(event1.getRecurrenceEndDate());
   }
 
   @Test
@@ -50,11 +55,16 @@ public class EventTest {
         .isAutoDecline(false)
         .build();
 
-    String expectedToString = "Name: Single Event 1 Start Time: 2025-03-10T10:00 "
-        + "End Time: 2025-03-10T11:00 Description: Some description "
-        + "Location: Some location Visibility: DEFAULT Recurring Days: M "
-        + "Occurrence Count: 3 Recurrence End Date: null Auto Decline: false\n";
-    assertEquals(expectedToString, eventWithOptionalField.toString());
+    assertNotNull(eventWithOptionalField);
+    assertEquals("Single Event 1", eventWithOptionalField.getName());
+    assertEquals(LocalDateTime.parse("2025-03-10T10:00"), eventWithOptionalField.getStartTime());
+    assertEquals(LocalDateTime.parse("2025-03-10T11:00"), eventWithOptionalField.getEndTime());
+    assertEquals("Some description", eventWithOptionalField.getDescription());
+    assertEquals("Some location", eventWithOptionalField.getLocation());
+    assertEquals("default", eventWithOptionalField.getVisibility().getValue());
+    assertEquals("M", eventWithOptionalField.getRecurringDays());
+    assertEquals(Integer.valueOf(3), eventWithOptionalField.getOccurrenceCount());
+    assertNull(eventWithOptionalField.getRecurrenceEndDate());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -116,11 +126,16 @@ public class EventTest {
         .isAutoDecline(false)
         .build();
 
-    String expectedToString = "Name: Single Event 1 Start Time: 2025-03-10T10:00 "
-        + "End Time: 2025-03-10T11:00 Description: Some description "
-        + "Location: Some location Visibility: DEFAULT Recurring Days: M "
-        + "Occurrence Count: null Recurrence End Date: 2025-04-10T00:00 Auto Decline: false\n";
-    assertEquals(expectedToString, eventWithOptionalField.toString());
+    assertNotNull(eventWithOptionalField);
+    assertEquals("Single Event 1", eventWithOptionalField.getName());
+    assertEquals(LocalDateTime.parse("2025-03-10T10:00"), eventWithOptionalField.getStartTime());
+    assertEquals(LocalDateTime.parse("2025-03-10T11:00"), eventWithOptionalField.getEndTime());
+    assertEquals("Some description", eventWithOptionalField.getDescription());
+    assertEquals("Some location", eventWithOptionalField.getLocation());
+    assertEquals("default", eventWithOptionalField.getVisibility().getValue());
+    assertEquals("M", eventWithOptionalField.getRecurringDays());
+    assertNull(eventWithOptionalField.getOccurrenceCount());
+    assertEquals(LocalDateTime.parse("2025-04-10T00:00"), eventWithOptionalField.getRecurrenceEndDate());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -147,11 +162,11 @@ public class EventTest {
         .endTime(null)
         .build();
 
-    String expectedToString = "Name: Event Without End Time Start Time: 2025-03-10T00:00 "
-        + "End Time: 2025-03-11T00:00 Description: null Location: null Visibility: DEFAULT "
-        + "Recurring Days: null Occurrence Count: null Recurrence End Date: null Auto "
-        + "Decline: true\n";
-    assertEquals(expectedToString, eventWithoutEndTime.toString());
+    assertNotNull(eventWithoutEndTime);
+    assertEquals("Event Without End Time", eventWithoutEndTime.getName());
+    assertEquals(LocalDateTime.parse("2025-03-10T00:00"), eventWithoutEndTime.getStartTime());
+    assertEquals(LocalDateTime.parse("2025-03-11T00:00"), eventWithoutEndTime.getEndTime());
+    assertEquals("default", eventWithoutEndTime.getVisibility().getValue());
   }
 
   @Test
@@ -262,7 +277,7 @@ public class EventTest {
 
     Event updatedEvent = event.updateProperty(Constants.PropertyKeys.NAME, "Updated Event");
 
-    assertTrue(updatedEvent.toString().contains("Updated Event"));
+    assertEquals("Updated Event", updatedEvent.getName());
   }
 
   @Test
@@ -279,7 +294,7 @@ public class EventTest {
         newStartTime.toString()
     );
 
-    assertTrue(updatedEvent.toString().contains(newStartTime.toString()));
+    assertEquals(newStartTime, updatedEvent.getStartTime());
   }
 
   @Test
@@ -296,7 +311,7 @@ public class EventTest {
         newEndTime.toString()
     );
 
-    assertTrue(updatedEvent.toString().contains(newEndTime.toString()));
+    assertEquals(newEndTime, updatedEvent.getEndTime());
   }
 
   @Test
@@ -313,7 +328,7 @@ public class EventTest {
         "Updated description"
     );
 
-    assertTrue(updatedEvent.toString().contains("Updated description"));
+    assertEquals("Updated description", updatedEvent.getDescription());
   }
 
   @Test
@@ -330,7 +345,7 @@ public class EventTest {
         "Updated location"
     );
 
-    assertTrue(updatedEvent.toString().contains("Updated location"));
+    assertEquals("Updated location", updatedEvent.getLocation());
   }
 
   @Test
@@ -346,7 +361,7 @@ public class EventTest {
         "PRIVATE"
     );
 
-    assertTrue(updatedEvent.toString().contains("PRIVATE"));
+    assertEquals("private", updatedEvent.getVisibility().getValue());
   }
 
   @Test
