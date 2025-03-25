@@ -104,10 +104,6 @@ public class Event implements IEvent {
     return recurrenceEndDate;
   }
 
-  public boolean isAutoDecline() {
-    return isAutoDecline;
-  }
-
   /**
    * Private constructor used by the Builder.
    *
@@ -135,6 +131,11 @@ public class Event implements IEvent {
     return new Builder();
   }
 
+  @Override
+  public IEvent deepCopyEvent() {
+    return new Builder(this).build();
+  }
+
   /**
    * Builder class for creating Event instances with proper validation.
    */
@@ -149,6 +150,22 @@ public class Event implements IEvent {
     private Integer occurrenceCount;
     private Temporal recurrenceEndDate;
     private boolean isAutoDecline = true;
+
+    public Builder() {
+    }
+
+    public Builder(Event event) {
+      this.name = event.name;
+      this.startTime = event.startTime;
+      this.endTime = event.endTime;
+      this.description = event.description;
+      this.location = event.location;
+      this.visibility = event.visibility;
+      this.recurringDays = event.recurringDays;
+      this.occurrenceCount = event.occurrenceCount;
+      this.recurrenceEndDate = event.recurrenceEndDate;
+      this.isAutoDecline = event.isAutoDecline;
+    }
 
     /**
      * Sets the name of the event.
@@ -348,19 +365,7 @@ public class Event implements IEvent {
     if (updater == null) {
       throw new IllegalArgumentException("Cannot edit property: " + property + "\n");
     }
-
-    Builder builder = Event.builder()
-        .name(this.name)
-        .startTime(this.startTime)
-        .endTime(this.endTime)
-        .description(this.description)
-        .location(this.location)
-        .visibility(this.visibility.getValue())
-        .recurringDays(this.recurringDays)
-        .occurrenceCount(this.occurrenceCount)
-        .recurrenceEndDate(this.recurrenceEndDate)
-        .isAutoDecline(this.isAutoDecline);
-
+    Builder builder = new Builder(this);
     updater.accept(builder, value);
     return builder.build();
   }
@@ -391,7 +396,6 @@ public class Event implements IEvent {
     }
 
     Event other = (Event) obj;
-
     if (!name.equals(other.name)) {
       return false;
     }
@@ -401,7 +405,6 @@ public class Event implements IEvent {
     if (!endTime.equals(other.endTime)) {
       return false;
     }
-
     if (!Objects.equals(description, other.description)) {
       return false;
     }

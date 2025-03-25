@@ -74,12 +74,6 @@ public interface IEvent {
    */
   Temporal getRecurrenceEndDate();
 
-  /**
-   * Checks whether this event should automatically decline conflicting events.
-   *
-   * @return true if the event should auto-decline conflicts, false otherwise.
-   */
-  boolean isAutoDecline();
 
   /**
    * Updates the property of the event.
@@ -91,4 +85,6 @@ public interface IEvent {
    * @throws IllegalArgumentException if the property is not valid or the value is invalid.
    */
   IEvent updateProperty(String name, String value) throws IllegalArgumentException;
+
+  IEvent deepCopyEvent();
 }

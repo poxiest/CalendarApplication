@@ -71,18 +71,19 @@ public class PrintCommand extends AbstractCommand {
       throw new InvalidCommandException(command + "\nReason : Required fields are missing.\n");
     }
 
-    List<PrintEventsResponseDTO> eventsToShow = model.getEventsForPrinting(getTemporalFromString(startDateTime),
-        getTemporalFromString(endDateTime));
+    List<PrintEventsResponseDTO> eventsToShow =
+        model.getEventsForPrinting(getTemporalFromString(startDateTime),
+            getTemporalFromString(endDateTime));
     if (!eventsToShow.isEmpty()) {
       view.displayMessage("Events:\n");
-      for(PrintEventsResponseDTO event : eventsToShow) {
-          view.displayMessage(String.format("• %s - %s to %s %s\n",
-              event.getEventName(),
-              event.getStartTime(),
-              event.getEndTime(),
-              event.getLocation() != null && !event.getLocation().isEmpty()
-                  ? "- Location: " + event.getLocation()
-                  : ""));
+      for (PrintEventsResponseDTO event : eventsToShow) {
+        view.displayMessage(String.format("• %s - %s to %s %s\n",
+            event.getEventName(),
+            event.getStartTime(),
+            event.getEndTime(),
+            event.getLocation() != null && !event.getLocation().isEmpty()
+                ? "- Location: " + event.getLocation()
+                : ""));
       }
     } else {
       view.displayMessage("No events found.\n");

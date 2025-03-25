@@ -64,7 +64,8 @@ public class CalendarRepository implements ICalendarRepository {
   }
 
   @Override
-  public void copyCalendarEvents(String currentCalendarName, CopyEventRequestDTO copyEventRequestDTO) {
+  public void copyCalendarEvents(String currentCalendarName,
+                                 CopyEventRequestDTO copyEventRequestDTO) {
     ICalendar currentCalendar = getCalendar(currentCalendarName);
     ICalendar toCalendar = getCalendar(copyEventRequestDTO.getCopyCalendarName());
 
@@ -73,8 +74,8 @@ public class CalendarRepository implements ICalendarRepository {
     }
 
     toCalendar.getEventRepository().copyEvents(currentCalendar.getEventRepository()
-            .getInBetweenEvents(copyEventRequestDTO.getEventName(), copyEventRequestDTO.getStartTime(),
-                copyEventRequestDTO.getEndTime()),
+            .getInBetweenEvents(copyEventRequestDTO.getEventName(),
+                copyEventRequestDTO.getStartTime(), copyEventRequestDTO.getEndTime()),
         copyEventRequestDTO, currentCalendar.getZoneId(), toCalendar.getZoneId());
   }
 

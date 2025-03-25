@@ -84,7 +84,8 @@ public class CalendarModel implements ICalendarModel {
    * @return A list of formatted event strings.
    */
   @Override
-  public List<PrintEventsResponseDTO> getEventsForPrinting(Temporal startDateTime, Temporal endDateTime) {
+  public List<PrintEventsResponseDTO> getEventsForPrinting(Temporal startDateTime,
+                                                           Temporal endDateTime) {
     if (endDateTime == null) {
       endDateTime = TimeUtil.GetStartOfNextDay(startDateTime);
     }

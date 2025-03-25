@@ -1,15 +1,17 @@
 package calendarapp.model.impl;
 
-import calendarapp.model.EventVisibility;
-import calendarapp.model.ICalendarExporter;
-import calendarapp.model.IEvent;
-import static calendarapp.utils.TimeUtil.*;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.temporal.Temporal;
 import java.util.List;
+
+import calendarapp.model.EventVisibility;
+import calendarapp.model.ICalendarExporter;
+import calendarapp.model.IEvent;
+
+import static calendarapp.utils.TimeUtil.formatDate;
+import static calendarapp.utils.TimeUtil.formatTime;
+import static calendarapp.utils.TimeUtil.isAllDayEvent;
 
 /**
  * Exports calendar events to a CSV file format.
@@ -32,7 +34,7 @@ public class CsvCalendarExporter implements ICalendarExporter {
       writer.write(Constants.CsvFormat.LINE_END);
 
       for (IEvent event : events) {
-        writer.write(formatEvent(event));
+        writer.write(formatEventAsCsvRow(event));
         writer.write(Constants.CsvFormat.LINE_END);
       }
     } catch (IOException e) {
@@ -42,29 +44,6 @@ public class CsvCalendarExporter implements ICalendarExporter {
     return new File(filePath).getAbsolutePath();
   }
 
-  /**
-   * Converts a single event into a formatted CSV row string.
-   *
-   * @param event the event to format
-   * @return the formatted CSV row
-   */
-  private String formatEvent(IEvent event) {
-    return formatEventAsCsvRow(
-        event.getName(),
-        event.getStartTime(),
-        event.getEndTime(),
-        event.getDescription(),
-        event.getLocation(),
-        event.getVisibility()
-    );
-  }
-
-  /**
-   * Determines the privacy flag value based on event visibility.
-   *
-   * @param visibility the visibility of the event
-   * @return "TRUE" if private, otherwise "FALSE"
-   */
   private String determinePrivacyFlag(EventVisibility visibility) {
     return EventVisibility.PRIVATE.equals(visibility)
         ? Constants.CsvFormat.TRUE_VALUE
@@ -85,27 +64,22 @@ public class CsvCalendarExporter implements ICalendarExporter {
   /**
    * Formats event details as a CSV row string.
    *
-   * @param name the name of the event
-   * @param startTime the start time of the event
-   * @param endTime the end time of the event
-   * @param description the description of the event
-   * @param location the location of the event
-   * @param visibility the visibility of the event
+   * @param event is an IEvent instance
    * @return the formatted CSV row
    */
-  private String formatEventAsCsvRow(String name, Temporal startTime, Temporal endTime,
-                                     String description, String location, EventVisibility visibility) {
-    boolean isAllDay = isAllDayEvent(startTime, endTime);
+  private String formatEventAsCsvRow(IEvent event) {
+    boolean isAllDay = isAllDayEvent(event.getStartTime(), event.getEndTime());
+
     return String.join(Constants.CsvFormat.DELIMITER,
-        escapeField(name),
-        formatDate(startTime),
-        isAllDay ? "" : formatTime(startTime),
-        formatDate(endTime),
-        isAllDay ? "" : formatTime(endTime),
+        escapeField(event.getName()),
+        formatDate(event.getStartTime()),
+        isAllDay ? "" : formatTime(event.getStartTime()),
+        formatDate(event.getEndTime()),
+        isAllDay ? "" : formatTime(event.getEndTime()),
         isAllDay ? Constants.CsvFormat.TRUE_VALUE : Constants.CsvFormat.FALSE_VALUE,
-        escapeField(description),
-        escapeField(location),
-        determinePrivacyFlag(visibility)
+        escapeField(event.getDescription()),
+        escapeField(event.getLocation()),
+        determinePrivacyFlag(event.getVisibility())
     );
   }
 }

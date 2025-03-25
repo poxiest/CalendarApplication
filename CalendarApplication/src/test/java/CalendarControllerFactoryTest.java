@@ -108,15 +108,9 @@ public class CalendarControllerFactoryTest {
   }
 
   private static class MockView implements ICalendarView {
-
     @Override
     public void displayMessage(String message) {
       System.out.println(message);
-    }
-
-    @Override
-    public void displayEvents(List<String> events) {
-      System.out.println(events);
     }
   }
 
