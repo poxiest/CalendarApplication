@@ -1644,8 +1644,8 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testInvalidCopy1() {
     try {
-      controller = new MockController("copy event EventName on 2025-11-11T11:00 --target default "
-          + "to", model, view);
+      controller = new MockController("copy event EventName on 2025-11-11T11:00 --target"
+          + " default to", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("copy event EventName on 2025-11-11T11:00 --target default to\n"
@@ -1670,8 +1670,8 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testInvalidCopy3() {
     try {
-      controller = new MockController("copy events on 2025-11-11 --target to 2025-11-11", model,
-          view);
+      controller = new MockController("copy events on 2025-11-11 --target to 2025-11-11",
+          model, view);
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("copy events on 2025-11-11 --target to 2025-11-11\n"
@@ -1683,8 +1683,8 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testInvalidCopy4() {
     try {
-      controller = new MockController("copy events between 2025-11-11 and --target default to "
-          + "2025-11-11", model, view);
+      controller = new MockController("copy events between 2025-11-11 and --target "
+          + "default to 2025-11-11", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("copy events between 2025-11-11 and --target default to 2025-11-11\n"
@@ -1696,8 +1696,8 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testInvalidCopy5() {
     try {
-      controller = new MockController("copy events between and 2025-11-15 --target default to "
-          + "2025-11-11", model, view);
+      controller = new MockController("copy events between and 2025-11-15 --target "
+          + "default to 2025-11-11", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("copy events between and 2025-11-15 --target default to 2025-11-11\n"
@@ -1709,12 +1709,26 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testInvalidCopy6() {
     try {
-      controller = new MockController("copy events between 2025-11-11 and 2025-11-15 --target to "
-          + "2025-11-11", model, view);
+      controller = new MockController("copy events between 2025-11-11 and 2025-11-15 "
+          + "--target to 2025-11-11", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("copy events between 2025-11-11 and 2025-11-15 --target to 2025-11-11\n"
           + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy7() {
+    try {
+      controller = new MockController("copy events between 2025-11-11 and 2025-11-15"
+          + " --target newCal to 2025-11-11T11:00", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy events between 2025-11-11 and 2025-11-15 --target newCal "
+          + "to 2025-11-11T11:00\n"
+          + "Reason : Invalid date format: 2025-11-11T11:00", e.getMessage());
       throw e;
     }
   }
