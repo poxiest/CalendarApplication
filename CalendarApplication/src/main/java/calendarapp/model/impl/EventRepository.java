@@ -281,9 +281,9 @@ public class EventRepository implements IEventRepository {
    */
   private boolean isRecurringProperty(String property) {
     String lowerCaseProperty = property.toLowerCase();
-    return lowerCaseProperty.equals(Constants.PropertyKeys.RECURRING_DAYS) ||
-        lowerCaseProperty.equals(Constants.PropertyKeys.OCCURRENCE_COUNT) ||
-        lowerCaseProperty.equals(Constants.PropertyKeys.RECURRENCE_END_DATE);
+    return lowerCaseProperty.equals(Constants.PropertyKeys.RECURRING_DAYS)
+        || lowerCaseProperty.equals(Constants.PropertyKeys.OCCURRENCE_COUNT)
+        || lowerCaseProperty.equals(Constants.PropertyKeys.RECURRENCE_END_DATE);
   }
 
   /**

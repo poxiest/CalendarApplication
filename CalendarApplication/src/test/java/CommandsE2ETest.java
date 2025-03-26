@@ -202,10 +202,6 @@ public class CommandsE2ETest {
           + "Reason : Event conflicts with existing event: abc_full", e.getMessage());
       throw e;
     }
-//    assertEquals("Events:\n" +
-//            "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n" +
-//            "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
-//        stringOutput.toString());
   }
 
   @Test

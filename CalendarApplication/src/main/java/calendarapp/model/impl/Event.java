@@ -152,12 +152,10 @@ public class Event implements IEvent {
     private boolean isAutoDecline = true;
 
     /**
-     * Default constructor for the Builder class.
-     * <p>
-     * This constructor does not perform any initialization and is required to allow
-     * for the instantiation of the Builder object without needing to provide
-     * an initial Event object. The builder pattern allows properties to be set
-     * incrementally.
+     * Default constructor for the Builder class. This constructor does not perform
+     * any initialization and is required to allow for the instantiation of the
+     * Builder object without needing to provide an initial Event object.
+     * The builder pattern allows properties to be set incrementally.
      */
     public Builder() {
       // No initialization is performed here.
