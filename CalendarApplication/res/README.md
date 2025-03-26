@@ -3,7 +3,8 @@
 This is a calendar application that allows users to manage events through a text-based interface.
 Users can create, edit, and view events in a calendar, as well as export the calendar data to CSV
 format
-which is supported by Google Calendar.
+which is supported by Google Calendar. Apart from this users can also manage multiple calendars, 
+do operations on a specific calendar, copy events from one calendar to other calendar.
 
 ## Getting Started
 
@@ -46,6 +47,34 @@ The commands file is present inside res/commands/validCommands.txt
 ## Supported Commands
 
 The application supports the following commands:
+
+### Create a new Calendar
+
+```
+create calendar --name <calendarName> --timezone area/location
+```
+
+Create a calendar with the name and timezone specified.
+
+### Edit a calendar
+
+```
+edit calendar --name <calendarName> --property <propertyName> <propertyValue>
+```
+
+Changes the property value of the given calendar. 
+Property can take the following values:
+1. name
+2. timezone
+
+### Use a specific Calendar
+
+```
+use calendar --name <calendarName>
+```
+
+Set a specific calendar as the active calendar. The operations done post this will be done on the
+active calendar.
 
 ### Creating Events
 
@@ -159,6 +188,33 @@ show status on <dateStringTtimeString>
 
 Prints busy status if the user has events scheduled on a given day and time, otherwise, available.
 
+### Copying a single Event
+
+```
+copy event <eventName> on <dateStringTimeString> --target <calendarName> to <dateStringTimeString>
+```
+
+Copies the event on the specified time from the active calendar to the target calendar on the
+specified date.
+
+### Copying all Events on a given date
+
+```
+copy events on <dateString> --target <calendarName> to <dateString>
+```
+
+Copies all the events on a given date from the active calendar to the target calendar on the
+specified date.
+
+### Copying all Events between a given time period
+
+```
+copy events between <dateString> and <dateString> --target <calendarName> to <dateString>
+```
+
+Copies all the events specified between the given time period from the active calendar
+to the target calendar on the specified date.
+
 For a complete list of supported commands, please refer to the file `res/commands/validCommands.txt`
 included with the application.
 
@@ -168,19 +224,56 @@ All the Required Features are working.
 
 <b>Major Features:</b>
 
-1. Create a single and recurring event (with and without autoDecline)
-2. Edit all the event properties for single and recurring events (with and without autoDecline)
-3. Print Events
-4. Export Calendar as CSV compatible with Google Calendar
-5. Show status
+1. Create a new Calendar with name and timezone
+2. Edit Calendar properties
+3. Copy events from one calendar to another
+4. Create a single and recurring event (with and without autoDecline)
+5. Edit all the event properties for single and recurring events (with and without autoDecline)
+6. Print Events
+7. Export Calendar as CSV compatible with Google Calendar
+8. Show status
 
-## Contribution
+## New Features and changes:
+New ICalendar and ICalendarRepository has been introduced.
 
-1. Sri Vishaak Ramesh Babu -
-   i. Designed and implemented controller and view
-   ii. Integrated Controller with Model
-   iii. E2E test cases for the Calendar Application
+### ICalendar
+Encapsulates a single calendar's data and behaviour. It stores the name, timezone and
+IEventRepository which contains a list of events. 
 
-2. Harikrishna Nagarajan -
-   i. Designed and implemented Model
-   ii. Unit test cases for Model
+### ICalendarRepository
+Represents a repository for managing multiple calendars. It has functionality to retrieve, add or
+edit calendars. It also supports copying between calendars.
+
+### Refactoring Event Management for Multi-Calendar Support
+
+In the previous design, `CalendarModel` was responsible for both storing a `List<IEvent>` and 
+handling all event-related operations since only one calendar was involved.
+
+With the introduction of a **multi-calendar system**, these responsibilities have been refactored 
+for better separation of concerns:
+
+- A new interface, `IEventRepository`, now encapsulates the storage and management of events.
+- It provides dedicated methods to **add**, **edit**, and **retrieve** events.
+- `CalendarModel` has shifted its role to act primarily as a **manager**, coordinating between calendars and delegating event-related operations to the corresponding `IEventRepository`.
+
+This architectural change improves **modularity**, supports **scalability**, and adheres to the **Single Responsibility Principle** by cleanly separating event logic from calendar coordination.
+
+### Separation of Formatting and Export Responsibilities
+
+In the earlier design, the `CalendarModel` handled both **formatting operations for printing** and **I/O operations for exporting** calendar data.
+
+To follow better architectural practices, these responsibilities have now been moved to the **controller layer**. This promotes a cleaner separation of concerns by keeping the model focused on data and business logic, while the controller manages presentation and I/O logic.
+
+To avoid exposing the entire `List<IEvent>` directly to the controller, a set of dedicated **DTOs (Data Transfer Objects)** has been introduced:
+
+- `PrintEventsResponseDTO`
+- `CalendarExporterDTO`
+- `CopyEventRequestDTO`
+
+These DTOs provide only the necessary data required for their respective operations, ensuring **encapsulation**, **data safety**, and **clear boundaries** between layers.
+
+With this refactor:
+- The **controller** handles all formatting and export logic.
+- The **model** only provides filtered data in the form of DTOs.
+
+This change aligns with **SOLID principles**, especially the **Interface Segregation** and **Single Responsibility** principles.
