@@ -26,7 +26,7 @@ public class ExactMatchEventsSearch implements SearchEventsStrategy {
    * @param endTime     The exact end time to match (optional, null to ignore).
    * @param isRecurring This parameter is ignored in this strategy since recurrence is not relevant.
    * @return A list of events that match the given criteria, sorted in descending order of start
-   * time.
+   *     time.
    */
   @Override
   public List<IEvent> search(List<IEvent> events, String eventName, Temporal startTime,

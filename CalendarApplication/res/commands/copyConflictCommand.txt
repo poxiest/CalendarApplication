@@ -1,0 +1,9 @@
+create calendar --name personalcal --timezone America/New_York
+create calendar --name workcal --timezone "America/Los_Angeles"
+use calendar --name personalcal
+create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00
+create event secondevent from 2025-11-10T13:00 to 2025-11-11T10:00
+create event thirdevent from 2025-11-12T10:00 to 2025-11-12T10:30
+print events from 2025-11-10 to 2025-11-13
+copy events between 2025-11-10 and 2025-11-11 --target workcal to 2025-11-10
+copy events between 2025-11-10 and 2025-11-11 --target workcal to 2025-11-10

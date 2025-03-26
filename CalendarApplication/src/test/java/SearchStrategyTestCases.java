@@ -13,6 +13,9 @@ import calendarapp.model.impl.searchstrategies.SearchEventFactory;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Test class to Search strategy events.
+ */
 public class SearchStrategyTestCases {
   private List<IEvent> events;
   private SearchEventFactory searchStrategy;

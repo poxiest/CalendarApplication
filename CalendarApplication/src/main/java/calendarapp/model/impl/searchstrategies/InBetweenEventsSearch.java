@@ -28,7 +28,7 @@ public class InBetweenEventsSearch implements SearchEventsStrategy {
    * @param isRecurring Whether to filter only recurring events (true to include only recurring
    *                    events).
    * @return A list of events that match the given criteria, sorted in descending order of start
-   * time.
+   *     time.
    */
   @Override
   public List<IEvent> search(List<IEvent> events, String eventName, Temporal startTime,

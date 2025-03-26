@@ -1100,8 +1100,8 @@ public class CommandsE2ETest {
     controller = new MockController("create event Sprint from"
         + " \"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats MTWRFSU for 5 times\n"
         + "print events from \"2025-11-11\" to \"2025-11-20\"\n"
-        +"edit event location Sprint from 2025-11-11T11:00 to 2025-11-11T12:00 with Richard\n"
-        +"edit event location Sprint from 2025-11-13T11:00 to 2025-11-13T12:00 with Shillman\n"
+        + "edit event location Sprint from 2025-11-11T11:00 to 2025-11-11T12:00 with Richard\n"
+        + "edit event location Sprint from 2025-11-13T11:00 to 2025-11-13T12:00 with Shillman\n"
         + "print events from \"2025-11-11\" to \"2025-11-20\"\n", model, view);
     controller.start();
     assertEquals("Events:\n"
@@ -1125,7 +1125,7 @@ public class CommandsE2ETest {
     controller = new MockController("create event Sprint from"
         + " \"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats MTWRFSU for 5 times\n"
         + "print events from \"2025-11-11\" to \"2025-11-20\"\n"
-        +"edit events location Sprint Richard\n"
+        + "edit events location Sprint Richard\n"
         + "print events from \"2025-11-11\" to \"2025-11-20\"\n", model, view);
     controller.start();
     assertEquals("Events:\n"
@@ -1153,7 +1153,8 @@ public class CommandsE2ETest {
           , model, view);
       controller.start();
     } catch (InvalidCommandException e) {
-      assertEquals("Cannot update a recurring property for a single event.", e.getMessage());
+      assertEquals("Cannot update a recurring property for a single event.",
+          e.getMessage());
       throw e;
     }
   }
@@ -1164,11 +1165,13 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("create event Sprint from"
           + " \"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats MTWRFSU until 2025-11-20\n"
-          + "edit event recurrence_end_date Sprint from 2025-11-11T11:00 to 2025-11-11T12:00 with 2025-11-30\n"
+          + "edit event recurrence_end_date Sprint from 2025-11-11T11:00 to 2025-11-11T12:00 "
+          + "with 2025-11-30\n"
           , model, view);
       controller.start();
     } catch (InvalidCommandException e) {
-      assertEquals("Cannot update a recurring property for a single event.", e.getMessage());
+      assertEquals("Cannot update a recurring property for a single event.",
+          e.getMessage());
       throw e;
     }
   }
@@ -1592,11 +1595,13 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testCreateCalendarController2() {
     try {
-      controller = new MockController("create --name personalcal --timezone \"America/New_York\""
+      controller = new MockController("create --name personalcal --timezone "
+          + "\"America/New_York\""
           , model, view);
       controller.start();
     } catch (InvalidCommandException e) {
-      assertEquals("Unknown command: create --name personalcal --timezone \"America/New_York\"\n"
+      assertEquals("Unknown command: create --name personalcal --timezone "
+              + "\"America/New_York\"\n"
           , e.getMessage());
       throw e;
     }
@@ -1624,8 +1629,8 @@ public class CommandsE2ETest {
           + "create calendar --name personalcal --timezone \"America/Los_Angeles\"", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
-      assertEquals("create calendar --name personalcal --timezone \"America/Los_Angeles\"\n"
-          + "Reason : Calendar already exists.\n", e.getMessage());
+      assertEquals("create calendar --name personalcal --timezone "
+          + "\"America/Los_Angeles\"\nReason : Calendar already exists.\n", e.getMessage());
       throw e;
     }
   }
@@ -1916,8 +1921,8 @@ public class CommandsE2ETest {
           + "2025-11-11T10:00", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
-      assertEquals("copy event EventName on 2025-11-11T11:00 --target to 2025-11-11T10:00\n"
-          + "Reason : Required fields are missing.\n", e.getMessage());
+      assertEquals("copy event EventName on 2025-11-11T11:00 --target to "
+          + "2025-11-11T10:00\nReason : Required fields are missing.\n", e.getMessage());
       throw e;
     }
   }
@@ -1994,8 +1999,8 @@ public class CommandsE2ETest {
           + "--target to 2025-11-11", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
-      assertEquals("copy events between 2025-11-11 and 2025-11-15 --target to 2025-11-11\n"
-          + "Reason : Required fields are missing.\n", e.getMessage());
+      assertEquals("copy events between 2025-11-11 and 2025-11-15 --target to "
+          + "2025-11-11\nReason : Required fields are missing.\n", e.getMessage());
       throw e;
     }
   }
@@ -2079,7 +2084,8 @@ public class CommandsE2ETest {
   @Test(expected = InvalidCommandException.class)
   public void testInvalidEditCommand() {
     try {
-      controller = new MockController("create calendar --name workcal --timezone America/New_York\n"
+      controller = new MockController("create calendar --name workcal --timezone "
+          + "America/New_York\n"
           + "edit calendar --name workcal --property timne Asia/Calcutta"
           , model, view);
       controller.start();

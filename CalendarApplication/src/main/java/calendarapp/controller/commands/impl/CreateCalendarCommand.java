@@ -9,6 +9,9 @@ import calendarapp.view.ICalendarView;
 
 import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_NEW_CALENDAR;
 
+/**
+ * Create Calendar Command implementation for creating new calendar.
+ */
 public class CreateCalendarCommand extends AbstractCommand {
 
   private String calendarName;

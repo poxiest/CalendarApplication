@@ -55,7 +55,8 @@ public class ExportCommand extends AbstractCommand {
       String fileExtension = getFileExtension(filename).toLowerCase();
       if (!Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS.contains(fileExtension)) {
         throw new IllegalArgumentException("Unsupported export format: " + fileExtension
-            + ". Supported formats are: " + Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS);
+            + ". Supported formats are: "
+            + Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS);
       }
 
       ICalendarExporter exporter = EXPORTER_MAP.get(fileExtension);

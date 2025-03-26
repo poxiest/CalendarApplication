@@ -40,16 +40,16 @@ public class Constants {
     /**
      * Maps characters to corresponding DayOfWeek values.
      */
-    public static final Map<Character, DayOfWeek> dayMap = new HashMap<>();
+    public static final Map<Character, DayOfWeek> DAY_MAP = new HashMap<>();
 
     static {
-      dayMap.put('M', DayOfWeek.MONDAY);
-      dayMap.put('T', DayOfWeek.TUESDAY);
-      dayMap.put('W', DayOfWeek.WEDNESDAY);
-      dayMap.put('R', DayOfWeek.THURSDAY);
-      dayMap.put('F', DayOfWeek.FRIDAY);
-      dayMap.put('S', DayOfWeek.SATURDAY);
-      dayMap.put('U', DayOfWeek.SUNDAY);
+      DAY_MAP.put('M', DayOfWeek.MONDAY);
+      DAY_MAP.put('T', DayOfWeek.TUESDAY);
+      DAY_MAP.put('W', DayOfWeek.WEDNESDAY);
+      DAY_MAP.put('R', DayOfWeek.THURSDAY);
+      DAY_MAP.put('F', DayOfWeek.FRIDAY);
+      DAY_MAP.put('S', DayOfWeek.SATURDAY);
+      DAY_MAP.put('U', DayOfWeek.SUNDAY);
     }
 
     /**
@@ -62,7 +62,7 @@ public class Constants {
     public static Set<DayOfWeek> parseDaysOfWeek(String daysString) {
       Set<DayOfWeek> days = new HashSet<>();
       for (char day : daysString.toUpperCase().toCharArray()) {
-        DayOfWeek dayOfWeek = dayMap.get(day);
+        DayOfWeek dayOfWeek = DAY_MAP.get(day);
         if (dayOfWeek == null) {
           throw new IllegalArgumentException("Invalid day character: " + day);
         }

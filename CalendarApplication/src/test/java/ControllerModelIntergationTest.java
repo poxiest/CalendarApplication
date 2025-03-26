@@ -200,13 +200,12 @@ public class ControllerModelIntergationTest {
 
   @Test
   public void testPrintCommandsIntegration() {
-    controller = new CalendarController(new StringReader("print events on \"2025-11-11\"\nexit")
-        , model, view);
+    controller = new CalendarController(new StringReader("print events on \"2025-11-11\"\n"
+        + "exit"), model, view);
     controller.start();
     assertEquals("Start Time: null\n"
-            + "End Time: null\n"
-            + "On Time: 2025-11-11\n"
-        , log.toString());
+        + "End Time: null\n"
+        + "On Time: 2025-11-11\n", log.toString());
     assertEquals("Enter command or enter 'exit' to exit the calendar application.\n"
         + "Processing command: print events on \"2025-11-11\"\n"
         + "Events:\n"
@@ -376,8 +375,8 @@ public class ControllerModelIntergationTest {
 
 
     @Override
-    public void editEvent(String eventName, String startTime, String endTime, String property
-        , String value) throws EventConflictException {
+    public void editEvent(String eventName, String startTime, String endTime, String property,
+                          String value) throws EventConflictException {
       log.append("Event Name: ").append(eventName).append("\n")
           .append("Start Time: ").append(startTime).append("\n")
           .append("End Time: ").append(endTime).append("\n")

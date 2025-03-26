@@ -17,8 +17,8 @@ public class TimeUtil {
 
   /**
    * Converts a string representation of date/time to a Temporal object.
-   * Accepts two formats: "yyyy-MM-dd'T'HH:mm" and
-   * "yyyy-MM-dd" - will be converted to start of day.
+   * Accepts two formats: "yyyy-MM-dd'T'HH:mm" and "yyyy-MM-dd" (the latter will be converted to
+   * the start of day).
    *
    * @param dateTime the string representation of date/time to parse.
    * @return a Temporal object (specifically a LocalDateTime) representing the parsed date/time,
@@ -44,6 +44,13 @@ public class TimeUtil {
     }
   }
 
+  /**
+   * Converts a string representation of a date to a Temporal object (LocalDate).
+   *
+   * @param dateTime the string representation of the date to parse.
+   * @return a Temporal object (specifically a LocalDate) representing the parsed date.
+   * @throws IllegalArgumentException if the date string cannot be parsed.
+   */
   public static Temporal getDateFromString(String dateTime) {
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     if (dateTime == null) {
@@ -57,11 +64,10 @@ public class TimeUtil {
   }
 
   /**
-   * Gets the end of day or exact time from a string representation.
+   * Gets the end of the day (23:59:59) from a string representation of date/time.
    *
    * @param dateTime the string representation of date/time to parse.
-   * @return a Temporal object representing either the exact time or the end of the day,
-   *     or null if the input is null.
+   * @return a Temporal object representing the end of the day, or null if the input is null.
    * @throws IllegalArgumentException if the date/time string cannot be parsed.
    */
   public static Temporal getEndOfDayFromString(String dateTime) throws IllegalArgumentException {
@@ -73,11 +79,11 @@ public class TimeUtil {
   }
 
   /**
-   * Returns the start of the day (00:00) for the given date string.
+   * Returns the start of the day (00:00:00) for the given date string.
    *
-   * @param dateTime the date string to parse
-   * @return the Temporal representing the start of the day
-   * @throws IllegalArgumentException if the input cannot be parsed
+   * @param dateTime the date string to parse.
+   * @return the Temporal object representing the start of the day.
+   * @throws IllegalArgumentException if the date string cannot be parsed.
    */
   public static Temporal getStartOfDayFromString(String dateTime) throws IllegalArgumentException {
     if (dateTime == null) {
@@ -110,11 +116,11 @@ public class TimeUtil {
   }
 
   /**
-   * Find the difference between two Temproral values.
+   * Returns the difference in seconds between two Temporal objects.
    *
    * @param temporal1 the first temporal to compare.
    * @param temporal2 the second temporal to compare.
-   * @return Difference between both in Long.
+   * @return the difference between the two temporals in seconds.
    */
   public static Long difference(Temporal temporal1, Temporal temporal2) {
     return ChronoUnit.SECONDS.between(temporal1, temporal2);
@@ -148,30 +154,30 @@ public class TimeUtil {
   }
 
   /**
-   * Returns the start of the next day (00:00) for the given temporal value.
+   * Returns the start of the next day (00:00:00) for the given temporal value.
    *
-   * @param temporal the input temporal
-   * @return the start of the next day
+   * @param temporal the input temporal.
+   * @return the start of the next day (00:00:00).
    */
-  public static Temporal GetStartOfNextDay(Temporal temporal) {
+  public static Temporal getStartOfNextDay(Temporal temporal) {
     return getLocalDateTimeFromTemporal(temporal).toLocalDate().plusDays(1).atStartOfDay();
   }
 
   /**
-   * Returns the start of the same day (00:00) for the given temporal value.
+   * Returns the start of the same day (00:00:00) for the given temporal value.
    *
-   * @param temporal the input temporal
-   * @return the start of the day
+   * @param temporal the input temporal.
+   * @return the start of the day (00:00:00).
    */
-  public static Temporal GetStartOfDay(Temporal temporal) {
+  public static Temporal getStartOfDay(Temporal temporal) {
     return getLocalDateTimeFromTemporal(temporal).toLocalDate().atStartOfDay();
   }
 
   /**
-   * Formats a temporal object as a date string (MM/dd/yyyy).
+   * Formats a temporal object as a date string in the format MM/dd/yyyy.
    *
    * @param temporal the temporal object to format.
-   * @return a string representation of the date.
+   * @return a string representation of the date in MM/dd/yyyy format.
    */
   public static String formatDate(Temporal temporal) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -183,10 +189,11 @@ public class TimeUtil {
   }
 
   /**
-   * Formats a temporal object as a time string (h:mm:ss a).
+   * Formats a temporal object as a time string in the format h:mm:ss a.
    *
    * @param temporal the temporal object to format.
-   * @return a string representation of the time, or an empty string if not a LocalDateTime.
+   * @return a string representation of the time in h:mm:ss a format, or an empty string if not a
+   *     LocalDateTime.
    */
   public static String formatTime(Temporal temporal) {
     if (temporal instanceof LocalDateTime) {
@@ -197,6 +204,7 @@ public class TimeUtil {
 
   /**
    * Determines if the given start and end times represent an all-day event.
+   * An event is considered all-day if it starts at midnight and ends at the start of the next day.
    *
    * @param startTime the start time of the event.
    * @param endTime   the end time of the event.
@@ -205,11 +213,11 @@ public class TimeUtil {
   public static boolean isAllDayEvent(Temporal startTime, Temporal endTime) {
     LocalDateTime start = getLocalDateTimeFromTemporal(startTime);
     LocalDateTime end = getLocalDateTimeFromTemporal(endTime);
-    boolean startsAtMidnight = start.getHour() == 0 && start.getMinute() == .0
+    boolean startsAtMidnight = start.getHour() == 0 && start.getMinute() == 0
         && start.getSecond() == 0;
     boolean endsAtStartOfNextDay = end.getHour() == 0 && end.getMinute() == 0
-        && end.getSecond() == 0 &&
-        end.toLocalDate().isEqual(start.toLocalDate().plusDays(1));
+        && end.getSecond() == 0
+        && end.toLocalDate().isEqual(start.toLocalDate().plusDays(1));
     return startsAtMidnight && endsAtStartOfNextDay;
   }
 
@@ -232,12 +240,12 @@ public class TimeUtil {
   /**
    * Converts a temporal value from one time zone to another.
    *
-   * @param temporal   the temporal value to convert
-   * @param fromZoneId the original time zone
-   * @param toZoneId   the target time zone
-   * @return the temporal value in the target time zone
+   * @param temporal   the temporal value to convert.
+   * @param fromZoneId the original time zone.
+   * @param toZoneId   the target time zone.
+   * @return the temporal value in the target time zone.
    */
-  public static Temporal ChangeZone(Temporal temporal, ZoneId fromZoneId, ZoneId toZoneId) {
+  public static Temporal changeZone(Temporal temporal, ZoneId fromZoneId, ZoneId toZoneId) {
     return getLocalDateTimeFromTemporal(temporal).atZone(fromZoneId)
         .withZoneSameInstant(toZoneId).toLocalDateTime();
   }
@@ -245,11 +253,11 @@ public class TimeUtil {
   /**
    * Adds a duration to the given temporal value.
    *
-   * @param temporal the original temporal value
-   * @param duration the duration to add
-   * @return the updated temporal value
+   * @param temporal the original temporal value.
+   * @param duration the duration to add.
+   * @return the updated temporal value.
    */
-  public static Temporal AddDuration(Temporal temporal, Duration duration) {
+  public static Temporal addDuration(Temporal temporal, Duration duration) {
     return temporal.plus(duration);
   }
 

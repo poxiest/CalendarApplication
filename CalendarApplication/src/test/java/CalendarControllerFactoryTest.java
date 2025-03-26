@@ -23,8 +23,8 @@ public class CalendarControllerFactoryTest {
   private ICalendarView view;
   private ICalendarModel model;
 
-  private String filepath = System.getProperty("user.dir").contains("CalendarApplication") ?
-      System.getProperty("user.dir") : System.getProperty("user.dir") + "/CalendarApplication";
+  private String filepath = System.getProperty("user.dir").contains("CalendarApplication")
+      ? System.getProperty("user.dir") : System.getProperty("user.dir") + "/CalendarApplication";
 
   @Before
   public void setup() {
@@ -55,8 +55,7 @@ public class CalendarControllerFactoryTest {
   @Test
   public void testControllerFactory3() {
     controller = CalendarControllerFactory.getController("headless",
-        filepath +
-            "/src/test/java/positiveTestcase.txt", model,
+        filepath + "/src/test/java/positiveTestcase.txt", model,
         view);
     assertEquals(CalendarController.class, controller.getClass());
   }
@@ -70,8 +69,7 @@ public class CalendarControllerFactoryTest {
   @Test
   public void testControllerFactory5() {
     controller = CalendarControllerFactory.getController("HEADLESS",
-        filepath +
-            "/src/test/java/positiveTestcase.txt", model,
+        filepath + "/src/test/java/positiveTestcase.txt", model,
         view);
     assertEquals(CalendarController.class, controller.getClass());
   }
@@ -175,22 +173,22 @@ public class CalendarControllerFactoryTest {
 
     @Override
     public void createCalendar(String calendarName, String timezone) {
-
+      // empty for test purposes.
     }
 
     @Override
     public void editCalendar(String calendarName, String propertyName, String propertyValue) {
-
+      // empty for test purposes.
     }
 
     @Override
     public void setCalendar(String calendarName) {
-
+      // empty for test purposes.
     }
 
     @Override
     public void copyEvent(CopyEventRequestDTO copyEventRequestDTO) {
-
+      // empty for test purposes.
     }
   }
 }

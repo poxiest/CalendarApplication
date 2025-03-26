@@ -3,7 +3,7 @@
 This is a calendar application that allows users to manage events through a text-based interface.
 Users can create, edit, and view events in a calendar, as well as export the calendar data to CSV
 format
-which is supported by Google Calendar. Apart from this users can also manage multiple calendars, 
+which is supported by Google Calendar. Apart from this users can also manage multiple calendars,
 do operations on a specific calendar, copy events from one calendar to other calendar.
 
 ## Getting Started
@@ -16,6 +16,7 @@ The application can run in two modes:
 2. **Headless Mode**: Processes commands from a file without requiring user interaction.
 
 Download the .jar file present in /res directory
+
 ### Interactive Mode
 
 To run the application in interactive mode:
@@ -25,7 +26,7 @@ java -jar <file.jar> --mode interactive
 ```
 
 Once the application starts, you can enter commands directly in the console.
-For reference use res/commands/validCalendarCommands.txt file.
+For command reference check res/commands/validCalendarCommands.txt file.
 
 ### Headless Mode
 
@@ -35,9 +36,7 @@ To run the application in headless mode compile the java main file similar to in
 java -jar <file.jar> --mode headless {absolute_path}
 ```
 
-The commands file is present inside res/commands/validCalendarCommands.txt
-
-(you can alternatively use validCommands.txt, which contains more valid Event related commands)
+The command files are present inside res/commands/
 
 ## Supported Commands
 
@@ -57,10 +56,11 @@ Create a calendar with the name and timezone specified.
 edit calendar --name <calendarName> --property <propertyName> <propertyValue>
 ```
 
-Changes the property value of the given calendar. 
+Changes the property value of the given calendar.
 Property can take the following values:
-1. name
-2. timezone
+
+1. name - Case Sensitive
+2. timezone - Follows IANA TimeZone Database Format
 
 ### Use a specific Calendar
 
@@ -74,11 +74,11 @@ active calendar.
 ### Creating Events
 
 ```
-create event --autoDecline <eventName> from <dateStringTtimeString> to <dateStringTtimeString>
+create event <eventName> from <dateStringTtimeString> to <dateStringTtimeString>
 ```
 
-Creates a single event in the calendar. The `--autoDecline` option is optional and indicates if the
-event should be rejected in case of a conflict.
+Creates a single event in the calendar. The event will be rejected in case of a conflict with
+exiting event.
 
 ### Creating Recurring Events
 
@@ -119,12 +119,39 @@ Creates a recurring all-day event until a specific date (inclusive).
 
 ### Editing Events
 
-```
+## 1. Editing a Single Event
+
+To modify a specific event at a given date and time, use:
+
+```plaintext
 edit event <property> <eventName> from <dateStringTtimeString> to <dateStringTtimeString> with <NewPropertyValue>
 ```
 
-Changes the property (e.g., name) of the given event.
 Property can take the following values:
+
+1. eventname
+2. from
+3. to
+4. description
+5. location
+6. visibility
+
+To modify multiple events, use:
+
+```
+edit events <property> <eventName> from <dateStringTtimeString> with <NewPropertyValue>
+```
+
+"events" Changes the property (e.g., name) of all events starting at a specific date/time
+and have the same event name.
+
+```
+edit events <property> <eventName> with <NewPropertyValue>
+```
+
+Change the property (e.g., name) of all events with the same event name.
+
+For the above two commands Property can take the following values:
 
 1. eventname
 2. from
@@ -135,20 +162,6 @@ Property can take the following values:
 7. recurring_days
 8. occurrence_count
 9. recurrence_end_date
-
-```
-edit events <property> <eventName> from <dateStringTtimeString> with <NewPropertyValue>
-```
-
-"events" Changes the property (e.g., name) of all recurring events starting at a specific date/time
-and have the same
-event name.
-
-```
-edit events <property> <eventName> with <NewPropertyValue>
-```
-
-Change the property (e.g., name) of all recurring events with the same event name.
 
 ### Viewing Events
 
@@ -183,7 +196,7 @@ show status on <dateStringTtimeString>
 
 Prints busy status if the user has events scheduled on a given day and time, otherwise, available.
 
-### Copying a single Event
+### Copying Events between Calendars
 
 ```
 copy event <eventName> on <dateStringTimeString> --target <calendarName> to <dateStringTimeString>
@@ -192,16 +205,12 @@ copy event <eventName> on <dateStringTimeString> --target <calendarName> to <dat
 Copies the event on the specified time from the active calendar to the target calendar on the
 specified date.
 
-### Copying all Events on a given date
-
 ```
 copy events on <dateString> --target <calendarName> to <dateString>
 ```
 
 Copies all the events on a given date from the active calendar to the target calendar on the
 specified date.
-
-### Copying all Events between a given time period
 
 ```
 copy events between <dateString> and <dateString> --target <calendarName> to <dateString>
@@ -210,65 +219,74 @@ copy events between <dateString> and <dateString> --target <calendarName> to <da
 Copies all the events specified between the given time period from the active calendar
 to the target calendar on the specified date.
 
-For a complete list of supported commands, please refer to the file `res/commands/validCommands.txt`
-included with the application.
-
 ## Features
 
 All the Required Features are working.
 
 <b>Major Features:</b>
 
-1. Create a new Calendar with name and timezone
-2. Edit Calendar properties
+1. Supports multiple calendars
+2. Edit Calendar properties (name and timezone)
 3. Copy events from one calendar to another
-4. Create a single and recurring event (with and without autoDecline)
-5. Edit all the event properties for single and recurring events (with and without autoDecline)
+4. Create a single and recurring event
+5. Edit properties of the events
 6. Print Events
 7. Export Calendar as CSV compatible with Google Calendar
 8. Show status
 
 ## New Features and changes:
+
 New ICalendar and ICalendarRepository has been introduced.
 
 ### ICalendar
+
 Encapsulates a single calendar's data and behaviour. It stores the name, timezone and
-IEventRepository which contains a list of events. 
+IEventRepository which contains a list of events.
 
 ### ICalendarRepository
+
 Represents a repository for managing multiple calendars. It has functionality to retrieve, add or
 edit calendars. It also supports copying between calendars.
 
 ### Refactoring Event Management for Multi-Calendar Support
 
-In the previous design, `CalendarModel` was responsible for both storing a `List<IEvent>` and 
+In the previous design, `CalendarModel` was responsible for both storing a `List<IEvent>` and
 handling all event-related operations since only one calendar was involved.
 
-With the introduction of a **multi-calendar system**, these responsibilities have been refactored 
+With the introduction of a **multi-calendar system**, these responsibilities have been refactored
 for better separation of concerns:
 
 - A new interface, `IEventRepository`, now encapsulates the storage and management of events.
 - It provides dedicated methods to **add**, **edit**, and **retrieve** events.
-- `CalendarModel` has shifted its role to act primarily as a **manager**, coordinating between calendars and delegating event-related operations to the corresponding `IEventRepository`.
+- `CalendarModel` has shifted its role to act primarily as a **manager**, coordinating between
+  calendars and delegating event-related operations to the corresponding `IEventRepository`.
 
-This architectural change improves **modularity**, supports **scalability**, and adheres to the **Single Responsibility Principle** by cleanly separating event logic from calendar coordination.
+This architectural change improves **modularity**, supports **scalability**, and adheres to the *
+*Single Responsibility Principle** by cleanly separating event logic from calendar coordination.
 
 ### Separation of Formatting and Export Responsibilities
 
-In the earlier design, the `CalendarModel` handled both **formatting operations for printing** and **I/O operations for exporting** calendar data.
+In the earlier design, the `CalendarModel` handled both **formatting operations for printing** and *
+*I/O operations for exporting** calendar data.
 
-To follow better architectural practices, these responsibilities have now been moved to the **controller layer**. This promotes a cleaner separation of concerns by keeping the model focused on data and business logic, while the controller manages presentation and I/O logic.
+To follow better architectural practices, these responsibilities have now been moved to the *
+*controller layer**. This promotes a cleaner separation of concerns by keeping the model focused on
+data and business logic, while the controller manages presentation and I/O logic.
 
-To avoid exposing the entire `List<IEvent>` directly to the controller, a set of dedicated **DTOs (Data Transfer Objects)** has been introduced:
+To avoid exposing the entire `List<IEvent>` directly to the controller, a set of dedicated **DTOs (
+Data Transfer Objects)** has been introduced:
 
 - `PrintEventsResponseDTO`
 - `CalendarExporterDTO`
 - `CopyEventRequestDTO`
 
-These DTOs provide only the necessary data required for their respective operations, ensuring **encapsulation**, **data safety**, and **clear boundaries** between layers.
+These DTOs provide only the necessary data required for their respective operations, ensuring *
+*encapsulation**, **data safety**, and **clear boundaries** between layers.
 
 With this refactor:
+
 - The **controller** handles all formatting and export logic.
 - The **model** only provides filtered data in the form of DTOs.
 
-This change aligns with **SOLID principles**, especially the **Interface Segregation** and **Single Responsibility** principles.
+This change aligns with **SOLID principles**, especially the **Interface Segregation** and **Single
+Responsibility** principles.

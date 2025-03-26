@@ -125,8 +125,8 @@ public class CalendarModel implements ICalendarModel {
   @Override
   public String showStatus(String dateTime) {
     boolean isAvailable = activeCalendar.getEventRepository()
-        .getEvents(null, getTemporalFromString(dateTime)
-            , getTemporalFromString(dateTime), SearchType.OVERLAPPING).isEmpty();
+        .getEvents(null, getTemporalFromString(dateTime),
+            getTemporalFromString(dateTime), SearchType.OVERLAPPING).isEmpty();
     return isAvailable ? Constants.Status.AVAILABLE : Constants.Status.BUSY;
   }
 

@@ -295,22 +295,22 @@ public class CommandFactoryTest {
 
     @Override
     public void createCalendar(String calendarName, String timezone) {
-
+      // empty for test purposes.
     }
 
     @Override
     public void editCalendar(String calendarName, String propertyName, String propertyValue) {
-
+      // empty for test purposes.
     }
 
     @Override
     public void setCalendar(String calendarName) {
-
+      // empty for test purposes.
     }
 
     @Override
     public void copyEvent(CopyEventRequestDTO copyEventRequestDTO) {
-
+      // empty for test purposes.
     }
   }
 }

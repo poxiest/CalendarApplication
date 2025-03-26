@@ -8,7 +8,7 @@ import calendarapp.model.EventVisibility;
 import calendarapp.model.IEvent;
 import calendarapp.utils.TimeUtil;
 
-import static calendarapp.utils.TimeUtil.GetStartOfNextDay;
+import static calendarapp.utils.TimeUtil.getStartOfNextDay;
 import static calendarapp.utils.TimeUtil.isFirstAfterSecond;
 import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
 
@@ -151,9 +151,23 @@ public class Event implements IEvent {
     private Temporal recurrenceEndDate;
     private boolean isAutoDecline = true;
 
+    /**
+     * Default constructor for the Builder class.
+     * <p>
+     * This constructor does not perform any initialization and is required to allow
+     * for the instantiation of the Builder object without needing to provide
+     * an initial Event object. The builder pattern allows properties to be set
+     * incrementally.
+     */
     public Builder() {
+      // No initialization is performed here.
     }
 
+    /**
+     * Constructs a new Builder object initialized with the values from the given Event object.
+     *
+     * @param event The Event object whose properties are copied into the Builder.
+     */
     public Builder(Event event) {
       this.name = event.name;
       this.startTime = event.startTime;
@@ -203,8 +217,8 @@ public class Event implements IEvent {
         throw new IllegalStateException("Set startTime before setting endTime.\n");
       }
       if (endTime == null) {
-        this.startTime = TimeUtil.GetStartOfDay(startTime);
-        this.endTime = TimeUtil.GetStartOfNextDay(startTime);
+        this.startTime = TimeUtil.getStartOfDay(startTime);
+        this.endTime = TimeUtil.getStartOfNextDay(startTime);
       } else {
         this.endTime = endTime;
       }
@@ -340,7 +354,7 @@ public class Event implements IEvent {
           throw new IllegalArgumentException("Recurrence end date must be after end date");
         }
 
-        if (isFirstAfterSecond(endTime, GetStartOfNextDay(startTime))) {
+        if (isFirstAfterSecond(endTime, getStartOfNextDay(startTime))) {
           throw new IllegalArgumentException("Recurring events cannot span more than one day");
         }
       } else {

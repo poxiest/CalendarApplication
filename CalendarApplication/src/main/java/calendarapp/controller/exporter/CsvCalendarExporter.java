@@ -46,6 +46,7 @@ public class CsvCalendarExporter implements ICalendarExporter {
 
   /**
    * Determines if the event is private or not.
+   *
    * @param visibility contains the event visibility.
    * @return True if the event is private and vice versa.
    */
@@ -62,7 +63,9 @@ public class CsvCalendarExporter implements ICalendarExporter {
    * @return the escaped field
    */
   private String escapeField(String field) {
-    if (field == null || field.isEmpty()) return "";
+    if (field == null || field.isEmpty()) {
+      return "";
+    }
     return "\"" + field.replace("\"", "\"\"") + "\"";
   }
 

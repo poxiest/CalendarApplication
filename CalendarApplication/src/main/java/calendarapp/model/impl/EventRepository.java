@@ -97,7 +97,7 @@ public class EventRepository implements IEventRepository {
         updatedEvents.add(updatedEvent);
       }
     } else {
-      if( isSingleEventUpdate ) {
+      if (isSingleEventUpdate) {
         throw new InvalidCommandException("Cannot update a recurring property for a single event.");
       }
       IEvent firstEvent = eventsToUpdate.get(0).updateProperty(property, value);
@@ -116,12 +116,12 @@ public class EventRepository implements IEventRepository {
     }
 
     Duration differenceBetween = TimeUtil.getDurationDifference(
-        TimeUtil.ChangeZone(eventsToCopy.get(0).getStartTime(), fromZoneId, toZoneId), toStartTime);
+        TimeUtil.changeZone(eventsToCopy.get(0).getStartTime(), fromZoneId, toZoneId), toStartTime);
 
     for (IEvent event : eventsToCopy) {
-      Temporal startTime = TimeUtil.AddDuration(TimeUtil.ChangeZone(event.getStartTime(),
+      Temporal startTime = TimeUtil.addDuration(TimeUtil.changeZone(event.getStartTime(),
           fromZoneId, toZoneId), differenceBetween);
-      Temporal endTime = TimeUtil.AddDuration(TimeUtil.ChangeZone(event.getEndTime(), fromZoneId,
+      Temporal endTime = TimeUtil.addDuration(TimeUtil.changeZone(event.getEndTime(), fromZoneId,
           toZoneId), differenceBetween);
       create(event.getName(), startTime, endTime, event.getDescription(), event.getLocation(),
           event.getVisibility().getValue(), null, null, null, true);
@@ -132,13 +132,13 @@ public class EventRepository implements IEventRepository {
   public void changeTimeZone(ZoneId fromZoneId, ZoneId toZoneId) {
     List<IEvent> updatedEvents = new ArrayList<>();
     for (IEvent event : events) {
-      Temporal startTime = TimeUtil.ChangeZone(event.getStartTime(),
+      Temporal startTime = TimeUtil.changeZone(event.getStartTime(),
           fromZoneId, toZoneId);
-      Temporal endTime = TimeUtil.ChangeZone(event.getEndTime(), fromZoneId,
+      Temporal endTime = TimeUtil.changeZone(event.getEndTime(), fromZoneId,
           toZoneId);
       Temporal recurrenceEndDate = null;
       if (event.getRecurrenceEndDate() != null) {
-        recurrenceEndDate = TimeUtil.ChangeZone(event.getRecurrenceEndDate(), fromZoneId,
+        recurrenceEndDate = TimeUtil.changeZone(event.getRecurrenceEndDate(), fromZoneId,
             toZoneId);
       }
       updatedEvents.add(createSingleEvent(event.getName(), startTime, endTime,
