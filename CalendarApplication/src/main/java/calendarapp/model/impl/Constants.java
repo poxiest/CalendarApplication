@@ -76,6 +76,7 @@ public class Constants {
    * Defines property keys for calendar attributes.
    */
   public static final class Calendar {
+    public static final String DEFAULT_CALENDAR_NAME = "Personal";
     public static final String DEFAULT_TIME_ZONE = "America/New_York";
     public static final String CALENDAR_NAME = "name";
     public static final String CALENDAR_TIME_ZONE = "timezone";

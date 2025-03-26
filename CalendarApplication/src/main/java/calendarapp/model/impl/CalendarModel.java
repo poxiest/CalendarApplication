@@ -14,6 +14,7 @@ import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.model.dto.PrintEventsResponseDTO;
 
+import static calendarapp.model.impl.Constants.Calendar.DEFAULT_CALENDAR_NAME;
 import static calendarapp.utils.TimeUtil.getEndOfDayFromString;
 import static calendarapp.utils.TimeUtil.getTemporalFromString;
 
@@ -32,8 +33,8 @@ public class CalendarModel implements ICalendarModel {
    */
   public CalendarModel() {
     calendarRepository = new CalendarRepository();
-    calendarRepository.addCalendar("default", null, new EventRepository());
-    activeCalendar = calendarRepository.getCalendar("default");
+    calendarRepository.addCalendar(DEFAULT_CALENDAR_NAME, null, new EventRepository());
+    activeCalendar = calendarRepository.getCalendar(DEFAULT_CALENDAR_NAME);
   }
 
   /**

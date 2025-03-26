@@ -1842,8 +1842,6 @@ public class CommandsE2ETest {
           + "print events from 2025-11-10 to 2025-11-13\n"
           + "copy events between 2025-11-10 and 2025-11-11 --target workcal to 2025-11-10\n"
           + "copy events between 2025-11-10 and 2025-11-11 --target workcal to 2025-11-10\n"
-          + "use calendar --name workcal\n"
-          + "print events from 2025-11-10 to 2025-11-14\n"
           , model, view);
       controller.start();
     } catch (EventConflictException e) {
@@ -1862,8 +1860,8 @@ public class CommandsE2ETest {
         + "use calendar --name personalcal\n"
         + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
         + "print events from 2025-11-10 to 2025-11-12\n"
-        + "copy event propertime on 2024-11-10 --target default to 2025-11-11T12:00\n"
-        + "use calendar --name default\n"
+        + "copy event propertime on 2024-11-10 --target Personal to 2025-11-11T12:00\n"
+        + "use calendar --name Personal\n"
         + "print events on 2025-11-11\n", model, view);
     controller.start();
     assertEquals("Events:\n"
@@ -1879,8 +1877,8 @@ public class CommandsE2ETest {
         + "use calendar --name personalcal\n"
         + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
         + "print events from 2025-11-10 to 2025-11-12\n"
-        + "copy events on 2024-11-10 --target default to 2025-11-11\n"
-        + "use calendar --name default\n"
+        + "copy events on 2024-11-10 --target Personal to 2025-11-11\n"
+        + "use calendar --name Personal\n"
         + "print events from 2025-11-10 to 2025-11-12\n", model, view);
     controller.start();
     assertEquals("Events:\n"
@@ -1897,8 +1895,8 @@ public class CommandsE2ETest {
         + "create event \"Recurring Event\" from "
         + "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" for 3 times\n"
         + "print events from 2025-11-10 to 2025-11-20\n"
-        + "copy events between 2025-11-10 and 2025-11-20 --target default to 2025-11-11\n"
-        + "use calendar --name default\n"
+        + "copy events between 2025-11-10 and 2025-11-20 --target Personal to 2025-11-11\n"
+        + "use calendar --name Personal\n"
         + "print events from 2025-11-10 to 2025-11-20\n", model, view);
     controller.start();
     assertEquals("Events:\n"
