@@ -45,6 +45,7 @@
                         <param>EventTest</param>
                         <param>EventVisibilityTest</param>
                         <param>HeadlessControllerTest</param>
+                        <param>SearchStrategyTestCases</param>
                         <param>TimeUtilsTest</param>
                     </targetTests>
                 </configuration>
