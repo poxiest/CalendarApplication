@@ -40,10 +40,12 @@
                         <param>CommandFactoryTest</param>
                         <param>CommandPropertiesTest</param>
                         <param>CommandsE2ETest</param>
+                        <param>ControllerModelIntergationTest</param>
                         <param>EventTest</param>
                         <param>EventVisibilityTest</param>
                         <param>HeadlessControllerTest</param>
                         <param>TimeUtilsTest</param>
+                        <param>CalendarTest</param>
                     </targetTests>
                 </configuration>
             </plugin>

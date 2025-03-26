@@ -1,6 +1,5 @@
 package calendarapp.model.impl;
 
-import java.time.DateTimeException;
 import java.time.ZoneId;
 import java.time.zone.ZoneRulesException;
 
@@ -86,8 +85,6 @@ public class Calendar implements ICalendar {
           this.zoneId = ZoneId.of(zoneId);
         } catch (ZoneRulesException e) {
           throw new InvalidCommandException("Cannot find zone id : " + zoneId + "\n");
-        } catch (DateTimeException e) {
-          throw new InvalidCommandException("Invalid zone id : " + zoneId + "\n");
         }
       }
       return this;
@@ -100,9 +97,7 @@ public class Calendar implements ICalendar {
      * @return this Builder instance
      */
     public Builder zoneId(ZoneId zoneId) {
-      if (zoneId != null) {
-        this.zoneId = zoneId;
-      }
+      this.zoneId = zoneId;
       return this;
     }
 

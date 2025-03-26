@@ -12,7 +12,7 @@ import calendarapp.model.ICalendarRepository;
 import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.model.dto.PrintEventsResponseDTO;
-import calendarapp.utils.TimeUtil;
+import calendarapp.model.impl.searchstrategies.SearchType;
 
 import static calendarapp.utils.TimeUtil.getEndOfDayFromString;
 import static calendarapp.utils.TimeUtil.getTemporalFromString;
@@ -87,16 +87,17 @@ public class CalendarModel implements ICalendarModel {
    */
   @Override
   public List<PrintEventsResponseDTO> getEventsForPrinting(String startDateTime,
-                                                           String endDateTime) {
+                                                           String endDateTime, String on) {
     Temporal startTemporal = getTemporalFromString(startDateTime);
-    Temporal endTemporal;
-    if (endDateTime == null) {
-      endTemporal = TimeUtil.GetStartOfNextDay(startTemporal);
-    } else {
-      endTemporal = getTemporalFromString(endDateTime);
+    Temporal endTemporal = getTemporalFromString(endDateTime);
+
+    if (on != null) {
+      startTemporal = getTemporalFromString(on);
+      endTemporal = getEndOfDayFromString(on);
     }
+
     return activeCalendar.getEventRepository()
-        .getOverlappingEvents(startTemporal, endTemporal)
+        .getEvents(null, startTemporal, endTemporal, SearchType.OVERLAPPING)
         .stream().map(event -> PrintEventsResponseDTO.builder()
             .eventName(event.getName())
             .startTime(event.getStartTime())
@@ -118,9 +119,10 @@ public class CalendarModel implements ICalendarModel {
    */
   @Override
   public String showStatus(String dateTime) {
-    boolean isBusy = activeCalendar.getEventRepository()
-        .isActiveAt(getTemporalFromString(dateTime));
-    return isBusy ? Constants.Status.BUSY : Constants.Status.AVAILABLE;
+    boolean isAvailable = activeCalendar.getEventRepository()
+        .getEvents(null, getTemporalFromString(dateTime)
+            , getTemporalFromString(dateTime), SearchType.OVERLAPPING).isEmpty();
+    return isAvailable ? Constants.Status.AVAILABLE : Constants.Status.BUSY;
   }
 
   @Override

@@ -8,7 +8,6 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,13 +15,12 @@ import calendarapp.model.EventConflictException;
 import calendarapp.model.IEvent;
 import calendarapp.model.IEventRepository;
 import calendarapp.model.dto.CalendarExporterDTO;
-import calendarapp.model.dto.CopyEventRequestDTO;
+import calendarapp.model.impl.searchstrategies.SearchEventFactory;
+import calendarapp.model.impl.searchstrategies.SearchType;
 import calendarapp.utils.TimeUtil;
 
 import static calendarapp.model.impl.Constants.DaysOfWeek.parseDaysOfWeek;
 import static calendarapp.utils.TimeUtil.isAllDayEvent;
-import static calendarapp.utils.TimeUtil.isEqual;
-import static calendarapp.utils.TimeUtil.isFirstAfterSecond;
 import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
 
 /**
@@ -31,12 +29,14 @@ import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
  */
 public class EventRepository implements IEventRepository {
   private final List<IEvent> events;
+  private final SearchEventFactory searchEventFactory;
 
   /**
    * Constructs an empty EventRepository.
    */
   public EventRepository() {
     this.events = new ArrayList<>();
+    searchEventFactory = new SearchEventFactory();
   }
 
   @Override
@@ -67,8 +67,14 @@ public class EventRepository implements IEventRepository {
   @Override
   public void update(String eventName, Temporal startTime, Temporal endTime, String property,
                      String value) {
-    List<IEvent> eventsToUpdate = searchMatchingEvents(eventName, startTime, endTime,
-        isRecurringProperty(property));
+    List<IEvent> eventsToUpdate;
+    if (endTime != null) {
+      eventsToUpdate = searchEventFactory.search(events, eventName, startTime, endTime, false,
+          SearchType.EXACT);
+    } else {
+      eventsToUpdate = searchEventFactory.search(events, eventName, startTime, endTime,
+          isRecurringProperty(property), SearchType.MATCHING);
+    }
     List<IEvent> updatedEvents = new ArrayList<>();
 
     if (!isRecurringProperty(property)) {
@@ -95,21 +101,14 @@ public class EventRepository implements IEventRepository {
   }
 
   @Override
-  public List<IEvent> getInBetweenEvents(String eventName, Temporal startTime, Temporal endTime) {
-    return searchMatchingEvents(eventName, startTime, endTime, false)
-        .stream().map(IEvent::deepCopyEvent).collect(Collectors.toList());
-  }
-
-  @Override
-  public void copyEvents(List<IEvent> eventsToCopy, CopyEventRequestDTO copyEventRequestDTO,
+  public void copyEvents(List<IEvent> eventsToCopy, Temporal toStartTime,
                          ZoneId fromZoneId, ZoneId toZoneId) {
     if (eventsToCopy.size() == 0) {
       return;
     }
 
     Duration differenceBetween = TimeUtil.getDurationDifference(
-        TimeUtil.ChangeZone(eventsToCopy.get(0).getStartTime(), fromZoneId, toZoneId),
-        copyEventRequestDTO.getCopyToDate());
+        TimeUtil.ChangeZone(eventsToCopy.get(0).getStartTime(), fromZoneId, toZoneId), toStartTime);
 
     for (IEvent event : eventsToCopy) {
       Temporal startTime = TimeUtil.AddDuration(TimeUtil.ChangeZone(event.getStartTime(),
@@ -144,11 +143,6 @@ public class EventRepository implements IEventRepository {
   }
 
   @Override
-  public boolean isActiveAt(Temporal time) {
-    return !getOverlappingEvents(time, time).isEmpty();
-  }
-
-  @Override
   public List<CalendarExporterDTO> getEventsForExport() {
     return events.stream()
         .map(event -> CalendarExporterDTO.builder()
@@ -164,14 +158,10 @@ public class EventRepository implements IEventRepository {
   }
 
   @Override
-  public List<IEvent> getOverlappingEvents(Temporal startTime, Temporal endTime) {
-    return events.stream()
-        .filter(event -> TimeUtil.isConflicting(event.getStartTime(),
-            event.getEndTime(), startTime, endTime))
-        .sorted((event1, event2) ->
-            Math.toIntExact(TimeUtil.difference(event2.getStartTime(), event1.getStartTime())))
-        .map(IEvent::deepCopyEvent)
-        .collect(Collectors.toList());
+  public List<IEvent> getEvents(String eventName, Temporal startTime,
+                                Temporal endTime, SearchType type) {
+    return searchEventFactory.search(events, eventName, startTime, endTime, false, type)
+        .stream().map(IEvent::deepCopyEvent).collect(Collectors.toList());
   }
 
   /**
@@ -263,9 +253,8 @@ public class EventRepository implements IEventRepository {
 
     for (IEvent newEvent : newEvents) {
       for (IEvent existingEvent : events) {
-        if (!Objects.equals(newEvent.getName(), existingEvent.getName()) &&
-            TimeUtil.isConflicting(newEvent.getStartTime(), newEvent.getEndTime(),
-                existingEvent.getStartTime(), existingEvent.getEndTime())) {
+        if (TimeUtil.isConflicting(newEvent.getStartTime(), newEvent.getEndTime(),
+            existingEvent.getStartTime(), existingEvent.getEndTime())) {
           if (oldEvents != null) {
             events.addAll(oldEvents);
           }
@@ -274,26 +263,6 @@ public class EventRepository implements IEventRepository {
         }
       }
     }
-  }
-
-  /**
-   * Finds events matching the specified name and time range.
-   *
-   * @param eventName The name of the event to search for.
-   * @param startTime The start time for the search range.
-   * @param endTime   The end time for the search range.
-   * @return A list of events matching the criteria.
-   */
-  private List<IEvent> searchMatchingEvents(String eventName, Temporal startTime,
-                                            Temporal endTime, boolean isRecurring) {
-    return events.stream()
-        .filter(event -> eventName == null || event.getName().equals(eventName))
-        .filter(event -> startTime == null || isFirstAfterSecond(event.getStartTime(), startTime) || isEqual(event.getStartTime(), startTime))
-        .filter(event -> endTime == null || isFirstBeforeSecond(event.getEndTime(), endTime) || isEqual(event.getEndTime(), endTime))
-        .filter(event -> !isRecurring || (event.getRecurringDays() != null))
-        .sorted((event1, event2) ->
-            Math.toIntExact(TimeUtil.difference(event2.getStartTime(), event1.getStartTime())))
-        .collect(Collectors.toList());
   }
 
   /**

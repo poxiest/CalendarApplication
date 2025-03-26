@@ -36,8 +36,10 @@ public class CalendarControllerFactory {
       case "headless":
         try {
           String[] filenameSplit = filename.split("\\.");
-          if (filenameSplit.length <= 1
-              || !filenameSplit[filenameSplit.length - 1].equalsIgnoreCase("txt")) {
+          if (filenameSplit.length <= 1) {
+            throw new IllegalArgumentException("Filename has no extension.");
+          }
+          if (!filenameSplit[filenameSplit.length - 1].equalsIgnoreCase("txt")) {
             throw new IllegalArgumentException("Only txt files are supported.");
           }
           return new CalendarController(new BufferedReader(new FileReader(filename)),

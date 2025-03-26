@@ -91,7 +91,7 @@ public class CalendarControllerFactoryTest {
           "test", model,
           view);
     } catch (IllegalArgumentException e) {
-      assertEquals("Only txt files are supported.", e.getMessage());
+      assertEquals("Filename has no extension.", e.getMessage());
       throw e;
     }
   }
@@ -104,6 +104,30 @@ public class CalendarControllerFactoryTest {
           view);
     } catch (IllegalArgumentException e) {
       assertEquals("Only txt files are supported.", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void IllegalTextFile2() {
+    try {
+      controller = CalendarControllerFactory.getController("headless",
+          ".", model,
+          view);
+    } catch (IllegalArgumentException e) {
+      assertEquals("Filename has no extension.", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void IllegalTextFile3() {
+    try {
+      controller = CalendarControllerFactory.getController("headless",
+          "null", model,
+          view);
+    } catch (IllegalArgumentException e) {
+      assertEquals("Filename has no extension.", e.getMessage());
       throw e;
     }
   }
@@ -134,7 +158,8 @@ public class CalendarControllerFactoryTest {
     }
 
     @Override
-    public List<PrintEventsResponseDTO> getEventsForPrinting(String startTime, String endTime) {
+    public List<PrintEventsResponseDTO> getEventsForPrinting(String startTime, String endTime,
+                                                             String on) {
       return List.of();
     }
 

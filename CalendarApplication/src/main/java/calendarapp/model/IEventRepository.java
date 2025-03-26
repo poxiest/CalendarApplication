@@ -5,7 +5,7 @@ import java.time.temporal.Temporal;
 import java.util.List;
 
 import calendarapp.model.dto.CalendarExporterDTO;
-import calendarapp.model.dto.CopyEventRequestDTO;
+import calendarapp.model.impl.searchstrategies.SearchType;
 
 /**
  * Interface for managing events in a calendar.
@@ -51,26 +51,18 @@ public interface IEventRepository {
    * @param endTime   the end time of the range
    * @return list of matching events
    */
-  List<IEvent> getInBetweenEvents(String eventName, Temporal startTime, Temporal endTime);
-
-  /**
-   * Returns all events that overlap with the specified time range.
-   *
-   * @param startTime the start of the range
-   * @param endTime   the end of the range
-   * @return list of overlapping events
-   */
-  List<IEvent> getOverlappingEvents(Temporal startTime, Temporal endTime);
+  List<IEvent> getEvents(String eventName, Temporal startTime,
+                         Temporal endTime, SearchType type);
 
   /**
    * Copies the given events to a new calendar based on the copy request.
    *
-   * @param eventsToCopy        the events to copy
-   * @param copyEventRequestDTO the details for copying
-   * @param fromZoneId          the original time zone
-   * @param toZoneId            the target time zone
+   * @param eventsToCopy the events to copy
+   * @param toStartTime  time to copy to.
+   * @param fromZoneId   the original time zone
+   * @param toZoneId     the target time zone
    */
-  void copyEvents(List<IEvent> eventsToCopy, CopyEventRequestDTO copyEventRequestDTO,
+  void copyEvents(List<IEvent> eventsToCopy, Temporal toStartTime,
                   ZoneId fromZoneId, ZoneId toZoneId);
 
   /**
@@ -80,14 +72,6 @@ public interface IEventRepository {
    * @param to   the new time zone
    */
   void changeTimeZone(ZoneId from, ZoneId to);
-
-  /**
-   * Checks if there is any event active at the given time.
-   *
-   * @param time the time to check
-   * @return true if an event is active, false otherwise
-   */
-  boolean isActiveAt(Temporal time);
 
   List<CalendarExporterDTO> getEventsForExport();
 }

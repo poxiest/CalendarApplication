@@ -201,8 +201,10 @@ public class ControllerModelIntergationTest {
     controller = new CalendarController(new StringReader("print events on \"2025-11-11\"\nexit")
         , model, view);
     controller.start();
-    assertEquals("Start Time: 2025-11-11\n"
-        + "End Time: null\n", log.toString());
+    assertEquals("Start Time: null\n"
+            + "End Time: null\n"
+            + "On Time: 2025-11-11\n"
+        , log.toString());
     assertEquals("Enter command or enter 'exit' to exit the calendar application.\n"
         + "Processing command: print events on \"2025-11-11\"\n"
         + "Events:\n"
@@ -219,7 +221,8 @@ public class ControllerModelIntergationTest {
         model, view);
     controller.start();
     assertEquals("Start Time: 2025-11-11T11:00\n"
-        + "End Time: 2025-11-12T11:00\n", log.toString());
+        + "End Time: 2025-11-12T11:00\n"
+        + "On Time: null\n", log.toString());
     assertEquals("Enter command or enter 'exit' to exit the calendar application.\n"
         + "Processing command: print events from \"2025-11-11T11:00\" to \"2025-11-12T11:00\"\n"
         + "Events:\n"
@@ -382,9 +385,11 @@ public class ControllerModelIntergationTest {
     }
 
     @Override
-    public List<PrintEventsResponseDTO> getEventsForPrinting(String startTime, String endTime) {
+    public List<PrintEventsResponseDTO> getEventsForPrinting(String startTime, String endTime,
+                                                             String on) {
       log.append("Start Time: ").append(startTime).append("\n")
-          .append("End Time: ").append(endTime).append("\n");
+          .append("End Time: ").append(endTime).append("\n")
+          .append("On Time: ").append(on).append("\n");
       return List.of(PrintEventsResponseDTO.builder().eventName("Test")
           .startTime(TimeUtil.getTemporalFromString("2025-11-11"))
           .endTime(TimeUtil.getTemporalFromString("2025-11-12"))
@@ -427,19 +432,6 @@ public class ControllerModelIntergationTest {
           .append("End Time: ").append(copyEventRequestDTO.getEndTime()).append("\n")
           .append("Calendar Name: ").append(copyEventRequestDTO.getCopyCalendarName()).append("\n")
           .append("Copy to: ").append(copyEventRequestDTO.getCopyToDate()).append("\n");
-    }
-  }
-
-  private static class MockView implements ICalendarView {
-    private final StringBuilder resultBuilder = new StringBuilder();
-
-    @Override
-    public void displayMessage(String message) {
-      resultBuilder.append(message);
-    }
-
-    public String getResult() {
-      return resultBuilder.toString();
     }
   }
 }

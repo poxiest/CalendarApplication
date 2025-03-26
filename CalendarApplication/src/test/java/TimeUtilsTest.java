@@ -3,12 +3,14 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.temporal.Temporal;
 
 import calendarapp.utils.TimeUtil;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -142,5 +144,26 @@ public class TimeUtilsTest {
     startTime2 = LocalDateTime.of(2025, 3, 13, 14, 0);
     endTime2 = LocalDateTime.of(2025, 3, 13, 16, 0);
     assertFalse(TimeUtil.isConflicting(startTime1, endTime1, startTime2, endTime2));
+  }
+
+  @Test
+  public void testNullDateFromString() {
+    assertNull(TimeUtil.getDateFromString(null));
+  }
+
+  @Test
+  public void testNullStartOfDay() {
+    assertNull(TimeUtil.getStartOfDayFromString(null));
+  }
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void testUnsupportedOperationException() {
+    try {
+      TimeUtil.getDurationDifference(sampleDateTime.minusHours(1), ZonedDateTime.now());
+    } catch (UnsupportedOperationException e) {
+      assertEquals("Unsupported Temporal types: class java.time.LocalDateTime"
+          + " and class java.time.ZonedDateTime", e.getMessage());
+      throw e;
+    }
   }
 }

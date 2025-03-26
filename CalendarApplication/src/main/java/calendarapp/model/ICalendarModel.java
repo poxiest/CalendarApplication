@@ -57,7 +57,7 @@ public interface ICalendarModel {
    * @param endTime   the end of the time range (if null, defaults to one day after startTime).
    * @return a list of events that intersect with the specified time range.
    */
-  List<PrintEventsResponseDTO> getEventsForPrinting(String startTime, String endTime);
+  List<PrintEventsResponseDTO> getEventsForPrinting(String startTime, String endTime, String on);
 
   List<CalendarExporterDTO> getEventsForExport();
 

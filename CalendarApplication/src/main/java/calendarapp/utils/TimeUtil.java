@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
@@ -27,8 +26,6 @@ public class TimeUtil {
    * @throws IllegalArgumentException if the date/time string cannot be parsed.
    */
   public static Temporal getTemporalFromString(String dateTime) {
-    DateTimeFormatter zonedDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmXXX"
-        + "['['VV']']");
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -37,16 +34,12 @@ public class TimeUtil {
     }
 
     try {
-      return ZonedDateTime.parse(dateTime, zonedDateTimeFormatter).toLocalDateTime();
-    } catch (DateTimeParseException e1) {
+      return LocalDateTime.parse(dateTime, dateTimeFormatter);
+    } catch (DateTimeParseException e2) {
       try {
-        return LocalDateTime.parse(dateTime, dateTimeFormatter);
-      } catch (DateTimeParseException e2) {
-        try {
-          return LocalDate.parse(dateTime, dateFormatter).atStartOfDay();
-        } catch (DateTimeParseException e3) {
-          throw new IllegalArgumentException("Invalid date format: " + dateTime);
-        }
+        return LocalDate.parse(dateTime, dateFormatter).atStartOfDay();
+      } catch (DateTimeParseException e3) {
+        throw new IllegalArgumentException("Invalid date format: " + dateTime);
       }
     }
   }

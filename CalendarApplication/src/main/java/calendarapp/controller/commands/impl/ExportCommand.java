@@ -52,17 +52,13 @@ public class ExportCommand extends AbstractCommand {
     }
 
     try {
-      String fileExtension = getFileExtension(filename);
+      String fileExtension = getFileExtension(filename).toLowerCase();
       if (!Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS.contains(fileExtension)) {
         throw new IllegalArgumentException("Unsupported export format: " + fileExtension
             + ". Supported formats are: " + Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS);
       }
+
       ICalendarExporter exporter = EXPORTER_MAP.get(fileExtension);
-
-      if (exporter == null) {
-        throw new IllegalStateException("No exporter for format: " + fileExtension);
-      }
-
       view.displayMessage("CSV file Location : "
           + exporter.export(model.getEventsForExport(), filename));
     } catch (Exception e) {
@@ -77,10 +73,10 @@ public class ExportCommand extends AbstractCommand {
    * @return the file extension, or an empty string if none found
    */
   private String getFileExtension(String filePath) {
-    int lastDot = filePath.lastIndexOf(".");
-    if (lastDot == -1 || lastDot == filePath.length() - 1) {
-      return "";
+    String[] filenameSplit = filePath.split("\\.");
+    if (filenameSplit.length <= 1) {
+      throw new IllegalArgumentException("No extension found for file: " + filePath);
     }
-    return filePath.substring(lastDot + 1);
+    return filenameSplit[filenameSplit.length - 1];
   }
 }

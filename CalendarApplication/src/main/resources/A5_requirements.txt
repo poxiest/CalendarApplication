@@ -9,13 +9,14 @@ calendar to another
 - make sure about conflict
 - refactor exporter
 - use DTO for Printing, copy
------- try move io to controller
-- write readme for all the changes with justification
-- write testcases and check mutation
-- create a jar file for submission
+- try move io to controller
+----- write readme for all the changes with justification
+----- write testcases and check mutation
+----- create a jar file for submission
 - use DTO for edit
 - write missed test cases from a4
-- write tests from controller to model and controller to view.
+----- write tests from controller to model and
+----- controller to view.
 
 - check a4 results and make the changes in a5
 - make calendarmodel a singleton class

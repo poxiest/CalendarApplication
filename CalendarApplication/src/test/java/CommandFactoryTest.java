@@ -278,7 +278,8 @@ public class CommandFactoryTest {
     }
 
     @Override
-    public List<PrintEventsResponseDTO> getEventsForPrinting(String startTime, String endTime) {
+    public List<PrintEventsResponseDTO> getEventsForPrinting(String startTime, String endTime,
+                                                             String on) {
       return List.of();
     }
 

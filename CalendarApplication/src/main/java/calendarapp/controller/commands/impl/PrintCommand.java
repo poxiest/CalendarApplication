@@ -62,16 +62,12 @@ public class PrintCommand extends AbstractCommand {
       on = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
     }
 
-    if ((startDateTime == null && endDateTime == null) && on != null) {
-      startDateTime = on;
-    }
-
-    if (startDateTime == null) {
+    if ((startDateTime == null && endDateTime == null) && on == null) {
       throw new InvalidCommandException(command + "\nReason : Required fields are missing.\n");
     }
 
     List<PrintEventsResponseDTO> eventsToShow =
-        model.getEventsForPrinting(startDateTime, endDateTime);
+        model.getEventsForPrinting(startDateTime, endDateTime, on);
     if (!eventsToShow.isEmpty()) {
       view.displayMessage("Events:\n");
       for (PrintEventsResponseDTO event : eventsToShow) {

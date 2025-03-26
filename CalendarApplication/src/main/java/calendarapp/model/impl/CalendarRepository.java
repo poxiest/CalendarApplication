@@ -1,5 +1,6 @@
 package calendarapp.model.impl;
 
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -9,6 +10,8 @@ import calendarapp.model.ICalendar;
 import calendarapp.model.ICalendarRepository;
 import calendarapp.model.IEventRepository;
 import calendarapp.model.dto.CopyEventRequestDTO;
+import calendarapp.model.impl.searchstrategies.SearchType;
+import calendarapp.utils.TimeUtil;
 
 /**
  * Implementation of ICalendarRepository that manages a list of calendars.
@@ -73,10 +76,17 @@ public class CalendarRepository implements ICalendarRepository {
       throw new InvalidCommandException("Calendar does not exist.\n");
     }
 
+    Temporal endTime = copyEventRequestDTO.getEndTime();
+    if (copyEventRequestDTO.getEventName() == null && copyEventRequestDTO.getEndTime() == null) {
+      endTime = TimeUtil.getEndOfDayFromString(copyEventRequestDTO.getStartTime().toString());
+    }
+
     toCalendar.getEventRepository().copyEvents(currentCalendar.getEventRepository()
-            .getInBetweenEvents(copyEventRequestDTO.getEventName(),
-                copyEventRequestDTO.getStartTime(), copyEventRequestDTO.getEndTime()),
-        copyEventRequestDTO, currentCalendar.getZoneId(), toCalendar.getZoneId());
+            .getEvents(copyEventRequestDTO.getEventName(),
+                copyEventRequestDTO.getStartTime(), endTime,
+                copyEventRequestDTO.getEventName() == null ? SearchType.MATCHING :
+                    SearchType.EXACT),
+        copyEventRequestDTO.getCopyToDate(), currentCalendar.getZoneId(), toCalendar.getZoneId());
   }
 
   @Override
