@@ -7,6 +7,9 @@ import calendarapp.controller.ICalendarExporter;
 
 import static calendarapp.controller.exporter.Constants.SupportExportFormats.CSV;
 
+/**
+ * Class containing exporter constants.
+ */
 public class Constants {
   /**
    * Constants representing CSV header field names for calendar export.

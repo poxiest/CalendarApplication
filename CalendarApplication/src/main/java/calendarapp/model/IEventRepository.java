@@ -73,5 +73,10 @@ public interface IEventRepository {
    */
   void changeTimeZone(ZoneId from, ZoneId to);
 
+  /**
+   * Converts all events to a list of CalendarExporterDTOs for exporting.
+   *
+   * @return a list of export-ready event DTOs
+   */
   List<CalendarExporterDTO> getEventsForExport();
 }

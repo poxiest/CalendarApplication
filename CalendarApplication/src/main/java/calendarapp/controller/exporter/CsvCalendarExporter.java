@@ -44,6 +44,11 @@ public class CsvCalendarExporter implements ICalendarExporter {
     return new File(filePath).getAbsolutePath();
   }
 
+  /**
+   * Determines if the event is private or not.
+   * @param visibility contains the event visibility.
+   * @return True if the event is private and vice versa.
+   */
   private String determinePrivacyFlag(String visibility) {
     return visibility.equals(EventVisibility.PRIVATE.toString().toLowerCase())
         ? Constants.CsvFormat.TRUE_VALUE

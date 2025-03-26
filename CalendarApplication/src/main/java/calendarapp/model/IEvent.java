@@ -86,5 +86,10 @@ public interface IEvent {
    */
   IEvent updateProperty(String name, String value) throws IllegalArgumentException;
 
+  /**
+   * Creates and returns a deep copy of the event.
+   *
+   * @return a new IEvent instance with the same values as the original
+   */
   IEvent deepCopyEvent();
 }
