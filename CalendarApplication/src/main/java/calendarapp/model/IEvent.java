@@ -6,7 +6,6 @@ import java.time.temporal.Temporal;
  * Interface representing a calendar event in the calendar application.
  */
 public interface IEvent {
-
   /**
    * Gets the name of the event.
    *
@@ -73,7 +72,6 @@ public interface IEvent {
    * @return the recurrence end date as a {@link Temporal} object, or null if not applicable.
    */
   Temporal getRecurrenceEndDate();
-
 
   /**
    * Updates the property of the event.

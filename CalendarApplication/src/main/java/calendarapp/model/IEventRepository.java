@@ -5,7 +5,6 @@ import java.time.temporal.Temporal;
 import java.util.List;
 
 import calendarapp.model.dto.CalendarExporterDTO;
-import calendarapp.model.impl.searchstrategies.SearchType;
 
 /**
  * Interface for managing events in a calendar.
@@ -15,16 +14,17 @@ public interface IEventRepository {
   /**
    * Creates a new event with the specified details.
    *
-   * @param eventName         the name of the event
-   * @param startTime         the start time of the event
-   * @param endTime           the end time of the event
-   * @param description       the description of the event
-   * @param location          the location of the event
-   * @param visibility        the visibility of the event (Public/Private)
-   * @param recurringDays     the days of recurrence (if any)
-   * @param occurrenceCount   the number of occurrences (optional)
-   * @param recurrenceEndDate the end date of recurrence (optional)
-   * @param autoDecline       whether to decline creation on*
+   * @param eventName         The name of the event.
+   * @param startTime         The start time of the event.
+   * @param endTime           The end time of the event.
+   * @param description       A brief description of the event.
+   * @param location          The location where the event takes place.
+   * @param visibility        The visibility of the event (Public/Private).
+   * @param recurringDays     The days on which the event recurs (if applicable).
+   * @param occurrenceCount   The total number of occurrences (optional).
+   * @param recurrenceEndDate The date when recurrence ends (optional).
+   * @param autoDecline       Whether to automatically decline conflicting events.
+   * @throws EventConflictException If the event conflicts with an existing one.
    */
   void create(String eventName, Temporal startTime, Temporal endTime,
               String description, String location, String visibility,
@@ -32,51 +32,52 @@ public interface IEventRepository {
               boolean autoDecline) throws EventConflictException;
 
   /**
-   * Updates a specific property of an event identified by its name and time range.
+   * Updates a specific property of an existing event identified by its name and time range.
    *
-   * @param eventName the name of the event
-   * @param startTime the start time of the event
-   * @param endTime   the end time of the event
-   * @param property  the property to update (e.g., description, location)
-   * @param value     the new value to set for the property
+   * @param eventName The name of the event.
+   * @param startTime The start time of the event.
+   * @param endTime   The end time of the event.
+   * @param property  The property to update (e.g., description, location).
+   * @param value     The new value to be set for the property.
    */
   void update(String eventName, Temporal startTime, Temporal endTime, String property,
               String value);
 
   /**
-   * Returns all events with the given name between the specified start and end time.
+   * Retrieves a list of events based on the specified search criteria.
    *
-   * @param eventName the name of the event
-   * @param startTime the start time of the range
-   * @param endTime   the end time of the range
-   * @return list of matching events
+   * @param eventName The name of the event (optional).
+   * @param startTime The start time of the search range (optional).
+   * @param endTime   The end time of the search range (optional).
+   * @param type      The search type to apply (e.g., overlapping, exact match).
+   * @return A list of deep copied events that match the given criteria.
    */
   List<IEvent> getEvents(String eventName, Temporal startTime,
                          Temporal endTime, SearchType type);
 
   /**
-   * Copies the given events to a new calendar based on the copy request.
+   * Copies a list of events to a new calendar while adjusting for time zones.
    *
-   * @param eventsToCopy the events to copy
-   * @param toStartTime  time to copy to.
-   * @param fromZoneId   the original time zone
-   * @param toZoneId     the target time zone
+   * @param eventsToCopy The list of events to copy.
+   * @param toStartTime  The new start time for the copied events.
+   * @param fromZoneId   The current time zone of the events.
+   * @param toZoneId     The target time zone for the copied events.
    */
   void copyEvents(List<IEvent> eventsToCopy, Temporal toStartTime,
                   ZoneId fromZoneId, ZoneId toZoneId);
 
   /**
-   * Updates all event times to a new time zone.
+   * Adjusts the time zone of all events to a new time zone.
    *
-   * @param from the current time zone
-   * @param to   the new time zone
+   * @param from The current time zone.
+   * @param to   The new target time zone.
    */
   void changeTimeZone(ZoneId from, ZoneId to);
 
   /**
-   * Converts all events to a list of CalendarExporterDTOs for exporting.
+   * Retrieves all events formatted as CalendarExporterDTO objects for export purposes.
    *
-   * @return a list of export-ready event DTOs
+   * @return A list of export-ready event DTOs.
    */
   List<CalendarExporterDTO> getEventsForExport();
 }

@@ -33,12 +33,12 @@ public class ExportCommand extends AbstractCommand {
   }
 
   /**
-   * Executes the export command by parsing the command string
-   * and exporting the calendar data.
+   * Parses the export command, validates the file format, and exports calendar data.
    *
-   * @param command The command string containing export instructions.
+   * @param command The command string containing export instructions and filename.
    * @throws InvalidCommandException If the command syntax is invalid, the filename is missing,
-   *                                 or an IO error occurs during export.
+   *                                 an unsupported format is used, or an error occurs during
+   *                                 export.
    */
   @Override
   public void execute(String command) throws InvalidCommandException {
@@ -67,10 +67,11 @@ public class ExportCommand extends AbstractCommand {
   }
 
   /**
-   * Extracts and returns the file extension from a given file path.
+   * Extracts the file extension from a given file path.
    *
-   * @param filePath the full file path or name
-   * @return the file extension, or an empty string if none found
+   * @param filePath The full file path or filename.
+   * @return The extracted file extension in lowercase.
+   * @throws IllegalArgumentException If no file extension is found.
    */
   private String getFileExtension(String filePath) {
     String[] filenameSplit = filePath.split("\\.");

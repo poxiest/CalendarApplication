@@ -10,7 +10,7 @@ import calendarapp.model.ICalendar;
 import calendarapp.model.ICalendarRepository;
 import calendarapp.model.IEventRepository;
 import calendarapp.model.dto.CopyEventRequestDTO;
-import calendarapp.model.impl.searchstrategies.SearchType;
+import calendarapp.model.SearchType;
 import calendarapp.utils.TimeUtil;
 
 /**

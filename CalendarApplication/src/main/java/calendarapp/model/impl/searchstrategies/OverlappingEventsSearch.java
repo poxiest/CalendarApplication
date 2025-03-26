@@ -8,7 +8,22 @@ import calendarapp.model.IEvent;
 import calendarapp.model.SearchEventsStrategy;
 import calendarapp.utils.TimeUtil;
 
+/**
+ * Implementation of {@link SearchEventsStrategy} for finding overlapping events.
+ * This strategy filters events that conflict with the given time range.
+ */
 public class OverlappingEventsSearch implements SearchEventsStrategy {
+
+  /**
+   * Searches for events that overlap with the specified time range.
+   *
+   * @param events      The list of available events to search through.
+   * @param eventName   The name of the event to search for (optional, unused in this strategy).
+   * @param startTime   The start time of the time range to check for conflicts.
+   * @param endTime     The end time of the time range to check for conflicts.
+   * @param isRecurring This parameter is ignored in this strategy since recurrence is not relevant.
+   * @return A list of overlapping events sorted in descending order of start time.
+   */
   @Override
   public List<IEvent> search(List<IEvent> events, String eventName, Temporal startTime,
                              Temporal endTime, boolean isRecurring) {

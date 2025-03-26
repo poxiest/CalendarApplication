@@ -1094,6 +1094,85 @@ public class CommandsE2ETest {
         stringOutput.toString());
   }
 
+  // Edit single instance of recurring events
+  @Test
+  public void EditCommandForRecurringEvents() {
+    controller = new MockController("create event Sprint from"
+        + " \"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats MTWRFSU for 5 times\n"
+        + "print events from \"2025-11-11\" to \"2025-11-20\"\n"
+        +"edit event location Sprint from 2025-11-11T11:00 to 2025-11-11T12:00 with Richard\n"
+        +"edit event location Sprint from 2025-11-13T11:00 to 2025-11-13T12:00 with Shillman\n"
+        + "print events from \"2025-11-11\" to \"2025-11-20\"\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+            + "• Sprint - 2025-11-11T11:00 to 2025-11-11T12:00 \n"
+            + "• Sprint - 2025-11-12T11:00 to 2025-11-12T12:00 \n"
+            + "• Sprint - 2025-11-13T11:00 to 2025-11-13T12:00 \n"
+            + "• Sprint - 2025-11-14T11:00 to 2025-11-14T12:00 \n"
+            + "• Sprint - 2025-11-15T11:00 to 2025-11-15T12:00 \n"
+            + "Events:\n"
+            + "• Sprint - 2025-11-11T11:00 to 2025-11-11T12:00 - Location: Richard\n"
+            + "• Sprint - 2025-11-12T11:00 to 2025-11-12T12:00 \n"
+            + "• Sprint - 2025-11-13T11:00 to 2025-11-13T12:00 - Location: Shillman\n"
+            + "• Sprint - 2025-11-14T11:00 to 2025-11-14T12:00 \n"
+            + "• Sprint - 2025-11-15T11:00 to 2025-11-15T12:00 \n",
+        stringOutput.toString());
+  }
+
+  // Edit all instances of recurring events
+  @Test
+  public void EditCommandForRecurringEvents1() {
+    controller = new MockController("create event Sprint from"
+        + " \"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats MTWRFSU for 5 times\n"
+        + "print events from \"2025-11-11\" to \"2025-11-20\"\n"
+        +"edit events location Sprint Richard\n"
+        + "print events from \"2025-11-11\" to \"2025-11-20\"\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+            + "• Sprint - 2025-11-11T11:00 to 2025-11-11T12:00 \n"
+            + "• Sprint - 2025-11-12T11:00 to 2025-11-12T12:00 \n"
+            + "• Sprint - 2025-11-13T11:00 to 2025-11-13T12:00 \n"
+            + "• Sprint - 2025-11-14T11:00 to 2025-11-14T12:00 \n"
+            + "• Sprint - 2025-11-15T11:00 to 2025-11-15T12:00 \n"
+            + "Events:\n"
+            + "• Sprint - 2025-11-11T11:00 to 2025-11-11T12:00 - Location: Richard\n"
+            + "• Sprint - 2025-11-12T11:00 to 2025-11-12T12:00 - Location: Richard\n"
+            + "• Sprint - 2025-11-13T11:00 to 2025-11-13T12:00 - Location: Richard\n"
+            + "• Sprint - 2025-11-14T11:00 to 2025-11-14T12:00 - Location: Richard\n"
+            + "• Sprint - 2025-11-15T11:00 to 2025-11-15T12:00 - Location: Richard\n",
+        stringOutput.toString());
+  }
+
+  // Edit all instances of recurring events using edit event
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandForRecurringEvents2() {
+    try {
+      controller = new MockController("create event Sprint from"
+          + " \"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats MTWRFSU for 5 times\n"
+          + "edit event occurrence_count Sprint from 2025-11-11T11:00 to 2025-11-11T12:00 with 3\n"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("Cannot update a recurring property for a single event.", e.getMessage());
+      throw e;
+    }
+  }
+
+  // Edit all instances of recurring events using edit event
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandForRecurringEvents3() {
+    try {
+      controller = new MockController("create event Sprint from"
+          + " \"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats MTWRFSU until 2025-11-20\n"
+          + "edit event recurrence_end_date Sprint from 2025-11-11T11:00 to 2025-11-11T12:00 with 2025-11-30\n"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("Cannot update a recurring property for a single event.", e.getMessage());
+      throw e;
+    }
+  }
+
   @Test(expected = InvalidCommandException.class)
   public void EditCommandInvalid() {
     try {
@@ -2143,19 +2222,6 @@ public class CommandsE2ETest {
             "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n" +
             "• cdb - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
         stringOutput.toString());
-  }
-
-  private static class MockView implements ICalendarView {
-    private final StringBuilder resultBuilder = new StringBuilder();
-
-    @Override
-    public void displayMessage(String message) {
-      resultBuilder.append(message);
-    }
-
-    public String getResult() {
-      return resultBuilder.toString();
-    }
   }
 
   private static class MockController implements ICalendarController {

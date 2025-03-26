@@ -9,10 +9,10 @@ import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendar;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.ICalendarRepository;
+import calendarapp.model.SearchType;
 import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.model.dto.PrintEventsResponseDTO;
-import calendarapp.model.impl.searchstrategies.SearchType;
 
 import static calendarapp.utils.TimeUtil.getEndOfDayFromString;
 import static calendarapp.utils.TimeUtil.getTemporalFromString;
@@ -79,11 +79,12 @@ public class CalendarModel implements ICalendarModel {
   }
 
   /**
-   * Returns a list of events that fall within the given date range, formatted for display.
+   * Retrieves and formats a list of events that fall within the specified date range for display.
    *
-   * @param startDateTime The start date-time for the range.
-   * @param endDateTime   The end date-time for the range.
-   * @return A list of formatted event strings.
+   * @param startDateTime The start date-time of the range (ignored if {@code on} is provided).
+   * @param endDateTime   The end date-time of the range (ignored if {@code on} is provided).
+   * @param on            (Optional) A specific date to retrieve all events occurring on that day.
+   * @return A list of {@link PrintEventsResponseDTO} objects containing event details.
    */
   @Override
   public List<PrintEventsResponseDTO> getEventsForPrinting(String startDateTime,
@@ -91,6 +92,7 @@ public class CalendarModel implements ICalendarModel {
     Temporal startTemporal = getTemporalFromString(startDateTime);
     Temporal endTemporal = getTemporalFromString(endDateTime);
 
+    // If 'on' is provided, override start and end time to cover the full day
     if (on != null) {
       startTemporal = getTemporalFromString(on);
       endTemporal = getEndOfDayFromString(on);
@@ -98,12 +100,14 @@ public class CalendarModel implements ICalendarModel {
 
     return activeCalendar.getEventRepository()
         .getEvents(null, startTemporal, endTemporal, SearchType.OVERLAPPING)
-        .stream().map(event -> PrintEventsResponseDTO.builder()
+        .stream()
+        .map(event -> PrintEventsResponseDTO.builder()
             .eventName(event.getName())
             .startTime(event.getStartTime())
             .endTime(event.getEndTime())
             .location(event.getLocation())
-            .build()).collect(Collectors.toList());
+            .build())
+        .collect(Collectors.toList());
   }
 
   @Override

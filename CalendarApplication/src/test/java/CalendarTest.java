@@ -6,8 +6,10 @@ import calendarapp.model.ICalendar;
 import calendarapp.model.impl.Calendar;
 import calendarapp.model.impl.EventRepository;
 
+/**
+ * Test class for {@link Calendar} class.
+ */
 public class CalendarTest {
-
   @Test(expected = InvalidCommandException.class)
   public void CalendarNameNull() {
     try {

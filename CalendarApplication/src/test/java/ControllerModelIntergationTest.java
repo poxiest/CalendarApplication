@@ -18,8 +18,10 @@ import calendarapp.view.impl.CLIView;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Integration test for controller to model by mocking model.
+ */
 public class ControllerModelIntergationTest {
-
   private StringBuilder log;
   private StringBuilder output;
   private ICalendarModel model;
@@ -348,8 +350,7 @@ public class ControllerModelIntergationTest {
         + "Exiting application.\n", output.toString());
   }
 
-  public class MockModel implements ICalendarModel {
-
+  private class MockModel implements ICalendarModel {
     private final StringBuilder log;
 
     MockModel(StringBuilder builder) {

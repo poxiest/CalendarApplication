@@ -11,12 +11,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.IEvent;
 import calendarapp.model.IEventRepository;
+import calendarapp.model.SearchType;
 import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.impl.searchstrategies.SearchEventFactory;
-import calendarapp.model.impl.searchstrategies.SearchType;
 import calendarapp.utils.TimeUtil;
 
 import static calendarapp.model.impl.Constants.DaysOfWeek.parseDaysOfWeek;
@@ -33,6 +34,8 @@ public class EventRepository implements IEventRepository {
 
   /**
    * Constructs an empty EventRepository.
+   * Initializes an empty list for storing events and sets up the search event factory for
+   * searching events.
    */
   public EventRepository() {
     this.events = new ArrayList<>();
@@ -68,9 +71,11 @@ public class EventRepository implements IEventRepository {
   public void update(String eventName, Temporal startTime, Temporal endTime, String property,
                      String value) {
     List<IEvent> eventsToUpdate;
+    boolean isSingleEventUpdate = false;
     if (endTime != null) {
       eventsToUpdate = searchEventFactory.search(events, eventName, startTime, endTime, false,
           SearchType.EXACT);
+      isSingleEventUpdate = true;
     } else {
       eventsToUpdate = searchEventFactory.search(events, eventName, startTime, endTime,
           isRecurringProperty(property), SearchType.MATCHING);
@@ -80,7 +85,7 @@ public class EventRepository implements IEventRepository {
     if (!isRecurringProperty(property)) {
       boolean isFirstRecurringEventUpdated = false;
       for (IEvent event : eventsToUpdate) {
-        if (event.getRecurringDays() != null) {
+        if (event.getRecurringDays() != null && !isSingleEventUpdate) {
           if (!isFirstRecurringEventUpdated) {
             IEvent firstEvent = event.updateProperty(property, value);
             updatedEvents.addAll(getUpdatedRecurringEvents(firstEvent));
@@ -92,6 +97,9 @@ public class EventRepository implements IEventRepository {
         updatedEvents.add(updatedEvent);
       }
     } else {
+      if( isSingleEventUpdate ) {
+        throw new InvalidCommandException("Cannot update a recurring property for a single event.");
+      }
       IEvent firstEvent = eventsToUpdate.get(0).updateProperty(property, value);
       updatedEvents = getUpdatedRecurringEvents(firstEvent);
     }

@@ -2,11 +2,11 @@ create calendar --name calendar1 --timezone America/New_York
 create calendar --name calendar2 --timezone America/Chicago
 use calendar --name calendar1
 create event "Event 1" from 2025-03-10T10:00 to 2025-03-10T11:00
-create event "Event 2" from 2025-03-11T14:00 to 2025-03-11T15:00 repeats MSU for 3 times
+create event "Event 2" from 2025-03-10T14:00 to 2025-03-10T15:00 repeats MSU for 3 times
 edit event eventname "Event 1" from 2025-03-10T10:00 to 2025-03-10T11:00 with "Updated Event 1"
-edit event description "Event 2" from 2025-03-11T14:00 to 2025-03-11T15:00 with "Client call"
+edit event location "Event 2" from 2025-03-10T14:00 to 2025-03-10T15:00 with "Dodge Hall"
 print events on 2025-03-10
-print events from 2025-03-10T09:00 to 2025-03-11T16:00
+print events from 2025-03-10T09:00 to 2025-03-20T16:00
 export cal calendar1.csv
 show status on 2025-03-10T10:30
 copy event "Updated Event 1" on 2025-03-10T10:00 --target calendar2 to 2025-03-15T10:00
@@ -16,3 +16,4 @@ use calendar --name calendar2
 print events on 2025-03-15
 print events on 2025-03-20
 print events from 2025-03-25T00:00 to 2025-03-30T23:59
+exit

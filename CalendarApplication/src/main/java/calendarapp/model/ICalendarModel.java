@@ -55,10 +55,16 @@ public interface ICalendarModel {
    *
    * @param startTime the start of the time range.
    * @param endTime   the end of the time range (if null, defaults to one day after startTime).
+   * @param on        specifies whether the event is on a specific day or within a given range.
    * @return a list of events that intersect with the specified time range.
    */
   List<PrintEventsResponseDTO> getEventsForPrinting(String startTime, String endTime, String on);
 
+  /**
+   * Retrieves a list of events formatted for export.
+   *
+   * @return a list of events suitable for exporting.
+   */
   List<CalendarExporterDTO> getEventsForExport();
 
   /**
@@ -72,31 +78,31 @@ public interface ICalendarModel {
   /**
    * Creates a new calendar with the given name and time zone.
    *
-   * @param calendarName the name of the calendar to create
-   * @param timezone     the time zone of the new calendar
+   * @param calendarName the name of the calendar to create.
+   * @param timezone     the time zone of the new calendar.
    */
   void createCalendar(String calendarName, String timezone);
 
   /**
    * Edits a property of the specified calendar.
    *
-   * @param calendarName  the name of the calendar to edit
-   * @param propertyName  the name of the property to change
-   * @param propertyValue the new value of the property
+   * @param calendarName  the name of the calendar to edit.
+   * @param propertyName  the name of the property to change.
+   * @param propertyValue the new value of the property.
    */
   void editCalendar(String calendarName, String propertyName, String propertyValue);
 
   /**
    * Sets the active calendar to the one with the specified name.
    *
-   * @param calendarName the name of the calendar to set as active
+   * @param calendarName the name of the calendar to set as active.
    */
   void setCalendar(String calendarName);
 
   /**
    * Copies event(s) to another calendar based on the provided copy request.
    *
-   * @param copyEventRequestDTO the request containing details for copying the event
+   * @param copyEventRequestDTO the request containing details for copying the event.
    */
   void copyEvent(CopyEventRequestDTO copyEventRequestDTO);
 }
