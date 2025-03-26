@@ -15,34 +15,29 @@ The application can run in two modes:
 1. **Interactive Mode**: Allows users to enter commands directly through the command line.
 2. **Headless Mode**: Processes commands from a file without requiring user interaction.
 
+Download the .jar file present in /res directory
 ### Interactive Mode
 
 To run the application in interactive mode:
 
 ```bash
-java cd src/main/java
-```
-
-```bash
-javac calendarapp/Main.java
-```
-
-```bash
-java calendarapp.Main --mode interactive
+java -jar <file.jar> --mode interactive
 ```
 
 Once the application starts, you can enter commands directly in the console.
-For reference use res/commands/validCommands.txt file.
+For reference use res/commands/validCalendarCommands.txt file.
 
 ### Headless Mode
 
 To run the application in headless mode compile the java main file similar to interactive and:
 
 ```bash
-java calendarapp.Main --mode headless {absolute_path}
+java -jar <file.jar> --mode headless {absolute_path}
 ```
 
-The commands file is present inside res/commands/validCommands.txt
+The commands file is present inside res/commands/validCalendarCommands.txt
+
+(you can alternatively use validCommands.txt, which contains more valid Event related commands)
 
 ## Supported Commands
 
