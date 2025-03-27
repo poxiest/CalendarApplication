@@ -225,7 +225,7 @@ to the target calendar on the specified date.
 
 All the Required Features are working.
 
-<b>Major Features:</b>
+### Major Features:
 
 1. Supports multiple calendars
 2. Edit Calendar properties (name and timezone)
@@ -240,31 +240,44 @@ All the Required Features are working.
 
 ### 1. **Controller**
 
-The `Controller` package is responsible for handling interactions with the user, both through headless (CLI) and interactive modes.
+The `Controller` package is responsible for handling interactions with the user, both through
+headless (CLI) and interactive modes.
 
+The controller also handles any kind of IO operation in the application, it is responsible for the export command in the application (adhering to MVC).
+
+Interfaces are introduced for controller, exporting and commands for scalability and extensibility.
+
+Commands Design Pattern is used for all the calendar commands, making it extensible for new commands and support undo if needed. 
+
+Custom exceptions are thrown with proper error message making it easier for the user to understand what went wrong where. 
 #### **Interfaces**
 
-- **`ICalendarController`**: Defines the commands for both interactive and headless modes of calendar operations.
+- **`ICalendarController`**: Defines the commands for both interactive and headless modes of
+  calendar operations.
 - **`ICalendarExporter`**: Interface for exporting events to various formats (currently only CSV).
 
 #### **Package `impl`**
 
-- **`CalendarControllerFactory`**: Factory class that initializes the correct `CalendarController` based on the selected mode (`--mode`).
+- **`CalendarControllerFactory`**: Factory class that initializes the correct `CalendarController`
+  based on the selected mode (`--mode`).
 
 #### **Package `commands`**
 
-- **Command Design Pattern**: The package is built using the Command Design Pattern, enabling easy addition of new commands.
+- **Command Design Pattern**: The package is built using the Command Design Pattern, enabling easy
+  addition of new commands.
 
     - **Interfaces**:
         - **`Command`**: Defines a common interface for all command classes.
-        - **`CommandProperties`**: Enum that categorizes different types of commands (e.g., add, remove, update events).
+        - **`CommandProperties`**: Enum that categorizes different types of commands (e.g., create, update, copy events, etc).
 
-    - **Package `impl`**: Contains concrete implementations for the different calendar operations (e.g., creating, updating, deleting events).
+    - **Package `impl`**: Contains concrete implementations for the different calendar operations (
+      e.g., creating, updating, deleting events).
 
 #### **Package `exporter`**
 
 - **CSV Export**: Contains functionality for exporting events to CSV format.
-    - **Constants**: Defines ICalendarExporter implementations for different file extensions (CSV for now).
+    - **Constants**: Defines ICalendarExporter implementations for different file extensions (CSV
+      for now).
 
 #### **Exceptions**
 
@@ -274,15 +287,26 @@ The `Controller` package is responsible for handling interactions with the user,
 
 ### 2. **Model**
 
-The `Model` package contains the core of the calendar application. It manages calendars, events, and repositories for storing and retrieving data.
+The `Model` package contains the core of the calendar application. It manages calendars, events, and
+repositories for storing and retrieving data.
+
+Interfaces are introduced for the Calendar and the Event representation.
+Like wise there are two repositories, ICalendarRepository and IEventRepository, which manipulates these data on any command that runs. 
+This ensures separation of concern and hold the data and operations togethers ensuring data encapsulation. 
+
+Search events strategies are written for better readability and addition of new search strategy if needed. 
+
+Throws appropriate custom error and with proper message. 
 
 #### **Interfaces**
 
-- **`ICalendar`**: Defines the methods for calendar operations.
+- **`ICalendar`**: Defines the data class for a calendar.
 - **`ICalendarModel`**: Orchestrates the calendar application and handles event operations.
-- **`ICalendarRepository`**: Defines operations for interacting with calendars (e.g., saving, updating, deleting).
+- **`ICalendarRepository`**: Defines operations for interacting with calendars (e.g., creating,
+  updating, copying).
 - **`IEvent`**: Defines the structure and behavior of events in the calendar.
-- **`IEventRepository`**: Handles operations related to events (e.g., saving, updating, searching events).
+- **`IEventRepository`**: Handles operations related to events (e.g., creating, updating, searching
+  events, etc.).
 - **`SearchEventsStrategy`**: Interface for different event search strategies.
 
 #### **Enums**
@@ -292,25 +316,32 @@ The `Model` package contains the core of the calendar application. It manages ca
 
 #### **Exceptions**
 
-- **`EventConflictException`**: Thrown when trying to add a new event that conflicts with an existing event's time.
+- **`EventConflictException`**: Thrown when trying to add a new event that conflicts with an
+  existing event's time.
 
 #### **Package `impl`**
 
-- **`Calendar`**: Concrete implementation of `ICalendar`, managing the calendar's data and operations.
-- **`CalendarModel`**: Orchestrates calendar events and operations, coordinating with `CalendarRepository` and `EventRepository`.
-- **`CalendarPropertyUpdater`**: Dynamically updates calendar properties, dispatching changes to `CalendarRepository`.
+- **`Calendar`**: Concrete implementation of `ICalendar`, managing the calendar's data and
+  operations.
+- **`CalendarModel`**: Orchestrates calendar events and operations, coordinating with
+  `CalendarRepository` and `EventRepository`.
+- **`CalendarPropertyUpdater`**: Dynamically updates calendar properties, dispatching changes to
+  `CalendarRepository`.
 - **`CalendarRepository`**: Handles all data-related operations for calendars.
-- **`Event`**: Concrete implementation of `IEvent` that holds event data (e.g., title, time, visibility).
-- **`EventPropertyUpdater`**: Dynamically updates event properties and dispatches updates to `EventRepository`.
+- **`Event`**: Concrete implementation of `IEvent` that holds event data (e.g., title, time,
+  visibility).
+- **`EventPropertyUpdater`**: Dynamically updates event properties and dispatches updates to
+  `EventRepository`.
 - **`EventRepository`**: Handles all data-related operations for events.
 
 #### **Package `searchStrategies`**
 
-- Contains concrete implementations of various search strategies used by `EventRepository` to search events (e.g., by name, by date range).
-- Strategies are 
-  - ExactMatch
-  - InBetween
-  - Overlapping
+- Contains concrete implementations of various search strategies used by `EventRepository` to search
+  events (e.g., by name, by date range).
+- Strategies are
+    - ExactMatch, matches the given exact name, exact start and end time if present
+    - InBetween, matches events inclusive of the given start and end time and anything in between
+    - Overlapping, matches events if there's any overlap with the given times 
 
 ---
 
@@ -324,28 +355,35 @@ The `View` package is responsible for displaying the output to the user.
 
 #### **Package `impl`**
 
-- **`CLIView`**: Concrete implementation of `ICalendarView` for the command-line interface (CLI), handling user interactions and output display.
+- **`CLIView`**: Concrete implementation of `ICalendarView` for the command-line interface (CLI),
+  handling user interactions and output display.
 
 ---
 
 ### 4. **Utils**
 
-The `Utils` package contains utility classes that centralize common logic and functionality used throughout the application.
+The `Utils` package contains utility classes that centralize common logic and functionality used
+throughout the application.
 
 #### **`TimeUtil`**
 
-- Contains all time-related logic for the calendar application (e.g., time zone conversion, duration calculations, formatting).
-- **Impact of Changes**: Modifying `TimeUtil` will affect all parts of the application that rely on time-based operations.
+- Contains all time-related logic for the calendar application (e.g., time zone conversion, duration
+  calculations, formatting).
+- **Impact of Changes**: Modifying `TimeUtil` will affect all parts of the application that rely on
+  time-based operations.
 
 ---
 
-# Calendar Application Design Overview
+## Calendar Application Design Overview
 
-The design choices made for this calendar application are well-structured, promoting maintainability, scalability, and extensibility. Here's why this design is a good choice:
+The design choices made for this calendar application are well-structured, promoting
+maintainability, scalability, and extensibility. Here's why this design is a good choice:
 
 ## 1. Use of Interfaces and Abstraction
 
-The design uses interfaces like `ICalendarController`, `ICalendar`, `IEvent`, etc., to define clear contracts for each part of the application:
+The design uses interfaces like `ICalendarController`, `ICalendar`, `IEvent`, etc., to define clear
+contracts for each part of the application:
+
 - **Flexibility**: You can easily replace or modify parts of the system without affecting the rest.
 - **Testability**: Interfaces allow easier testing by mocking dependencies.
 - **Loose Coupling**: Components interact via well-defined interfaces, reducing dependencies.
@@ -353,33 +391,50 @@ The design uses interfaces like `ICalendarController`, `ICalendar`, `IEvent`, et
 ## 2. Command Design Pattern
 
 The **Command Design Pattern** is used in the `commands` package:
+
 - **Scalability**: New commands (e.g., `DeleteEvent`, `UpdateEvent`) can be easily added.
 - **Decoupling**: The `Controller` doesn't need to know the details of each command.
 - **Undo/Redo**: The pattern can be extended to support undo/redo functionality.
 
 ## 3. Factory Pattern for CalendarController Initialization
 
-The **Factory Pattern** (`CalendarControllerFactory`) helps initialize the `CalendarController` based on the `--mode`:
+The **Factory Pattern** (`CalendarControllerFactory`) helps initialize the `CalendarController`
+based on the `--mode`:
+
 - **Flexibility**: New modes (like a web mode) can be added without affecting other code.
-- **Single Responsibility**: The factory handles all initialization, reducing complexity in the controller.
+- **Single Responsibility**: The factory handles all initialization, reducing complexity in the
+  controller.
 - **Centralized Initialization**: All setup logic is in one place, improving maintainability.
 
 ## 4. Interface for Searching Events
 
 - **Extensibility**: You can easily add new search strategies.
-- **Separation of Concerns**: Each search strategy is encapsulated in its own class, making the code cleaner and more maintainable.
+- **Separation of strategies**: Each search strategy is encapsulated in its own class, making the code
+  cleaner and more maintainable.
 
 ## 5. Exception Handling
 
-Custom exceptions like `InvalidCommandException` and `EventConflictException` are used to handle specific errors:
+Custom exceptions like `InvalidCommandException` and `EventConflictException` are used to handle
+specific errors:
+
 - **Clear Error Handling**: It's easy to identify where errors come from.
-- **Separation of Error Logic**: Different errors are handled in their own classes, keeping the code organized.
+- **Separation of Error Logic**: Different errors are handled in their own classes, keeping the code
+  organized.
 
 ## 6. Time Utils
 
 The `TimeUtil` class handles all time-related logic:
+
 - **Consistency**: All time-related operations are done in one place, reducing the risk of bugs.
-- **Single Responsibility**: The class only handles time-related tasks, following the Single Responsibility Principle.
+- **Single Responsibility**: The class only handles time-related tasks, following the Single
+  Responsibility Principle.
 
 ---
 
+## Project Contributors
+
+- **Harikrishna Nagarajan** - Event modeling, Export functionality, Time Functions and relevant test
+  cases.
+- **Sri Vishaak Ramesh Babu** - Controller, Commands parsing, Calendar modeling and E2E test cases.
+
+---
