@@ -68,7 +68,13 @@ public class CalendarController implements ICalendarController {
         break;
       }
       view.displayMessage("Processing command: " + command + "\n");
-      processCommand(command);
+      try {
+        processCommand(command);
+      } catch (Exception e) {
+        view.displayMessage("\nENCOUNTERED ERROR : " + e.getMessage() + "\n");
+        view.displayMessage("Exiting application gracefully.\n");
+        break;
+      }
       view.displayMessage("\n");
     }
   }
