@@ -28,6 +28,7 @@ java -jar <file.jar> --mode interactive
 Once the application starts, you can enter commands directly in the console.
 For command reference check res/commands/validCalendarCommands.txt file.
 
+
 ### Headless Mode
 
 To run the application in headless mode compile the java main file similar to interactive and:
@@ -37,6 +38,7 @@ java -jar <file.jar> --mode headless {absolute_path}
 ```
 
 The command files are present inside res/commands/
+
 
 ---
 
@@ -51,6 +53,8 @@ create calendar --name <calendarName> --timezone area/location
 ```
 
 Create a calendar with the name and timezone specified.
+
+**Note**: The application at start defaults to `Personal` Calendar. 
 
 ### Edit a calendar
 
@@ -72,6 +76,8 @@ use calendar --name <calendarName>
 
 Set a specific calendar as the active calendar. The operations done post this will be done on the
 active calendar.
+
+**Note**: The application at start uses `Personal` Calendar to work. 
 
 ### Creating Events
 
