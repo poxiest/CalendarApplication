@@ -221,6 +221,16 @@ to the target calendar on the specified date.
 
 ---
 
+## Project Contributors
+
+- **Harikrishna Nagarajan** - Event modeling, Export functionality, Time functions, Search events
+  and relevant test
+  cases.
+- **Sri Vishaak Ramesh Babu** - Controller, Commands parsing, Calendar modeling, View and E2E test
+  cases.
+
+---
+
 ## Features
 
 All the Required Features are working.
@@ -236,20 +246,23 @@ All the Required Features are working.
 7. Export Calendar as CSV compatible with Google Calendar
 8. Show status
 
+--- 
+
 ## Project Structure
 
 ### 1. **Controller**
 
-The `Controller` package is responsible for handling interactions with the user, both through
-headless (CLI) and interactive modes.
+The Controller package is responsible for managing user interactions in both interactive (CLI) and
+headless (file-based) modes. It also handles input/output operations, including event export,
+adhering to the Model-View-Controller (MVC) architecture.
 
-The controller also handles any kind of IO operation in the application, it is responsible for the export command in the application (adhering to MVC).
+Designed with scalability and extensibility in mind, the package utilizes interfaces for
+controllers, exporters, and command processing. The Command Design Pattern is implemented, allowing
+seamless integration of new commands and potential support for undo/redo functionality.
 
-Interfaces are introduced for controller, exporting and commands for scalability and extensibility.
+To enhance usability, custom exceptions provide clear and informative error messages to users,
+improving debugging and error handling.
 
-Commands Design Pattern is used for all the calendar commands, making it extensible for new commands and support undo if needed. 
-
-Custom exceptions are thrown with proper error message making it easier for the user to understand what went wrong where. 
 #### **Interfaces**
 
 - **`ICalendarController`**: Defines the commands for both interactive and headless modes of
@@ -268,7 +281,8 @@ Custom exceptions are thrown with proper error message making it easier for the 
 
     - **Interfaces**:
         - **`Command`**: Defines a common interface for all command classes.
-        - **`CommandProperties`**: Enum that categorizes different types of commands (e.g., create, update, copy events, etc).
+        - **`CommandProperties`**: Enum that categorizes different types of commands (e.g., create,
+          update, copy events, etc).
 
     - **Package `impl`**: Contains concrete implementations for the different calendar operations (
       e.g., creating, updating, deleting events).
@@ -287,16 +301,20 @@ Custom exceptions are thrown with proper error message making it easier for the 
 
 ### 2. **Model**
 
-The `Model` package contains the core of the calendar application. It manages calendars, events, and
-repositories for storing and retrieving data.
+The Model package is the core of the calendar application. It manages calendars, events, and data
+storage.
 
-Interfaces are introduced for the Calendar and the Event representation.
-Like wise there are two repositories, ICalendarRepository and IEventRepository, which manipulates these data on any command that runs. 
-This ensures separation of concern and hold the data and operations togethers ensuring data encapsulation. 
+It uses interfaces like ICalendar and IEvent to define how calendars and events are represented. The
+package also includes two repositories, ICalendarRepository and IEventRepository, which handle
+storing, retrieving, and modifying calendar data when commands are executed.
+This design ensures a clear separation of concerns, keeping data and operations together while
+maintaining encapsulation.
 
-Search events strategies are written for better readability and addition of new search strategy if needed. 
+To improve search functionality, different search strategies are implemented, making it easier to
+add new search methods when needed.
 
-Throws appropriate custom error and with proper message. 
+The package also includes custom error handling, throwing clear and meaningful error messages to
+help users understand issues.
 
 #### **Interfaces**
 
@@ -341,7 +359,7 @@ Throws appropriate custom error and with proper message.
 - Strategies are
     - ExactMatch, matches the given exact name, exact start and end time if present
     - InBetween, matches events inclusive of the given start and end time and anything in between
-    - Overlapping, matches events if there's any overlap with the given times 
+    - Overlapping, matches events if there's any overlap with the given times
 
 ---
 
@@ -379,7 +397,7 @@ throughout the application.
 The design choices made for this calendar application are well-structured, promoting
 maintainability, scalability, and extensibility. Here's why this design is a good choice:
 
-## 1. Use of Interfaces and Abstraction
+### 1. Use of Interfaces and Abstraction
 
 The design uses interfaces like `ICalendarController`, `ICalendar`, `IEvent`, etc., to define clear
 contracts for each part of the application:
@@ -388,7 +406,7 @@ contracts for each part of the application:
 - **Testability**: Interfaces allow easier testing by mocking dependencies.
 - **Loose Coupling**: Components interact via well-defined interfaces, reducing dependencies.
 
-## 2. Command Design Pattern
+### 2. Command Design Pattern
 
 The **Command Design Pattern** is used in the `commands` package:
 
@@ -396,7 +414,7 @@ The **Command Design Pattern** is used in the `commands` package:
 - **Decoupling**: The `Controller` doesn't need to know the details of each command.
 - **Undo/Redo**: The pattern can be extended to support undo/redo functionality.
 
-## 3. Factory Pattern for CalendarController Initialization
+### 3. Factory Pattern for CalendarController Initialization
 
 The **Factory Pattern** (`CalendarControllerFactory`) helps initialize the `CalendarController`
 based on the `--mode`:
@@ -406,13 +424,14 @@ based on the `--mode`:
   controller.
 - **Centralized Initialization**: All setup logic is in one place, improving maintainability.
 
-## 4. Interface for Searching Events
+### 4. Interface for Searching Events
 
 - **Extensibility**: You can easily add new search strategies.
-- **Separation of strategies**: Each search strategy is encapsulated in its own class, making the code
+- **Separation of strategies**: Each search strategy is encapsulated in its own class, making the
+  code
   cleaner and more maintainable.
 
-## 5. Exception Handling
+### 5. Exception Handling
 
 Custom exceptions like `InvalidCommandException` and `EventConflictException` are used to handle
 specific errors:
@@ -421,20 +440,12 @@ specific errors:
 - **Separation of Error Logic**: Different errors are handled in their own classes, keeping the code
   organized.
 
-## 6. Time Utils
+### 6. Time Utils
 
 The `TimeUtil` class handles all time-related logic:
 
 - **Consistency**: All time-related operations are done in one place, reducing the risk of bugs.
 - **Single Responsibility**: The class only handles time-related tasks, following the Single
   Responsibility Principle.
-
----
-
-## Project Contributors
-
-- **Harikrishna Nagarajan** - Event modeling, Export functionality, Time Functions and relevant test
-  cases.
-- **Sri Vishaak Ramesh Babu** - Controller, Commands parsing, Calendar modeling and E2E test cases.
 
 ---
