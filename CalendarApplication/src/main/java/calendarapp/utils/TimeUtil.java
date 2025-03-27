@@ -64,7 +64,8 @@ public class TimeUtil {
   }
 
   /**
-   * Gets the end of the day (Start of the next day at 00:00) from a string representation of date/time.
+   * Gets the end of the day (Start of the next day at 00:00) from a string representation of
+   * date/time.
    *
    * @param dateTime the string representation of date/time to parse.
    * @return a Temporal object representing the end of the day, or null if the input is null.

@@ -26,3 +26,9 @@ CalendarApplication/.idea/*.xml
 hs_err_pid*
 replay_pid*
 /.idea/
+/CalendarApplication/exportTest.csv
+/exportTest.csv
+/CalendarApplication/src/main/resources/META-INF/MANIFEST.MF
+/out/production/group/META-INF/MANIFEST.MF
+/out/production/group/A5_requirements.txt
+/out/test/group/SingleEventConflictCommand.txt

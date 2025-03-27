@@ -35,10 +35,23 @@ public class HeadlessControllerTest {
 
   @Test(expected = InvalidCommandException.class)
   public void testHeadless1() {
-    controller = CalendarControllerFactory.getController("headless",
-        filepath + "/src/test/java/withoutExitCommand.txt",
-        model, view);
-    controller.start();
+    try {
+      controller = CalendarControllerFactory.getController("headless",
+          filepath + "/src/test/java/withoutExitCommand.txt",
+          model, view);
+      controller.start();
+    } catch (Exception e) {
+      assertEquals("Enter command or enter 'exit' to exit the calendar application.\n"
+          + "Processing command: create event test on \"2025-11-11\"\n"
+          + "\n"
+          + "Enter command or enter 'exit' to exit the calendar application.\n"
+          + "Processing command: print events from \"2025-11-09\" to \"2025-11-25\"\n"
+          + "Events:\n"
+          + "• test - 2025-11-11T00:00 to 2025-11-12T00:00 \n"
+          + "\n"
+          + "Enter command or enter 'exit' to exit the calendar application.\n", view.getResult());
+      throw e;
+    }
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -65,6 +78,26 @@ public class HeadlessControllerTest {
             "Enter command or enter 'exit' to exit the calendar application.\n" +
             "Exiting application.\n",
         view.getResult());
+  }
+
+  @Test
+  public void testGracefulExit() {
+    controller = CalendarControllerFactory.getController("headless",
+        filepath + "/src/test/java/SingleEventConflictCommand.txt",
+        model, view);
+    controller.start();
+    assertEquals("Enter command or enter 'exit' to exit the calendar application.\n"
+        + "Processing command: create event test1 from \"2025-11-12T12:00\" to "
+        + "\"2025-11-12T13:00\"\n"
+        + "\n"
+        + "Enter command or enter 'exit' to exit the calendar application.\n"
+        + "Processing command: create event test2 from \"2025-11-12T12:00\" to "
+        + "\"2025-11-12T13:00\"\n"
+        + "\n"
+        + "ENCOUNTERED ERROR : create event test2 from \"2025-11-12T12:00\" to "
+        + "\"2025-11-12T13:00\"\n"
+        + "Reason : Event conflicts with existing event: test1\n"
+        + "Exiting application gracefully.\n", view.getResult());
   }
 
   private static class MockView implements ICalendarView {
