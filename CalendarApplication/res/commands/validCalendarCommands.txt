@@ -17,4 +17,5 @@ use calendar --name UpdatedCalendarName
 print events from 2025-03-01T00:00 to 2025-03-30T23:59
 edit calendar --name UpdatedCalendarName --property timezone America/Los_Angeles
 print events from 2025-03-01T00:00 to 2025-03-30T23:59
+export cal calendar2.csv
 exit

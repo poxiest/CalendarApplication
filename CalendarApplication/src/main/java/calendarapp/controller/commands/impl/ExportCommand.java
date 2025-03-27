@@ -61,7 +61,7 @@ public class ExportCommand extends AbstractCommand {
 
       ICalendarExporter exporter = EXPORTER_MAP.get(fileExtension);
       view.displayMessage("CSV file Location : "
-          + exporter.export(model.getEventsForExport(), filename));
+          + exporter.export(model.getEventsForExport(), filename) + "\n");
     } catch (Exception e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     }

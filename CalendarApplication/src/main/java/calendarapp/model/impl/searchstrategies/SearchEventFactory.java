@@ -22,9 +22,7 @@ public class SearchEventFactory {
    */
   private static final Map<SearchType, Supplier<SearchEventsStrategy>> STRATEGY_MAP;
 
-  /**
-   * Static block to initialize the strategy map.
-   */
+  // Static block to initialize the strategy map.
   static {
     STRATEGY_MAP = new HashMap<>();
     STRATEGY_MAP.put(SearchType.OVERLAPPING, OverlappingEventsSearch::new);
