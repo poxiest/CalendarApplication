@@ -392,10 +392,10 @@ throughout the application.
 
 ---
 
-## Calendar Application Design Overview
+## Design Overview
 
-The design choices made for this calendar application are well-structured, promoting
-maintainability, scalability, and extensibility. Here's why this design is a good choice:
+The design choices made for this calendar application supports
+maintainability, scalability, and extensibility.
 
 ### 1. Use of Interfaces and Abstraction
 
