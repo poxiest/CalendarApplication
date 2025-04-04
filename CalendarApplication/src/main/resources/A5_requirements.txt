@@ -1,0 +1,26 @@
+- support multiple calendars
+- calendars should have unique names
+- default timezone to EST
+- AUTO DECLINE is true always
+- conflict works on create, edit and copying event from one
+calendar to another
+- edit events - edit both single and recurring events
+- copy calendar events - should adjust for the new calendar's timezone
+- make sure about conflict
+- refactor exporter
+- use DTO for Printing, copy
+- try move io to controller
+----- write readme for all the changes with justification
+----- write testcases and check mutation
+----- create a jar file for submission
+- use DTO for edit
+- write missed test cases from a4
+----- write tests from controller to model and
+----- controller to view.
+
+- check a4 results and make the changes in a5
+- make calendarmodel a singleton class
+
+- what are the possible extensions and how feasible.
+based on that see if we can refactor our code more.
+- use DTO wherever required (check after a4 grading)

@@ -1,0 +1,2254 @@
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.StringReader;
+import java.util.Scanner;
+
+import calendarapp.controller.ICalendarController;
+import calendarapp.controller.InvalidCommandException;
+import calendarapp.controller.commands.Command;
+import calendarapp.controller.commands.impl.CommandFactory;
+import calendarapp.model.EventConflictException;
+import calendarapp.model.ICalendarModel;
+import calendarapp.model.impl.CalendarModel;
+import calendarapp.view.ICalendarView;
+import calendarapp.view.impl.CLIView;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+/**
+ * End 2 end test for the calendar application.
+ */
+public class CommandsE2ETest {
+  private ICalendarController controller;
+  private ICalendarModel model;
+  private ICalendarView view;
+  private StringBuilder stringOutput;
+
+  @Before
+  public void setUp() {
+    stringOutput = new StringBuilder();
+    model = new CalendarModel();
+    view = new CLIView(stringOutput);
+  }
+
+  @Test
+  public void SingleDayEvent() {
+    controller = new MockController("create event Standup from \"2025-11-11T11:00\" " +
+        "to \"2025-11-11T12:00\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Standup - 2025-11-11T11:00 to 2025-11-11T12:00 \n",
+        stringOutput.toString());
+    setUp();
+    controller = new MockController("create event Standup from 2025-11-11T11:00 " +
+        "to 2025-11-11T12:00\n" +
+        "print events on 2025-11-11", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Standup - 2025-11-11T11:00 to 2025-11-11T12:00 \n",
+        stringOutput.toString());
+  }
+
+  // Subject with space
+  @Test
+  public void SingleDayEvent1() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 \n",
+        stringOutput.toString());
+  }
+
+  // Single event span Two days
+  @Test
+  public void SingleEventSpanTwoDays() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-11T11:00\" to \"2025-11-12T11:00\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-12T11:00 \n",
+        stringOutput.toString());
+  }
+
+  @Test
+  public void SingleEventSpanTwoDays1() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-11T11:00\" to \"2025-11-12T11:00\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-12T11:00 \n",
+        stringOutput.toString());
+  }
+
+
+  // Multiple events on same time
+  @Test(expected = EventConflictException.class)
+  public void MultipleEventsOnSameTime() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
+        "create event \"Sprint Planning2\" from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 \n" +
+            "• Sprint Planning2 - 2025-11-11T11:00 to 2025-11-11T12:00 \n",
+        stringOutput.toString());
+  }
+
+  // Multiple events on Different time same day
+  @Test
+  public void MultipleEventsOnDifferentTime() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
+        "create event \"Sprint Planning2\" from \"2025-11-11T12:00\" to \"2025-11-11T13:00\"\n" +
+        "create event \"Sprint Planning3\" from \"2025-11-11T13:00\" to \"2025-11-11T14:00\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 \n" +
+            "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T13:00 \n" +
+            "• Sprint Planning3 - 2025-11-11T13:00 to 2025-11-11T14:00 \n",
+        stringOutput.toString());
+  }
+
+  // Multiple events on Different time same day - with autodecline
+  @Test
+  public void MultipleEventsOnDifferentTime1() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
+        "create event --autoDecline \"Sprint Planning2\" from \"2025-11-11T12:00\" to" +
+        " \"2025-11-11T13:00\"\n" +
+        "create event --autoDecline \"Sprint Planning3\" from \"2025-11-11T13:00\" to" +
+        " \"2025-11-11T14:00\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 \n" +
+            "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T13:00 \n" +
+            "• Sprint Planning3 - 2025-11-11T13:00 to 2025-11-11T14:00 \n",
+        stringOutput.toString());
+  }
+
+  // Multiple events on same time
+  @Test(expected = EventConflictException.class)
+  public void MultipleEventsOnSameTimeAutoDecline() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
+        "create event --autoDecline \"Sprint Planning2\" from \"2025-11-11T11:00\" to" +
+        " \"2025-11-11T12:00\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.start();
+  }
+
+  // Multiple events on same time
+  @Test(expected = EventConflictException.class)
+  public void MultipleEventsOnSameTimeAutoDecline2() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
+        "create event --autoDecline \"Sprint Planning2\" from \"2025-11-11T10:00\" to" +
+        " \"2025-11-11T11:15\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.start();
+  }
+
+  // Multiple events on same time
+  @Test(expected = EventConflictException.class)
+  public void MultipleEventsOnSameTimeAutoDecline3() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from \"2025-11-11T11:00\" to \"2025-11-11T12:00\"\n" +
+        "create event --autoDecline \"Sprint Planning2\" from \"2025-11-11T11:30\" to" +
+        " \"2025-11-11T12:30\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.start();
+  }
+
+  @Test
+  public void AllDayEventTest() {
+    controller = new MockController("create event abc on \"2025-12-22\"" +
+        "\nprint events on \"2025-12-22\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
+        stringOutput.toString());
+  }
+
+  @Test
+  public void AllDayEventTest2() {
+    controller = new MockController("create event \"Sprint Planning\" on" +
+        " \"2025-12-22T10:00\"" +
+        "\nprint events on \"2025-12-22\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
+        stringOutput.toString());
+  }
+
+  @Test(expected = EventConflictException.class)
+  public void AllDayEventTest3() {
+    try {
+      controller = new MockController("create event abc_full on \"2025-12-22\"\n" +
+          "create event abc on \"2025-12-22T10:00\"\n" +
+          "print events on \"2025-12-22\"", model, view);
+      controller.start();
+    } catch (EventConflictException e) {
+      assertEquals("create event abc on \"2025-12-22T10:00\"\n"
+          + "Reason : Event conflicts with existing event: abc_full", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test
+  public void RecurringEventsForNTimes() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" for 3 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-20\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+        "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n" +
+        "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+        "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n", stringOutput.toString());
+  }
+
+  @Test
+  public void RecurringEventsForNTimesEdit() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" for 3 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-20\"\n"
+        + "edit events recurring_days \"Recurring Event\" \"MW\"\n"
+        + "print events from \"2025-11-10\" to \"2025-11-20\""
+        , model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n"
+        + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+        + "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n"
+        + "Events:\n"
+        + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+        + "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n"
+        + "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n", stringOutput.toString());
+  }
+
+  @Test
+  public void RecurringEventsForNTimesEdit1() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" for 3 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-20\"\n"
+        + "edit events occurrence_count \"Recurring Event\" \"5\"\n"
+        + "print events from \"2025-11-10\" to \"2025-11-20\""
+        , model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n"
+        + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+        + "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n"
+        + "Events:\n"
+        + "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n"
+        + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+        + "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n"
+        + "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n"
+        + "• Recurring Event - 2025-11-15T10:00 to 2025-11-15T10:30 \n", stringOutput.toString());
+  }
+
+  @Test
+  public void RecurringEventsForNTimes_1() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats MTWRFSU for 3 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-20\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+        "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n" +
+        "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+        "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n", stringOutput.toString());
+  }
+
+  // Recurring on all days for 6 times
+  @Test
+  public void RecurringEventsForNTimes1() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" for 6 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-20\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n" +
+            "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+            "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n" +
+            "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
+            "• Recurring Event - 2025-11-15T10:00 to 2025-11-15T10:30 \n" +
+            "• Recurring Event - 2025-11-16T10:00 to 2025-11-16T10:30 \n"
+        , stringOutput.toString());
+  }
+
+  // Recurring on Monday, wednesday and friday
+  @Test
+  public void RecurringEventsForNTimes2() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MWF\" for 6 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+            "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
+            "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n" +
+            "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
+            "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n" +
+            "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
+        , stringOutput.toString());
+  }
+
+  @Test
+  public void RecurringEventsForNTimesWithExistingEvent() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-12T09:00\" to \"2025-11-12T10:00\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"" +
+        " repeats \"MFW\" for 6 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-12T09:00 to 2025-11-12T10:00 \n" +
+            "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+            "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
+            "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n" +
+            "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
+            "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n" +
+            "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
+        , stringOutput.toString());
+  }
+
+  @Test
+  public void RecurringEventsForNTimesWithExistingEvent1() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-12T10:30\" to \"2025-11-12T11:00\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"" +
+        " repeats \"MFW\" for 6 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+            "• Sprint Planning - 2025-11-12T10:30 to 2025-11-12T11:00 \n" +
+            "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
+            "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n" +
+            "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
+            "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n" +
+            "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
+        , stringOutput.toString());
+  }
+
+  // edit events from
+  @Test
+  public void RecurringEventsForNTimesWithExistingEvent2() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-12T10:30\" to \"2025-11-12T11:00\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"" +
+        " repeats \"MFW\" for 6 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"\n" +
+        "edit events location \"Recurring Event\" from \"2025-11-10T10:00\" with Richard\n"
+        + "edit event location \"Sprint Planning\" from \"2025-11-12T10:30\" to "
+        + "\"2025-11-12T11:00\"  with \"Shillman Hall\"\n"
+        + "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+            + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+            + "• Sprint Planning - 2025-11-12T10:30 to 2025-11-12T11:00 \n"
+            + "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n"
+            + "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n"
+            + "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n"
+            + "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n"
+            + "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
+            + "Events:\n"
+            + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 - Location: Richard\n"
+            + "• Sprint Planning - 2025-11-12T10:30 to 2025-11-12T11:00 - Location: Shillman Hall\n"
+            + "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 - Location: Richard\n"
+            + "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 - Location: Richard\n"
+            + "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 - Location: Richard\n"
+            + "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 - Location: Richard\n"
+            + "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 - Location: Richard\n"
+        , stringOutput.toString());
+  }
+
+  // TODO: Change the searching logic for edit and copy to stick on strictly for datetime
+  // edit events from
+  @Test
+  public void RecurringEventsForNTimesWithExistingEvent3() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-12T10:30\" to \"2025-11-12T11:00\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"" +
+        " repeats \"MFW\" for 6 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"\n" +
+        "edit events location \"Recurring Event\" from \"2025-11-10T10:00\" with Richard\n"
+        + "edit event location \"Sprint Planning\" from \"2024-11-12T10:30\" to "
+        + "\"2025-11-12T11:00\"  with \"Shillman Hall\"\n"
+        + "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+            + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+            + "• Sprint Planning - 2025-11-12T10:30 to 2025-11-12T11:00 \n"
+            + "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n"
+            + "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n"
+            + "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n"
+            + "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n"
+            + "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
+            + "Events:\n"
+            + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 - Location: Richard\n"
+            + "• Sprint Planning - 2025-11-12T10:30 to 2025-11-12T11:00 \n"
+            + "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 - Location: Richard\n"
+            + "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 - Location: Richard\n"
+            + "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 - Location: Richard\n"
+            + "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 - Location: Richard\n"
+            + "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 - Location: Richard\n"
+        , stringOutput.toString());
+  }
+
+  @Test(expected = EventConflictException.class)
+  public void RecurringEventsForNTimesConflict() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-12T10:15\" to \"2025-11-12T11:00\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"" +
+        " repeats \"MFW\" for 6 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+  }
+
+  @Test(expected = EventConflictException.class)
+  public void RecurringEventsForNTimesConflict1() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-12T09:15\" to \"2025-11-12T10:15\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"" +
+        " repeats \"MFW\" for 6 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+  }
+
+  @Test
+  public void RecurringEventsUntil() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" until \"2025-11-13\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-20\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+        "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n" +
+        "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+        "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n", stringOutput.toString());
+  }
+
+  // Recurring on all days for 6 times
+  @Test
+  public void RecurringEventsUntil1() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" until " +
+        "\"2025-11-16T20:00\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-20\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n" +
+            "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+            "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n" +
+            "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
+            "• Recurring Event - 2025-11-15T10:00 to 2025-11-15T10:30 \n" +
+            "• Recurring Event - 2025-11-16T10:00 to 2025-11-16T10:30 \n"
+        , stringOutput.toString());
+  }
+
+  // Recurring on all days for 6 times
+  @Test
+  public void RecurringEventsUntil1EditUntil() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" until " +
+        "\"2025-11-16T20:00\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"\n"
+        + "edit events recurrence_end_date \"Recurring Event\" \"2025-11-20T20:00\"\n"
+        + "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+            + "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n"
+            + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+            + "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n"
+            + "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n"
+            + "• Recurring Event - 2025-11-15T10:00 to 2025-11-15T10:30 \n"
+            + "• Recurring Event - 2025-11-16T10:00 to 2025-11-16T10:30 \n"
+            + "Events:\n"
+            + "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n"
+            + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+            + "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n"
+            + "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n"
+            + "• Recurring Event - 2025-11-15T10:00 to 2025-11-15T10:30 \n"
+            + "• Recurring Event - 2025-11-16T10:00 to 2025-11-16T10:30 \n"
+            + "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n"
+            + "• Recurring Event - 2025-11-18T10:00 to 2025-11-18T10:30 \n"
+            + "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n"
+            + "• Recurring Event - 2025-11-20T10:00 to 2025-11-20T10:30 \n"
+        , stringOutput.toString());
+  }
+
+  // Recurring on all days for 6 times
+  @Test
+  public void RecurringEventsUntil1EditFrom() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" until " +
+        "\"2025-11-16T20:00\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"\n"
+        + "edit events to \"Recurring Event\" \"2025-11-11T11:00\"\n"
+        + "print events from \"2025-11-10\" to \"2025-11-30\"\n"
+        + "edit events from \"Recurring Event\" \"2025-11-11T10:15\"\n"
+        + "print events from \"2025-11-10\" to \"2025-11-30\""
+        , model, view);
+    controller.start();
+    assertEquals("Events:\n"
+            + "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n"
+            + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+            + "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n"
+            + "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n"
+            + "• Recurring Event - 2025-11-15T10:00 to 2025-11-15T10:30 \n"
+            + "• Recurring Event - 2025-11-16T10:00 to 2025-11-16T10:30 \n"
+            + "Events:\n"
+            + "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T11:00 \n"
+            + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T11:00 \n"
+            + "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T11:00 \n"
+            + "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T11:00 \n"
+            + "• Recurring Event - 2025-11-15T10:00 to 2025-11-15T11:00 \n"
+            + "• Recurring Event - 2025-11-16T10:00 to 2025-11-16T11:00 \n"
+            + "Events:\n"
+            + "• Recurring Event - 2025-11-11T10:15 to 2025-11-11T11:00 \n"
+            + "• Recurring Event - 2025-11-12T10:15 to 2025-11-12T11:00 \n"
+            + "• Recurring Event - 2025-11-13T10:15 to 2025-11-13T11:00 \n"
+            + "• Recurring Event - 2025-11-14T10:15 to 2025-11-14T11:00 \n"
+            + "• Recurring Event - 2025-11-15T10:15 to 2025-11-15T11:00 \n"
+            + "• Recurring Event - 2025-11-16T10:15 to 2025-11-16T11:00 \n"
+        , stringOutput.toString());
+  }
+
+  @Test
+  public void RecurringAndSingleEventsEditTogether() {
+    controller = new MockController("create event \"Same Event Name\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" until " +
+        "\"2025-11-16T20:00\"\n" +
+        "create event \"Same Event Name\" from \"2025-11-10T10:00\" to \"2025-11-10T10:30\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"\n" +
+        "edit events location \"Same Event Name\" \"Shillman\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"",
+        model, view);
+    controller.start();
+
+    assertEquals("Events:\n"
+            + "• Same Event Name - 2025-11-10T10:00 to 2025-11-10T10:30 \n"
+            + "• Same Event Name - 2025-11-11T10:00 to 2025-11-11T10:30 \n"
+            + "• Same Event Name - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+            + "• Same Event Name - 2025-11-13T10:00 to 2025-11-13T10:30 \n"
+            + "• Same Event Name - 2025-11-14T10:00 to 2025-11-14T10:30 \n"
+            + "• Same Event Name - 2025-11-15T10:00 to 2025-11-15T10:30 \n"
+            + "• Same Event Name - 2025-11-16T10:00 to 2025-11-16T10:30 \n"
+            + "Events:\n"
+            + "• Same Event Name - 2025-11-10T10:00 to 2025-11-10T10:30 - Location: Shillman\n"
+            + "• Same Event Name - 2025-11-11T10:00 to 2025-11-11T10:30 - Location: Shillman\n"
+            + "• Same Event Name - 2025-11-12T10:00 to 2025-11-12T10:30 - Location: Shillman\n"
+            + "• Same Event Name - 2025-11-13T10:00 to 2025-11-13T10:30 - Location: Shillman\n"
+            + "• Same Event Name - 2025-11-14T10:00 to 2025-11-14T10:30 - Location: Shillman\n"
+            + "• Same Event Name - 2025-11-15T10:00 to 2025-11-15T10:30 - Location: Shillman\n"
+            + "• Same Event Name - 2025-11-16T10:00 to 2025-11-16T10:30 - Location: Shillman\n",
+        stringOutput.toString());
+  }
+
+
+  // Recurring on Monday, wednesday and friday
+  @Test
+  public void RecurringEventsUntil2() {
+    controller = new MockController("create event \"Recurring Event\" from " +
+        "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MWF\" " +
+        "until \"2025-11-24T20:00\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+            "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
+            "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n" +
+            "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
+            "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n" +
+            "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
+        , stringOutput.toString());
+  }
+
+  @Test
+  public void RecurringEventsUntilWithExistingEvent() {
+    controller = new MockController("create event \"Sprint Planning\" from " +
+        "\"2025-11-12T09:00\" to \"2025-11-12T10:00\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\" " +
+        "repeats \"MFW\" until \"2025-11-24T20:00\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-12T09:00 to 2025-11-12T10:00 \n" +
+            "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+            "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
+            "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n" +
+            "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
+            "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n" +
+            "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
+        , stringOutput.toString());
+  }
+
+  @Test
+  public void RecurringEventsUntilWithExistingEvent1() {
+    controller = new MockController("create event \"Sprint Planning\" from " +
+        "\"2025-11-12T10:30\" to \"2025-11-12T11:00\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\" " +
+        "repeats \"MFW\" until \"2025-11-24T20:00\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n" +
+            "• Sprint Planning - 2025-11-12T10:30 to 2025-11-12T11:00 \n" +
+            "• Recurring Event - 2025-11-14T10:00 to 2025-11-14T10:30 \n" +
+            "• Recurring Event - 2025-11-17T10:00 to 2025-11-17T10:30 \n" +
+            "• Recurring Event - 2025-11-19T10:00 to 2025-11-19T10:30 \n" +
+            "• Recurring Event - 2025-11-21T10:00 to 2025-11-21T10:30 \n" +
+            "• Recurring Event - 2025-11-24T10:00 to 2025-11-24T10:30 \n"
+        , stringOutput.toString());
+  }
+
+  @Test(expected = EventConflictException.class)
+  public void RecurringEventsUntilConflict() {
+    controller = new MockController("create event \"Sprint Planning\" from " +
+        "\"2025-11-12T10:15\" to \"2025-11-12T11:00\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\" " +
+        "repeats \"MFW\" until \"2025-11-24T20:00\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+  }
+
+  @Test(expected = EventConflictException.class)
+  public void RecurringEventsUntilConflict1() {
+    controller = new MockController("create event \"Sprint Planning\" from " +
+        "\"2025-11-12T09:15\" to \"2025-11-12T10:15\"\n" +
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\" " +
+        "repeats \"MFW\" until \"2025-11-24T20:00\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+  }
+
+  @Test
+  public void AllDayRecurringEventsFor() {
+    controller = new MockController("create event \"All Day Recurring\" on \"2025-11-12\"" +
+        " repeats \"MWRT\" for 5 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+        "• All Day Recurring - 2025-11-12T00:00 to 2025-11-13T00:00 \n" +
+        "• All Day Recurring - 2025-11-13T00:00 to 2025-11-14T00:00 \n" +
+        "• All Day Recurring - 2025-11-17T00:00 to 2025-11-18T00:00 \n" +
+        "• All Day Recurring - 2025-11-18T00:00 to 2025-11-19T00:00 \n" +
+        "• All Day Recurring - 2025-11-19T00:00 to 2025-11-20T00:00 \n", stringOutput.toString());
+  }
+
+  @Test(expected = EventConflictException.class)
+  public void AllDayRecurringEventsFor1() {
+    controller = new MockController("create event \"Sprint Planning\" from " +
+        "\"2025-11-12T10:15\" to \"2025-11-12T11:00\"\n" +
+        "create event \"All Day Recurring\" on \"2025-11-12\" repeats \"MWRU\" for 3 times\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+  }
+
+  @Test
+  public void AllDayRecurringEventsUntil() {
+    controller = new MockController("create event \"All Day Recurring\" on \"2025-11-12\"" +
+        " repeats \"MWRT\" until \"2025-11-19\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+        "• All Day Recurring - 2025-11-12T00:00 to 2025-11-13T00:00 \n" +
+        "• All Day Recurring - 2025-11-13T00:00 to 2025-11-14T00:00 \n" +
+        "• All Day Recurring - 2025-11-17T00:00 to 2025-11-18T00:00 \n" +
+        "• All Day Recurring - 2025-11-18T00:00 to 2025-11-19T00:00 \n" +
+        "• All Day Recurring - 2025-11-19T00:00 to 2025-11-20T00:00 \n", stringOutput.toString());
+  }
+
+  @Test(expected = EventConflictException.class)
+  public void AllDayRecurringEventsUntil1() {
+    controller = new MockController("create event \"Sprint Planning\" from " +
+        "\"2025-11-12T10:15\" to \"2025-11-12T11:00\"\n" +
+        "create event \"All Day Recurring\" on \"2025-11-12\" repeats \"MWRU\" " +
+        "until \"2025-11-19\"\n" +
+        "print events from \"2025-11-10\" to \"2025-11-30\"", model, view);
+    controller.start();
+  }
+
+  @Test(expected = EventConflictException.class)
+  public void RecurringEventsConflict() {
+    controller = new MockController(
+        "create event \"Recurring Event\" from \"2025-11-11T10:00\" to "
+            + "\"2025-11-11T10:30\" repeats \"MFW\" for 6 times\n"
+            + "create event \"New Recurring Event\" from \"2025-11-11T10:15\" to "
+            + "\"2025-11-11T11:15\" repeats \"MFW\" until \"2025-11-24T20:00\"\n", model, view);
+    controller.start();
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from " +
+          "\"2025-11-12T10:15\"", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-12T10:15\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate1() {
+    try {
+      controller = new MockController("create event from " +
+          "\"2025-11-12T10:15\" to \"2025-11-12T11:15\"", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event from \"2025-11-12T10:15\" to \"2025-11-12T11:15\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate2() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\"", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate3() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from " +
+          "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats \"MTW\" for", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
+          " to \"2025-11-11T12:00\" repeats \"MTW\" for\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate4() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from " +
+          "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats \"MTW\" for times", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
+          " to \"2025-11-11T12:00\" repeats \"MTW\" for times\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate4_1() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from " +
+          "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats \"MTW\" for d times", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
+          " to \"2025-11-11T12:00\" repeats \"MTW\" for d times\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate5() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from " +
+          "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats for 5 times", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
+          " to \"2025-11-11T12:00\" repeats for 5 times\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate6() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from " +
+          "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats \"MTW\" until", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
+          " to \"2025-11-11T12:00\" repeats \"MTW\" until\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate7() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from " +
+          "\"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats until \"2025-11-11\""
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\"" +
+          " to \"2025-11-11T12:00\" repeats until \"2025-11-11\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate8() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" on", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" on\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate9() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" on " +
+          "\"2025-11-11T11:00\" repeats \"MTW\" for", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" on \"2025-11-11T11:00\" " +
+          "repeats \"MTW\" for\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate10() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" on " +
+          "\"2025-11-11T11:00\" repeats \"MTW\" for times", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" on \"2025-11-11T11:00\" " +
+          "repeats \"MTW\" for times\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate11() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" " +
+          "on \"2025-11-11T11:00\" repeats for 5 times", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" on \"2025-11-11T11:00\"" +
+          " repeats for 5 times\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate12() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" " +
+          "on \"2025-11-11T11:00\" repeats \"MTW\" until", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" on \"2025-11-11T11:00\" " +
+          "repeats \"MTW\" until\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RequiredFieldsMissingCreate13() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" " +
+          "on \"2025-11-11T11:00\" repeats until \"2025-11-11\"", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" " +
+          "on \"2025-11-11T11:00\" repeats until \"2025-11-11\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void RecurringEventsCantSpanMoreThanOneDay() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" " +
+          "from \"2025-11-11T11:00\" to \"2025-11-12T11:00\" repeats MWR for 7 times"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\" to"
+          + " \"2025-11-12T11:00\" repeats MWR for 7 times\n"
+          + "Reason : Recurring events cannot span more than one day", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EndDateLessThanStartDate() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" " +
+          "from \"2025-11-11T11:00\" to \"2025-11-11T10:00\"", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Sprint Planning\" from \"2025-11-11T11:00\" to " +
+          "\"2025-11-11T10:00\"\n" +
+          "Reason : Event end time cannot be before start time", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test
+  public void SameStartTimeAndEndTime() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from \"2025-11-11T11:00\" to \"2025-11-11T11:00\"\n" +
+        "create event \"Sprint Planning2\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 \n" +
+            "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T12:00 \n",
+        stringOutput.toString());
+  }
+
+  @Test
+  public void CreateCommandWithLocation() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
+        "create event \"Sprint Planning2\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n"
+            + "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T12:00 \n",
+        stringOutput.toString());
+  }
+
+  @Test
+  public void CreateCommandWithLocationDescriptionVisibility() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\" description "
+        + "\"Longer Desc\" visibility private\n" +
+        "create event \"Sprint Planning2\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+        "print events on \"2025-11-11\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n" +
+            "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T12:00 \n",
+        stringOutput.toString());
+  }
+
+  @Test
+  public void ShowCommand() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from \"2025-11-11T11:00\" to \"2025-11-11T12:00\" location \"Shillman Hall\"\n" +
+        "create event \"Sprint Planning2\" from \"2025-11-11T12:00\" to \"2025-11-11T13:00\"\n" +
+        "print events on \"2025-11-11\"\n" +
+        "show status on \"2025-11-11T11:30\"\n" +
+        "show status on \"2025-11-12T11:30\"\n" +
+        "show status on \"2025-11-11T12:30\""
+        , model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 - Location: Shillman Hall\n"
+            + "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T13:00 \n" +
+            "Status: Busy\n" +
+            "Status: Available\n" +
+            "Status: Busy\n",
+        stringOutput.toString());
+  }
+
+  @Test
+  public void ShowCommand1() {
+    controller = new MockController("create event \"Sprint Planning\" " +
+        "from 2025-11-11T11:00 to 2025-11-11T12:00 location \"Shillman Hall\"\n" +
+        "create event \"Sprint Planning2\" from 2025-11-11T12:00 to 2025-11-11T13:00\n" +
+        "print events on 2025-11-11\n" +
+        "show status on 2025-11-11T11:30\n" +
+        "show status on 2025-11-12T11:30\n" +
+        "show status on 2025-11-11T12:30"
+        , model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T12:00 - Location: Shillman Hall\n"
+            + "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T13:00 \n" +
+            "Status: Busy\n" +
+            "Status: Available\n" +
+            "Status: Busy\n",
+        stringOutput.toString());
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void ShowCommandInvalid() {
+    try {
+      controller = new MockController("show status 2025-11-11T11:00", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("show status 2025-11-11T11:00\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void ShowCommandInvalid1() {
+    try {
+      controller = new MockController("show status on", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("show status on\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  // Edit just one event at a time
+  @Test
+  public void EditCommandWithLocation() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
+        "create event Sprint from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+        "print events on \"2025-11-11\"\n" +
+        "edit event location \"Sprint Planning\" from \"2025-11-11T11:00\" to" +
+        " \"2025-11-11T11:00\" with \"Richard Hall\" \n" +
+        "edit event location Sprint from 2025-11-11T12:00 to" +
+        " 2025-11-11T12:00 with \"Shillman Hall\" \n" +
+        "print events on \"2025-11-11\"\n", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman Hall\n"
+            + "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 \n" +
+            "Events:\n" +
+            "• Sprint Planning - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Richard Hall\n" +
+            "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 - Location: Shillman Hall\n",
+        stringOutput.toString());
+  }
+
+  // Edit multiple events property
+  @Test
+  public void EditCommandWithLocation1() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-11T10:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
+        "create event \"Sprint Planning2\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+        "print events on \"2025-11-11\"\n" +
+        "edit event location \"Sprint Planning\" from \"2025-11-11T10:00\" to \"2025-11-11T11:00\""
+        + " with \"Richard Hall\"\n" +
+        "edit event location \"Sprint Planning2\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\""
+        + " with \"Richard Hall\"\n" +
+        "print events on \"2025-11-11\"\n", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Sprint Planning - 2025-11-11T10:00 to 2025-11-11T11:00 - Location: Shillman Hall\n" +
+            "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T12:00 \n" +
+            "Events:\n" +
+            "• Sprint Planning - 2025-11-11T10:00 to 2025-11-11T11:00 - Location: Richard Hall\n" +
+            "• Sprint Planning2 - 2025-11-11T12:00 to 2025-11-11T12:00 - Location: Richard Hall\n",
+        stringOutput.toString());
+  }
+
+  // Edit multiple events property
+  @Test
+  public void EditCommandWithLocation1_1() {
+    controller = new MockController("create event Sprint from" +
+        " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location Shillman\n" +
+        "create event Sprint from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+        "print events on \"2025-11-11\"\n" +
+        "edit event location Sprint from 2025-11-11T11:00 to 2025-11-11T11:00 with" +
+        " Richard\n" +
+        "print events on \"2025-11-11\"\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+            + "• Sprint - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Shillman\n"
+            + "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 \n"
+            + "Events:\n"
+            + "• Sprint - 2025-11-11T11:00 to 2025-11-11T11:00 - Location: Richard\n"
+            + "• Sprint - 2025-11-11T12:00 to 2025-11-11T12:00 \n",
+        stringOutput.toString());
+  }
+
+  // Edit single instance of recurring events
+  @Test
+  public void EditCommandForRecurringEvents() {
+    controller = new MockController("create event Sprint from"
+        + " \"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats MTWRFSU for 5 times\n"
+        + "print events from \"2025-11-11\" to \"2025-11-20\"\n"
+        + "edit event location Sprint from 2025-11-11T11:00 to 2025-11-11T12:00 with Richard\n"
+        + "edit event location Sprint from 2025-11-13T11:00 to 2025-11-13T12:00 with Shillman\n"
+        + "print events from \"2025-11-11\" to \"2025-11-20\"\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+            + "• Sprint - 2025-11-11T11:00 to 2025-11-11T12:00 \n"
+            + "• Sprint - 2025-11-12T11:00 to 2025-11-12T12:00 \n"
+            + "• Sprint - 2025-11-13T11:00 to 2025-11-13T12:00 \n"
+            + "• Sprint - 2025-11-14T11:00 to 2025-11-14T12:00 \n"
+            + "• Sprint - 2025-11-15T11:00 to 2025-11-15T12:00 \n"
+            + "Events:\n"
+            + "• Sprint - 2025-11-11T11:00 to 2025-11-11T12:00 - Location: Richard\n"
+            + "• Sprint - 2025-11-12T11:00 to 2025-11-12T12:00 \n"
+            + "• Sprint - 2025-11-13T11:00 to 2025-11-13T12:00 - Location: Shillman\n"
+            + "• Sprint - 2025-11-14T11:00 to 2025-11-14T12:00 \n"
+            + "• Sprint - 2025-11-15T11:00 to 2025-11-15T12:00 \n",
+        stringOutput.toString());
+  }
+
+  // Edit all instances of recurring events
+  @Test
+  public void EditCommandForRecurringEvents1() {
+    controller = new MockController("create event Sprint from"
+        + " \"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats MTWRFSU for 5 times\n"
+        + "print events from \"2025-11-11\" to \"2025-11-20\"\n"
+        + "edit events location Sprint Richard\n"
+        + "print events from \"2025-11-11\" to \"2025-11-20\"\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+            + "• Sprint - 2025-11-11T11:00 to 2025-11-11T12:00 \n"
+            + "• Sprint - 2025-11-12T11:00 to 2025-11-12T12:00 \n"
+            + "• Sprint - 2025-11-13T11:00 to 2025-11-13T12:00 \n"
+            + "• Sprint - 2025-11-14T11:00 to 2025-11-14T12:00 \n"
+            + "• Sprint - 2025-11-15T11:00 to 2025-11-15T12:00 \n"
+            + "Events:\n"
+            + "• Sprint - 2025-11-11T11:00 to 2025-11-11T12:00 - Location: Richard\n"
+            + "• Sprint - 2025-11-12T11:00 to 2025-11-12T12:00 - Location: Richard\n"
+            + "• Sprint - 2025-11-13T11:00 to 2025-11-13T12:00 - Location: Richard\n"
+            + "• Sprint - 2025-11-14T11:00 to 2025-11-14T12:00 - Location: Richard\n"
+            + "• Sprint - 2025-11-15T11:00 to 2025-11-15T12:00 - Location: Richard\n",
+        stringOutput.toString());
+  }
+
+  // Edit all instances of recurring events using edit event
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandForRecurringEvents2() {
+    try {
+      controller = new MockController("create event Sprint from"
+          + " \"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats MTWRFSU for 5 times\n"
+          + "edit event occurrence_count Sprint from 2025-11-11T11:00 to 2025-11-11T12:00 with 3\n"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("Cannot update a recurring property for a single event.",
+          e.getMessage());
+      throw e;
+    }
+  }
+
+  // Edit all instances of recurring events using edit event
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandForRecurringEvents3() {
+    try {
+      controller = new MockController("create event Sprint from"
+          + " \"2025-11-11T11:00\" to \"2025-11-11T12:00\" repeats MTWRFSU until 2025-11-20\n"
+          + "edit event recurrence_end_date Sprint from 2025-11-11T11:00 to 2025-11-11T12:00 "
+          + "with 2025-11-30\n"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("Cannot update a recurring property for a single event.",
+          e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid() {
+    try {
+      controller = new MockController("edit event \"Sprint Meeting\"", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit event \"Sprint Meeting\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid1() {
+    try {
+      controller = new MockController("edit event location \"Sprint Meeting\"", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit event location \"Sprint Meeting\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid2() {
+    try {
+      controller = new MockController("edit event location \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" to with Shillman", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit event location \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" to with Shillman\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid3() {
+    try {
+      controller = new MockController("edit event location \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" to \"2025-11-11T11:00\" with", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit event location \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" to \"2025-11-11T11:00\" with\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid4() {
+    try {
+      controller = new MockController("edit event location \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" with Shillam", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit event location \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" with Shillam\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid5() {
+    try {
+      controller = new MockController("edit events \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" with Shillam", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit events \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" with Shillam\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid6() {
+    try {
+      controller = new MockController("edit events location \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" with", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit events location \"Sprint Meeting\" from " +
+          "\"2025-11-11T10:00\" with\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid7() {
+    try {
+      controller = new MockController("edit events \"Sprint Meeting\" Shillam", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit events \"Sprint Meeting\" Shillam\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid8() {
+    try {
+      controller = new MockController("edit events location \"Sprint Meeting\"", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit events location \"Sprint Meeting\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid9() {
+    try {
+      controller = new MockController("create event Sprint from" +
+          " \"2025-11-11T11:00\" to \"2025-11-11T12:00\" location \"Shillman Hall\"\n" +
+          "edit event to Sprint from 2025-11-11T11:00 to 2025-11-11T12:00 with 2025-11-11T10:00\n"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit event to Sprint from 2025-11-11T11:00 to " +
+          "2025-11-11T12:00 with 2025-11-11T10:00\n" +
+          "Reason : Event end time cannot be before start time", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void EditCommandInvalid10() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from" +
+          " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
+          "create event Sprint from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+          "print events on \"2025-11-11\"\n" +
+          "edit event unknownproperty \"Sprint Planning\" from \"2025-11-11T11:00\" to" +
+          " \"2025-11-11T11:00\" with \"Richard Hall\" \n"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit event unknownproperty \"Sprint Planning\" from "
+          + "\"2025-11-11T11:00\" to \"2025-11-11T11:00\" with \"Richard Hall\" \n"
+          + "Reason : Cannot edit property: unknownproperty\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  // edit event conflic expection
+  @Test(expected = EventConflictException.class)
+  public void editEventsConflict() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from" +
+          " \"2025-11-12T10:30\" to \"2025-11-12T11:00\"\n" +
+          "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"" +
+          " repeats \"MFW\" for 6 times\n"
+          + "edit event from \"Sprint Planning\" from \"2025-11-12T10:30\" to "
+          + "\"2025-11-12T11:00\"  with \"2025-11-11T10:15\"", model, view);
+      controller.start();
+    } catch (EventConflictException e) {
+      assertEquals("edit event from \"Sprint Planning\" from \"2025-11-12T10:30\" to "
+          + "\"2025-11-12T11:00\"  with \"2025-11-11T10:15\"\n"
+          + "Reason : Event conflicts with existing event: Recurring Event", e.getMessage());
+      throw e;
+    }
+  }
+
+  // edit event conflic expection
+  @Test(expected = EventConflictException.class)
+  public void editEventsConflict1() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from" +
+          " \"2025-11-12T10:30\" to \"2025-11-12T11:00\"\n" +
+          "create event \"Recurring Event\" from \"2025-11-11T10:00\" to \"2025-11-11T10:30\"" +
+          " repeats \"MTWRFSU\" for 6 times\n"
+          + "edit events to \"Recurring Event\" \"2025-11-11T10:45\"", model, view);
+      controller.start();
+    } catch (EventConflictException e) {
+      assertEquals("edit events to \"Recurring Event\" \"2025-11-11T10:45\"\n"
+          + "Reason : Event conflicts with existing event: Sprint Planning", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void PrintCommandInvalid() {
+    try {
+      controller = new MockController("print events on", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("print events on\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void PrintCommandInvalid1() {
+    try {
+      controller = new MockController("print on 2025-11-11T11:00", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("print on 2025-11-11T11:00\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void PrintCommandInvalid2() {
+    try {
+      controller = new MockController("print events from \"2025-11-11\" to", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("print events from \"2025-11-11\" to\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void PrintCommandInvalid3() {
+    try {
+      controller = new MockController("print events \"2025-11-11\" to \"2025-11-12\"",
+          model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("print events \"2025-11-11\" to \"2025-11-12\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void PrintCommandInvalid4() {
+    try {
+      controller = new MockController("print events from to \"2025-11-12\"", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("print events from to \"2025-11-12\"\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void ExportCommandInvalid4() {
+    try {
+      controller = new MockController("export cal", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("export cal\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void ExportCommandInvalid5() {
+    try {
+      controller = new MockController("export filename.csv", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("export filename.csv\n" +
+          "Reason : Required fields are missing.\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test
+  public void NoEventsPrint() {
+    controller = new MockController("print events on \"2025-12-22\"", model, view);
+    controller.start();
+    assertEquals("No events found.\n", stringOutput.toString());
+  }
+
+  @Test
+  public void exportCommand() {
+    controller = new MockController("create event \"Sprint Planning\" from" +
+        " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
+        "create event \"Sprint Planning\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+        "export cal exportTest.csv", model, view);
+    controller.start();
+    assertTrue(stringOutput.toString().contains("exportTest.csv"));
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void exportCommandInvalidFile() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from" +
+          " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
+          "create event \"Sprint Planning\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+          "export cal exportTest.xlsx", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("export cal exportTest.xlsx\n"
+              + "Reason : Unsupported export format: xlsx. Supported formats are: [csv]",
+          e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void exportCommandInvalidFile1() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from" +
+          " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
+          "create event \"Sprint Planning\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+          "export cal exportTest", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("export cal exportTest\n"
+          + "Reason : No extension found for file: exportTest", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void exportCommandInvalidFile2() {
+    try {
+      controller = new MockController("create event \"Sprint Planning\" from" +
+          " \"2025-11-11T11:00\" to \"2025-11-11T11:00\" location \"Shillman Hall\"\n" +
+          "create event \"Sprint Planning\" from \"2025-11-11T12:00\" to \"2025-11-11T12:00\"\n" +
+          "export cal .", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("export cal .\n"
+          + "Reason : No extension found for file: .", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void InvalidCommandName() {
+    try {
+      controller = new MockController("exrt filename.csv", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("Unknown command: exrt filename.csv\n", e.getMessage());
+      throw new InvalidCommandException(e.getMessage());
+    }
+  }
+
+  @Test
+  public void testInteractive1() {
+    controller = new MockController("CREATE EVENT abc ON \"2025-12-22T10:00\"" +
+        "\nPRINT EVENTS ON \"2025-12-22\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
+        stringOutput.toString());
+  }
+
+  @Test
+  public void testInteractive2() {
+    controller = new MockController("CREATE EVENT ABC ON \"2025-12-22T10:00\"" +
+        "\nPRINT EVENTS ON \"2025-12-22\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• ABC - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
+        stringOutput.toString());
+  }
+
+  // Create
+  @Test
+  public void testInteractive3() {
+    controller = new MockController("Create event \"Happy Event\" ON \"2025-12-22T10:00\"" +
+        "\nprint events on \"2025-12-22\"", model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• Happy Event - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
+        stringOutput.toString());
+  }
+
+  // Create calendar command tests
+  @Test
+  public void testCreateCalendarController() {
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"", model, view);
+    controller.start();
+    assertEquals("", stringOutput.toString());
+  }
+
+  // invalid timezone
+  @Test(expected = InvalidCommandException.class)
+  public void testCreateCalendarController1() {
+    try {
+      controller = new MockController("create calendar --name personalcal --timezone "
+          + "\"America/ABC\"", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create calendar --name personalcal --timezone \"America/ABC\"\n"
+          + "Reason : Cannot find zone id : America/ABC\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  // invalid timezone
+  @Test(expected = InvalidCommandException.class)
+  public void testCreateCalendarNameNull() {
+    try {
+      controller = new MockController("create calendar --name", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create calendar --name\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  // invalid command without calendar
+  @Test(expected = InvalidCommandException.class)
+  public void testCreateCalendarController2() {
+    try {
+      controller = new MockController("create --name personalcal --timezone "
+          + "\"America/New_York\""
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("Unknown command: create --name personalcal --timezone "
+              + "\"America/New_York\"\n"
+          , e.getMessage());
+      throw e;
+    }
+  }
+
+  // invalid create command
+  @Test(expected = InvalidCommandException.class)
+  public void testCreateCalendarController3() {
+    try {
+      controller = new MockController("cree calendar --name personalcal --timezone "
+          + "\"America/New_York\"", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("Unknown command: cree calendar --name personalcal --timezone "
+          + "\"America/New_York\"\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testCreateCalendarControllerDuplicate() {
+    try {
+      controller = new MockController("create calendar --name personalcal --timezone "
+          + "\"America/New_York\"\n"
+          + "create calendar --name personalcal --timezone \"America/Los_Angeles\"", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create calendar --name personalcal --timezone "
+          + "\"America/Los_Angeles\"\nReason : Calendar already exists.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  // edit calendar timezone
+  @Test
+  public void testEditCalendarTimezone() {
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "print events from 2025-11-10 to 2025-11-12\n"
+        + "edit calendar --name personalcal --property timezone America/Los_Angeles\n"
+        + "print events from 2025-11-10 to 2025-11-12\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "Events:\n"
+        + "• propertime - 2025-11-10T08:00 to 2025-11-10T09:00 \n", stringOutput.toString());
+  }
+
+  // edit calendar name
+  @Test
+  public void testEditCalendarName() {
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "print events from 2025-11-10 to 2025-11-12\n"
+        + "edit calendar --name personalcal --property name PersonalCal\n"
+        + "use calendar --name PersonalCal\n"
+        + "print events from 2025-11-10 to 2025-11-12\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n", stringOutput.toString());
+  }
+
+  // edit calendar name and call use calendar with old name
+  @Test(expected = InvalidCommandException.class)
+  public void testEditCalendarName1() {
+    try {
+      controller = new MockController("create calendar --name personalcal --timezone "
+          + "\"America/New_York\"\n"
+          + "use calendar --name personalcal\n"
+          + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+          + "print events from 2025-11-10 to 2025-11-12\n"
+          + "edit calendar --name personalcal --property name PersonalCal\n"
+          + "use calendar --name personalcal\n", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("use calendar --name personalcal\n"
+          + "Reason : Calendar does not exist.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  // copy command with specific event name and same timezone
+  @Test
+  public void testCopyCalendarCommand1() {
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
+        + "create calendar --name workcal --timezone \"America/New_York\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "print events from 2025-11-10 to 2025-11-12\n"
+        + "copy event propertime on 2025-11-10T11:00 --target workcal to 2025-11-11T12:00\n"
+        + "use calendar --name workcal\n"
+        + "print events from 2025-11-10 to 2025-11-12\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "Events:\n"
+        + "• propertime - 2025-11-11T12:00 to 2025-11-11T13:00 \n", stringOutput.toString());
+  }
+
+  // copy command with specific event name and different timezone
+  @Test
+  public void testCopyCalendarCommand1_1() {
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
+        + "create calendar --name workcal --timezone \"America/Los_Angeles\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "print events from 2025-11-10 to 2025-11-12\n"
+        + "copy event propertime on 2025-11-10T11:00 --target workcal to 2025-11-11T12:00\n"
+        + "use calendar --name workcal\n"
+        + "print events from 2025-11-10 to 2025-11-12\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "Events:\n"
+        + "• propertime - 2025-11-11T12:00 to 2025-11-11T13:00 \n", stringOutput.toString());
+  }
+
+  // copy command on a day and same timezone
+  @Test
+  public void testCopyCalendarCommand2() {
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
+        + "create calendar --name workcal --timezone \"America/New_York\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "create event secondevent from 2025-11-10T13:00 to 2025-11-11T10:00\n"
+        + "print events from 2025-11-10 to 2025-11-12\n"
+        + "copy events on 2025-11-10 --target workcal to 2025-11-10\n"
+        + "use calendar --name workcal\n"
+        + "print events from 2025-11-10 to 2025-11-13\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "• secondevent - 2025-11-10T13:00 to 2025-11-11T10:00 \n"
+        + "Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n", stringOutput.toString());
+  }
+
+  // copy command on a day and different timezone
+  @Test
+  public void testCopyCalendarCommand2_1() {
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
+        + "create calendar --name workcal --timezone \"America/Los_Angeles\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "create event secondevent from 2025-11-10T13:00 to 2025-11-11T10:00\n"
+        + "create event thirdevent from 2025-11-11T13:00 to 2025-11-11T15:00\n"
+        + "print events from 2025-11-10 to 2025-11-12\n"
+        + "copy events on 2025-11-10 --target workcal to 2025-11-10\n"
+        + "use calendar --name workcal\n"
+        + "print events from 2025-11-10 to 2025-11-13\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "• secondevent - 2025-11-10T13:00 to 2025-11-11T10:00 \n"
+        + "• thirdevent - 2025-11-11T13:00 to 2025-11-11T15:00 \n"
+        + "Events:\n"
+        + "• propertime - 2025-11-10T08:00 to 2025-11-10T09:00 \n", stringOutput.toString());
+  }
+
+  // copy command between on same timezone
+  @Test
+  public void testCopyCalendarCommand3() {
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
+        + "create calendar --name workcal --timezone \"America/New_York\"\n"
+        + "create calendar --name officecal --timezone \"America/New_York\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "create event secondevent from 2025-11-10T13:00 to 2025-11-11T10:00\n"
+        + "create event thirdevent from 2025-11-12T10:00 to 2025-11-12T10:30\n"
+        + "print events from 2025-11-10 to 2025-11-13\n"
+        + "copy events between 2025-11-10 and 2025-11-11 --target workcal to 2025-11-10\n"
+        + "copy events between 2025-11-12 and 2025-11-12 --target officecal to 2025-11-13\n"
+        + "use calendar --name workcal\n"
+        + "print events from 2025-11-10 to 2025-11-14\n"
+        + "use calendar --name officecal\n"
+        + "print events from 2025-11-10 to 2025-11-14\n"
+        , model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "• secondevent - 2025-11-10T13:00 to 2025-11-11T10:00 \n"
+        + "• thirdevent - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+        + "Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "• secondevent - 2025-11-10T13:00 to 2025-11-11T10:00 \n"
+        + "Events:\n"
+        + "• thirdevent - 2025-11-13T10:00 to 2025-11-13T10:30 \n", stringOutput.toString());
+  }
+
+  // copy command between on different timezone
+  @Test
+  public void testCopyCalendarCommand3_1() {
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
+        + "create calendar --name workcal --timezone \"America/Los_Angeles\"\n"
+        + "create calendar --name officecal --timezone \"Asia/Calcutta\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "create event secondevent from 2025-11-10T13:00 to 2025-11-11T10:00\n"
+        + "create event thirdevent from 2025-11-12T10:00 to 2025-11-12T10:30\n"
+        + "print events from 2025-11-10 to 2025-11-13\n"
+        + "copy events between 2025-11-10 and 2025-11-11 --target workcal to 2025-11-10\n"
+        + "copy events between 2025-11-12 and 2025-11-12 --target officecal to 2025-11-13\n"
+        + "use calendar --name workcal\n"
+        + "print events from 2025-11-10 to 2025-11-14\n"
+        + "use calendar --name officecal\n"
+        + "print events from 2025-11-10 to 2025-11-14\n"
+        , model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "• secondevent - 2025-11-10T13:00 to 2025-11-11T10:00 \n"
+        + "• thirdevent - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+        + "Events:\n"
+        + "• propertime - 2025-11-10T08:00 to 2025-11-10T09:00 \n"
+        + "• secondevent - 2025-11-10T10:00 to 2025-11-11T07:00 \n"
+        + "Events:\n"
+        + "• thirdevent - 2025-11-13T20:30 to 2025-11-13T21:00 \n", stringOutput.toString());
+  }
+
+  // copy command conflict
+  @Test(expected = EventConflictException.class)
+  public void testCopyCalendarCommandConflict() {
+    try {
+      controller = new MockController("create calendar --name personalcal --timezone "
+          + "\"America/New_York\"\n"
+          + "create calendar --name workcal --timezone \"America/Los_Angeles\"\n"
+          + "use calendar --name personalcal\n"
+          + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+          + "create event secondevent from 2025-11-10T13:00 to 2025-11-11T10:00\n"
+          + "create event thirdevent from 2025-11-12T10:00 to 2025-11-12T10:30\n"
+          + "print events from 2025-11-10 to 2025-11-13\n"
+          + "copy events between 2025-11-10 and 2025-11-11 --target workcal to 2025-11-10\n"
+          + "copy events between 2025-11-10 and 2025-11-11 --target workcal to 2025-11-10\n"
+          , model, view);
+      controller.start();
+    } catch (EventConflictException e) {
+      assertEquals("copy events between 2025-11-10 and 2025-11-11 --target workcal to "
+          + "2025-11-10\nReason : Event conflicts with existing event: propertime", e.getMessage());
+      throw e;
+    }
+  }
+
+  // todo: change this
+  // copy command with specific event name and same timezone
+  @Test
+  public void testCopyCalendarCommand4() {
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "print events from 2025-11-10 to 2025-11-12\n"
+        + "copy event propertime on 2024-11-10 --target Personal to 2025-11-11T12:00\n"
+        + "use calendar --name Personal\n"
+        + "print events on 2025-11-11\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "No events found.\n", stringOutput.toString());
+  }
+
+  // copy command with no events found to copy
+  @Test
+  public void testCopyCalendarCommand5() {
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "print events from 2025-11-10 to 2025-11-12\n"
+        + "copy events on 2024-11-10 --target Personal to 2025-11-11\n"
+        + "use calendar --name Personal\n"
+        + "print events from 2025-11-10 to 2025-11-12\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n"
+        + "No events found.\n", stringOutput.toString());
+  }
+
+  // copy command with no events found to copy
+  @Test
+  public void testCopyCalendarCommand6() {
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event \"Recurring Event\" from "
+        + "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"MTWRFSU\" for 3 times\n"
+        + "print events from 2025-11-10 to 2025-11-20\n"
+        + "copy events between 2025-11-10 and 2025-11-20 --target Personal to 2025-11-11\n"
+        + "use calendar --name Personal\n"
+        + "print events from 2025-11-10 to 2025-11-20\n", model, view);
+    controller.start();
+    assertEquals("Events:\n"
+        + "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n"
+        + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+        + "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n"
+        + "Events:\n"
+        + "• Recurring Event - 2025-11-11T10:00 to 2025-11-11T10:30 \n"
+        + "• Recurring Event - 2025-11-12T10:00 to 2025-11-12T10:30 \n"
+        + "• Recurring Event - 2025-11-13T10:00 to 2025-11-13T10:30 \n", stringOutput.toString());
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy() {
+    try {
+      controller = new MockController("copy event EventName on 2025-11-11T11:00 --target to "
+          + "2025-11-11T10:00", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy event EventName on 2025-11-11T11:00 --target to "
+          + "2025-11-11T10:00\nReason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy1() {
+    try {
+      controller = new MockController("copy event EventName on 2025-11-11T11:00 --target"
+          + " default to", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy event EventName on 2025-11-11T11:00 --target default to\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy2() {
+    try {
+      controller = new MockController("copy events on 2025-11-11 --target default to "
+          + "2025-11-11T13:00", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy events on 2025-11-11 --target default to 2025-11-11T13:00\n"
+          + "Reason : Invalid date format: 2025-11-11T13:00", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy3() {
+    try {
+      controller = new MockController("copy events on 2025-11-11 --target to 2025-11-11",
+          model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy events on 2025-11-11 --target to 2025-11-11\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy4() {
+    try {
+      controller = new MockController("copy events between 2025-11-11 and --target "
+          + "default to 2025-11-11", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy events between 2025-11-11 and --target default to 2025-11-11\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy5() {
+    try {
+      controller = new MockController("copy events between and 2025-11-15 --target "
+          + "default to 2025-11-11", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy events between and 2025-11-15 --target default to 2025-11-11\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy6() {
+    try {
+      controller = new MockController("copy events between 2025-11-11 and 2025-11-15 "
+          + "--target to 2025-11-11", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy events between 2025-11-11 and 2025-11-15 --target to "
+          + "2025-11-11\nReason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy7() {
+    try {
+      controller = new MockController("copy events between 2025-11-11 and 2025-11-15"
+          + " --target newCal to 2025-11-11T11:00", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy events between 2025-11-11 and 2025-11-15 --target newCal "
+          + "to 2025-11-11T11:00\n"
+          + "Reason : Invalid date format: 2025-11-11T11:00", e.getMessage());
+      throw e;
+    }
+  }
+
+  // Copy calendar unknown calendar name
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy8() {
+    try {
+      controller = new MockController("copy events between 2025-11-11 and 2025-11-15"
+          + " --target newCal to 2025-11-11", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy events between 2025-11-11 and 2025-11-15 --target"
+          + " newCal to 2025-11-11\nReason : Calendar does not exist.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidUseCommand() {
+    try {
+      controller = new MockController("use calendar Default", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("use calendar Default\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidUseCommand1() {
+    try {
+      controller = new MockController("use calendar --name Default", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("use calendar --name Default\n"
+          + "Reason : Calendar does not exist.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidUseCommand2() {
+    try {
+      controller = new MockController("use --name Default", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("use --name Default\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidUseCommand3() {
+    try {
+      controller = new MockController("us calendar --name Default", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("Unknown command: us calendar --name Default\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  // Edit calendar invalid property name
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidEditCommand() {
+    try {
+      controller = new MockController("create calendar --name workcal --timezone "
+          + "America/New_York\n"
+          + "edit calendar --name workcal --property timne Asia/Calcutta"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit calendar --name workcal --property timne Asia/Calcutta\n"
+          + "Reason : Invalid property name.\n", e.getMessage());
+      throw e;
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
+  // Edit calendar invalid timezone
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidEditCommand1() {
+    try {
+      controller = new MockController("create calendar --name workcal --timezone "
+          + "America/New_York\nedit calendar --name workcal --property timezone Asia/ABC"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit calendar --name workcal --property timezone Asia/ABC\n"
+          + "Reason : Cannot find zone id : Asia/ABC\n", e.getMessage());
+      throw e;
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
+  // Edit calendar invalid command
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidEditCommand2() {
+    try {
+      controller = new MockController("edit caldar --name workcal --property timezone"
+          + " Asia/New_York", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("Unknown command: edit caldar --name workcal --property timezone "
+          + "Asia/New_York\n", e.getMessage());
+      throw e;
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
+  // Edit calendar invalid command
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidEditCommand3() {
+    try {
+      controller = new MockController("edt calendar --name workcal --property timezone "
+          + "Asia/New_York"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("Unknown command: edt calendar --name workcal --property timezone "
+          + "Asia/New_York\n", e.getMessage());
+      throw e;
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
+  // Edit calendar invalid command
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidEditCommand4() {
+    try {
+      controller = new MockController("edit calendar --name --property timezone Asia/New_York"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit calendar --name --property timezone Asia/New_York\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
+  // Edit calendar invalid command
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidEditCommand5() {
+    try {
+      controller = new MockController("edit calendar --name default --property Asia/New_York"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit calendar --name default --property Asia/New_York\n"
+          + "Reason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
+  // Edit calendar invalid calendar command
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidEditCommand6() {
+    try {
+      controller = new MockController("edit calendar --name newCal --property name"
+          + " Asia/New_York", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit calendar --name newCal --property name Asia/New_York\n"
+          + "Reason : Calendar does not exist.\n", e.getMessage());
+      throw e;
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
+
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidRecurringDaysCommand() {
+    try {
+      controller = new MockController("create event \"Recurring Event\" from " +
+          "\"2025-11-11T10:00\" to \"2025-11-11T10:30\" repeats \"A\" for 3 times\n"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("create event \"Recurring Event\" from \"2025-11-11T10:00\" "
+          + "to \"2025-11-11T10:30\" repeats \"A\" for 3 times\n"
+          + "Reason : Invalid day character: A", e.getMessage());
+      throw e;
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
+
+  // Create two events
+  @Test(expected = EventConflictException.class)
+  public void testInteractive4() {
+    controller = new MockController("create event abc on \"2025-12-22T10:00\"" +
+        "\ncreate event cdb on \"2025-12-22T11:00\"\nprint events on \"2025-12-22\"",
+        model, view);
+    controller.start();
+    assertEquals("Events:\n" +
+            "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n" +
+            "• cdb - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
+        stringOutput.toString());
+  }
+
+  private static class MockController implements ICalendarController {
+    private ICalendarModel model;
+    private Readable in;
+    private ICalendarView view;
+
+    public MockController(String input, ICalendarModel calendarApplication,
+                          ICalendarView calendarView) {
+      this.model = calendarApplication;
+      this.view = calendarView;
+      this.in = new StringReader(input);
+    }
+
+    @Override
+    public void start() {
+      Scanner scanner = new Scanner(in);
+      while (scanner.hasNextLine()) {
+        String commandString = scanner.nextLine();
+        Command command;
+        try {
+          command = CommandFactory.getCommand(commandString, model, view);
+        } catch (InvalidCommandException e) {
+          throw e;
+        }
+        command.execute(commandString);
+      }
+    }
+  }
+}
