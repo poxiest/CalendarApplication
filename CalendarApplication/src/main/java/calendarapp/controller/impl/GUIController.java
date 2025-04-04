@@ -3,7 +3,6 @@ package calendarapp.controller.impl;
 import calendarapp.controller.Features;
 import calendarapp.model.ICalendarModel;
 import calendarapp.view.GUIView;
-import calendarapp.view.ICalendarView;
 
 public class GUIController implements Features {
 
