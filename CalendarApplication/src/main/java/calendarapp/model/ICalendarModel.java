@@ -105,4 +105,11 @@ public interface ICalendarModel {
    * @param copyEventRequestDTO the request containing details for copying the event.
    */
   void copyEvent(CopyEventRequestDTO copyEventRequestDTO);
+
+  /**
+   * Fetches all the calendar present.
+   *
+   * @return List of calendar names.
+   */
+  List<String> getCalendars();
 }

@@ -1,7 +1,6 @@
 package calendarapp.controller.impl;
 
 import java.util.List;
-
 import calendarapp.controller.Features;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
@@ -11,14 +10,7 @@ import calendarapp.view.GUIView;
 
 public class GUIController implements Features {
 
-  /**
-   * The calendar model that stores and manages calendar data.
-   */
   private final ICalendarModel model;
-
-  /**
-   * The view used for displaying information to the user.
-   */
   private GUIView view;
 
   public GUIController(ICalendarModel model) {
@@ -28,6 +20,7 @@ public class GUIController implements Features {
   @Override
   public void setView(GUIView view) {
     this.view = view;
+    // The view registers all its listeners to delegate to this controller.
     view.addFeatures(this);
   }
 
@@ -39,10 +32,7 @@ public class GUIController implements Features {
       model.createEvent(eventName, startTime, endTime, recurringDays, occurrenceCount,
           recurrenceEndDate, description, location, visibility, autoDecline);
       view.showConfirmation("Event created successfully.");
-
-      // Refresh the view with updated events - assuming a method to get current view date range
-      // will be added to the model later
-      refreshEvents("day"); // Default to day view refresh
+      refreshEvents("day"); // Refresh current view (default to day view)
     } catch (EventConflictException e) {
       view.showError("Event conflicts with existing event: " + e.getMessage());
     } catch (Exception e) {
@@ -55,7 +45,7 @@ public class GUIController implements Features {
     try {
       model.editEvent(eventName, startTime, endTime, property, value);
       view.showConfirmation("Event updated successfully.");
-      refreshEvents("day"); // Refresh current view
+      refreshEvents("day");
     } catch (EventConflictException e) {
       view.showError("Event update conflicts with existing event: " + e.getMessage());
     } catch (Exception e) {
@@ -90,7 +80,7 @@ public class GUIController implements Features {
     try {
       model.setCalendar(calendarName);
       view.setActiveCalendar(calendarName);
-      refreshEvents("day"); // Refresh with current view type
+      refreshEvents("day");
     } catch (Exception e) {
       view.showError("Error setting active calendar: " + e.getMessage());
     }
@@ -101,7 +91,7 @@ public class GUIController implements Features {
     try {
       model.copyEvent(copyRequest);
       view.showConfirmation("Event copied successfully.");
-      refreshEvents("day"); // Refresh current view
+      refreshEvents("day");
     } catch (Exception e) {
       view.showError("Error copying event: " + e.getMessage());
     }
@@ -110,12 +100,7 @@ public class GUIController implements Features {
   @Override
   public void loadEvents(String startDate, String endDate, String viewType) {
     try {
-      // The "on" parameter determines if we're looking at a specific day or a range
-      String on = "range";
-      if (startDate.equals(endDate)) {
-        on = "day";
-      }
-
+      String on = startDate.equals(endDate) ? "day" : "range";
       List<PrintEventsResponseDTO> events = model.getEventsForPrinting(startDate, endDate, on);
       view.updateEvents(events);
     } catch (Exception e) {
@@ -133,47 +118,81 @@ public class GUIController implements Features {
     }
   }
 
-  /**
-   * Helper method to refresh calendar list.
-   * This would use a model method that will be added later.
-   */
+  // Helper methods to refresh view data
   private void refreshCalendarList() {
-    // Placeholder - would call a model method to get calendar names
+    // For example, if model provided a list of calendar names:
     // List<String> calendarNames = model.getCalendarNames();
     // view.updateCalendarList(calendarNames);
   }
 
-  /**
-   * Helper method to refresh events based on current view.
-   *
-   * @param viewType The current view type (day, week, month)
-   */
   private void refreshEvents(String viewType) {
-    // This is a placeholder implementation that would be replaced
-    // once the model provides methods to get current date range
-
-    // For now, we'll just assume we're looking at today's events
+    // Placeholder: Assume today's date for now. Date calculations can be expanded later.
     String today = getCurrentDateString();
-
-    if ("day".equals(viewType)) {
+    if ("day".equalsIgnoreCase(viewType)) {
       loadEvents(today, today, viewType);
-    } else if ("week".equals(viewType)) {
-      // Get a week's worth of events - this would be replaced with proper date calculations
-      loadEvents(today, today, viewType); // Placeholder
-    } else if ("month".equals(viewType)) {
-      // Get a month's worth of events - this would be replaced with proper date calculations
-      loadEvents(today, today, viewType); // Placeholder
+    } else if ("week".equalsIgnoreCase(viewType)) {
+      // Replace with proper date range calculation for week
+      loadEvents(today, today, viewType);
+    } else if ("month".equalsIgnoreCase(viewType)) {
+      // Replace with proper date range calculation for month
+      loadEvents(today, today, viewType);
     }
   }
 
-  /**
-   * Helper method to get current date as string.
-   * This is a placeholder that would be replaced with actual date formatting.
-   *
-   * @return Current date in MM-dd-yyyy format
-   */
   private String getCurrentDateString() {
-    // Placeholder - would use proper date formatting
-    return "04-04-2025"; // Example hardcoded date
+    // For now, return a hardcoded example date (MM-dd-yyyy)
+    return "04-04-2025";
+  }
+
+  @Override
+  public void navigateToPrevious() {
+    view.navigateToPrevious();
+    String startDate = view.getCurrentDate().format(java.time.format.DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+    String endDate = startDate;
+    String viewType = view.getCurrentViewType();
+    if ("week".equalsIgnoreCase(viewType)) {
+      endDate = view.getCurrentDate().plusDays(6)
+          .format(java.time.format.DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+    } else if ("month".equalsIgnoreCase(viewType)) {
+      endDate = view.getCurrentDate().plusMonths(1).minusDays(1)
+          .format(java.time.format.DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+    }
+    loadEvents(startDate, endDate, viewType);
+  }
+
+  @Override
+  public void navigateToNext() {
+    view.navigateToNext();
+    String startDate = view.getCurrentDate().format(java.time.format.DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+    String endDate = startDate;
+    String viewType = view.getCurrentViewType();
+    if ("week".equalsIgnoreCase(viewType)) {
+      endDate = view.getCurrentDate().plusDays(6)
+          .format(java.time.format.DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+    } else if ("month".equalsIgnoreCase(viewType)) {
+      endDate = view.getCurrentDate().plusMonths(1).minusDays(1)
+          .format(java.time.format.DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+    }
+    loadEvents(startDate, endDate, viewType);
+  }
+
+  @Override
+  public void showCreateEventForm() {
+    view.showCreateEventForm();
+  }
+
+  @Override
+  public void showEditEventForm(PrintEventsResponseDTO event) {
+    view.showEditEventForm(event);
+  }
+
+  @Override
+  public void showCreateCalendarForm() {
+    view.showCreateCalendarForm();
+  }
+
+  @Override
+  public List<String> getCalendars() {
+    return model.getCalendars();
   }
 }

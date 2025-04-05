@@ -433,5 +433,10 @@ public class ControllerModelIntergationTest {
           .append("Calendar Name: ").append(copyEventRequestDTO.getCopyCalendarName()).append("\n")
           .append("Copy to: ").append(copyEventRequestDTO.getCopyToDate()).append("\n");
     }
+
+    @Override
+    public List<String> getCalendars() {
+      return List.of();
+    }
   }
 }

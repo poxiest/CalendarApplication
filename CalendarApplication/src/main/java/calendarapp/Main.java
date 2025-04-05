@@ -40,7 +40,6 @@ public class Main {
       GUIController guiController = new GUIController(model);
       GUIView guiView = new GUIJFrameView();
       guiController.setView(guiView);
-      guiView.display();
     } else {
       view.displayMessage("Invalid arguments.");
     }

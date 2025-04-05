@@ -190,5 +190,10 @@ public class CalendarControllerFactoryTest {
     public void copyEvent(CopyEventRequestDTO copyEventRequestDTO) {
       // empty for test purposes.
     }
+
+    @Override
+    public List<String> getCalendars() {
+      return List.of();
+    }
   }
 }

@@ -153,4 +153,9 @@ public class CalendarModel implements ICalendarModel {
   public void copyEvent(CopyEventRequestDTO copyEventRequestDTO) {
     calendarRepository.copyCalendarEvents(activeCalendar.getName(), copyEventRequestDTO);
   }
+
+  @Override
+  public List<String> getCalendars() {
+    return calendarRepository.getCalendars();
+  }
 }

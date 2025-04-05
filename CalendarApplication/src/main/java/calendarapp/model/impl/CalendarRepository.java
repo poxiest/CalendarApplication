@@ -4,6 +4,7 @@ import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.ICalendar;
@@ -94,5 +95,10 @@ public class CalendarRepository implements ICalendarRepository {
     return calendars.stream()
         .filter(calendar -> calendar.getName().equals(calendarName))
         .findFirst().orElse(null);
+  }
+
+  @Override
+  public List<String> getCalendars() {
+    return calendars.stream().map(ICalendar::getName).collect(Collectors.toList());
   }
 }

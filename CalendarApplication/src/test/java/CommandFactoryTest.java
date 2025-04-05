@@ -312,5 +312,10 @@ public class CommandFactoryTest {
     public void copyEvent(CopyEventRequestDTO copyEventRequestDTO) {
       // empty for test purposes.
     }
+
+    @Override
+    public List<String> getCalendars() {
+      return List.of();
+    }
   }
 }
