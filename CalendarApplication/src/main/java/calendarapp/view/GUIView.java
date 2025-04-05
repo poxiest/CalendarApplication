@@ -30,8 +30,6 @@ public interface GUIView {
 
   LocalDate getCurrentDate();
 
-  String getCurrentViewType();
-
   void navigateToPrevious();
 
   void navigateToNext();

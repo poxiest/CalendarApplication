@@ -136,9 +136,9 @@ public class GUIController implements Features {
   public void navigateToPrevious() {
     view.navigateToPrevious();
     String startDate = view.getCurrentDate().format(java.time.format.DateTimeFormatter.ofPattern(
-        "MM-dd-yyyy"));
+        "yyyy-MM-dd"));
     String endDate = view.getCurrentDate().plusMonths(1).minusDays(1)
-        .format(java.time.format.DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+        .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     loadEvents(startDate, endDate);
   }
 
@@ -146,9 +146,9 @@ public class GUIController implements Features {
   public void navigateToNext() {
     view.navigateToNext();
     String startDate = view.getCurrentDate().format(java.time.format.DateTimeFormatter.ofPattern(
-        "MM-dd-yyyy"));
+        "yyyy-MM-dd"));
     String endDate = view.getCurrentDate().plusMonths(1).minusDays(1)
-        .format(java.time.format.DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+        .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     loadEvents(startDate, endDate);
   }
 

@@ -31,7 +31,7 @@ public class CalendarFormDialog extends JDialog {
     formPanel.add(nameField);
 
     formPanel.add(new JLabel("Timezone:"));
-    timezoneField = new JTextField("GMT");
+    timezoneField = new JTextField("America/New_York");
     formPanel.add(timezoneField);
 
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
