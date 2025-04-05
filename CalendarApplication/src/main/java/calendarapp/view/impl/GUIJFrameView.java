@@ -7,13 +7,14 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
 import calendarapp.controller.Features;
 import calendarapp.model.dto.PrintEventsResponseDTO;
 import calendarapp.view.GUIView;
@@ -55,7 +56,6 @@ public class GUIJFrameView extends JFrame implements GUIView {
   private String currentViewType = "month"; // Default view
   private LocalDate currentDate = LocalDate.now();
   private LocalDate selectedDate = LocalDate.now();
-  private List<PrintEventsResponseDTO> currentEvents = new ArrayList<>();
   private final Random random = new Random();
 
   // Features instance provided by the controller
@@ -63,7 +63,6 @@ public class GUIJFrameView extends JFrame implements GUIView {
 
   public GUIJFrameView() {
     super("Calendar");
-    setupDefaultCalendars();
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setSize(900, 600);
     setLocationRelativeTo(null);
@@ -210,23 +209,27 @@ public class GUIJFrameView extends JFrame implements GUIView {
     detailsPanel.setVisible(false);
   }
 
-  private void setupDefaultCalendars() {
-    calendarNames.add("Personal");
-    calendarColors.put("Personal", new Color(200, 0, 120, 150));
-  }
-
   private void assembleUI() {
     mainPanel.add(headerPanel, BorderLayout.NORTH);
     mainPanel.add(sidebarPanel, BorderLayout.WEST);
     mainPanel.add(contentPanel, BorderLayout.CENTER);
     mainPanel.add(detailsPanel, BorderLayout.EAST);
     updateCalendarList(calendarNames);
+
+    JPanel navigationWrapper = new JPanel(new BorderLayout());
+    navigationWrapper.setBackground(calendarColors.getOrDefault(activeCalendar, Color.GRAY));
+    navigationWrapper.setBorder(new EmptyBorder(10, 10, 10, 10));
+    navigationWrapper.add(navigationPanel, BorderLayout.CENTER);
+    contentPanel.add(navigationWrapper, BorderLayout.NORTH);
+
+    JScrollPane calendarScrollPane = new JScrollPane(calendarPanel);
+    contentPanel.add(calendarScrollPane, BorderLayout.CENTER);
     updateCalendarView();
   }
 
+
   @Override
   public void updateEvents(List<PrintEventsResponseDTO> events) {
-    this.currentEvents = events;
     updateCalendarView();
     if (detailsPanel.isVisible()) {
       updateDetailsPanel(events);
@@ -269,7 +272,6 @@ public class GUIJFrameView extends JFrame implements GUIView {
         }
       });
       calendarListPanel.add(radioPanel);
-      calendarListPanel.add(Box.createRigidArea(new Dimension(0, 5)));
     }
     calendarListPanel.revalidate();
     calendarListPanel.repaint();
@@ -306,19 +308,22 @@ public class GUIJFrameView extends JFrame implements GUIView {
   @Override
   public void showStatus(String dateTime, String status) {
     String message = "Status for " + dateTime + ": " + status;
-    JOptionPane.showMessageDialog(this, message, "Availability Status", JOptionPane.INFORMATION_MESSAGE);
+    JOptionPane.showMessageDialog(this, message, "Availability Status",
+        JOptionPane.INFORMATION_MESSAGE);
   }
 
   @Override
   public void showCreateEventForm() {
     // Use the separate EventFormDialog class
-    EventFormDialog dialog = new EventFormDialog(this, controller, "Create Event", null);
+    EventFormDialog dialog = new EventFormDialog(this, controller, "Create Event", null,
+        selectedDate);
     dialog.setVisible(true);
   }
 
   @Override
   public void showEditEventForm(PrintEventsResponseDTO event) {
-    EventFormDialog dialog = new EventFormDialog(this, controller, "Edit Event", event);
+    EventFormDialog dialog = new EventFormDialog(this, controller, "Edit Event", event,
+        selectedDate);
     dialog.setVisible(true);
   }
 
@@ -326,6 +331,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
   public void showCreateCalendarForm() {
     // Use the separate CalendarFormDialog class
     CalendarFormDialog dialog = new CalendarFormDialog(this, controller);
+    updateCalendarView();
     dialog.setVisible(true);
   }
 
@@ -345,9 +351,10 @@ public class GUIJFrameView extends JFrame implements GUIView {
     currentDate = currentDate.minusMonths(1);
     dateLabel.setText(formatDateForView(currentDate));
     updateCalendarView();
-    String startDate = currentDate.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
-    String endDate = currentDate.plusMonths(1).minusDays(1).format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
-    controller.loadEvents(startDate, endDate, currentViewType);
+    String startDate = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    String endDate = currentDate.plusMonths(1).minusDays(1).format(DateTimeFormatter.ofPattern(
+        "yyyy-MM-dd"));
+    controller.loadEvents(startDate, endDate);
   }
 
   @Override
@@ -355,14 +362,16 @@ public class GUIJFrameView extends JFrame implements GUIView {
     currentDate = currentDate.plusMonths(1);
     dateLabel.setText(formatDateForView(currentDate));
     updateCalendarView();
-    String startDate = currentDate.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
-    String endDate = currentDate.plusMonths(1).minusDays(1).format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
-    controller.loadEvents(startDate, endDate, currentViewType);
+    String startDate = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    String endDate = currentDate.plusMonths(1).minusDays(1).format(DateTimeFormatter.ofPattern(
+        "yyyy-MM-dd"));
+    controller.loadEvents(startDate, endDate);
   }
 
   private void setupMonthView() {
+    // Set the background color based on the active calendar.
+    calendarPanel.setBackground(Color.WHITE);
     calendarPanel.setLayout(new GridLayout(0, 7));
-    calendarPanel.setBackground(calendarColors.getOrDefault(activeCalendar, Color.GRAY));
     YearMonth yearMonth = YearMonth.from(currentDate);
     LocalDate firstOfMonth = yearMonth.atDay(1);
     String[] daysOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
@@ -390,16 +399,6 @@ public class GUIJFrameView extends JFrame implements GUIView {
       dayLabel.setBorder(new EmptyBorder(3, 3, 3, 3));
       JPanel eventsPanel = new JPanel();
       eventsPanel.setLayout(new BoxLayout(eventsPanel, BoxLayout.Y_AXIS));
-      int eventCount = 0;
-      for (PrintEventsResponseDTO event : currentEvents) {
-        eventCount++;
-      }
-      if (eventCount > 0) {
-        JLabel countLabel = new JLabel(eventCount + " event" + (eventCount > 1 ? "s" : ""));
-        countLabel.setFont(new Font("Arial", Font.PLAIN, 10));
-        countLabel.setForeground(Color.DARK_GRAY);
-        eventsPanel.add(countLabel);
-      }
       dayPanel.add(dayLabel, BorderLayout.NORTH);
       dayPanel.add(eventsPanel, BorderLayout.CENTER);
       final LocalDate selectedDay = date;
@@ -416,8 +415,8 @@ public class GUIJFrameView extends JFrame implements GUIView {
 
   private void showEventsForDate(LocalDate date) {
     detailsDateLabel.setText(date.format(DateTimeFormatter.ofPattern("EEEE, MMM d")));
-    String formattedDate = date.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
-    controller.loadEvents(formattedDate, formattedDate, "day");
+    String formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    controller.loadEvents(formattedDate, formattedDate);
     detailsPanel.setVisible(true);
   }
 
@@ -474,10 +473,8 @@ public class GUIJFrameView extends JFrame implements GUIView {
   }
 
   private Color generateRandomColor() {
-    int r = random.nextInt(256);
-    int g = random.nextInt(256);
-    int b = random.nextInt(256);
-    return new Color(r, g, b, 150);
+    return new Color(random.nextInt(256), random.nextInt(256),
+        random.nextInt(256), 150);
   }
 
   @Override
