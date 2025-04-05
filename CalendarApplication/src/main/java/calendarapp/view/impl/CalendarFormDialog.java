@@ -6,12 +6,19 @@ import javax.swing.border.EmptyBorder;
 import calendarapp.controller.Features;
 
 public class CalendarFormDialog extends JDialog {
-
-  private final JTextField nameField;
-  private final JTextField timezoneField;
+  private final JFrame parent;
+  private final Features controller;
 
   public CalendarFormDialog(JFrame parent, Features controller) {
     super(parent, "Create Calendar", true);
+    this.parent = parent;
+    this.controller = controller;
+    constructCalendarPanel();
+  }
+
+  private void constructCalendarPanel() {
+    JTextField nameField;
+    JTextField timezoneField;
     setSize(350, 200);
     setLocationRelativeTo(parent);
 
@@ -37,13 +44,6 @@ public class CalendarFormDialog extends JDialog {
     saveButton.addActionListener(e -> {
       String calendarName = nameField.getText().trim();
       String timezone = timezoneField.getText().trim();
-      if (calendarName.isEmpty()) {
-        JOptionPane.showMessageDialog(this,
-            "Please enter a calendar name.",
-            "Input Error",
-            JOptionPane.ERROR_MESSAGE);
-        return;
-      }
       controller.createCalendar(calendarName, timezone);
       dispose();
     });

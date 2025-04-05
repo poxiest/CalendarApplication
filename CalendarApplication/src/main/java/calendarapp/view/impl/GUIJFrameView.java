@@ -144,10 +144,10 @@ public class GUIJFrameView extends JFrame implements GUIView {
     calendarListPanel.setBackground(Color.WHITE);
     calendarListPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
     calendarGroup = new ButtonGroup();
-    sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-    sidebarPanel.add(createEventPanel);
     sidebarPanel.add(Box.createRigidArea(new Dimension(0, 5)));
     sidebarPanel.add(createCalendarPanel);
+    sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+    sidebarPanel.add(createEventPanel);
     sidebarPanel.add(Box.createRigidArea(new Dimension(0, 20)));
     sidebarPanel.add(calendarHeaderPanel);
     sidebarPanel.add(Box.createRigidArea(new Dimension(0, 5)));
@@ -264,6 +264,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
       radioPanel.add(colorIndicator);
       radioPanel.add(Box.createRigidArea(new Dimension(5, 0)));
       radioPanel.add(radioButton);
+      radioPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, radioPanel.getPreferredSize().height));
       calendarGroup.add(radioButton);
       radioButton.setActionCommand(name);
       radioButton.addActionListener(e -> {
