@@ -28,7 +28,7 @@ public interface Features {
   void copyEvent(CopyEventRequestDTO copyRequest);
 
   // Loading and status
-  void loadEvents(String startDate, String endDate, String viewType);
+  void loadEvents(String startDate, String endDate);
 
   void checkStatus(String dateTime);
 

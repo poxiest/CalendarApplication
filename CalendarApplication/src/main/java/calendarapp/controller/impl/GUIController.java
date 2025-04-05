@@ -1,6 +1,7 @@
 package calendarapp.controller.impl;
 
 import java.util.List;
+
 import calendarapp.controller.Features;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
@@ -20,8 +21,8 @@ public class GUIController implements Features {
   @Override
   public void setView(GUIView view) {
     this.view = view;
-    // The view registers all its listeners to delegate to this controller.
     view.addFeatures(this);
+    view.updateCalendarList(model.getCalendars());
   }
 
   @Override
@@ -32,7 +33,7 @@ public class GUIController implements Features {
       model.createEvent(eventName, startTime, endTime, recurringDays, occurrenceCount,
           recurrenceEndDate, description, location, visibility, autoDecline);
       view.showConfirmation("Event created successfully.");
-      refreshEvents("day"); // Refresh current view (default to day view)
+      refreshEvents();
     } catch (EventConflictException e) {
       view.showError("Event conflicts with existing event: " + e.getMessage());
     } catch (Exception e) {
@@ -41,11 +42,12 @@ public class GUIController implements Features {
   }
 
   @Override
-  public void editEvent(String eventName, String startTime, String endTime, String property, String value) {
+  public void editEvent(String eventName, String startTime, String endTime, String property,
+                        String value) {
     try {
       model.editEvent(eventName, startTime, endTime, property, value);
       view.showConfirmation("Event updated successfully.");
-      refreshEvents("day");
+      refreshEvents();
     } catch (EventConflictException e) {
       view.showError("Event update conflicts with existing event: " + e.getMessage());
     } catch (Exception e) {
@@ -80,7 +82,7 @@ public class GUIController implements Features {
     try {
       model.setCalendar(calendarName);
       view.setActiveCalendar(calendarName);
-      refreshEvents("day");
+      refreshEvents();
     } catch (Exception e) {
       view.showError("Error setting active calendar: " + e.getMessage());
     }
@@ -91,17 +93,16 @@ public class GUIController implements Features {
     try {
       model.copyEvent(copyRequest);
       view.showConfirmation("Event copied successfully.");
-      refreshEvents("day");
+      refreshEvents();
     } catch (Exception e) {
       view.showError("Error copying event: " + e.getMessage());
     }
   }
 
   @Override
-  public void loadEvents(String startDate, String endDate, String viewType) {
+  public void loadEvents(String startDate, String endDate) {
     try {
-      String on = startDate.equals(endDate) ? "day" : "range";
-      List<PrintEventsResponseDTO> events = model.getEventsForPrinting(startDate, endDate, on);
+      List<PrintEventsResponseDTO> events = model.getEventsForPrinting(null, null, startDate);
       view.updateEvents(events);
     } catch (Exception e) {
       view.showError("Error loading events: " + e.getMessage());
@@ -118,62 +119,37 @@ public class GUIController implements Features {
     }
   }
 
-  // Helper methods to refresh view data
   private void refreshCalendarList() {
-    // For example, if model provided a list of calendar names:
-    // List<String> calendarNames = model.getCalendarNames();
-    // view.updateCalendarList(calendarNames);
+     view.updateCalendarList(model.getCalendars());
   }
 
-  private void refreshEvents(String viewType) {
-    // Placeholder: Assume today's date for now. Date calculations can be expanded later.
+  private void refreshEvents() {
     String today = getCurrentDateString();
-    if ("day".equalsIgnoreCase(viewType)) {
-      loadEvents(today, today, viewType);
-    } else if ("week".equalsIgnoreCase(viewType)) {
-      // Replace with proper date range calculation for week
-      loadEvents(today, today, viewType);
-    } else if ("month".equalsIgnoreCase(viewType)) {
-      // Replace with proper date range calculation for month
-      loadEvents(today, today, viewType);
-    }
+    loadEvents(today, today);
   }
 
   private String getCurrentDateString() {
-    // For now, return a hardcoded example date (MM-dd-yyyy)
-    return "04-04-2025";
+    return view.getCurrentDate().toString();
   }
 
   @Override
   public void navigateToPrevious() {
     view.navigateToPrevious();
-    String startDate = view.getCurrentDate().format(java.time.format.DateTimeFormatter.ofPattern("MM-dd-yyyy"));
-    String endDate = startDate;
-    String viewType = view.getCurrentViewType();
-    if ("week".equalsIgnoreCase(viewType)) {
-      endDate = view.getCurrentDate().plusDays(6)
-          .format(java.time.format.DateTimeFormatter.ofPattern("MM-dd-yyyy"));
-    } else if ("month".equalsIgnoreCase(viewType)) {
-      endDate = view.getCurrentDate().plusMonths(1).minusDays(1)
-          .format(java.time.format.DateTimeFormatter.ofPattern("MM-dd-yyyy"));
-    }
-    loadEvents(startDate, endDate, viewType);
+    String startDate = view.getCurrentDate().format(java.time.format.DateTimeFormatter.ofPattern(
+        "MM-dd-yyyy"));
+    String endDate = view.getCurrentDate().plusMonths(1).minusDays(1)
+        .format(java.time.format.DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+    loadEvents(startDate, endDate);
   }
 
   @Override
   public void navigateToNext() {
     view.navigateToNext();
-    String startDate = view.getCurrentDate().format(java.time.format.DateTimeFormatter.ofPattern("MM-dd-yyyy"));
-    String endDate = startDate;
-    String viewType = view.getCurrentViewType();
-    if ("week".equalsIgnoreCase(viewType)) {
-      endDate = view.getCurrentDate().plusDays(6)
-          .format(java.time.format.DateTimeFormatter.ofPattern("MM-dd-yyyy"));
-    } else if ("month".equalsIgnoreCase(viewType)) {
-      endDate = view.getCurrentDate().plusMonths(1).minusDays(1)
-          .format(java.time.format.DateTimeFormatter.ofPattern("MM-dd-yyyy"));
-    }
-    loadEvents(startDate, endDate, viewType);
+    String startDate = view.getCurrentDate().format(java.time.format.DateTimeFormatter.ofPattern(
+        "MM-dd-yyyy"));
+    String endDate = view.getCurrentDate().plusMonths(1).minusDays(1)
+        .format(java.time.format.DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+    loadEvents(startDate, endDate);
   }
 
   @Override
