@@ -4,7 +4,7 @@ import java.util.List;
 
 import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
-import calendarapp.model.dto.PrintEventsResponseDTO;
+import calendarapp.model.dto.EventsResponseDTO;
 
 /**
  * Interface for the calendar model component.
@@ -56,9 +56,10 @@ public interface ICalendarModel {
    * @param startTime the start of the time range.
    * @param endTime   the end of the time range (if null, defaults to one day after startTime).
    * @param on        specifies whether the event is on a specific day or within a given range.
+   * @param eventName
    * @return a list of events that intersect with the specified time range.
    */
-  List<PrintEventsResponseDTO> getEventsForPrinting(String startTime, String endTime, String on);
+  List<EventsResponseDTO> getEvents(String eventName, String startTime, String endTime, String on);
 
   /**
    * Retrieves a list of events formatted for export.

@@ -12,7 +12,7 @@ import calendarapp.model.ICalendarRepository;
 import calendarapp.model.SearchType;
 import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
-import calendarapp.model.dto.PrintEventsResponseDTO;
+import calendarapp.model.dto.EventsResponseDTO;
 
 import static calendarapp.model.impl.Constants.Calendar.DEFAULT_CALENDAR_NAME;
 import static calendarapp.utils.TimeUtil.getEndOfDayFromString;
@@ -85,11 +85,10 @@ public class CalendarModel implements ICalendarModel {
    * @param startDateTime The start date-time of the range (ignored if {@code on} is provided).
    * @param endDateTime   The end date-time of the range (ignored if {@code on} is provided).
    * @param on            (Optional) A specific date to retrieve all events occurring on that day.
-   * @return A list of {@link PrintEventsResponseDTO} objects containing event details.
+   * @return A list of {@link EventsResponseDTO} objects containing event details.
    */
   @Override
-  public List<PrintEventsResponseDTO> getEventsForPrinting(String startDateTime,
-                                                           String endDateTime, String on) {
+  public List<EventsResponseDTO> getEvents(String eventName, String startDateTime, String endDateTime, String on) {
     Temporal startTemporal = getTemporalFromString(startDateTime);
     Temporal endTemporal = getTemporalFromString(endDateTime);
 
@@ -102,7 +101,7 @@ public class CalendarModel implements ICalendarModel {
     return activeCalendar.getEventRepository()
         .getEvents(null, startTemporal, endTemporal, SearchType.OVERLAPPING)
         .stream()
-        .map(event -> PrintEventsResponseDTO.builder()
+        .map(event -> EventsResponseDTO.builder()
             .eventName(event.getName())
             .startTime(event.getStartTime())
             .endTime(event.getEndTime())

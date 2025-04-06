@@ -2,15 +2,16 @@ package calendarapp.view;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import calendarapp.controller.Features;
-import calendarapp.model.dto.PrintEventsResponseDTO;
+import calendarapp.model.dto.EventsResponseDTO;
 
 public interface GUIView {
 
   void addFeatures(Features features);
 
-  void updateEvents(List<PrintEventsResponseDTO> events);
+  void updateEvents(List<EventsResponseDTO> events);
 
   void updateCalendarList(List<String> calendarNames);
 
@@ -20,17 +21,17 @@ public interface GUIView {
 
   void showError(String errorMessage);
 
-  void showStatus(String dateTime, String status);
+  Map<String, String> showCreateEventForm();
 
-  void showCreateEventForm();
+  void showEditEventForm(EventsResponseDTO event);
 
-  void showEditEventForm(PrintEventsResponseDTO event);
-
-  void showCreateCalendarForm();
+  Map<String, String> showCreateCalendarForm();
 
   LocalDate getCurrentDate();
 
   void navigateToPrevious();
 
   void navigateToNext();
+
+  void findEvents();
 }

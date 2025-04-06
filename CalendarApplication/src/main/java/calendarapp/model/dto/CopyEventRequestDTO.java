@@ -22,6 +22,10 @@ public class CopyEventRequestDTO {
     this.copyToDate = builder.toDate;
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   public String getEventName() {
     return eventName;
   }
@@ -40,10 +44,6 @@ public class CopyEventRequestDTO {
 
   public Temporal getCopyToDate() {
     return copyToDate;
-  }
-
-  public static Builder builder() {
-    return new Builder();
   }
 
   /**

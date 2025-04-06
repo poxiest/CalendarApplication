@@ -10,7 +10,7 @@ import calendarapp.controller.impl.CalendarControllerFactory;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
-import calendarapp.model.dto.PrintEventsResponseDTO;
+import calendarapp.model.dto.EventsResponseDTO;
 import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
@@ -156,8 +156,8 @@ public class CalendarControllerFactoryTest {
     }
 
     @Override
-    public List<PrintEventsResponseDTO> getEventsForPrinting(String startTime, String endTime,
-                                                             String on) {
+    public List<EventsResponseDTO> getEvents(String eventName, String startTime, String endTime,
+                                             String on) {
       return List.of();
     }
 

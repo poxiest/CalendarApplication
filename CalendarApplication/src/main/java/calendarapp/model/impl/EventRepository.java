@@ -109,6 +109,13 @@ public class EventRepository implements IEventRepository {
   }
 
   @Override
+  public List<IEvent> getEvents(String eventName, Temporal startTime,
+                                Temporal endTime, SearchType type) {
+    return searchEventFactory.search(events, eventName, startTime, endTime, false, type)
+        .stream().map(IEvent::deepCopyEvent).collect(Collectors.toList());
+  }
+
+  @Override
   public void copyEvents(List<IEvent> eventsToCopy, Temporal toStartTime,
                          ZoneId fromZoneId, ZoneId toZoneId) {
     if (eventsToCopy.size() == 0) {
@@ -163,13 +170,6 @@ public class EventRepository implements IEventRepository {
             .visibility(event.getVisibility() != null ? event.getVisibility().getValue() : null)
             .build())
         .collect(Collectors.toList());
-  }
-
-  @Override
-  public List<IEvent> getEvents(String eventName, Temporal startTime,
-                                Temporal endTime, SearchType type) {
-    return searchEventFactory.search(events, eventName, startTime, endTime, false, type)
-        .stream().map(IEvent::deepCopyEvent).collect(Collectors.toList());
   }
 
   /**

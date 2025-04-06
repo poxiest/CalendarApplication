@@ -1,13 +1,20 @@
 package calendarapp.controller.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import calendarapp.controller.Features;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
-import calendarapp.model.dto.CopyEventRequestDTO;
-import calendarapp.model.dto.PrintEventsResponseDTO;
+import calendarapp.model.dto.EventsResponseDTO;
 import calendarapp.view.GUIView;
+
+import static calendarapp.utils.Constants.CALENDAR_NAME;
+import static calendarapp.utils.Constants.CALENDAR_TIME_ZONE;
+import static calendarapp.utils.Constants.EVENT_END_DATE;
+import static calendarapp.utils.Constants.EVENT_LOCATION;
+import static calendarapp.utils.Constants.EVENT_NAME;
+import static calendarapp.utils.Constants.EVENT_START_DATE;
 
 public class GUIController implements Features {
 
@@ -26,12 +33,11 @@ public class GUIController implements Features {
   }
 
   @Override
-  public void createEvent(String eventName, String startTime, String endTime, String recurringDays,
-                          String occurrenceCount, String recurrenceEndDate, String description,
-                          String location, String visibility, boolean autoDecline) {
+  public void createEvent() {
     try {
-      model.createEvent(eventName, startTime, endTime, recurringDays, occurrenceCount,
-          recurrenceEndDate, description, location, visibility, autoDecline);
+      Map<String, String> results = view.showCreateEventForm();
+      model.createEvent(results.get(EVENT_NAME), results.get(EVENT_START_DATE), results.get(EVENT_END_DATE), null, null,
+          null, null, results.get(EVENT_LOCATION), null, true);
       view.showConfirmation("Event created successfully.");
       refreshEvents();
     } catch (EventConflictException e) {
@@ -56,24 +62,14 @@ public class GUIController implements Features {
   }
 
   @Override
-  public void createCalendar(String calendarName, String timezone) {
+  public void createCalendar() {
     try {
-      model.createCalendar(calendarName, timezone);
+      Map<String, String> results = view.showCreateCalendarForm();
+      model.createCalendar(results.get(CALENDAR_NAME), results.get(CALENDAR_TIME_ZONE));
       view.showConfirmation("Calendar created successfully.");
       refreshCalendarList();
     } catch (Exception e) {
       view.showError("Error creating calendar: " + e.getMessage());
-    }
-  }
-
-  @Override
-  public void editCalendar(String calendarName, String propertyName, String propertyValue) {
-    try {
-      model.editCalendar(calendarName, propertyName, propertyValue);
-      view.showConfirmation("Calendar updated successfully.");
-      refreshCalendarList();
-    } catch (Exception e) {
-      view.showError("Error updating calendar: " + e.getMessage());
     }
   }
 
@@ -89,47 +85,13 @@ public class GUIController implements Features {
   }
 
   @Override
-  public void copyEvent(CopyEventRequestDTO copyRequest) {
-    try {
-      model.copyEvent(copyRequest);
-      view.showConfirmation("Event copied successfully.");
-      refreshEvents();
-    } catch (Exception e) {
-      view.showError("Error copying event: " + e.getMessage());
-    }
-  }
-
-  @Override
   public void loadEvents(String startDate, String endDate) {
     try {
-      List<PrintEventsResponseDTO> events = model.getEventsForPrinting(null, null, startDate);
+      List<EventsResponseDTO> events = model.getEvents(null, null, null, startDate);
       view.updateEvents(events);
     } catch (Exception e) {
       view.showError("Error loading events: " + e.getMessage());
     }
-  }
-
-  @Override
-  public void checkStatus(String dateTime) {
-    try {
-      String status = model.showStatus(dateTime);
-      view.showStatus(dateTime, status);
-    } catch (Exception e) {
-      view.showError("Error checking status: " + e.getMessage());
-    }
-  }
-
-  private void refreshCalendarList() {
-     view.updateCalendarList(model.getCalendars());
-  }
-
-  private void refreshEvents() {
-    String today = getCurrentDateString();
-    loadEvents(today, today);
-  }
-
-  private String getCurrentDateString() {
-    return view.getCurrentDate().toString();
   }
 
   @Override
@@ -158,17 +120,25 @@ public class GUIController implements Features {
   }
 
   @Override
-  public void showEditEventForm(PrintEventsResponseDTO event) {
+  public void showEditEventForm(EventsResponseDTO event) {
     view.showEditEventForm(event);
   }
 
   @Override
-  public void showCreateCalendarForm() {
-    view.showCreateCalendarForm();
+  public void findEvents() {
+
   }
 
-  @Override
-  public List<String> getCalendars() {
-    return model.getCalendars();
+  private void refreshCalendarList() {
+    view.updateCalendarList(model.getCalendars());
+  }
+
+  private void refreshEvents() {
+    String today = getCurrentDateString();
+    loadEvents(today, today);
+  }
+
+  private String getCurrentDateString() {
+    return view.getCurrentDate().toString();
   }
 }

@@ -5,31 +5,29 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
-
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import calendarapp.controller.Features;
-import calendarapp.model.dto.PrintEventsResponseDTO;
+import static calendarapp.utils.Constants.EVENT_END_DATE;
+import static calendarapp.utils.Constants.EVENT_LOCATION;
+import static calendarapp.utils.Constants.EVENT_NAME;
+import static calendarapp.utils.Constants.EVENT_START_DATE;
 
-public class EventFormDialog extends JDialog {
-
-  private final PrintEventsResponseDTO eventToEdit;
+public class CreateEventDialog extends JDialog {
   private JTextField eventNameField;
   private JSpinner startTimeSpinner;
   private JSpinner endTimeSpinner;
   private JTextField locationField;
   private final Date selectedDate;
   private final JFrame parent;
-  private final Features controller;
+  private Map<String, String> result = null;
 
-  public EventFormDialog(JFrame parent, Features controller, String title,
-                         PrintEventsResponseDTO event, LocalDate selectedDate) {
-    super(parent, title, true);
+  public CreateEventDialog(JFrame parent, LocalDate selectedDate) {
+    super(parent, "Create Event", true);
     this.parent = parent;
-    this.controller = controller;
     this.selectedDate = Date.from(selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-    this.eventToEdit = event;
     constructPane();
   }
 
@@ -41,27 +39,20 @@ public class EventFormDialog extends JDialog {
     mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
     JPanel formPanel = new JPanel(new GridLayout(0, 2, 10, 10));
-
-    // Event Name
     formPanel.add(new JLabel("Event Name:"));
-    eventNameField = new JTextField(eventToEdit != null ? eventToEdit.getEventName() : "");
+    eventNameField = new JTextField();
     formPanel.add(eventNameField);
 
-    // Start Time using JSpinner
     formPanel.add(new JLabel("Start Time:"));
-    startTimeSpinner = createDateTimeSpinner(eventToEdit != null ?
-        (Date) eventToEdit.getStartTime() : selectedDate);
+    startTimeSpinner = createDateTimeSpinner(selectedDate);
     formPanel.add(startTimeSpinner);
 
-    // End Time using JSpinner
     formPanel.add(new JLabel("End Time:"));
-    endTimeSpinner = createDateTimeSpinner(eventToEdit != null ? (Date) eventToEdit.getEndTime()
-        : selectedDate);
+    endTimeSpinner = createDateTimeSpinner(selectedDate);
     formPanel.add(endTimeSpinner);
 
-    // Location
     formPanel.add(new JLabel("Location:"));
-    locationField = new JTextField(eventToEdit != null ? eventToEdit.getLocation() : "");
+    locationField = new JTextField();
     formPanel.add(locationField);
 
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -70,29 +61,20 @@ public class EventFormDialog extends JDialog {
     buttonPanel.add(cancelButton);
     buttonPanel.add(saveButton);
 
-    cancelButton.addActionListener(e -> dispose());
+    cancelButton.addActionListener(e -> {
+      result = null;
+      dispose();
+    });
+
     saveButton.addActionListener(e -> {
-      // Retrieve the selected dates from the spinners
       Date startDate = (Date) startTimeSpinner.getValue();
       Date endDate = (Date) endTimeSpinner.getValue();
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-      if (eventToEdit == null) {
-        controller.createEvent(
-            eventNameField.getText(),
-            sdf.format(startDate),
-            sdf.format(endDate),
-            null, null, null, null,
-            locationField.getText(),
-            null, true);
-      } else {
-        controller.editEvent(
-            eventToEdit.getEventName(),
-            sdf.format(startDate),
-            sdf.format(endDate),
-            "name",
-            eventNameField.getText()
-        );
-      }
+      result = new HashMap<>();
+      result.put(EVENT_NAME, eventNameField.getText().trim());
+      result.put(EVENT_START_DATE, sdf.format(startDate));
+      result.put(EVENT_END_DATE, sdf.format(endDate));
+      result.put(EVENT_LOCATION, locationField.getText().trim());
       dispose();
     });
 
@@ -101,14 +83,16 @@ public class EventFormDialog extends JDialog {
     add(mainPanel);
   }
 
-  // Helper method to create a JSpinner for date/time selection.
   private JSpinner createDateTimeSpinner(Date initialDate) {
-    SpinnerDateModel model = new SpinnerDateModel(initialDate, null, null,
-        java.util.Calendar.MINUTE);
+    SpinnerDateModel model = new SpinnerDateModel(initialDate, null, null, java.util.Calendar.MINUTE);
     JSpinner spinner = new JSpinner(model);
-    // Set a date editor with a custom date/time format.
     JSpinner.DateEditor editor = new JSpinner.DateEditor(spinner, "MM-dd-yyyy HH:mm");
     spinner.setEditor(editor);
     return spinner;
+  }
+
+  public Map<String, String> showDialog() {
+    setVisible(true);
+    return result;
   }
 }

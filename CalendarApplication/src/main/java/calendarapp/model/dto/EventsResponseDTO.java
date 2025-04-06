@@ -6,16 +6,16 @@ import java.time.temporal.Temporal;
  * DTO representing a response containing event details for printing.
  * Includes event name, time range, and optional location.
  */
-public class PrintEventsResponseDTO {
+public class EventsResponseDTO {
   private final String eventName;
   private final Temporal startTime;
   private final Temporal endTime;
   private final String location;
 
   /**
-   * Builder for constructing a PrintEventsResponseDTO object.
+   * Builder for constructing a EventsResponseDTO object.
    */
-  private PrintEventsResponseDTO(PrintEventsResponseDTO.Builder builder) {
+  private EventsResponseDTO(EventsResponseDTO.Builder builder) {
     this.eventName = builder.eventName;
     this.startTime = builder.startTime;
     this.endTime = builder.endTime;
@@ -59,12 +59,12 @@ public class PrintEventsResponseDTO {
   }
 
   /**
-   * Creates and returns a new Builder instance for PrintEventsResponseDTO.
+   * Creates and returns a new Builder instance for EventsResponseDTO.
    *
    * @return a new Builder instance.
    */
-  public static PrintEventsResponseDTO.Builder builder() {
-    return new PrintEventsResponseDTO.Builder();
+  public static EventsResponseDTO.Builder builder() {
+    return new EventsResponseDTO.Builder();
   }
 
   /**
@@ -82,7 +82,7 @@ public class PrintEventsResponseDTO {
      * @param eventName the event name.
      * @return this Builder instance.
      */
-    public PrintEventsResponseDTO.Builder eventName(String eventName) {
+    public EventsResponseDTO.Builder eventName(String eventName) {
       this.eventName = eventName;
       return this;
     }
@@ -93,7 +93,7 @@ public class PrintEventsResponseDTO {
      * @param startTime the start time.
      * @return this Builder instance.
      */
-    public PrintEventsResponseDTO.Builder startTime(Temporal startTime) {
+    public EventsResponseDTO.Builder startTime(Temporal startTime) {
       this.startTime = startTime;
       return this;
     }
@@ -104,7 +104,7 @@ public class PrintEventsResponseDTO {
      * @param endTime the end time.
      * @return this Builder instance.
      */
-    public PrintEventsResponseDTO.Builder endTime(Temporal endTime) {
+    public EventsResponseDTO.Builder endTime(Temporal endTime) {
       this.endTime = endTime;
       return this;
     }
@@ -115,18 +115,18 @@ public class PrintEventsResponseDTO {
      * @param location the event location.
      * @return this Builder instance.
      */
-    public PrintEventsResponseDTO.Builder location(String location) {
+    public EventsResponseDTO.Builder location(String location) {
       this.location = location;
       return this;
     }
 
     /**
-     * Builds and returns the final PrintEventsResponseDTO instance.
+     * Builds and returns the final EventsResponseDTO instance.
      *
-     * @return the constructed PrintEventsResponseDTO object.
+     * @return the constructed EventsResponseDTO object.
      */
-    public PrintEventsResponseDTO build() {
-      return new PrintEventsResponseDTO(this);
+    public EventsResponseDTO build() {
+      return new EventsResponseDTO(this);
     }
   }
 }

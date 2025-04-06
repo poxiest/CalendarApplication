@@ -12,6 +12,13 @@ import static calendarapp.controller.exporter.Constants.SupportExportFormats.CSV
  */
 public class Constants {
   /**
+   * A map of supported export formats to their corresponding calendar exporter.
+   */
+  public static final Map<String, ICalendarExporter> EXPORTER_MAP = Map.of(
+      CSV, new CsvCalendarExporter()
+  );
+
+  /**
    * Constants representing CSV header field names for calendar export.
    */
   public static final class CsvHeaders {
@@ -43,11 +50,4 @@ public class Constants {
     public static final String CSV = "csv";
     public static final Set<String> SUPPORTED_EXPORT_FORMATS = Set.of(CSV);
   }
-
-  /**
-   * A map of supported export formats to their corresponding calendar exporter.
-   */
-  public static final Map<String, ICalendarExporter> EXPORTER_MAP = Map.of(
-      CSV, new CsvCalendarExporter()
-  );
 }

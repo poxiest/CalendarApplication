@@ -29,6 +29,15 @@ public class Calendar implements ICalendar {
     this.eventRepository = eventRepository;
   }
 
+  /**
+   * Creates and returns a new Builder instance for constructing a Calendar.
+   *
+   * @return a new Builder
+   */
+  public static Builder builder() {
+    return new Builder();
+  }
+
   @Override
   public String getName() {
     return name;
@@ -45,20 +54,11 @@ public class Calendar implements ICalendar {
   }
 
   /**
-   * Creates and returns a new Builder instance for constructing a Calendar.
-   *
-   * @return a new Builder
-   */
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  /**
    * Builder class for constructing Calendar instances.
    */
   public static class Builder {
     private String name;
-    private ZoneId zoneId = ZoneId.of(Constants.Calendar.DEFAULT_TIME_ZONE);
+    private ZoneId zoneId = ZoneId.of(ZoneId.systemDefault().getId());
     private IEventRepository eventRepository;
 
     /**

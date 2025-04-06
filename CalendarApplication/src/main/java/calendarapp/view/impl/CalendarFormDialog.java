@@ -1,18 +1,23 @@
 package calendarapp.view.impl;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import calendarapp.controller.Features;
+
+import static calendarapp.utils.Constants.CALENDAR_NAME;
+import static calendarapp.utils.Constants.CALENDAR_TIME_ZONE;
 
 public class CalendarFormDialog extends JDialog {
   private final JFrame parent;
-  private final Features controller;
+  private Map<String, String> result;
 
-  public CalendarFormDialog(JFrame parent, Features controller) {
+  public CalendarFormDialog(JFrame parent) {
     super(parent, "Create Calendar", true);
     this.parent = parent;
-    this.controller = controller;
+    result = new HashMap<>();
     constructCalendarPanel();
   }
 
@@ -40,16 +45,24 @@ public class CalendarFormDialog extends JDialog {
     buttonPanel.add(cancelButton);
     buttonPanel.add(saveButton);
 
-    cancelButton.addActionListener(e -> dispose());
+    cancelButton.addActionListener(e -> {
+      result = null;
+      dispose();
+    });
+
     saveButton.addActionListener(e -> {
-      String calendarName = nameField.getText().trim();
-      String timezone = timezoneField.getText().trim();
-      controller.createCalendar(calendarName, timezone);
+      result.put(CALENDAR_NAME, nameField.getText().trim());
+      result.put(CALENDAR_TIME_ZONE, timezoneField.getText().trim());
       dispose();
     });
 
     mainPanel.add(formPanel, BorderLayout.CENTER);
     mainPanel.add(buttonPanel, BorderLayout.SOUTH);
     add(mainPanel);
+  }
+
+  public Map<String, String> showDialog() {
+    setVisible(true);
+    return result;
   }
 }

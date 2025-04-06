@@ -11,7 +11,7 @@ import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
-import calendarapp.model.dto.PrintEventsResponseDTO;
+import calendarapp.model.dto.EventsResponseDTO;
 import calendarapp.utils.TimeUtil;
 import calendarapp.view.ICalendarView;
 import calendarapp.view.impl.CLIView;
@@ -385,12 +385,12 @@ public class ControllerModelIntergationTest {
     }
 
     @Override
-    public List<PrintEventsResponseDTO> getEventsForPrinting(String startTime, String endTime,
-                                                             String on) {
+    public List<EventsResponseDTO> getEvents(String eventName, String startTime, String endTime,
+                                             String on) {
       log.append("Start Time: ").append(startTime).append("\n")
           .append("End Time: ").append(endTime).append("\n")
           .append("On Time: ").append(on).append("\n");
-      return List.of(PrintEventsResponseDTO.builder().eventName("Test")
+      return List.of(EventsResponseDTO.builder().eventName("Test")
           .startTime(TimeUtil.getTemporalFromString("2025-11-11"))
           .endTime(TimeUtil.getTemporalFromString("2025-11-12"))
           .location("testLocation").build());
