@@ -1,6 +1,7 @@
 package calendarapp.view;
 
 import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -29,9 +30,9 @@ public interface GUIView {
 
   LocalDate getCurrentDate();
 
-  void navigateToPrevious();
+  void navigateToPrevious(LocalDate date);
 
-  void navigateToNext();
+  void navigateToNext(LocalDate date);
 
-  void findEvents();
+  Map<String, String> findEvents();
 }

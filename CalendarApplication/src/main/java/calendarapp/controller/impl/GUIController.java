@@ -20,6 +20,10 @@ import static calendarapp.utils.Constants.EVENT_RECURRING_DAYS;
 import static calendarapp.utils.Constants.EVENT_RECURRING_END_DATE;
 import static calendarapp.utils.Constants.EVENT_START_DATE;
 import static calendarapp.utils.Constants.EVENT_VISIBILITY;
+import static calendarapp.utils.Constants.FIND_END_TIME;
+import static calendarapp.utils.Constants.FIND_EVENT_NAME;
+import static calendarapp.utils.Constants.FIND_ON;
+import static calendarapp.utils.Constants.FIND_START_TIME;
 
 public class GUIController implements Features {
 
@@ -35,6 +39,7 @@ public class GUIController implements Features {
     this.view = view;
     view.addFeatures(this);
     view.updateCalendarList(model.getCalendars());
+    setActiveCalendar(model.getCalendars().get(0));
   }
 
   @Override
@@ -99,9 +104,9 @@ public class GUIController implements Features {
   }
 
   @Override
-  public void loadEvents(String startDate, String endDate) {
+  public void loadEvents(String startDate, String endDate, String on) {
     try {
-      List<EventsResponseDTO> events = model.getEvents(null, null, null, startDate);
+      List<EventsResponseDTO> events = model.getEvents(null, startDate, endDate, on);
       view.updateEvents(events);
     } catch (Exception e) {
       view.showError("Error loading events: " + e.getMessage());
@@ -110,22 +115,22 @@ public class GUIController implements Features {
 
   @Override
   public void navigateToPrevious() {
-    view.navigateToPrevious();
+    view.navigateToPrevious(view.getCurrentDate().minusMonths(1));
     String startDate = view.getCurrentDate().format(java.time.format.DateTimeFormatter.ofPattern(
         "yyyy-MM-dd"));
     String endDate = view.getCurrentDate().plusMonths(1).minusDays(1)
         .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-    loadEvents(startDate, endDate);
+    loadEvents(startDate, endDate, null);
   }
 
   @Override
   public void navigateToNext() {
-    view.navigateToNext();
+    view.navigateToNext(view.getCurrentDate().plusMonths(1));
     String startDate = view.getCurrentDate().format(java.time.format.DateTimeFormatter.ofPattern(
         "yyyy-MM-dd"));
     String endDate = view.getCurrentDate().plusMonths(1).minusDays(1)
         .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-    loadEvents(startDate, endDate);
+    loadEvents(startDate, endDate, null);
   }
 
   @Override
@@ -140,7 +145,17 @@ public class GUIController implements Features {
 
   @Override
   public void findEvents() {
-
+    try {
+      Map<String, String> results = view.findEvents();
+      if (results == null) {
+        return;
+      }
+      List<EventsResponseDTO> events = model.getEvents(results.get(FIND_EVENT_NAME),
+          results.get(FIND_START_TIME), results.get(FIND_END_TIME), results.get(FIND_ON));
+      view.updateEvents(events);
+    } catch (Exception e) {
+      view.showError("Error creating calendar: " + e.getMessage());
+    }
   }
 
   private void refreshCalendarList() {
@@ -149,7 +164,7 @@ public class GUIController implements Features {
 
   private void refreshEvents() {
     String today = getCurrentDateString();
-    loadEvents(today, today);
+    loadEvents(null, null,  today);
   }
 
   private String getCurrentDateString() {

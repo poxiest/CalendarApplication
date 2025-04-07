@@ -14,7 +14,7 @@ public interface Features {
 
   void setActiveCalendar(String calendarName);
 
-  void loadEvents(String startDate, String endDate);
+  void loadEvents(String startDate, String endDate, String on);
 
   void navigateToPrevious();
 

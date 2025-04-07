@@ -1,8 +1,6 @@
 package calendarapp.view.impl;
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -46,10 +44,10 @@ public class GUIJFrameView extends JFrame implements GUIView {
   private JButton findEventsButton;
   // Data structures and state
   private List<String> calendarNames = new ArrayList<>();
-  private String activeCalendar = "Personal";
+  private String activeCalendar;
   private LocalDate currentDate = LocalDate.now();
   private LocalDate selectedDate = LocalDate.now();
-  // Features instance provided by the controller
+
   private Features controller;
 
   public GUIJFrameView() {
@@ -71,6 +69,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
     prevButton.addActionListener(e -> controller.navigateToPrevious());
     nextButton.addActionListener(e -> controller.navigateToNext());
     createEventButton.addActionListener(e -> controller.createEvent());
+    findEventsButton.addActionListener(e -> controller.findEvents());
   }
 
   @Override
@@ -143,30 +142,26 @@ public class GUIJFrameView extends JFrame implements GUIView {
   }
 
   @Override
-  public void navigateToPrevious() {
-    currentDate = currentDate.minusMonths(1);
+  public void navigateToPrevious(LocalDate date) {
+    currentDate = date;
     dateLabel.setText(formatDateForView(currentDate));
+    detailsDateLabel.setText(formatDateForView(currentDate));
     updateCalendarView();
-    String startDate = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-    String endDate = currentDate.plusMonths(1).minusDays(1).format(DateTimeFormatter.ofPattern(
-        "yyyy-MM-dd"));
-    controller.loadEvents(startDate, endDate);
   }
 
   @Override
-  public void navigateToNext() {
-    currentDate = currentDate.plusMonths(1);
+  public void navigateToNext(LocalDate date) {
+    currentDate = date;
     dateLabel.setText(formatDateForView(currentDate));
+    detailsDateLabel.setText(formatDateForView(currentDate));
     updateCalendarView();
-    String startDate = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-    String endDate = currentDate.plusMonths(1).minusDays(1).format(DateTimeFormatter.ofPattern(
-        "yyyy-MM-dd"));
-    controller.loadEvents(startDate, endDate);
   }
 
   @Override
-  public void findEvents() {
-
+  public Map<String, String> findEvents() {
+    FindEventsFormDialog dialog = new FindEventsFormDialog(this);
+    detailsDateLabel.setText("Find Events Result");
+    return dialog.showDialog();
   }
 
   private void createComponents() {
@@ -342,6 +337,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
     YearMonth yearMonth = YearMonth.from(currentDate);
     LocalDate firstOfMonth = yearMonth.atDay(1);
     String[] daysOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+
     for (String day : daysOfWeek) {
       JPanel headerCell = new JPanel(new BorderLayout());
       headerCell.setBackground(Color.LIGHT_GRAY);
@@ -351,50 +347,40 @@ public class GUIJFrameView extends JFrame implements GUIView {
       headerCell.add(dayLabel, BorderLayout.CENTER);
       calendarPanel.add(headerCell);
     }
+
     int dayOfWeekValue = firstOfMonth.getDayOfWeek().getValue() % 7;
     for (int i = 0; i < dayOfWeekValue; i++) {
       JPanel emptyCell = new JPanel();
       emptyCell.setBackground(calendarColors.getOrDefault(activeCalendar, Color.GRAY));
       calendarPanel.add(emptyCell);
     }
+
     int daysInMonth = yearMonth.lengthOfMonth();
     for (int day = 1; day <= daysInMonth; day++) {
       LocalDate date = yearMonth.atDay(day);
-      JPanel dayPanel = new JPanel(new BorderLayout());
-      dayPanel.setBackground(Color.WHITE);
-      dayPanel.setBorder(BorderFactory.createCompoundBorder(
+      // Create a JButton for each day cell
+      JButton dayButton = new JButton(String.valueOf(day));
+      dayButton.setBackground(Color.WHITE);
+      dayButton.setOpaque(true);
+      dayButton.setBorder(BorderFactory.createCompoundBorder(
           BorderFactory.createLineBorder(Color.DARK_GRAY),
           new EmptyBorder(3, 3, 3, 3)
       ));
-      JLabel dayLabel = new JLabel(String.valueOf(day));
-      dayLabel.setHorizontalAlignment(SwingConstants.LEFT);
-      dayPanel.add(dayLabel, BorderLayout.NORTH);
-      JPanel eventsPanel = new JPanel();
-      eventsPanel.setOpaque(false);
-      eventsPanel.setLayout(new BoxLayout(eventsPanel, BoxLayout.Y_AXIS));
-      dayPanel.add(eventsPanel, BorderLayout.CENTER);
-      final LocalDate selectedDay = date;
-      dayPanel.addMouseListener(new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-          selectedDate = selectedDay;
-          showEventsForDate(selectedDay);
-        }
+      final LocalDate selDay = date;
+      dayButton.addActionListener(e -> {
+        selectedDate = selDay;
+        detailsDateLabel.setText(selDay.format(DateTimeFormatter.ofPattern("EEEE, MMM d")));
+        String formattedDate = selDay.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        controller.loadEvents(null, null, formattedDate);
       });
-      calendarPanel.add(dayPanel);
+      calendarPanel.add(dayButton);
     }
-  }
-
-  private void showEventsForDate(LocalDate date) {
-    detailsDateLabel.setText(date.format(DateTimeFormatter.ofPattern("EEEE, MMM d")));
-    String formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-    controller.loadEvents(formattedDate, formattedDate);
   }
 
   private void updateDetailsPanel(List<EventsResponseDTO> events) {
     detailsContentPanel.removeAll();
     if (events.isEmpty()) {
-      JLabel noEventsLabel = new JLabel("No events scheduled");
+      JLabel noEventsLabel = new JLabel("No events found.");
       noEventsLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
       detailsContentPanel.add(noEventsLabel);
     } else {
