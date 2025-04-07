@@ -26,7 +26,7 @@ public class SearchEventFactory {
   static {
     STRATEGY_MAP = new HashMap<>();
     STRATEGY_MAP.put(SearchType.OVERLAPPING, OverlappingEventsSearch::new);
-    STRATEGY_MAP.put(SearchType.MATCHING, InBetweenEventsSearch::new);
+    STRATEGY_MAP.put(SearchType.BETWEEN, InBetweenEventsSearch::new);
     STRATEGY_MAP.put(SearchType.EXACT, ExactMatchEventsSearch::new);
   }
 

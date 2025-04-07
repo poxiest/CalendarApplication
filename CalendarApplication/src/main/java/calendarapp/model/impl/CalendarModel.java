@@ -99,7 +99,7 @@ public class CalendarModel implements ICalendarModel {
     }
 
     return activeCalendar.getEventRepository()
-        .getEvents(null, startTemporal, endTemporal, SearchType.OVERLAPPING)
+        .getEvents(eventName, startTemporal, endTemporal, SearchType.OVERLAPPING)
         .stream()
         .map(event -> EventsResponseDTO.builder()
             .eventName(event.getName())

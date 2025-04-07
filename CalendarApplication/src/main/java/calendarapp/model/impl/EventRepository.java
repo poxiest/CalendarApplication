@@ -78,7 +78,7 @@ public class EventRepository implements IEventRepository {
       isSingleEventUpdate = true;
     } else {
       eventsToUpdate = searchEventFactory.search(events, eventName, startTime, endTime,
-          isRecurringProperty(property), SearchType.MATCHING);
+          isRecurringProperty(property), SearchType.BETWEEN);
     }
     List<IEvent> updatedEvents = new ArrayList<>();
 
