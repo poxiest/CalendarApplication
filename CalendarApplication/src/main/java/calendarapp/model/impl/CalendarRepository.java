@@ -47,6 +47,12 @@ public class CalendarRepository implements ICalendarRepository {
       throw new InvalidCommandException("Calendar does not exist.\n");
     }
 
+    if (propertyName.equals(Constants.Calendar.CALENDAR_NAME)) {
+      if (getCalendar(propertyValue) != null) {
+        throw new InvalidCommandException("Calendar already exists.\n");
+      }
+    }
+
     BiConsumer<Calendar.Builder, String> updater = CalendarPropertyUpdater.getUpdater(propertyName);
     if (updater == null) {
       throw new InvalidCommandException("Invalid property name.\n");
