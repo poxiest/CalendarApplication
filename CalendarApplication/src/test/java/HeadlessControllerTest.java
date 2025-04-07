@@ -67,16 +67,19 @@ public class HeadlessControllerTest {
     controller = CalendarControllerFactory.getController("headless",
         filepath + "/src/test/java/positiveTestcase.txt", model, view);
     controller.start();
-    assertEquals("Enter command or enter 'exit' to exit the calendar application.\n" +
-            "Processing command: create event test on \"2025-11-11\"\n" +
-            "\n" +
-            "Enter command or enter 'exit' to exit the calendar application.\n" +
-            "Processing command: print events from \"2025-11-09\" to \"2025-11-25\"\n" +
-            "Events:\n" +
-            "• test - 2025-11-11T00:00 to 2025-11-12T00:00 \n" +
-            "\n" +
-            "Enter command or enter 'exit' to exit the calendar application.\n" +
-            "Exiting application.\n",
+    assertEquals("Enter command or enter 'exit' to exit the calendar application.\n"
+            + "Processing command: create event test on \"2025-11-11\"\n"
+            + "\n"
+            + "Enter command or enter 'exit' to exit the calendar application.\n"
+            + "Processing command: print events from \"2025-11-09\" to \"2025-11-25\"\n"
+            + "Events:\n"
+            + "• test - 2025-11-11T00:00 to 2025-11-12T00:00 \n"
+            + "\n"
+            + "Enter command or enter 'exit' to exit the calendar application.\n"
+            + "Skipping empty line.\n"
+            + "\n"
+            + "Enter command or enter 'exit' to exit the calendar application.\n"
+            + "Exiting application.\n",
         view.getResult());
   }
 

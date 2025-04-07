@@ -2,18 +2,32 @@ package calendarapp.model.impl;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
+
+import calendarapp.model.CalendarUpdateOperation;
+import calendarapp.model.ICalendar;
 
 /**
  * Provides property update operations for Calendar.Builder using a map of supported properties.
  */
 public class CalendarPropertyUpdater {
-  private static final Map<String, BiConsumer<Calendar.Builder, String>> UPDATERS;
+  private static final Map<String, CalendarUpdateOperation> UPDATERS;
 
   static {
     UPDATERS = new HashMap<>();
-    UPDATERS.put(Constants.Calendar.CALENDAR_NAME, (builder, value) -> builder.name(value));
-    UPDATERS.put(Constants.Calendar.CALENDAR_TIME_ZONE, (builder, value) -> builder.zoneId(value));
+    UPDATERS.put(Constants.Calendar.CALENDAR_NAME, (oldCal, newValue) -> Calendar.builder()
+        .name(newValue)
+        .zoneId(oldCal.getZoneId())
+        .eventRepository(oldCal.getEventRepository())
+        .build());
+    UPDATERS.put(Constants.Calendar.CALENDAR_TIME_ZONE, (oldCal, newValue) -> {
+      ICalendar updated = Calendar.builder()
+          .name(oldCal.getName())
+          .zoneId(newValue)
+          .eventRepository(oldCal.getEventRepository())
+          .build();
+      updated.getEventRepository().changeTimeZone(oldCal.getZoneId(), updated.getZoneId());
+      return updated;
+    });
   }
 
   /**
@@ -22,7 +36,7 @@ public class CalendarPropertyUpdater {
    * @param property the name of the calendar property
    * @return a BiConsumer that updates the corresponding property on the Calendar.Builder
    */
-  public static BiConsumer<Calendar.Builder, String> getUpdater(String property) {
+  public static CalendarUpdateOperation getUpdater(String property) {
     return UPDATERS.get(property.toLowerCase());
   }
 }

@@ -1666,6 +1666,26 @@ public class CommandsE2ETest {
         + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n", stringOutput.toString());
   }
 
+  // edit calendar name
+  @Test(expected = InvalidCommandException.class)
+  public void testEditCalendarName_1() {
+    try{
+    controller = new MockController("create calendar --name personalcal --timezone "
+        + "\"America/New_York\"\n"
+        + "create calendar --name PersonalCal --timezone "
+            + "\"America/New_York\"\n"
+        + "use calendar --name personalcal\n"
+        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+        + "print events from 2025-11-10 to 2025-11-12\n"
+        + "edit calendar --name personalcal --property name PersonalCal\n", model, view);
+    controller.start();}
+    catch (InvalidCommandException e) {
+      assertEquals("edit calendar --name personalcal --property name PersonalCal\n"
+          + "Reason : Calendar already exists.\n", e.getMessage());
+      throw e;
+    }
+  }
+
   // edit calendar name and call use calendar with old name
   @Test(expected = InvalidCommandException.class)
   public void testEditCalendarName1() {
