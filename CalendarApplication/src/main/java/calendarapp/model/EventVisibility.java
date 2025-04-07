@@ -1,5 +1,9 @@
 package calendarapp.model;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Enum of event visibility options available in the calendar application.
  */
@@ -51,6 +55,17 @@ public enum EventVisibility {
       }
     }
     return UNKNOWN;
+  }
+
+  /**
+   * Returns the list of active visibilities.
+   *
+   * @return List<String> visibilities.
+   */
+  public static List<String> getVisibilities() {
+    return Arrays.stream(values())
+        .filter(prop -> !prop.value.equalsIgnoreCase(EventVisibility.UNKNOWN.value))
+        .map(EventVisibility::getValue).collect(Collectors.toList());
   }
 
   /**

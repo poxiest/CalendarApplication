@@ -11,10 +11,15 @@ import calendarapp.view.GUIView;
 
 import static calendarapp.utils.Constants.CALENDAR_NAME;
 import static calendarapp.utils.Constants.CALENDAR_TIME_ZONE;
+import static calendarapp.utils.Constants.EVENT_DESCRIPTION;
 import static calendarapp.utils.Constants.EVENT_END_DATE;
 import static calendarapp.utils.Constants.EVENT_LOCATION;
 import static calendarapp.utils.Constants.EVENT_NAME;
+import static calendarapp.utils.Constants.EVENT_RECURRING_COUNT;
+import static calendarapp.utils.Constants.EVENT_RECURRING_DAYS;
+import static calendarapp.utils.Constants.EVENT_RECURRING_END_DATE;
 import static calendarapp.utils.Constants.EVENT_START_DATE;
+import static calendarapp.utils.Constants.EVENT_VISIBILITY;
 
 public class GUIController implements Features {
 
@@ -36,8 +41,14 @@ public class GUIController implements Features {
   public void createEvent() {
     try {
       Map<String, String> results = view.showCreateEventForm();
-      model.createEvent(results.get(EVENT_NAME), results.get(EVENT_START_DATE), results.get(EVENT_END_DATE), null, null,
-          null, null, results.get(EVENT_LOCATION), null, true);
+      if (results == null) {
+        return;
+      }
+      model.createEvent(results.get(EVENT_NAME), results.get(EVENT_START_DATE),
+          results.get(EVENT_END_DATE), results.get(EVENT_RECURRING_DAYS),
+          results.get(EVENT_RECURRING_COUNT), results.get(EVENT_RECURRING_END_DATE),
+          results.get(EVENT_DESCRIPTION), results.get(EVENT_LOCATION),
+          results.get(EVENT_VISIBILITY), true);
       view.showConfirmation("Event created successfully.");
       refreshEvents();
     } catch (EventConflictException e) {
@@ -65,6 +76,9 @@ public class GUIController implements Features {
   public void createCalendar() {
     try {
       Map<String, String> results = view.showCreateCalendarForm();
+      if (results == null) {
+        return;
+      }
       model.createCalendar(results.get(CALENDAR_NAME), results.get(CALENDAR_TIME_ZONE));
       view.showConfirmation("Calendar created successfully.");
       refreshCalendarList();

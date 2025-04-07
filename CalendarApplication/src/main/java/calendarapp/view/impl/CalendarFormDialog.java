@@ -24,7 +24,7 @@ public class CalendarFormDialog extends JDialog {
   private void constructCalendarPanel() {
     JTextField nameField;
     JTextField timezoneField;
-    setSize(350, 200);
+    setSize(350, 300);
     setLocationRelativeTo(parent);
 
     JPanel mainPanel = new JPanel(new BorderLayout());
