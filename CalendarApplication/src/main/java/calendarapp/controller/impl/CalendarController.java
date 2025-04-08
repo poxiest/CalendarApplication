@@ -68,7 +68,6 @@ public class CalendarController implements ICalendarController {
         break;
       }
       if (command.isEmpty() || command.isBlank()) {
-        view.displayMessage("Skipping empty line.\n\n");
         continue;
       }
       view.displayMessage("Processing command: " + command + "\n");

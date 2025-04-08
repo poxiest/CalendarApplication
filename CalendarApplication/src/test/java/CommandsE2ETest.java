@@ -1669,17 +1669,17 @@ public class CommandsE2ETest {
   // edit calendar name
   @Test(expected = InvalidCommandException.class)
   public void testEditCalendarName_1() {
-    try{
-    controller = new MockController("create calendar --name personalcal --timezone "
-        + "\"America/New_York\"\n"
-        + "create calendar --name PersonalCal --timezone "
-            + "\"America/New_York\"\n"
-        + "use calendar --name personalcal\n"
-        + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
-        + "print events from 2025-11-10 to 2025-11-12\n"
-        + "edit calendar --name personalcal --property name PersonalCal\n", model, view);
-    controller.start();}
-    catch (InvalidCommandException e) {
+    try {
+      controller = new MockController("create calendar --name personalcal --timezone "
+          + "\"America/New_York\"\n"
+          + "create calendar --name PersonalCal --timezone "
+          + "\"America/New_York\"\n"
+          + "use calendar --name personalcal\n"
+          + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+          + "print events from 2025-11-10 to 2025-11-12\n"
+          + "edit calendar --name personalcal --property name PersonalCal\n", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
       assertEquals("edit calendar --name personalcal --property name PersonalCal\n"
           + "Reason : Calendar already exists.\n", e.getMessage());
       throw e;
@@ -1939,6 +1939,22 @@ public class CommandsE2ETest {
     } catch (InvalidCommandException e) {
       assertEquals("copy event EventName on 2025-11-11T11:00 --target to "
           + "2025-11-11T10:00\nReason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  // start greater than end time
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy_1() {
+    try {
+      controller = new MockController("create calendar --name workcal --timezone "
+          + "\"America/New_York\"\n"
+          + "copy events between 2025-11-12 and 2025-11-10 --target workcal to 2025-11-10"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy events between 2025-11-12 and 2025-11-10 --target workcal to 2025-11-10\n"
+          + "Reason : Start time must be before end time", e.getMessage());
       throw e;
     }
   }
@@ -2245,9 +2261,9 @@ public class CommandsE2ETest {
   }
 
   private static class MockController implements ICalendarController {
-    private ICalendarModel model;
-    private Readable in;
-    private ICalendarView view;
+    private final ICalendarModel model;
+    private final Readable in;
+    private final ICalendarView view;
 
     public MockController(String input, ICalendarModel calendarApplication,
                           ICalendarView calendarView) {

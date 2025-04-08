@@ -119,7 +119,7 @@ public class Calendar implements ICalendar {
      * @throws InvalidCommandException if name or event repository is missing
      */
     public Calendar build() {
-      if (name == null) {
+      if (name == null || name.trim().isEmpty()) {
         throw new InvalidCommandException("Calendar name cannot be null or empty.\n");
       }
       if (eventRepository == null) {

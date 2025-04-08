@@ -405,10 +405,10 @@ public class Event implements IEvent {
               + "Use M,T,W,R,F,S,U for days of week");
         }
 
-//        if (occurrenceCount != null && recurrenceEndDate = null) {
-//          throw new IllegalArgumentException("Recurring events require either occurrence "
-//              + "count or end date");
-//        }
+        if (occurrenceCount != null && recurrenceEndDate != null) {
+          throw new IllegalArgumentException("Cannot have both occurrenceCount and "
+              + "recurrenceEndDate.");
+        }
 
         if (occurrenceCount == null && recurrenceEndDate == null) {
           throw new IllegalArgumentException("Recurring events require either occurrence "

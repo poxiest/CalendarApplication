@@ -1,6 +1,8 @@
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+
 import calendarapp.controller.ICalendarController;
 import calendarapp.controller.InvalidCommandException;
 import calendarapp.controller.impl.CalendarControllerFactory;
@@ -15,11 +17,12 @@ import static org.junit.Assert.assertEquals;
  */
 public class HeadlessControllerTest {
 
+  private final String filepath = System.getProperty("user.dir").contains("CalendarApplication")
+      ? System.getProperty("user.dir") : System.getProperty("user.dir") + File.separator +
+      "CalendarApplication";
   private ICalendarController controller;
   private ICalendarModel model;
   private MockView view;
-  private String filepath = System.getProperty("user.dir").contains("CalendarApplication")
-      ? System.getProperty("user.dir") : System.getProperty("user.dir") + "/CalendarApplication";
 
   @Before
   public void setUp() {
@@ -37,7 +40,7 @@ public class HeadlessControllerTest {
   public void testHeadless1() {
     try {
       controller = CalendarControllerFactory.getController("headless",
-          filepath + "/src/test/java/withoutExitCommand.txt",
+          filepath + File.separator + ("src") + File.separator + "test" + File.separator + "java" + File.separator + "withoutExitCommand.txt",
           model, view);
       controller.start();
     } catch (Exception e) {
@@ -57,7 +60,7 @@ public class HeadlessControllerTest {
   @Test(expected = IllegalArgumentException.class)
   public void testHeadless1_1() {
     controller = CalendarControllerFactory.getController("headless",
-        filepath + "/src/test/java/withoutExitCommand",
+        filepath + File.separator + ("src") + File.separator + "test" + File.separator + "java" + File.separator + "withoutExitCommand",
         model, view);
     controller.start();
   }
@@ -65,7 +68,7 @@ public class HeadlessControllerTest {
   @Test
   public void testHeadless2() {
     controller = CalendarControllerFactory.getController("headless",
-        filepath + "/src/test/java/positiveTestcase.txt", model, view);
+        filepath + File.separator + ("src") + File.separator + "test" + File.separator + "java" + File.separator + "positiveTestcase.txt", model, view);
     controller.start();
     assertEquals("Enter command or enter 'exit' to exit the calendar application.\n"
             + "Processing command: create event test on \"2025-11-11\"\n"
@@ -76,8 +79,6 @@ public class HeadlessControllerTest {
             + "• test - 2025-11-11T00:00 to 2025-11-12T00:00 \n"
             + "\n"
             + "Enter command or enter 'exit' to exit the calendar application.\n"
-            + "Skipping empty line.\n"
-            + "\n"
             + "Enter command or enter 'exit' to exit the calendar application.\n"
             + "Exiting application.\n",
         view.getResult());
@@ -86,7 +87,7 @@ public class HeadlessControllerTest {
   @Test
   public void testGracefulExit() {
     controller = CalendarControllerFactory.getController("headless",
-        filepath + "/src/test/java/SingleEventConflictCommand.txt",
+        filepath + File.separator + ("src") + File.separator + "test" + File.separator + "java" + File.separator + "SingleEventConflictCommand.txt",
         model, view);
     controller.start();
     assertEquals("Enter command or enter 'exit' to exit the calendar application.\n"

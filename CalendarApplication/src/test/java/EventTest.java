@@ -375,7 +375,6 @@ public class EventTest {
         .description("Annual Meeting")
         .visibility("Public")
         .recurringDays("MRW")
-        .occurrenceCount(5)
         .recurrenceEndDate(LocalDateTime.of(2025, 12, 31, 0, 0))
         .isAutoDecline(true).build();
 
@@ -395,7 +394,6 @@ public class EventTest {
         .visibility("Public")
         .recurringDays("MRW")
         .occurrenceCount(5)
-        .recurrenceEndDate(LocalDateTime.of(2025, 12, 31, 0, 0))
         .isAutoDecline(true).build();
 
     Event event2 = Event.builder()
@@ -407,7 +405,6 @@ public class EventTest {
         .visibility("Public")
         .recurringDays("MRW")
         .occurrenceCount(5)
-        .recurrenceEndDate(LocalDateTime.of(2025, 12, 31, 0, 0))
         .isAutoDecline(true).build();
 
     // Symmetric: If event1 equals event2, then event2 should equal event1
@@ -429,7 +426,6 @@ public class EventTest {
         .visibility("Public")
         .recurringDays("MRW")
         .occurrenceCount(5)
-        .recurrenceEndDate(LocalDateTime.of(2025, 12, 31, 0, 0))
         .isAutoDecline(true).build();
 
     Event event2 = Event.builder()
@@ -441,7 +437,6 @@ public class EventTest {
         .visibility("Public")
         .recurringDays("MRW")
         .occurrenceCount(5)
-        .recurrenceEndDate(LocalDateTime.of(2025, 12, 31, 0, 0))
         .isAutoDecline(true).build();
 
     Event event3 = Event.builder()
@@ -453,7 +448,6 @@ public class EventTest {
         .visibility("Public")
         .recurringDays("MRW")
         .occurrenceCount(5)
-        .recurrenceEndDate(LocalDateTime.of(2025, 12, 31, 0, 0))
         .isAutoDecline(true).build();
 
     // Transitive: If event1 equals event2 and event2 equals event3, then event1 should equal event3
@@ -476,7 +470,6 @@ public class EventTest {
         .description("Annual Meeting")
         .visibility("Public")
         .recurringDays("MRW")
-        .occurrenceCount(5)
         .recurrenceEndDate(LocalDateTime.of(2025, 12, 31, 0, 0))
         .isAutoDecline(true).build();
 
@@ -488,7 +481,6 @@ public class EventTest {
         .description("Annual Meeting")
         .visibility("Public")
         .recurringDays("MRW")
-        .occurrenceCount(5)
         .recurrenceEndDate(LocalDateTime.of(2025, 12, 31, 0, 0))
         .isAutoDecline(true).build();
 

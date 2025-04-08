@@ -133,7 +133,7 @@ public class SearchStrategyTestCases {
         null,
         LocalDateTime.of(2025, 4, 10, 0, 0),
         LocalDateTime.of(2025, 4, 12, 23, 59),
-        false, SearchType.MATCHING);
+        false, SearchType.BETWEEN);
 
     assertEquals(3, results.size());
     assertEquals("Team Meeting", results.get(0).getName());
@@ -147,7 +147,7 @@ public class SearchStrategyTestCases {
         "Team Meeting",
         null,
         null,
-        false, SearchType.MATCHING);
+        false, SearchType.BETWEEN);
 
     assertEquals(2, results.size());
     assertEquals(LocalDateTime.of(2025, 4, 11, 9, 0), results.get(1).getStartTime());
@@ -160,7 +160,7 @@ public class SearchStrategyTestCases {
         null,
         null,
         null,
-        true, SearchType.MATCHING);
+        true, SearchType.BETWEEN);
 
     assertEquals(1, results.size());
     assertEquals("Yoga Class", results.get(0).getName());
@@ -172,7 +172,7 @@ public class SearchStrategyTestCases {
         null,
         LocalDateTime.of(2025, 5, 1, 0, 0),
         LocalDateTime.of(2025, 5, 2, 0, 0),
-        false, SearchType.MATCHING);
+        false, SearchType.BETWEEN);
 
     assertEquals(0, results.size());
   }

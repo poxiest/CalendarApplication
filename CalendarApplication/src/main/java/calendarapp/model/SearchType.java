@@ -5,6 +5,6 @@ package calendarapp.model;
  */
 public enum SearchType {
   OVERLAPPING,
-  MATCHING,
+  BETWEEN,
   EXACT;
 }

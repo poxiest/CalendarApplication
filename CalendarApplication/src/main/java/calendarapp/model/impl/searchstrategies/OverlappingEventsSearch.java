@@ -4,6 +4,7 @@ import java.time.temporal.Temporal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.IEvent;
 import calendarapp.model.SearchEventsStrategy;
 import calendarapp.utils.TimeUtil;
@@ -27,6 +28,9 @@ public class OverlappingEventsSearch implements SearchEventsStrategy {
   @Override
   public List<IEvent> search(List<IEvent> events, String eventName, Temporal startTime,
                              Temporal endTime, boolean isRecurring) {
+    if (endTime != null && TimeUtil.isFirstAfterSecond(startTime, endTime)) {
+      throw new InvalidCommandException("Start time must be before end time.\n");
+    }
     return events.stream()
         .filter(event -> TimeUtil.isConflicting(event.getStartTime(),
             event.getEndTime(), startTime, endTime))

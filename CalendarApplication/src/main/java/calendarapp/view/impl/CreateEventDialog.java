@@ -4,6 +4,7 @@ import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +25,8 @@ import static calendarapp.utils.Constants.EVENT_START_DATE;
 import static calendarapp.utils.Constants.EVENT_VISIBILITY;
 
 public class CreateEventDialog extends JDialog {
+  private final Date selectedDate;
+  private final JFrame parent;
   private JTextField eventNameField;
   private JSpinner startTimeSpinner;
   private JSpinner endTimeSpinner;
@@ -33,15 +36,9 @@ public class CreateEventDialog extends JDialog {
   private JSpinner recurrenceEndDateSpinner;
   private JTextField descriptionField;
   private JComboBox<String> visibilityComboBox;
-
-  // Radio buttons to choose between recurrence types
   private JRadioButton singleEventButton;
   private JRadioButton countRadioButton;
   private JRadioButton dateRadioButton;
-
-
-  private final Date selectedDate;
-  private final JFrame parent;
   private Map<String, String> result = null;
 
   public CreateEventDialog(JFrame parent, LocalDate selectedDate) {
@@ -65,11 +62,11 @@ public class CreateEventDialog extends JDialog {
     formPanel.add(eventNameField);
 
     formPanel.add(new JLabel("Start Time:"));
-    startTimeSpinner = createDateTimeSpinner(selectedDate);
+    startTimeSpinner = createDateTimeSpinner(selectedDate, "MM-dd-yyyy HH:mm", Calendar.MINUTE);
     formPanel.add(startTimeSpinner);
 
     formPanel.add(new JLabel("End Time:"));
-    endTimeSpinner = createDateTimeSpinner(selectedDate);
+    endTimeSpinner = createDateTimeSpinner(selectedDate, "MM-dd-yyyy HH:mm", Calendar.MINUTE);
     formPanel.add(endTimeSpinner);
 
     formPanel.add(new JLabel("Location:"));
@@ -103,16 +100,13 @@ public class CreateEventDialog extends JDialog {
     formPanel.add(daysPanel);
 
     formPanel.add(new JLabel("Occurrence Count:"));
-    occurrenceCountSpinner = new JSpinner(new SpinnerNumberModel(1, 0, Integer.MAX_VALUE, 1));
+    occurrenceCountSpinner = new JSpinner(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
     occurrenceCountSpinner.setEnabled(false);
     formPanel.add(occurrenceCountSpinner);
 
     formPanel.add(new JLabel("Recurrence End Date:"));
-    recurrenceEndDateSpinner = new JSpinner(new SpinnerDateModel(selectedDate, null, null,
-        java.util.Calendar.DAY_OF_MONTH));
-    JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(recurrenceEndDateSpinner, "MM-dd"
-        + "-yyyy");
-    recurrenceEndDateSpinner.setEditor(dateEditor);
+    recurrenceEndDateSpinner = createDateTimeSpinner(selectedDate, "MM-dd-yyyy",
+        Calendar.DAY_OF_MONTH);
     recurrenceEndDateSpinner.setEnabled(false);
     formPanel.add(recurrenceEndDateSpinner);
 
@@ -190,11 +184,10 @@ public class CreateEventDialog extends JDialog {
     add(mainPanel);
   }
 
-  private JSpinner createDateTimeSpinner(Date initialDate) {
-    SpinnerDateModel model = new SpinnerDateModel(initialDate, null, null,
-        java.util.Calendar.MINUTE);
+  private JSpinner createDateTimeSpinner(Date initialDate, String format, int calendarField) {
+    SpinnerDateModel model = new SpinnerDateModel(initialDate, null, null, calendarField);
     JSpinner spinner = new JSpinner(model);
-    JSpinner.DateEditor editor = new JSpinner.DateEditor(spinner, "MM-dd-yyyy HH:mm");
+    JSpinner.DateEditor editor = new JSpinner.DateEditor(spinner, format);
     spinner.setEditor(editor);
     return spinner;
   }
