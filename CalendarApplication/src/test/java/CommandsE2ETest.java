@@ -1943,6 +1943,22 @@ public class CommandsE2ETest {
     }
   }
 
+  // start greater than end time
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy_1() {
+    try {
+      controller = new MockController("create calendar --name workcal --timezone "
+          + "\"America/New_York\"\n"
+          + "copy events between 2025-11-12 and 2025-11-10 --target workcal to 2025-11-10"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy events between 2025-11-12 and 2025-11-10 --target workcal to 2025-11-10\n"
+          + "Reason : Start time must be before end time", e.getMessage());
+      throw e;
+    }
+  }
+
   @Test(expected = InvalidCommandException.class)
   public void testInvalidCopy1() {
     try {

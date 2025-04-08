@@ -17,12 +17,12 @@ import static org.junit.Assert.assertEquals;
  */
 public class HeadlessControllerTest {
 
-  private ICalendarController controller;
-  private ICalendarModel model;
-  private MockView view;
   private final String filepath = System.getProperty("user.dir").contains("CalendarApplication")
       ? System.getProperty("user.dir") : System.getProperty("user.dir") + File.separator +
       "CalendarApplication";
+  private ICalendarController controller;
+  private ICalendarModel model;
+  private MockView view;
 
   @Before
   public void setUp() {
