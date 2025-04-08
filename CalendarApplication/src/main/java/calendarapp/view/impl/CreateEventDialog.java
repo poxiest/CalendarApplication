@@ -25,6 +25,8 @@ import static calendarapp.utils.Constants.EVENT_START_DATE;
 import static calendarapp.utils.Constants.EVENT_VISIBILITY;
 
 public class CreateEventDialog extends JDialog {
+  private final Date selectedDate;
+  private final JFrame parent;
   private JTextField eventNameField;
   private JSpinner startTimeSpinner;
   private JSpinner endTimeSpinner;
@@ -34,13 +36,9 @@ public class CreateEventDialog extends JDialog {
   private JSpinner recurrenceEndDateSpinner;
   private JTextField descriptionField;
   private JComboBox<String> visibilityComboBox;
-
   private JRadioButton singleEventButton;
   private JRadioButton countRadioButton;
   private JRadioButton dateRadioButton;
-
-  private final Date selectedDate;
-  private final JFrame parent;
   private Map<String, String> result = null;
 
   public CreateEventDialog(JFrame parent, LocalDate selectedDate) {

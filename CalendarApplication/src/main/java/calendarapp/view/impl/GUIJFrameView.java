@@ -218,7 +218,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
     dateLabel = new JLabel(formatDateForView(currentDate));
     dateLabel.setFont(new Font("Arial", Font.BOLD, 16));
     dateLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    navigationPanel.setBorder(BorderFactory.createMatteBorder(0 ,0 , 10, 0, Color.WHITE));
+    navigationPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 10, 0, Color.WHITE));
     navigationPanel.add(prevButton);
     navigationPanel.add(dateLabel);
     navigationPanel.add(nextButton);

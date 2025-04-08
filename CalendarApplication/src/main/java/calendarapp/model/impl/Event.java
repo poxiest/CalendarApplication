@@ -406,7 +406,8 @@ public class Event implements IEvent {
         }
 
         if (occurrenceCount != null && recurrenceEndDate != null) {
-          throw new IllegalArgumentException("Cannot have both occurrenceCount and recurrenceEndDate.");
+          throw new IllegalArgumentException("Cannot have both occurrenceCount and "
+              + "recurrenceEndDate.");
         }
 
         if (occurrenceCount == null && recurrenceEndDate == null) {

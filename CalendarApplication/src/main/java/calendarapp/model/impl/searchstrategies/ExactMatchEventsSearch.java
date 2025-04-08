@@ -4,7 +4,6 @@ import java.time.temporal.Temporal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.IEvent;
 import calendarapp.model.SearchEventsStrategy;
 import calendarapp.utils.TimeUtil;

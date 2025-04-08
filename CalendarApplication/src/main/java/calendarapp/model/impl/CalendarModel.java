@@ -88,7 +88,8 @@ public class CalendarModel implements ICalendarModel {
    * @return A list of {@link EventsResponseDTO} objects containing event details.
    */
   @Override
-  public List<EventsResponseDTO> getEvents(String eventName, String startDateTime, String endDateTime, String on) {
+  public List<EventsResponseDTO> getEvents(String eventName, String startDateTime,
+                                           String endDateTime, String on) {
     Temporal startTemporal = getTemporalFromString(startDateTime);
     Temporal endTemporal = getTemporalFromString(endDateTime);
 
@@ -106,6 +107,11 @@ public class CalendarModel implements ICalendarModel {
             .startTime(event.getStartTime())
             .endTime(event.getEndTime())
             .location(event.getLocation())
+            .description(event.getDescription())
+            .recurringEndDate(event.getRecurrenceEndDate())
+            .occurrenceCount(event.getOccurrenceCount())
+            .recurringDays(event.getRecurringDays())
+            .visibility(event.getVisibility().getValue())
             .build())
         .collect(Collectors.toList());
   }

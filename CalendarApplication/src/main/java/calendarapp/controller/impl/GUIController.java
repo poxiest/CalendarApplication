@@ -164,7 +164,7 @@ public class GUIController implements Features {
 
   private void refreshEvents() {
     String today = getCurrentDateString();
-    loadEvents(null, null,  today);
+    loadEvents(null, null, today);
   }
 
   private String getCurrentDateString() {
