@@ -76,8 +76,6 @@ public class HeadlessControllerTest {
             + "• test - 2025-11-11T00:00 to 2025-11-12T00:00 \n"
             + "\n"
             + "Enter command or enter 'exit' to exit the calendar application.\n"
-            + "Skipping empty line.\n"
-            + "\n"
             + "Enter command or enter 'exit' to exit the calendar application.\n"
             + "Exiting application.\n",
         view.getResult());
