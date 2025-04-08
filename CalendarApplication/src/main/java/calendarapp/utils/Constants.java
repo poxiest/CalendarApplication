@@ -14,4 +14,8 @@ public class Constants {
   public static final String EVENT_DESCRIPTION = "description";
   public static final String EVENT_VISIBILITY = "visibility";
 
+  public static final String EXPORT_FILE_NAME = "exportFileName";
+  public static final String EXPORT_FILE_EXTENSION = "exportFileExtension";
+
+  public static final String IMPORT_FILE_PATH = "importFilePath";
 }

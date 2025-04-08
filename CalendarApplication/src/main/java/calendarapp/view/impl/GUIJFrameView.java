@@ -23,7 +23,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
   private final Map<String, Color> calendarColors = new HashMap<>();
   private final Random random = new Random();
   // Main panel components
-  private JPanel mainPanel;
+  private final JPanel mainPanel;
   // Header components
   private JPanel headerPanel;
   // Sidebar components
@@ -31,6 +31,8 @@ public class GUIJFrameView extends JFrame implements GUIView {
   private JButton createCalendarButton;
   private JPanel calendarListPanel;
   private ButtonGroup calendarGroup;
+  private JButton exportButton;
+  private JButton importButton;
   // Content components
   private JPanel contentPanel;
   private JPanel navigationPanel;
@@ -71,6 +73,8 @@ public class GUIJFrameView extends JFrame implements GUIView {
     prevButton.addActionListener(e -> controller.navigateToPrevious());
     nextButton.addActionListener(e -> controller.navigateToNext());
     createEventButton.addActionListener(e -> controller.createEvent());
+    exportButton.addActionListener(e -> controller.exportCalendar());
+    importButton.addActionListener(e -> controller.importCalendar());
   }
 
   @Override
@@ -169,6 +173,18 @@ public class GUIJFrameView extends JFrame implements GUIView {
 
   }
 
+  @Override
+  public Map<String, String> showExportCalendarForm() {
+    ExportCalendarFormDialog dialog = new ExportCalendarFormDialog(this);
+    return dialog.showDialog();
+  }
+
+  @Override
+  public Map<String, String> showImportCalendarDialog() {
+    ImportCalendarDialog dialog = new ImportCalendarDialog(this);
+    return dialog.showDialog();
+  }
+
   private void createComponents() {
     // Header panel
     headerPanel = new JPanel(new BorderLayout());
@@ -208,8 +224,27 @@ public class GUIJFrameView extends JFrame implements GUIView {
     calendarListPanel.setBackground(Color.WHITE);
     calendarListPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
     calendarGroup = new ButtonGroup();
+
+    JPanel calendarFooterPanel = new JPanel();
+    calendarFooterPanel.setBackground(Color.WHITE);
+    calendarFooterPanel.setLayout(new BoxLayout(calendarFooterPanel, BoxLayout.Y_AXIS));
+
+    exportButton = new JButton("Export Calendar");
+    exportButton.setPreferredSize(new Dimension(200, 30));
+    exportButton.setFont(new Font("Arial", Font.BOLD, 14));
+
+    importButton = new JButton("Import Calendar");
+    importButton.setPreferredSize(new Dimension(200, 30));
+    importButton.setFont(new Font("Arial", Font.BOLD, 14));
+
+    calendarFooterPanel.add(exportButton);
+    calendarFooterPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+    calendarFooterPanel.add(importButton);
+
     sidebarPanel.add(calendarHeaderPanel);
     sidebarPanel.add(calendarListPanel);
+    sidebarPanel.add(Box.createVerticalGlue());
+    sidebarPanel.add(calendarFooterPanel);
 
     // Content panel
     contentPanel = new JPanel(new BorderLayout());
@@ -223,7 +258,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
     dateLabel = new JLabel(formatDateForView(currentDate));
     dateLabel.setFont(new Font("Arial", Font.BOLD, 16));
     dateLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    navigationPanel.setBorder(BorderFactory.createMatteBorder(0 ,0 , 10, 0, Color.WHITE));
+    navigationPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 10, 0, Color.WHITE));
     navigationPanel.add(prevButton);
     navigationPanel.add(dateLabel);
     navigationPanel.add(nextButton);

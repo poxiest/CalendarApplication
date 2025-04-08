@@ -140,7 +140,7 @@ public class CreateEventDialog extends JDialog {
     formPanel.add(new JLabel("Visibility:"));
     String[] visibilityOptions = new String[EventVisibility.getVisibilities().size()];
     for (int i = 0; i < EventVisibility.getVisibilities().size(); i++) {
-      visibilityOptions[i] = EventVisibility.getVisibilities().get(i).toString();
+      visibilityOptions[i] = EventVisibility.getVisibilities().get(i);
     }
     visibilityComboBox = new JComboBox<>(visibilityOptions);
     formPanel.add(visibilityComboBox);

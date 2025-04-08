@@ -10,6 +10,7 @@ import calendarapp.view.ICalendarView;
 
 import static calendarapp.controller.commands.impl.RegexPatternConstants.EXPORT_FILENAME_PATTERN;
 import static calendarapp.controller.exporter.Constants.EXPORTER_MAP;
+import static calendarapp.utils.FileUtil.getFileExtension;
 
 /**
  * Export Command implementation for exporting calendar data to a file.
@@ -65,20 +66,5 @@ public class ExportCommand extends AbstractCommand {
     } catch (Exception e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     }
-  }
-
-  /**
-   * Extracts the file extension from a given file path.
-   *
-   * @param filePath The full file path or filename.
-   * @return The extracted file extension in lowercase.
-   * @throws IllegalArgumentException If no file extension is found.
-   */
-  private String getFileExtension(String filePath) {
-    String[] filenameSplit = filePath.split("\\.");
-    if (filenameSplit.length <= 1) {
-      throw new IllegalArgumentException("No extension found for file: " + filePath);
-    }
-    return filenameSplit[filenameSplit.length - 1];
   }
 }
