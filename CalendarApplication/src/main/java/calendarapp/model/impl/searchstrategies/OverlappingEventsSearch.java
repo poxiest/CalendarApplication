@@ -33,7 +33,8 @@ public class OverlappingEventsSearch implements SearchEventsStrategy {
     }
     return events.stream()
         .filter(event -> TimeUtil.isConflicting(event.getStartTime(),
-            event.getEndTime(), startTime, endTime))
+            event.getEndTime(), startTime, endTime) || TimeUtil.isEqual(event.getStartTime(),
+            startTime) || TimeUtil.isEqual(event.getEndTime(), startTime))
         .sorted((event1, event2) ->
             Math.toIntExact(TimeUtil.difference(event2.getStartTime(), event1.getStartTime())))
         .map(IEvent::deepCopyEvent)

@@ -119,15 +119,15 @@ public class GUIJFrameView extends JFrame implements GUIView {
 
   @Override
   public Map<String, String> showCreateEventForm() {
-    CreateEventDialog dialog = new CreateEventDialog(this, selectedDate);
+    EventDialog dialog = new EventDialog(this, selectedDate);
+    detailsDateLabel.setText(formatDateForView(currentDate));
     return dialog.showDialog();
   }
 
   @Override
-  public void showEditEventForm(EventsResponseDTO event) {
-//    EventFormDialog dialog = new EventFormDialog(this, controller, "Edit Event", event,
-//        selectedDate);
-//    dialog.setVisible(true);
+  public Map<String, String> showEditEventForm(EventsResponseDTO event) {
+    EventDialog dialog = new EventDialog(this, selectedDate, event);
+    return dialog.showDialog();
   }
 
   @Override
@@ -253,7 +253,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
 
     JPanel headerLabelPanel = new JPanel(new BorderLayout());
     headerLabelPanel.setBackground(Color.WHITE);
-    detailsDateLabel = new JLabel("Events");
+    detailsDateLabel = new JLabel(formatDateForView(currentDate));
     detailsDateLabel.setFont(new Font("Arial", Font.BOLD, 16));
     detailsDateLabel.setBorder(BorderFactory.createMatteBorder(20, 0, 10, 0, Color.WHITE));
     headerLabelPanel.add(detailsDateLabel, BorderLayout.WEST);
@@ -405,9 +405,10 @@ public class GUIJFrameView extends JFrame implements GUIView {
     JPanel infoPanel = new JPanel();
     infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
     infoPanel.setBackground(Color.WHITE);
-    JLabel timeLabel = new JLabel(event.getStartTime() + " - " + event.getEndTime());
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
+    JLabel timeLabel = new JLabel(formatter.format(event.getStartTime()) + " to " + formatter.format(event.getEndTime()));
     timeLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-    JLabel titleLabel = new JLabel(event.getEventName());
+    JLabel titleLabel = new JLabel(event.getEventName() + ((event.getLocation() != null) ? " - Location : " + event.getLocation() : ""));
     titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
     infoPanel.add(timeLabel);
     infoPanel.add(titleLabel);
@@ -418,7 +419,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
     }
     JButton editButton = new JButton("Edit");
     editButton.setFont(new Font("Arial", Font.PLAIN, 12));
-    editButton.addActionListener(e -> showEditEventForm(event));
+    editButton.addActionListener(e -> controller.editEvent(event));
     panel.add(infoPanel, BorderLayout.CENTER);
     panel.add(editButton, BorderLayout.EAST);
     return panel;

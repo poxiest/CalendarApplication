@@ -23,7 +23,7 @@ public interface GUIView {
 
   Map<String, String> showCreateEventForm();
 
-  void showEditEventForm(EventsResponseDTO event);
+  Map<String, String> showEditEventForm(EventsResponseDTO event);
 
   Map<String, String> showCreateCalendarForm();
 

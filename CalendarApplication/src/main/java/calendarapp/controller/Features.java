@@ -8,7 +8,7 @@ public interface Features {
 
   void createEvent();
 
-  void editEvent(String eventName, String startTime, String endTime, String property, String value);
+  void editEvent(EventsResponseDTO eventDTO);
 
   void createCalendar();
 
