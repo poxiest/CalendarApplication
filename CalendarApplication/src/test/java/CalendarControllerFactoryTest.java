@@ -1,6 +1,7 @@
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +24,9 @@ public class CalendarControllerFactoryTest {
   private ICalendarView view;
   private ICalendarModel model;
 
-  private String filepath = System.getProperty("user.dir").contains("CalendarApplication")
-      ? System.getProperty("user.dir") : System.getProperty("user.dir") + "/CalendarApplication";
+  private final String filepath = System.getProperty("user.dir").contains("CalendarApplication")
+      ? System.getProperty("user.dir") : System.getProperty("user.dir") + File.separator +
+      "CalendarApplication";
 
   @Before
   public void setup() {
@@ -55,7 +57,7 @@ public class CalendarControllerFactoryTest {
   @Test
   public void testControllerFactory3() {
     controller = CalendarControllerFactory.getController("headless",
-        filepath + "/src/test/java/positiveTestcase.txt", model,
+        filepath + File.separator + ("src") + File.separator + "test" + File.separator + "java" + File.separator + "positiveTestcase.txt", model,
         view);
     assertEquals(CalendarController.class, controller.getClass());
   }
@@ -69,7 +71,7 @@ public class CalendarControllerFactoryTest {
   @Test
   public void testControllerFactory5() {
     controller = CalendarControllerFactory.getController("HEADLESS",
-        filepath + "/src/test/java/positiveTestcase.txt", model,
+        filepath + File.separator + ("src") + File.separator + "test" + File.separator + "java" + File.separator + "positiveTestcase.txt", model,
         view);
     assertEquals(CalendarController.class, controller.getClass());
   }
