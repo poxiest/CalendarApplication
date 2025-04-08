@@ -68,8 +68,8 @@ public class CsvCalendarImporter implements ICalendarImporter {
     String startTime = fields.get(2);
     String endDate = fields.get(3);
     String endTime = fields.get(4);
-    String description = fields.get(6);
-    String location = fields.get(7);
+    String description = fields.get(6).isEmpty() ? null : fields.get(6);;
+    String location = fields.get(7).isEmpty() ? null : fields.get(7);
     String visibility = CsvFormat.TRUE_VALUE.equalsIgnoreCase(fields.get(8).trim()) ?
         EventVisibility.PRIVATE.toString().toLowerCase() :
         EventVisibility.PUBLIC.toString().toLowerCase();
