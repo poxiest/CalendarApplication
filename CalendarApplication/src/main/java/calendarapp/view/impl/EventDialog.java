@@ -3,6 +3,7 @@ package calendarapp.view.impl;
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
@@ -13,6 +14,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import calendarapp.model.EventVisibility;
+import calendarapp.model.dto.EventsResponseDTO;
 
 import static calendarapp.utils.Constants.EVENT_DESCRIPTION;
 import static calendarapp.utils.Constants.EVENT_END_DATE;
@@ -24,9 +26,9 @@ import static calendarapp.utils.Constants.EVENT_RECURRING_END_DATE;
 import static calendarapp.utils.Constants.EVENT_START_DATE;
 import static calendarapp.utils.Constants.EVENT_VISIBILITY;
 
-public class CreateEventDialog extends JDialog {
-  private final Date selectedDate;
+public class EventDialog extends JDialog {
   private final JFrame parent;
+  private Date selectedDate;
   private JTextField eventNameField;
   private JSpinner startTimeSpinner;
   private JSpinner endTimeSpinner;
@@ -39,14 +41,32 @@ public class CreateEventDialog extends JDialog {
   private JRadioButton singleEventButton;
   private JRadioButton countRadioButton;
   private JRadioButton dateRadioButton;
+  private JPanel daysPanel;
   private Map<String, String> result = null;
 
-  public CreateEventDialog(JFrame parent, LocalDate selectedDate) {
+  // Constructor for Create mode
+  public EventDialog(JFrame parent, LocalDate selectedDate) {
     super(parent, "Create Event", true);
     this.parent = parent;
     this.selectedDate = Date.from(selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     this.result = new HashMap<>();
     constructPane();
+  }
+
+  // Constructor for Edit mode using an EventsResponseDTO
+  public EventDialog(JFrame parent, LocalDate selectedDate, EventsResponseDTO dto) {
+    super(parent, "Edit Event", true);
+    this.parent = parent;
+    // If the DTO has a start time, use it; otherwise, fall back to the provided selectedDate.
+    if (dto.getStartTime() != null) {
+      LocalDateTime ldt = (LocalDateTime) dto.getStartTime();
+      this.selectedDate = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+    } else {
+      this.selectedDate = Date.from(selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+    this.result = new HashMap<>();
+    constructPane();
+    populateFieldsFromDTO(dto);
   }
 
   private void constructPane() {
@@ -89,7 +109,7 @@ public class CreateEventDialog extends JDialog {
     formPanel.add(recurrenceOptionPanel);
 
     formPanel.add(new JLabel("Recurring Days:"));
-    JPanel daysPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    daysPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     String[] days = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
     recurringDayCheckBoxes = new JCheckBox[days.length];
     for (int i = 0; i < days.length; i++) {
@@ -105,8 +125,7 @@ public class CreateEventDialog extends JDialog {
     formPanel.add(occurrenceCountSpinner);
 
     formPanel.add(new JLabel("Recurrence End Date:"));
-    recurrenceEndDateSpinner = createDateTimeSpinner(selectedDate, "MM-dd-yyyy",
-        Calendar.DAY_OF_MONTH);
+    recurrenceEndDateSpinner = createDateTimeSpinner(selectedDate, "MM-dd-yyyy", Calendar.DAY_OF_MONTH);
     recurrenceEndDateSpinner.setEnabled(false);
     formPanel.add(recurrenceEndDateSpinner);
 
@@ -160,7 +179,7 @@ public class CreateEventDialog extends JDialog {
       result.put(EVENT_NAME, eventNameField.getText().trim());
       result.put(EVENT_START_DATE, sdf.format(startDate));
       result.put(EVENT_END_DATE, sdf.format(endDate));
-      result.put(EVENT_LOCATION, locationField.getText().trim());
+      result.put(EVENT_LOCATION, (locationField.getText().isEmpty() || locationField.getText().isBlank()) ? null : locationField.getText().trim());
       result.put(EVENT_RECURRING_DAYS, getDays());
       if (singleEventButton.isSelected()) {
         result.put(EVENT_RECURRING_COUNT, null);
@@ -173,8 +192,7 @@ public class CreateEventDialog extends JDialog {
         result.put(EVENT_RECURRING_COUNT, null);
         result.put(EVENT_RECURRING_END_DATE, sdfDate.format(recurrenceEndDate));
       }
-
-      result.put(EVENT_DESCRIPTION, descriptionField.getText().trim());
+      result.put(EVENT_DESCRIPTION, (descriptionField.getText().isEmpty() || descriptionField.getText().isBlank()) ? null : descriptionField.getText().trim());
       result.put(EVENT_VISIBILITY, visibilityComboBox.getSelectedItem().toString());
       dispose();
     });
@@ -201,6 +219,72 @@ public class CreateEventDialog extends JDialog {
       }
     }
     return recurringDays.toString().isEmpty() ? null : recurringDays.toString();
+  }
+
+  private void populateFieldsFromDTO(EventsResponseDTO dto) {
+    // Populate basic fields.
+    eventNameField.setText(dto.getEventName() != null ? dto.getEventName() : "");
+    if (dto.getStartTime() != null) {
+      LocalDateTime ldt = (LocalDateTime) dto.getStartTime();
+      Date startDate = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+      startTimeSpinner.setValue(startDate);
+    }
+    if (dto.getEndTime() != null) {
+      LocalDateTime ldt = (LocalDateTime) dto.getEndTime();
+      Date endDate = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+      endTimeSpinner.setValue(endDate);
+    }
+    locationField.setText(dto.getLocation() != null ? dto.getLocation() : "");
+    descriptionField.setText(dto.getDescription() != null ? dto.getDescription() : "");
+
+    // Set visibility selection.
+    if (dto.getVisibility() != null) {
+      for (int i = 0; i < visibilityComboBox.getItemCount(); i++) {
+        if (visibilityComboBox.getItemAt(i).equals(dto.getVisibility())) {
+          visibilityComboBox.setSelectedIndex(i);
+          break;
+        }
+      }
+    }
+
+    // Recurrence settings.
+    String recurringDays = dto.getRecurringDays();
+    boolean hasRecurringDays = recurringDays != null && !recurringDays.isEmpty();
+    char[] dayCodes = {'U', 'M', 'T', 'W', 'R', 'F', 'S'};
+    for (int i = 0; i < recurringDayCheckBoxes.length; i++) {
+      if (hasRecurringDays && recurringDays.indexOf(dayCodes[i]) != -1) {
+        recurringDayCheckBoxes[i].setSelected(true);
+      } else {
+        recurringDayCheckBoxes[i].setSelected(false);
+      }
+    }
+
+    // Choose radio buttons based on recurrence values.
+    if (!hasRecurringDays) {
+      singleEventButton.setSelected(true);
+      occurrenceCountSpinner.setEnabled(false);
+      recurrenceEndDateSpinner.setEnabled(false);
+      daysPanel.setVisible(false);
+    } else {
+      if (dto.getOccurrenceCount() != null) {
+        countRadioButton.setSelected(true);
+        occurrenceCountSpinner.setValue(dto.getOccurrenceCount());
+        occurrenceCountSpinner.setEnabled(true);
+        recurrenceEndDateSpinner.setEnabled(false);
+      } else if (dto.getRecurrenceEndDate() != null) {
+        dateRadioButton.setSelected(true);
+        LocalDateTime ldt = (LocalDateTime) dto.getRecurrenceEndDate();
+        Date recurDate = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+        recurrenceEndDateSpinner.setValue(recurDate);
+        occurrenceCountSpinner.setEnabled(false);
+        recurrenceEndDateSpinner.setEnabled(true);
+      } else {
+        singleEventButton.setSelected(true);
+        occurrenceCountSpinner.setEnabled(false);
+        recurrenceEndDateSpinner.setEnabled(false);
+      }
+      daysPanel.setVisible(true);
+    }
   }
 
   public Map<String, String> showDialog() {

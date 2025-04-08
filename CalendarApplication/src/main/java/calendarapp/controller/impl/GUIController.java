@@ -1,5 +1,6 @@
 package calendarapp.controller.impl;
 
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Map;
 
@@ -74,10 +75,10 @@ public class GUIController implements Features {
   }
 
   @Override
-  public void editEvent(String eventName, String startTime, String endTime, String property,
-                        String value) {
+  public void editEvent(EventsResponseDTO eventName) {
     try {
-      model.editEvent(eventName, startTime, endTime, property, value);
+      Map<String, String> result = view.showEditEventForm(eventName);
+//      model.editEvent(eventName, startTime, endTime, property, value);
       view.showConfirmation("Event updated successfully.");
       refreshEvents();
     } catch (EventConflictException e) {
@@ -126,21 +127,13 @@ public class GUIController implements Features {
   @Override
   public void navigateToPrevious() {
     view.navigateToPrevious(view.getCurrentDate().minusMonths(1));
-    String startDate = view.getCurrentDate().format(java.time.format.DateTimeFormatter.ofPattern(
-        "yyyy-MM-dd"));
-    String endDate = view.getCurrentDate().plusMonths(1).minusDays(1)
-        .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-    loadEvents(startDate, endDate, null);
+    refreshEvents();
   }
 
   @Override
   public void navigateToNext() {
     view.navigateToNext(view.getCurrentDate().plusMonths(1));
-    String startDate = view.getCurrentDate().format(java.time.format.DateTimeFormatter.ofPattern(
-        "yyyy-MM-dd"));
-    String endDate = view.getCurrentDate().plusMonths(1).minusDays(1)
-        .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-    loadEvents(startDate, endDate, null);
+    refreshEvents();
   }
 
   @Override
@@ -218,11 +211,7 @@ public class GUIController implements Features {
   }
 
   private void refreshEvents() {
-    String today = getCurrentDateString();
-    loadEvents(null, null, today);
-  }
-
-  private String getCurrentDateString() {
-    return view.getCurrentDate().toString();
+    loadEvents(view.getCurrentDate().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay().toString(),
+        view.getCurrentDate().with(TemporalAdjusters.firstDayOfNextMonth()).atStartOfDay().toString(), null);
   }
 }
