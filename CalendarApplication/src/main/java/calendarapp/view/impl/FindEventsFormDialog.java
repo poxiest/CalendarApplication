@@ -18,6 +18,10 @@ import static calendarapp.utils.Constants.FIND_EVENT_NAME;
 import static calendarapp.utils.Constants.FIND_ON;
 import static calendarapp.utils.Constants.FIND_START_TIME;
 
+/**
+ * A dialog for searching events by name and either a specific date or a date-time range.
+ * Returns the search criteria as a map when submitted.
+ */
 public class FindEventsFormDialog extends JDialog {
   private final JFrame parent;
   private Map<String, String> result;
@@ -25,6 +29,11 @@ public class FindEventsFormDialog extends JDialog {
   private JRadioButton findInBetweenRadio;
   private JRadioButton findOnRadio;
 
+  /**
+   * Constructs the dialog used to input criteria for finding events.
+   *
+   * @param parent the parent frame of this dialog
+   */
   public FindEventsFormDialog(JFrame parent) {
     super(parent, "Find Events", true);
     this.parent = parent;
@@ -39,6 +48,9 @@ public class FindEventsFormDialog extends JDialog {
     constructCalendarPanel();
   }
 
+  /**
+   * Builds the user interface for the event search form with search options and fields.
+   */
   private void constructCalendarPanel() {
     JTextField eventNameField;
     JSpinner startDateField;
@@ -132,6 +144,14 @@ public class FindEventsFormDialog extends JDialog {
     add(mainPanel);
   }
 
+  /**
+   * Creates and returns a date/time spinner for user input.
+   *
+   * @param initialDate the initial date to display
+   * @param format the format of the date/time in the spinner
+   * @param calendarField the calendar field for increment steps
+   * @return the configured JSpinner component
+   */
   private JSpinner createDateTimeSpinner(Date initialDate, String format, int calendarField) {
     SpinnerDateModel model = new SpinnerDateModel(initialDate, null, null, calendarField);
     JSpinner spinner = new JSpinner(model);
@@ -140,6 +160,11 @@ public class FindEventsFormDialog extends JDialog {
     return spinner;
   }
 
+  /**
+   * Displays the event search dialog and returns the search criteria entered by the user.
+   *
+   * @return a map of search parameters or null if cancelled
+   */
   public Map<String, String> showDialog() {
     setVisible(true);
     return result;

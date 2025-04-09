@@ -1,5 +1,8 @@
 package calendarapp.utils;
 
+/**
+ * Utility class for file-related operations such as extracting file extensions.
+ */
 public class FileUtil {
   /**
    * Extracts the file extension from a given file path.
