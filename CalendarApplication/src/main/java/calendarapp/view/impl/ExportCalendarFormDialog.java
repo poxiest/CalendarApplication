@@ -8,7 +8,7 @@ import java.util.Map;
 
 import javax.swing.*;
 
-import calendarapp.controller.exporter.Constants;
+import calendarapp.controller.Constants;
 
 import static calendarapp.utils.Constants.EXPORT_FILE_EXTENSION;
 import static calendarapp.utils.Constants.EXPORT_FILE_NAME;

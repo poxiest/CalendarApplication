@@ -8,9 +8,9 @@ import calendarapp.model.ICalendarModel;
 import calendarapp.model.dto.EditEventRequestDTO;
 import calendarapp.view.ICalendarView;
 
-import static calendarapp.controller.commands.impl.RegexPatternConstants.EDIT_EVENT_NAME_PATTERN;
-import static calendarapp.controller.commands.impl.RegexPatternConstants.EDIT_FROM_PATTERN;
-import static calendarapp.controller.commands.impl.RegexPatternConstants.EDIT_FROM_TO_PATTERN;
+import static calendarapp.controller.Constants.EDIT_EVENT_NAME_PATTERN;
+import static calendarapp.controller.Constants.EDIT_FROM_PATTERN;
+import static calendarapp.controller.Constants.EDIT_FROM_TO_PATTERN;
 
 /**
  * Edit Command implementation for editing existing calendar events.
