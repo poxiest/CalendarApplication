@@ -1,6 +1,7 @@
 package calendarapp.view.impl;
 
 import java.awt.*;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -16,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 import calendarapp.controller.Features;
 import calendarapp.model.dto.CalendarResponseDTO;
 import calendarapp.model.dto.EventsResponseDTO;
+import calendarapp.utils.Constants;
 import calendarapp.view.GUIView;
 
 /**
@@ -60,7 +62,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
    * Constructs and initializes the main GUI window for the calendar application.
    */
   public GUIJFrameView() {
-    super("Calendar");
+    super(Constants.APP_TITLE);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setSize(1200, 750);
     setLocationRelativeTo(null);
@@ -120,12 +122,12 @@ public class GUIJFrameView extends JFrame implements GUIView {
 
   @Override
   public void showConfirmation(String message) {
-    JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
+    JOptionPane.showMessageDialog(this, message, Constants.SUCCESS_DIALOG_TITLE, JOptionPane.INFORMATION_MESSAGE);
   }
 
   @Override
   public void showError(String errorMessage) {
-    JOptionPane.showMessageDialog(this, errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+    JOptionPane.showMessageDialog(this, errorMessage, Constants.ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
   }
 
   @Override
@@ -171,7 +173,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
   @Override
   public Map<String, String> findEvents() {
     FindEventsFormDialog dialog = new FindEventsFormDialog(this);
-    detailsDateLabel.setText("Find Events Result");
+    detailsDateLabel.setText(Constants.FIND_EVENTS_RESULT);
     return dialog.showDialog();
   }
 
@@ -191,13 +193,26 @@ public class GUIJFrameView extends JFrame implements GUIView {
    * Creates and configures all UI components including header, sidebar, calendar grid, and details panel.
    */
   private void createComponents() {
-    // Header panel
+    createHeaderPanel();
+    createSidebarPanel();
+    createContentPanel();
+    createDetailsPanel();
+  }
+
+  /**
+   * Creates the header panel of the application
+   */
+  private void createHeaderPanel() {
     headerPanel = new JPanel(new BorderLayout());
     headerPanel.setBorder(new EmptyBorder(0, 10, 10, 10));
     headerPanel.setBackground(Color.WHITE);
-    // (Additional header components can be added here.)
+    // Additional header components can be added here
+  }
 
-    // Sidebar panel
+  /**
+   * Creates the sidebar panel with calendar controls and calendar listing
+   */
+  private void createSidebarPanel() {
     sidebarPanel = new JPanel();
     sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
     sidebarPanel.setPreferredSize(new Dimension(300, 0));
@@ -210,11 +225,11 @@ public class GUIJFrameView extends JFrame implements GUIView {
     calendarHeaderPanel.setLayout(new BoxLayout(calendarHeaderPanel, BoxLayout.X_AXIS));
     calendarHeaderPanel.setBackground(Color.WHITE);
     calendarHeaderPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-    JLabel calendarLabel = new JLabel("My Calendars");
+    JLabel calendarLabel = new JLabel(Constants.MY_CALENDARS_LABEL);
     calendarLabel.setFont(new Font("Arial", Font.BOLD, 18));
     calendarLabel.setPreferredSize(new Dimension(120, 30));
 
-    createCalendarButton = new JButton("+");
+    createCalendarButton = new JButton(Constants.CREATE_BUTTON);
     createCalendarButton.setBorderPainted(false);
     createCalendarButton.setContentAreaFilled(false);
     createCalendarButton.setFocusPainted(false);
@@ -234,11 +249,11 @@ public class GUIJFrameView extends JFrame implements GUIView {
     calendarFooterPanel.setBackground(Color.WHITE);
     calendarFooterPanel.setLayout(new BoxLayout(calendarFooterPanel, BoxLayout.Y_AXIS));
 
-    exportButton = new JButton("Export Calendar");
+    exportButton = new JButton(Constants.EXPORT_CALENDAR_BUTTON);
     exportButton.setPreferredSize(new Dimension(200, 30));
     exportButton.setFont(new Font("Arial", Font.BOLD, 14));
 
-    importButton = new JButton("Import Calendar");
+    importButton = new JButton(Constants.IMPORT_CALENDAR_BUTTON);
     importButton.setPreferredSize(new Dimension(200, 30));
     importButton.setFont(new Font("Arial", Font.BOLD, 14));
 
@@ -250,16 +265,22 @@ public class GUIJFrameView extends JFrame implements GUIView {
     sidebarPanel.add(calendarListPanel);
     sidebarPanel.add(Box.createVerticalGlue());
     sidebarPanel.add(calendarFooterPanel);
+  }
 
-    // Content panel
+  /**
+   * Creates the main content panel with calendar view
+   */
+  private void createContentPanel() {
     contentPanel = new JPanel(new BorderLayout());
     contentPanel.setBorder(BorderFactory.createCompoundBorder(
         BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE),
         BorderFactory.createMatteBorder(10, 10, 10, 10, Color.WHITE)));
+
+    // Navigation panel
     navigationPanel = new JPanel();
     navigationPanel.setBackground(Color.WHITE);
-    prevButton = new JButton("<");
-    nextButton = new JButton(">");
+    prevButton = new JButton(Constants.PREV_BUTTON);
+    nextButton = new JButton(Constants.NEXT_BUTTON);
     dateLabel = new JLabel(formatDateForView(currentDate));
     dateLabel.setFont(new Font("Arial", Font.BOLD, 16));
     dateLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -267,14 +288,20 @@ public class GUIJFrameView extends JFrame implements GUIView {
     navigationPanel.add(prevButton);
     navigationPanel.add(dateLabel);
     navigationPanel.add(nextButton);
+
+    // Calendar panel
     calendarPanel = new JPanel();
     calendarPanel.setBackground(Color.WHITE);
-    // Add some padding around the calendar grid.
     calendarPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
     contentPanel.add(navigationPanel, BorderLayout.NORTH);
     contentPanel.add(new JScrollPane(calendarPanel), BorderLayout.CENTER);
+  }
 
-    // Details panel
+  /**
+   * Creates the details panel for showing events
+   */
+  private void createDetailsPanel() {
     detailsPanel = new JPanel(new BorderLayout());
     detailsPanel.setPreferredSize(new Dimension(330, 0));
     detailsPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -289,9 +316,9 @@ public class GUIJFrameView extends JFrame implements GUIView {
 
     JPanel eventButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     eventButtonsPanel.setBackground(Color.WHITE);
-    createEventButton = new JButton("Create Event");
+    createEventButton = new JButton(Constants.CREATE_EVENT_BUTTON);
     createEventButton.setFont(new Font("Arial", Font.BOLD, 14));
-    findEventsButton = new JButton("Find Events");
+    findEventsButton = new JButton(Constants.FIND_EVENTS_BUTTON);
     findEventsButton.setFont(new Font("Arial", Font.BOLD, 14));
     eventButtonsPanel.add(createEventButton);
     eventButtonsPanel.add(findEventsButton);
@@ -356,8 +383,8 @@ public class GUIJFrameView extends JFrame implements GUIView {
         if (radioButton.isSelected()) {
           int response = JOptionPane.showConfirmDialog(
               GUIJFrameView.this,
-              "Do you want to change the calendar to \"" + radioButton.getText() + "\"?",
-              "Confirm Calendar Change",
+              Constants.CALENDAR_CHANGE_MESSAGE + radioButton.getText() + "\"?",
+              Constants.CALENDAR_CHANGE_TITLE,
               JOptionPane.YES_NO_OPTION);
           if (response == JOptionPane.YES_OPTION) {
             controller.setActiveCalendar(radioButton.getText().split("\t")[0]);
@@ -390,7 +417,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
    * @return formatted date string
    */
   private String formatDateForView(LocalDate date) {
-    return date.format(DateTimeFormatter.ofPattern("MMMM yyyy"));
+    return date.format(DateTimeFormatter.ofPattern(Constants.MONTH_YEAR_FORMAT));
   }
 
   /**
@@ -401,9 +428,8 @@ public class GUIJFrameView extends JFrame implements GUIView {
     calendarPanel.setBackground(calendarColors.getOrDefault(activeCalendar, Color.GRAY));
     YearMonth yearMonth = YearMonth.from(currentDate);
     LocalDate firstOfMonth = yearMonth.atDay(1);
-    String[] daysOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
-    for (String day : daysOfWeek) {
+    for (String day : Constants.DAYS_OF_WEEK) {
       JPanel headerCell = new JPanel(new BorderLayout());
       headerCell.setBackground(Color.LIGHT_GRAY);
       headerCell.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
@@ -434,8 +460,8 @@ public class GUIJFrameView extends JFrame implements GUIView {
       final LocalDate selDay = date;
       dayButton.addActionListener(e -> {
         selectedDate = selDay;
-        detailsDateLabel.setText(selDay.format(DateTimeFormatter.ofPattern("EEEE, MMM d")));
-        String formattedDate = selDay.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        detailsDateLabel.setText(selDay.format(DateTimeFormatter.ofPattern(Constants.DAY_MONTH_FORMAT)));
+        String formattedDate = selDay.format(DateTimeFormatter.ofPattern(Constants.ISO_DATE_FORMAT));
         controller.loadEvents(null, null, formattedDate);
       });
       calendarPanel.add(dayButton);
@@ -450,7 +476,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
   private void updateDetailsPanel(List<EventsResponseDTO> events) {
     detailsContentPanel.removeAll();
     if (events.isEmpty()) {
-      JLabel noEventsLabel = new JLabel("No events found.");
+      JLabel noEventsLabel = new JLabel(Constants.NO_EVENTS_LABEL);
       noEventsLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
       detailsContentPanel.add(noEventsLabel);
     } else {
@@ -481,7 +507,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
     JPanel infoPanel = new JPanel();
     infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
     infoPanel.setBackground(Color.WHITE);
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.TIME_FORMAT);
     JLabel timeLabel =
         new JLabel(formatter.format(event.getStartTime()) + " to " + formatter.format(event.getEndTime()));
     timeLabel.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -490,11 +516,11 @@ public class GUIJFrameView extends JFrame implements GUIView {
     infoPanel.add(titleLabel);
     infoPanel.add(timeLabel);
     if (event.getLocation() != null && !event.getLocation().isEmpty()) {
-      JLabel locationLabel = new JLabel("Location - " + event.getLocation());
+      JLabel locationLabel = new JLabel(Constants.LOCATION_LABEL + event.getLocation());
       locationLabel.setFont(new Font("Arial", Font.PLAIN, 12));
       infoPanel.add(locationLabel);
     }
-    JButton editButton = new JButton("Edit");
+    JButton editButton = new JButton(Constants.EDIT_BUTTON);
     editButton.setFont(new Font("Arial", Font.PLAIN, 12));
     editButton.addActionListener(e -> controller.editEvent(event));
     panel.add(infoPanel, BorderLayout.CENTER);
