@@ -38,7 +38,6 @@ public class RegexPatternConstants {
   public static final String EDIT_EVENT_NAME_PATTERN =
       "(?i)\\s+events\\s+([a-zA-Z_]+)\\s+(?:\"([^\"]+)\"|([^\\s\"]+))\\s+(?:\"([^\"]+)\""
           + "|([^\\s\"]+))$";
-  public static final String IS_RECURRING_EVENTS = "edit events";
   public static final String EDIT_CALENDAR_PATTERN = "(?i)\\s+--name\\s+(?:\"([^\"]+)\"|(\\S+))"
       + "\\s+--property\\s+([a-zA-Z_]+)\\s+(?:\"([^\"]+)\"|(\\S+))$";
 

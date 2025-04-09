@@ -148,16 +148,6 @@ public class GUIController implements Features {
   }
 
   @Override
-  public void showCreateEventForm() {
-    view.showCreateEventForm();
-  }
-
-  @Override
-  public void showEditEventForm(EventsResponseDTO event) {
-    view.showEditEventForm(event);
-  }
-
-  @Override
   public void findEvents() {
     try {
       Map<String, String> results = view.findEvents();

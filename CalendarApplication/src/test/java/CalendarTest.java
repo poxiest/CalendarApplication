@@ -13,8 +13,7 @@ public class CalendarTest {
   @Test(expected = InvalidCommandException.class)
   public void CalendarNameNull() {
     try {
-      ICalendar calendar =
-          Calendar.builder().zoneId("Europe/Berlin").eventRepository(new EventRepository()).build();
+      Calendar.builder().zoneId("Europe/Berlin").eventRepository(new EventRepository()).build();
     } catch (InvalidCommandException e) {
       Assert.assertEquals("Calendar name cannot be null or empty.\n", e.getMessage());
       throw e;
@@ -24,8 +23,7 @@ public class CalendarTest {
   @Test(expected = InvalidCommandException.class)
   public void EventRepositoryNull() {
     try {
-      ICalendar calendar =
-          Calendar.builder().name("New Cal").zoneId("Europe/Berlin").build();
+      Calendar.builder().name("New Cal").zoneId("Europe/Berlin").build();
     } catch (InvalidCommandException e) {
       Assert.assertEquals("Event repository cannot be null.\n", e.getMessage());
       throw e;

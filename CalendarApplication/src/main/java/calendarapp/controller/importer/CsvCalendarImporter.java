@@ -18,10 +18,6 @@ import static calendarapp.utils.TimeUtil.parseAndFormatDateTime;
  * Implements the ICalendarImporter interface.
  */
 public class CsvCalendarImporter implements ICalendarImporter {
-
-  private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(Constants.CsvImport.DATE_FORMAT);
-  private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(Constants.CsvImport.TIME_FORMAT);
-
   @Override
   public List<CalendarImporterDTO> importEvents(String filePath) throws Exception {
     List<CalendarImporterDTO> importedEvents = new ArrayList<>();

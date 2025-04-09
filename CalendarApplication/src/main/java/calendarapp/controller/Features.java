@@ -20,10 +20,6 @@ public interface Features {
 
   void navigateToNext();
 
-  void showCreateEventForm();
-
-  void showEditEventForm(EventsResponseDTO event);
-
   void findEvents();
 
   void exportCalendar();

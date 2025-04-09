@@ -12,11 +12,6 @@ public class Constants {
       SupportImportFormats.CSV, new CsvCalendarImporter()
   );
 
-  public static final class CsvImport {
-    public static final String DATE_FORMAT = "MM/dd/yyyy";
-    public static final String TIME_FORMAT = "h:mm a";
-  }
-
   public static final class SupportImportFormats {
     public static final String CSV = "csv";
   }

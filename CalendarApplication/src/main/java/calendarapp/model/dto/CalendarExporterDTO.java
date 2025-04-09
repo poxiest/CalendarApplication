@@ -10,7 +10,6 @@ public class CalendarExporterDTO {
   private final String subject;
   private final Temporal startDate;
   private final Temporal endDate;
-  private final boolean isAllDayEvent;
   private final String description;
   private final String location;
   private final String visibility;
@@ -19,7 +18,6 @@ public class CalendarExporterDTO {
     this.subject = builder.subject;
     this.startDate = builder.startDate;
     this.endDate = builder.endDate;
-    this.isAllDayEvent = builder.isAllDayEvent;
     this.description = builder.description;
     this.location = builder.location;
     this.visibility = builder.visibility;
@@ -95,7 +93,6 @@ public class CalendarExporterDTO {
     private String subject;
     private Temporal startDate;
     private Temporal endDate;
-    private boolean isAllDayEvent;
     private String description;
     private String location;
     private String visibility;
@@ -140,7 +137,6 @@ public class CalendarExporterDTO {
      * @return this Builder instance
      */
     public Builder isAllDayEvent(boolean isAllDayEvent) {
-      this.isAllDayEvent = isAllDayEvent;
       return this;
     }
 

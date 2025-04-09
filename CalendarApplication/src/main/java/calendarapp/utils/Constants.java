@@ -15,9 +15,5 @@ public class Constants {
 
   public static final String IMPORT_FILE_PATH = "importFilePath";
 
-  public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("MM-dd"
-      + "-yyyy HH:mm");
-  public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-
   public static final String IS_MULTIPLE = "isMultiple";
 }
