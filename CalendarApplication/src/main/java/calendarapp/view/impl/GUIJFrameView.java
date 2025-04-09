@@ -1,7 +1,6 @@
 package calendarapp.view.impl;
 
 import java.awt.*;
-import java.io.File;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -51,6 +50,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
   private JLabel detailsDateLabel;
   private JButton createEventButton;
   private JButton findEventsButton;
+  private JLabel currentTimeZone;
   private List<CalendarResponseDTO> calendarList = new ArrayList<>();
   private String activeCalendar;
   private LocalDate currentDate = LocalDate.now();
@@ -112,6 +112,9 @@ public class GUIJFrameView extends JFrame implements GUIView {
             JRadioButton rb = (JRadioButton) inner;
             if (rb.getText().equals(calendarName)) {
               rb.setSelected(true);
+              currentTimeZone.setText(calendarList.stream()
+                  .filter(r -> r.getName().equals(activeCalendar))
+                  .findFirst().get().getZoneId().getId());
               break;
             }
           }
@@ -122,12 +125,14 @@ public class GUIJFrameView extends JFrame implements GUIView {
 
   @Override
   public void showConfirmation(String message) {
-    JOptionPane.showMessageDialog(this, message, Constants.SUCCESS_DIALOG_TITLE, JOptionPane.INFORMATION_MESSAGE);
+    JOptionPane.showMessageDialog(this, message, Constants.SUCCESS_DIALOG_TITLE,
+        JOptionPane.INFORMATION_MESSAGE);
   }
 
   @Override
   public void showError(String errorMessage) {
-    JOptionPane.showMessageDialog(this, errorMessage, Constants.ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
+    JOptionPane.showMessageDialog(this, errorMessage, Constants.ERROR_DIALOG_TITLE,
+        JOptionPane.ERROR_MESSAGE);
   }
 
   @Override
@@ -190,7 +195,8 @@ public class GUIJFrameView extends JFrame implements GUIView {
   }
 
   /**
-   * Creates and configures all UI components including header, sidebar, calendar grid, and details panel.
+   * Creates and configures all UI components including header, sidebar, calendar grid, and
+   * details panel.
    */
   private void createComponents() {
     createHeaderPanel();
@@ -277,23 +283,30 @@ public class GUIJFrameView extends JFrame implements GUIView {
         BorderFactory.createMatteBorder(10, 10, 10, 10, Color.WHITE)));
 
     // Navigation panel
-    navigationPanel = new JPanel();
+    navigationPanel = new JPanel(new BorderLayout());
     navigationPanel.setBackground(Color.WHITE);
+    navigationPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 10, 0, Color.WHITE));
+
+    currentTimeZone = new JLabel(Constants.CURRENT_TIMEZONE);
+    currentTimeZone.setFont(new Font("Arial", Font.ITALIC, 14));
+    navigationPanel.add(currentTimeZone, BorderLayout.WEST);
+
+    JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+    centerPanel.setBackground(Color.WHITE);
     prevButton = new JButton(Constants.PREV_BUTTON);
     nextButton = new JButton(Constants.NEXT_BUTTON);
     dateLabel = new JLabel(formatDateForView(currentDate));
     dateLabel.setFont(new Font("Arial", Font.BOLD, 16));
     dateLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    navigationPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 10, 0, Color.WHITE));
-    navigationPanel.add(prevButton);
-    navigationPanel.add(dateLabel);
-    navigationPanel.add(nextButton);
+    centerPanel.add(prevButton);
+    centerPanel.add(dateLabel);
+    centerPanel.add(nextButton);
+    navigationPanel.add(centerPanel, BorderLayout.CENTER);
 
     // Calendar panel
     calendarPanel = new JPanel();
     calendarPanel.setBackground(Color.WHITE);
     calendarPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
     contentPanel.add(navigationPanel, BorderLayout.NORTH);
     contentPanel.add(new JScrollPane(calendarPanel), BorderLayout.CENTER);
   }
@@ -361,8 +374,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
     calendarGroup = new ButtonGroup();
     for (CalendarResponseDTO calendar : calendarList) {
       String name = calendar.getName();
-      JRadioButton radioButton = new JRadioButton(name + "\t(" + calendar.getZoneId().getId() +
-          ")");
+      JRadioButton radioButton = new JRadioButton(name);
       radioButton.setBackground(Color.WHITE);
       radioButton.setSelected(name.equals(activeCalendar));
       radioButton.setFont(new Font("Arial", Font.PLAIN, 13));
@@ -387,7 +399,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
               Constants.CALENDAR_CHANGE_TITLE,
               JOptionPane.YES_NO_OPTION);
           if (response == JOptionPane.YES_OPTION) {
-            controller.setActiveCalendar(radioButton.getText().split("\t")[0]);
+            controller.setActiveCalendar(radioButton.getText());
           } else {
             setActiveCalendar(activeCalendar);
           }
@@ -421,7 +433,8 @@ public class GUIJFrameView extends JFrame implements GUIView {
   }
 
   /**
-   * Builds the visual calendar grid for the current month, including day headers and clickable day buttons.
+   * Builds the visual calendar grid for the current month, including day headers and clickable
+   * day buttons.
    */
   private void setupMonthView() {
     calendarPanel.setLayout(new GridLayout(0, 7, 5, 5));
@@ -449,7 +462,6 @@ public class GUIJFrameView extends JFrame implements GUIView {
     int daysInMonth = yearMonth.lengthOfMonth();
     for (int day = 1; day <= daysInMonth; day++) {
       LocalDate date = yearMonth.atDay(day);
-      // Create a JButton for each day cell
       JButton dayButton = new JButton(String.valueOf(day));
       dayButton.setBackground(Color.WHITE);
       dayButton.setOpaque(true);
@@ -460,8 +472,10 @@ public class GUIJFrameView extends JFrame implements GUIView {
       final LocalDate selDay = date;
       dayButton.addActionListener(e -> {
         selectedDate = selDay;
-        detailsDateLabel.setText(selDay.format(DateTimeFormatter.ofPattern(Constants.DAY_MONTH_FORMAT)));
-        String formattedDate = selDay.format(DateTimeFormatter.ofPattern(Constants.ISO_DATE_FORMAT));
+        detailsDateLabel.setText(selDay
+            .format(DateTimeFormatter.ofPattern(Constants.DAY_MONTH_FORMAT)));
+        String formattedDate =
+            selDay.format(DateTimeFormatter.ofPattern(Constants.ISO_DATE_FORMAT));
         controller.loadEvents(null, null, formattedDate);
       });
       calendarPanel.add(dayButton);

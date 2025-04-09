@@ -3,7 +3,6 @@ package calendarapp.model.impl;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.CalendarUpdateOperation;

@@ -147,8 +147,8 @@ public class FindEventsFormDialog extends JDialog {
   /**
    * Creates and returns a date/time spinner for user input.
    *
-   * @param initialDate the initial date to display
-   * @param format the format of the date/time in the spinner
+   * @param initialDate   the initial date to display
+   * @param format        the format of the date/time in the spinner
    * @param calendarField the calendar field for increment steps
    * @return the configured JSpinner component
    */

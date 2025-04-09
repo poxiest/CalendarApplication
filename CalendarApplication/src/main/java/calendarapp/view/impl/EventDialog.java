@@ -22,7 +22,8 @@ import calendarapp.model.impl.Constants;
 
 /**
  * A dialog for creating or editing a calendar event, supporting both single and recurring events.
- * Allows input for event details such as name, time, location, recurrence, description, and visibility.
+ * Allows input for event details such as name, time, location, recurrence, description, and
+ * visibility.
  */
 public class EventDialog extends JDialog {
   private final JFrame parent;
@@ -48,7 +49,7 @@ public class EventDialog extends JDialog {
   /**
    * Constructs a dialog for creating a new event based on the selected date.
    *
-   * @param parent the parent frame of this dialog
+   * @param parent       the parent frame of this dialog
    * @param selectedDate the date selected on the calendar
    */
   public EventDialog(JFrame parent, LocalDate selectedDate) {
@@ -71,9 +72,9 @@ public class EventDialog extends JDialog {
   /**
    * Constructs a dialog for editing an existing event using the provided DTO.
    *
-   * @param parent the parent frame of this dialog
+   * @param parent       the parent frame of this dialog
    * @param selectedDate the fallback date if the DTO doesn't contain a start time
-   * @param dto the event data to prefill the dialog
+   * @param dto          the event data to prefill the dialog
    */
   public EventDialog(JFrame parent, LocalDate selectedDate, EventsResponseDTO dto) {
     super(parent, "Edit Event", true);
@@ -274,8 +275,8 @@ public class EventDialog extends JDialog {
   /**
    * Creates a JSpinner for date and time selection using the given format and initial value.
    *
-   * @param initialDate the initial date to display
-   * @param format the date/time format for the spinner
+   * @param initialDate   the initial date to display
+   * @param format        the date/time format for the spinner
    * @param calendarField the calendar field to increment (e.g., Calendar.MINUTE)
    * @return the configured JSpinner
    */

@@ -2,7 +2,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import calendarapp.controller.InvalidCommandException;
-import calendarapp.model.ICalendar;
 import calendarapp.model.impl.Calendar;
 import calendarapp.model.impl.EventRepository;
 

@@ -1,13 +1,11 @@
 package calendarapp.controller.importer;
 
 import java.util.Map;
-import java.util.Set;
 
 import calendarapp.controller.ICalendarImporter;
 
 
 public class Constants {
-
   public static final Map<String, ICalendarImporter> IMPORTER_MAP = Map.of(
       SupportImportFormats.CSV, new CsvCalendarImporter()
   );

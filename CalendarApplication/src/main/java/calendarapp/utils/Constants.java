@@ -1,7 +1,5 @@
 package calendarapp.utils;
 
-import java.time.format.DateTimeFormatter;
-
 public class Constants {
   public static final String CALENDAR_NAME = "name";
   public static final String CALENDAR_TIME_ZONE = "timezone";
@@ -20,6 +18,7 @@ public class Constants {
   // Window titles and labels
   public static final String APP_TITLE = "Calendar";
   public static final String MY_CALENDARS_LABEL = "My Calendars";
+  public static final String CURRENT_TIMEZONE = "Current Timezone";
   public static final String EXPORT_CALENDAR_BUTTON = "Export Calendar";
   public static final String IMPORT_CALENDAR_BUTTON = "Import Calendar";
   public static final String CREATE_EVENT_BUTTON = "Create Event";

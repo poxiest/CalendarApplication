@@ -90,7 +90,8 @@ public class GUIController implements Features {
         return;
       }
       Map<String, String> updatedValues = EditEventHelper.getEditEventChanges(event, result);
-      boolean isRecurring = Boolean.parseBoolean(result.getOrDefault(IS_MULTIPLE, String.valueOf(false)));
+      boolean isRecurring = Boolean.parseBoolean(result.getOrDefault(IS_MULTIPLE,
+          String.valueOf(false)));
       for (Map.Entry<String, String> entry : updatedValues.entrySet()) {
         model.editEvent(
             EditEventRequestDTO.builder()
@@ -195,7 +196,7 @@ public class GUIController implements Features {
       ICalendarExporter exporter = EXPORTER_MAP.get(results.get(EXPORT_FILE_EXTENSION));
       String filePath = exporter.export(model.getEventsForExport(),
           results.get(EXPORT_FILE_NAME) + "."
-          + results.get(EXPORT_FILE_EXTENSION));
+              + results.get(EXPORT_FILE_EXTENSION));
       view.showConfirmation("Calendar exported successfully at: " + filePath);
       loadCurrentMonthEvents();
     } catch (Exception e) {
