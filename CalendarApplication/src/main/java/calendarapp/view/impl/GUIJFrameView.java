@@ -360,7 +360,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
               "Confirm Calendar Change",
               JOptionPane.YES_NO_OPTION);
           if (response == JOptionPane.YES_OPTION) {
-            controller.setActiveCalendar(radioButton.getText());
+            controller.setActiveCalendar(radioButton.getText().split("\t")[0]);
           } else {
             setActiveCalendar(activeCalendar);
           }
