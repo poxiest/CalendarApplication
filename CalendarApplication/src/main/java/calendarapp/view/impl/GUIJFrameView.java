@@ -14,6 +14,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import calendarapp.controller.Features;
+import calendarapp.model.dto.CalendarResponseDTO;
 import calendarapp.model.dto.EventsResponseDTO;
 import calendarapp.view.GUIView;
 
@@ -48,8 +49,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
   private JLabel detailsDateLabel;
   private JButton createEventButton;
   private JButton findEventsButton;
-  // Data structures and state
-  private List<String> calendarNames = new ArrayList<>();
+  private List<CalendarResponseDTO> calendarList = new ArrayList<>();
   private String activeCalendar;
   private LocalDate currentDate = LocalDate.now();
   private LocalDate selectedDate = LocalDate.now();
@@ -62,7 +62,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
   public GUIJFrameView() {
     super("Calendar");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setSize(1200, 700);
+    setSize(1200, 750);
     setLocationRelativeTo(null);
     mainPanel = new JPanel(new BorderLayout());
     setContentPane(mainPanel);
@@ -90,11 +90,11 @@ public class GUIJFrameView extends JFrame implements GUIView {
   }
 
   @Override
-  public void updateCalendarList(List<String> calendarNames) {
-    this.calendarNames = calendarNames;
-    for (String name : calendarNames) {
-      if (!calendarColors.containsKey(name)) {
-        calendarColors.put(name, generateRandomColor());
+  public void updateCalendarList(List<CalendarResponseDTO> calendar) {
+    this.calendarList = calendar;
+    for (CalendarResponseDTO dto : calendarList) {
+      if (!calendarColors.containsKey(dto.getName())) {
+        calendarColors.put(dto.getName(), generateRandomColor());
       }
     }
     refreshCalendarList();
@@ -200,7 +200,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
     // Sidebar panel
     sidebarPanel = new JPanel();
     sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
-    sidebarPanel.setPreferredSize(new Dimension(220, 0));
+    sidebarPanel.setPreferredSize(new Dimension(300, 0));
     sidebarPanel.setBorder(BorderFactory.createCompoundBorder(
         BorderFactory.createMatteBorder(0, 0, 0, 1, Color.LIGHT_GRAY),
         BorderFactory.createEmptyBorder(10, 10, 10, 10)));
@@ -322,7 +322,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
     mainPanel.add(sidebarPanel, BorderLayout.WEST);
     mainPanel.add(contentPanel, BorderLayout.CENTER);
     mainPanel.add(detailsPanel, BorderLayout.EAST);
-    updateCalendarList(calendarNames);
+    updateCalendarList(calendarList);
     updateCalendarView();
   }
 
@@ -332,8 +332,10 @@ public class GUIJFrameView extends JFrame implements GUIView {
   private void refreshCalendarList() {
     calendarListPanel.removeAll();
     calendarGroup = new ButtonGroup();
-    for (String name : calendarNames) {
-      JRadioButton radioButton = new JRadioButton(name);
+    for (CalendarResponseDTO calendar : calendarList) {
+      String name = calendar.getName();
+      JRadioButton radioButton = new JRadioButton(name + "\t(" + calendar.getZoneId().getId() +
+          ")");
       radioButton.setBackground(Color.WHITE);
       radioButton.setSelected(name.equals(activeCalendar));
       radioButton.setFont(new Font("Arial", Font.PLAIN, 13));
@@ -483,14 +485,13 @@ public class GUIJFrameView extends JFrame implements GUIView {
     JLabel timeLabel =
         new JLabel(formatter.format(event.getStartTime()) + " to " + formatter.format(event.getEndTime()));
     timeLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-    JLabel titleLabel = new JLabel(event.getEventName() + ((event.getLocation() != null) ? " - "
-        + "Location : " + event.getLocation() : ""));
-    titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
-    infoPanel.add(timeLabel);
+    JLabel titleLabel = new JLabel(event.getEventName());
+    titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
     infoPanel.add(titleLabel);
+    infoPanel.add(timeLabel);
     if (event.getLocation() != null && !event.getLocation().isEmpty()) {
-      JLabel locationLabel = new JLabel(event.getLocation());
-      locationLabel.setFont(new Font("Arial", Font.ITALIC, 11));
+      JLabel locationLabel = new JLabel("Location - " + event.getLocation());
+      locationLabel.setFont(new Font("Arial", Font.PLAIN, 12));
       infoPanel.add(locationLabel);
     }
     JButton editButton = new JButton("Edit");

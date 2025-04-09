@@ -10,7 +10,9 @@ import calendarapp.controller.impl.CalendarController;
 import calendarapp.controller.impl.CalendarControllerFactory;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.dto.CalendarExporterDTO;
+import calendarapp.model.dto.CalendarResponseDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
+import calendarapp.model.dto.EditEventRequestDTO;
 import calendarapp.model.dto.EventsResponseDTO;
 import calendarapp.view.ICalendarView;
 
@@ -150,8 +152,7 @@ public class CalendarControllerFactoryTest {
     }
 
     @Override
-    public void editEvent(String eventName, String startTime, String endTime, String property,
-                          String value) {
+    public void editEvent(EditEventRequestDTO editEventRequestDTO) {
       System.out.println("message");
 
     }
@@ -193,7 +194,7 @@ public class CalendarControllerFactoryTest {
     }
 
     @Override
-    public List<String> getCalendars() {
+    public List<CalendarResponseDTO> getCalendars() {
       return List.of();
     }
   }

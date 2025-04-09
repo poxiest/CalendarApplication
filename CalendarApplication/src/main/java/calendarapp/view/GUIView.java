@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import calendarapp.controller.Features;
+import calendarapp.model.dto.CalendarResponseDTO;
 import calendarapp.model.dto.EventsResponseDTO;
 
 /**
@@ -23,10 +24,7 @@ public interface GUIView {
    */
   void updateEvents(List<EventsResponseDTO> events);
 
-  /**
-   * Updates the list of calendars shown in the sidebar.
-   */
-  void updateCalendarList(List<String> calendarNames);
+  void updateCalendarList(List<CalendarResponseDTO> calendarNames);
 
   /**
    * Sets the specified calendar as the active calendar in the view.

@@ -2,17 +2,13 @@ package calendarapp.controller.importer;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 import calendarapp.controller.ICalendarImporter;
-import calendarapp.model.EventVisibility;
 import calendarapp.controller.exporter.Constants.CsvFormat;
+import calendarapp.model.EventVisibility;
 import calendarapp.model.dto.CalendarImporterDTO;
 
 import static calendarapp.utils.TimeUtil.parseAndFormatDateTime;
@@ -68,7 +64,8 @@ public class CsvCalendarImporter implements ICalendarImporter {
     String startTime = fields.get(2);
     String endDate = fields.get(3);
     String endTime = fields.get(4);
-    String description = fields.get(6).isEmpty() ? null : fields.get(6);;
+    String description = fields.get(6).isEmpty() ? null : fields.get(6);
+    ;
     String location = fields.get(7).isEmpty() ? null : fields.get(7);
     String visibility = CsvFormat.TRUE_VALUE.equalsIgnoreCase(fields.get(8).trim()) ?
         EventVisibility.PRIVATE.toString().toLowerCase() :

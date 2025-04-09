@@ -94,7 +94,7 @@ public class CalendarRepository implements ICalendarRepository {
   }
 
   @Override
-  public List<String> getCalendars() {
-    return calendars.stream().map(ICalendar::getName).collect(Collectors.toList());
+  public List<ICalendar> getCalendars() {
+    return calendars;
   }
 }

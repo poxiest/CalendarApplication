@@ -17,16 +17,8 @@ import javax.swing.border.EmptyBorder;
 
 import calendarapp.model.EventVisibility;
 import calendarapp.model.dto.EventsResponseDTO;
+import calendarapp.model.impl.Constants;
 
-import static calendarapp.utils.Constants.EVENT_DESCRIPTION;
-import static calendarapp.utils.Constants.EVENT_END_DATE;
-import static calendarapp.utils.Constants.EVENT_LOCATION;
-import static calendarapp.utils.Constants.EVENT_NAME;
-import static calendarapp.utils.Constants.EVENT_RECURRING_COUNT;
-import static calendarapp.utils.Constants.EVENT_RECURRING_DAYS;
-import static calendarapp.utils.Constants.EVENT_RECURRING_END_DATE;
-import static calendarapp.utils.Constants.EVENT_START_DATE;
-import static calendarapp.utils.Constants.EVENT_VISIBILITY;
 
 /**
  * A dialog for creating or editing a calendar event, supporting both single and recurring events.
@@ -47,8 +39,11 @@ public class EventDialog extends JDialog {
   private JRadioButton singleEventButton;
   private JRadioButton countRadioButton;
   private JRadioButton dateRadioButton;
+  private JRadioButton isSingle;
+  private JRadioButton isMultiple;
   private JPanel daysPanel;
-  private Map<String, String> result = null;
+  private JPanel editPropertyPanel;
+  private Map<String, String> result;
 
   /**
    * Constructs a dialog for creating a new event based on the selected date.
@@ -99,7 +94,7 @@ public class EventDialog extends JDialog {
    * Builds the user interface of the dialog with all event input fields and buttons.
    */
   private void constructPanel() {
-    setSize(600, 700);
+    setSize(700, 750);
     setLocationRelativeTo(parent);
 
     JPanel mainPanel = new JPanel(new BorderLayout());
@@ -121,6 +116,18 @@ public class EventDialog extends JDialog {
     formPanel.add(new JLabel("Location:"));
     locationField = new JTextField();
     formPanel.add(locationField);
+
+    formPanel.add(new JLabel("Description:"));
+    descriptionField = new JTextField();
+    formPanel.add(descriptionField);
+
+    formPanel.add(new JLabel("Visibility:"));
+    String[] visibilityOptions = new String[EventVisibility.getVisibilities().size()];
+    for (int i = 0; i < EventVisibility.getVisibilities().size(); i++) {
+      visibilityOptions[i] = EventVisibility.getVisibilities().get(i).toString();
+    }
+    visibilityComboBox = new JComboBox<>(visibilityOptions);
+    formPanel.add(visibilityComboBox);
 
     formPanel.add(new JLabel("Recurrence Setting:"));
     JPanel recurrenceOptionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -176,17 +183,36 @@ public class EventDialog extends JDialog {
       daysPanel.setVisible(true);
     });
 
-    formPanel.add(new JLabel("Description:"));
-    descriptionField = new JTextField();
-    formPanel.add(descriptionField);
 
-    formPanel.add(new JLabel("Visibility:"));
-    String[] visibilityOptions = new String[EventVisibility.getVisibilities().size()];
-    for (int i = 0; i < EventVisibility.getVisibilities().size(); i++) {
-      visibilityOptions[i] = EventVisibility.getVisibilities().get(i);
+    if (super.getTitle().equals("Edit Event")) {
+      formPanel.add(new JLabel("Events to Edit:"));
+      editPropertyPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+      isSingle = new JRadioButton("Only this");
+      isMultiple = new JRadioButton("This and future events");
+      ButtonGroup editEventGroup = new ButtonGroup();
+      editEventGroup.add(isSingle);
+      editEventGroup.add(isMultiple);
+      isSingle.setSelected(true);
+      editPropertyPanel.add(isSingle);
+      editPropertyPanel.add(isMultiple);
+      isMultiple.addActionListener(e -> {
+        if (countRadioButton.isSelected()) {
+          String message = "You are editing a recurring series.\n"
+              + "Changes made to an event will affect all subsequent occurrences and create "
+              + "new events based on the remaining occurrence count.\n"
+              + "If you do not wish to add extra events, please adjust the count accordingly.\n\n"
+              + "Example:\n"
+              + "If your recurring series is set for 10 events and you edit the 5th event, "
+              + "5 new events will be created along with the 5 existing ones.";
+          String title = "Warning";
+          JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);
+        }
+      });
     }
-    visibilityComboBox = new JComboBox<>(visibilityOptions);
-    formPanel.add(visibilityComboBox);
+
+    if (editPropertyPanel != null) {
+      formPanel.add(editPropertyPanel);
+    }
 
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     JButton cancelButton = new JButton("Cancel");
@@ -206,28 +232,37 @@ public class EventDialog extends JDialog {
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
       SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
 
-      result.put(EVENT_NAME, eventNameField.getText().trim());
-      result.put(EVENT_START_DATE, sdf.format(startDate));
-      result.put(EVENT_END_DATE, sdf.format(endDate));
-      result.put(EVENT_LOCATION,
+      result.put(calendarapp.model.impl.Constants.PropertyKeys.NAME,
+          eventNameField.getText().trim());
+      result.put(Constants.PropertyKeys.START_TIME, sdf.format(startDate));
+      result.put(Constants.PropertyKeys.END_TIME, sdf.format(endDate));
+      result.put(Constants.PropertyKeys.LOCATION,
           (locationField.getText().isEmpty() || locationField.getText().isBlank()) ? null :
               locationField.getText().trim());
-      result.put(EVENT_RECURRING_DAYS, getDays());
+      result.put(Constants.PropertyKeys.RECURRING_DAYS, getDays());
       if (singleEventButton.isSelected()) {
-        result.put(EVENT_RECURRING_COUNT, null);
-        result.put(EVENT_RECURRING_END_DATE, null);
+        result.put(Constants.PropertyKeys.OCCURRENCE_COUNT, null);
+        result.put(Constants.PropertyKeys.RECURRENCE_END_DATE, null);
       }
       if (countRadioButton.isSelected()) {
-        result.put(EVENT_RECURRING_COUNT, occurrenceCountSpinner.getValue().toString());
-        result.put(EVENT_RECURRING_END_DATE, null);
+        result.put(Constants.PropertyKeys.OCCURRENCE_COUNT,
+            occurrenceCountSpinner.getValue().toString());
+        result.put(Constants.PropertyKeys.RECURRENCE_END_DATE, null);
       } else if (dateRadioButton.isSelected()) {
-        result.put(EVENT_RECURRING_COUNT, null);
-        result.put(EVENT_RECURRING_END_DATE, sdfDate.format(recurrenceEndDate));
+        result.put(Constants.PropertyKeys.OCCURRENCE_COUNT, null);
+        result.put(Constants.PropertyKeys.RECURRENCE_END_DATE, sdfDate.format(recurrenceEndDate));
       }
-      result.put(EVENT_DESCRIPTION,
+      result.put(Constants.PropertyKeys.DESCRIPTION,
           (descriptionField.getText().isEmpty() || descriptionField.getText().isBlank()) ? null :
               descriptionField.getText().trim());
-      result.put(EVENT_VISIBILITY, visibilityComboBox.getSelectedItem().toString());
+      result.put(Constants.PropertyKeys.VISIBILITY,
+          visibilityComboBox.getSelectedItem().toString());
+      if (isSingle != null && isSingle.isSelected()) {
+        result.put(calendarapp.utils.Constants.IS_MULTIPLE, String.valueOf(false));
+      }
+      if (isMultiple != null && isMultiple.isSelected()) {
+        result.put(calendarapp.utils.Constants.IS_MULTIPLE, String.valueOf(true));
+      }
       dispose();
     });
 
@@ -313,6 +348,7 @@ public class EventDialog extends JDialog {
       occurrenceCountSpinner.setEnabled(false);
       recurrenceEndDateSpinner.setEnabled(false);
       daysPanel.setVisible(false);
+      editPropertyPanel.setVisible(false);
     } else {
       if (dto.getOccurrenceCount() != null) {
         countRadioButton.setSelected(true);

@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
+import calendarapp.model.dto.EditEventRequestDTO;
 import calendarapp.view.ICalendarView;
 
 import static calendarapp.controller.commands.impl.RegexPatternConstants.EDIT_EVENT_NAME_PATTERN;
@@ -44,6 +45,11 @@ public class EditEventCommand extends AbstractCommand {
   private String endDateTime;
 
   /**
+   *
+   */
+  private boolean isMultiple;
+
+  /**
    * Creates a new EditCommand with the specified model and view.
    *
    * @param model The calendar model to use for editing events.
@@ -65,7 +71,12 @@ public class EditEventCommand extends AbstractCommand {
   public void execute(String command) throws InvalidCommandException, EventConflictException {
     parseCommand(command);
     try {
-      model.editEvent(eventName, startDateTime, endDateTime, propertyName, newPropertyValue);
+      model.editEvent(EditEventRequestDTO.builder().eventName(eventName)
+          .startTime(startDateTime)
+          .endTime(endDateTime)
+          .propertyName(propertyName)
+          .propertyValue(newPropertyValue)
+          .isRecurring(isMultiple).build());
     } catch (IllegalArgumentException e) {
       throw new InvalidCommandException(command + "\nReason : " + e.getMessage());
     } catch (EventConflictException e) {
@@ -86,6 +97,7 @@ public class EditEventCommand extends AbstractCommand {
       startDateTime = matcher.group(4) != null ? matcher.group(4) : matcher.group(5);
       endDateTime = matcher.group(6) != null ? matcher.group(6) : matcher.group(7);
       newPropertyValue = matcher.group(8) != null ? matcher.group(8) : matcher.group(9);
+      isMultiple = false;
     }
 
     matcher = regexMatching(EDIT_FROM_PATTERN, command);
@@ -94,6 +106,7 @@ public class EditEventCommand extends AbstractCommand {
       eventName = matcher.group(2) != null ? matcher.group(2) : matcher.group(3);
       startDateTime = matcher.group(4) != null ? matcher.group(4) : matcher.group(5);
       newPropertyValue = matcher.group(6) != null ? matcher.group(6) : matcher.group(7);
+      isMultiple = true;
     }
 
     matcher = regexMatching(EDIT_EVENT_NAME_PATTERN, command);
@@ -101,6 +114,7 @@ public class EditEventCommand extends AbstractCommand {
       propertyName = matcher.group(1);
       eventName = matcher.group(2) != null ? matcher.group(2) : matcher.group(3);
       newPropertyValue = matcher.group(4) != null ? matcher.group(4) : matcher.group(5);
+      isMultiple = true;
     }
 
     if (eventName == null || newPropertyValue == null || propertyName == null) {

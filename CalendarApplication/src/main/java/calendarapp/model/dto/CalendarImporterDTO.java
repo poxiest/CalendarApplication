@@ -22,6 +22,15 @@ public class CalendarImporterDTO {
   }
 
   /**
+   * Creates and returns a new Builder instance for CalendarImporterDTO.
+   *
+   * @return a new Builder
+   */
+  public static CalendarImporterDTO.Builder builder() {
+    return new CalendarImporterDTO.Builder();
+  }
+
+  /**
    * Returns the name of the event.
    *
    * @return the event name
@@ -73,15 +82,6 @@ public class CalendarImporterDTO {
    */
   public String getVisibility() {
     return visibility;
-  }
-
-  /**
-   * Creates and returns a new Builder instance for CalendarImporterDTO.
-   *
-   * @return a new Builder
-   */
-  public static CalendarImporterDTO.Builder builder() {
-    return new CalendarImporterDTO.Builder();
   }
 
   /**

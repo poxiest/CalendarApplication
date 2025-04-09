@@ -47,7 +47,7 @@ public interface ICalendarRepository {
   /**
    * Fetches all the calendar present.
    *
-   * @return List of calendar names.
+   * @return List of calendar.
    */
-  List<String> getCalendars();
+  List<ICalendar> getCalendars();
 }

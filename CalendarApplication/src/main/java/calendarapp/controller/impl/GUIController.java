@@ -11,6 +11,7 @@ import calendarapp.controller.exporter.Constants;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.dto.CalendarImporterDTO;
+import calendarapp.model.dto.EditEventRequestDTO;
 import calendarapp.model.dto.EventsResponseDTO;
 import calendarapp.view.GUIView;
 
@@ -18,23 +19,15 @@ import static calendarapp.controller.exporter.Constants.EXPORTER_MAP;
 import static calendarapp.controller.importer.Constants.IMPORTER_MAP;
 import static calendarapp.utils.Constants.CALENDAR_NAME;
 import static calendarapp.utils.Constants.CALENDAR_TIME_ZONE;
-import static calendarapp.utils.Constants.EVENT_DESCRIPTION;
-import static calendarapp.utils.Constants.EVENT_END_DATE;
-import static calendarapp.utils.Constants.EVENT_LOCATION;
-import static calendarapp.utils.Constants.EVENT_NAME;
-import static calendarapp.utils.Constants.EVENT_RECURRING_COUNT;
-import static calendarapp.utils.Constants.EVENT_RECURRING_DAYS;
-import static calendarapp.utils.Constants.EVENT_RECURRING_END_DATE;
-import static calendarapp.utils.Constants.EVENT_START_DATE;
-import static calendarapp.utils.Constants.EVENT_VISIBILITY;
 import static calendarapp.utils.Constants.EXPORT_FILE_EXTENSION;
 import static calendarapp.utils.Constants.EXPORT_FILE_NAME;
-import static calendarapp.utils.Constants.IMPORT_FILE_PATH;
-import static calendarapp.utils.FileUtil.getFileExtension;
 import static calendarapp.utils.Constants.FIND_END_TIME;
 import static calendarapp.utils.Constants.FIND_EVENT_NAME;
 import static calendarapp.utils.Constants.FIND_ON;
 import static calendarapp.utils.Constants.FIND_START_TIME;
+import static calendarapp.utils.Constants.IMPORT_FILE_PATH;
+import static calendarapp.utils.Constants.IS_MULTIPLE;
+import static calendarapp.utils.FileUtil.getFileExtension;
 
 /**
  * Controller implementation for handling user interactions in the GUI-based calendar application.
@@ -60,7 +53,7 @@ public class GUIController implements Features {
     this.view = view;
     view.addFeatures(this);
     view.updateCalendarList(model.getCalendars());
-    setActiveCalendar(model.getCalendars().get(0));
+    setActiveCalendar(model.getCalendars().get(0).getName());
   }
 
   @Override
@@ -70,11 +63,15 @@ public class GUIController implements Features {
       if (results == null) {
         return;
       }
-      model.createEvent(results.get(EVENT_NAME), results.get(EVENT_START_DATE),
-          results.get(EVENT_END_DATE), results.get(EVENT_RECURRING_DAYS),
-          results.get(EVENT_RECURRING_COUNT), results.get(EVENT_RECURRING_END_DATE),
-          results.get(EVENT_DESCRIPTION), results.get(EVENT_LOCATION),
-          results.get(EVENT_VISIBILITY), true);
+      model.createEvent(results.get(calendarapp.model.impl.Constants.PropertyKeys.NAME),
+          results.get(calendarapp.model.impl.Constants.PropertyKeys.START_TIME),
+          results.get(calendarapp.model.impl.Constants.PropertyKeys.END_TIME),
+          results.get(calendarapp.model.impl.Constants.PropertyKeys.RECURRING_DAYS),
+          results.get(calendarapp.model.impl.Constants.PropertyKeys.OCCURRENCE_COUNT),
+          results.get(calendarapp.model.impl.Constants.PropertyKeys.RECURRENCE_END_DATE),
+          results.get(calendarapp.model.impl.Constants.PropertyKeys.DESCRIPTION),
+          results.get(calendarapp.model.impl.Constants.PropertyKeys.LOCATION),
+          results.get(calendarapp.model.impl.Constants.PropertyKeys.VISIBILITY), true);
       view.showConfirmation("Event created successfully.");
       refreshEvents();
     } catch (EventConflictException e) {
@@ -88,7 +85,21 @@ public class GUIController implements Features {
   public void editEvent(EventsResponseDTO eventName) {
     try {
       Map<String, String> result = view.showEditEventForm(eventName);
-//      model.editEvent(eventName, startTime, endTime, property, value);
+      if (result == null) {
+        return;
+      }
+      Map<String, String> updatedValues = EditEventHelper.getEditEventChanges(eventName, result);
+      for (Map.Entry<String, String> entry : updatedValues.entrySet()) {
+        model.editEvent(
+            EditEventRequestDTO.builder().eventName(eventName.getEventName())
+                .startTime(eventName.getStartTime().toString())
+                .endTime(eventName.getEndTime().toString())
+                .propertyName(entry.getKey())
+                .propertyValue(entry.getValue())
+                .isRecurring(Boolean.parseBoolean(result.getOrDefault(IS_MULTIPLE,
+                    String.valueOf(false))))
+                .build());
+      }
       view.showConfirmation("Event updated successfully.");
       refreshEvents();
     } catch (EventConflictException e) {
@@ -167,7 +178,7 @@ public class GUIController implements Features {
           results.get(FIND_START_TIME), results.get(FIND_END_TIME), results.get(FIND_ON));
       view.updateEvents(events);
     } catch (Exception e) {
-      view.showError("Error creating calendar: " + e.getMessage());
+      view.showError("Error Finding events: " + e.getMessage());
     }
   }
 
@@ -204,11 +215,13 @@ public class GUIController implements Features {
             + Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS);
       }
       ICalendarImporter importer = IMPORTER_MAP.get(fileExtension);
-      List<CalendarImporterDTO> importedEvents = importer.importEvents(results.get(IMPORT_FILE_PATH));
+      List<CalendarImporterDTO> importedEvents =
+          importer.importEvents(results.get(IMPORT_FILE_PATH));
       for (CalendarImporterDTO importedEvent : importedEvents) {
-        model.createEvent(importedEvent.getEventName(), importedEvent.getStartTime(), importedEvent.getEndTime(),
-            null, null, null, importedEvent.getDescription(),
-            importedEvent.getLocation(), importedEvent.getVisibility(), true);
+        model.createEvent(importedEvent.getEventName(), importedEvent.getStartTime(),
+            importedEvent.getEndTime(), null, null, null,
+            importedEvent.getDescription(), importedEvent.getLocation(),
+            importedEvent.getVisibility(), true);
       }
       view.showConfirmation("Calendar imported successfully.");
       refreshEvents();

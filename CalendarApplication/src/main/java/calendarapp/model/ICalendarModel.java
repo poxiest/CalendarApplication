@@ -3,7 +3,9 @@ package calendarapp.model;
 import java.util.List;
 
 import calendarapp.model.dto.CalendarExporterDTO;
+import calendarapp.model.dto.CalendarResponseDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
+import calendarapp.model.dto.EditEventRequestDTO;
 import calendarapp.model.dto.EventsResponseDTO;
 
 /**
@@ -39,16 +41,10 @@ public interface ICalendarModel {
   /**
    * Edits an existing event or events that match the specified criteria.
    *
-   * @param eventName the name of the event(s) to edit.
-   * @param startTime the start time to use for finding matching events (optional).
-   * @param endTime   the end time to use for finding matching events (optional).
-   * @param property  the property to modify (subject, description, location, etc.).
-   * @param value     the new value for the specified property.
-   * @throws EventConflictException if the edited event would conflict with existing
-   *                                events and auto-decline is enabled.
+   * @param editEventRequestDTO@throws EventConflictException if the edited event would conflict
+   *                                   with existing events and auto-decline is enabled.
    */
-  void editEvent(String eventName, String startTime, String endTime, String property,
-                 String value) throws EventConflictException;
+  void editEvent(EditEventRequestDTO editEventRequestDTO) throws EventConflictException;
 
   /**
    * Retrieves events that occur within the specified time range sorted in ascending order.
@@ -112,5 +108,5 @@ public interface ICalendarModel {
    *
    * @return List of calendar names.
    */
-  List<String> getCalendars();
+  List<CalendarResponseDTO> getCalendars();
 }
