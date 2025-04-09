@@ -5,11 +5,17 @@ import java.util.List;
 import java.util.Map;
 
 import calendarapp.controller.Features;
+import calendarapp.controller.ICalendarExporter;
+import calendarapp.controller.ICalendarImporter;
+import calendarapp.controller.exporter.Constants;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
+import calendarapp.model.dto.CalendarImporterDTO;
 import calendarapp.model.dto.EventsResponseDTO;
 import calendarapp.view.GUIView;
 
+import static calendarapp.controller.exporter.Constants.EXPORTER_MAP;
+import static calendarapp.controller.importer.Constants.IMPORTER_MAP;
 import static calendarapp.utils.Constants.CALENDAR_NAME;
 import static calendarapp.utils.Constants.CALENDAR_TIME_ZONE;
 import static calendarapp.utils.Constants.EVENT_DESCRIPTION;
@@ -21,6 +27,10 @@ import static calendarapp.utils.Constants.EVENT_RECURRING_DAYS;
 import static calendarapp.utils.Constants.EVENT_RECURRING_END_DATE;
 import static calendarapp.utils.Constants.EVENT_START_DATE;
 import static calendarapp.utils.Constants.EVENT_VISIBILITY;
+import static calendarapp.utils.Constants.EXPORT_FILE_EXTENSION;
+import static calendarapp.utils.Constants.EXPORT_FILE_NAME;
+import static calendarapp.utils.Constants.IMPORT_FILE_PATH;
+import static calendarapp.utils.FileUtil.getFileExtension;
 import static calendarapp.utils.Constants.FIND_END_TIME;
 import static calendarapp.utils.Constants.FIND_EVENT_NAME;
 import static calendarapp.utils.Constants.FIND_ON;
@@ -148,6 +158,51 @@ public class GUIController implements Features {
       view.updateEvents(events);
     } catch (Exception e) {
       view.showError("Error creating calendar: " + e.getMessage());
+    }
+  }
+
+  @Override
+  public void exportCalendar() {
+    try {
+      Map<String, String> results = view.showExportCalendarForm();
+      if (results == null) {
+        return;
+      }
+      ICalendarExporter exporter = EXPORTER_MAP.get(results.get(EXPORT_FILE_EXTENSION));
+      exporter.export(model.getEventsForExport(), results.get(EXPORT_FILE_NAME) + "."
+          + results.get(EXPORT_FILE_EXTENSION));
+      view.showConfirmation("Calendar exported successfully.");
+      refreshEvents();
+    } catch (Exception e) {
+      view.showError("Error exporting calendar: " + e.getMessage());
+    }
+  }
+
+  @Override
+  public void importCalendar() {
+    try {
+      Map<String, String> results = view.showImportCalendarDialog();
+      if (results == null) {
+        return;
+      }
+
+      String fileExtension = getFileExtension(results.get(IMPORT_FILE_PATH));
+      if (!Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS.contains(fileExtension)) {
+        throw new IllegalArgumentException("Unsupported export format: " + fileExtension
+            + ". Supported formats are: "
+            + Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS);
+      }
+      ICalendarImporter importer = IMPORTER_MAP.get(fileExtension);
+      List<CalendarImporterDTO> importedEvents = importer.importEvents(results.get(IMPORT_FILE_PATH));
+      for (CalendarImporterDTO importedEvent : importedEvents) {
+        model.createEvent(importedEvent.getEventName(), importedEvent.getStartTime(), importedEvent.getEndTime(),
+            null, null, null, importedEvent.getDescription(),
+            importedEvent.getLocation(), importedEvent.getVisibility(), true);
+      }
+      view.showConfirmation("Calendar imported successfully.");
+      refreshEvents();
+    } catch (Exception e) {
+      view.showError("Error importing calendar: " + e.getMessage());
     }
   }
 

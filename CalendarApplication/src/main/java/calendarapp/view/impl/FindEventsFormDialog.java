@@ -1,6 +1,8 @@
 package calendarapp.view.impl;
 
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
@@ -27,6 +29,15 @@ public class FindEventsFormDialog extends JDialog {
     super(parent, "Create Calendar", true);
     this.parent = parent;
     result = new HashMap<>();
+
+    addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosing(WindowEvent e) {
+        result = null;
+        dispose();
+      }
+    });
+
     constructCalendarPanel();
   }
 
