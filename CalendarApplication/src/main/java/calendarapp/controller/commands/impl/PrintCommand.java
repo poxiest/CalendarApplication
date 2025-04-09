@@ -8,8 +8,8 @@ import calendarapp.model.ICalendarModel;
 import calendarapp.model.dto.EventsResponseDTO;
 import calendarapp.view.ICalendarView;
 
-import static calendarapp.controller.commands.impl.RegexPatternConstants.PRINT_FROM_TO_PATTERN;
-import static calendarapp.controller.commands.impl.RegexPatternConstants.PRINT_ON_PATTERN;
+import static calendarapp.controller.Constants.PRINT_FROM_TO_PATTERN;
+import static calendarapp.controller.Constants.PRINT_ON_PATTERN;
 
 /**
  * Print Command implementation for printing calendar events within a specified time range.

@@ -6,7 +6,7 @@ import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
-import static calendarapp.controller.commands.impl.RegexPatternConstants.STATUS_ON_PATTERN;
+import static calendarapp.controller.Constants.STATUS_ON_PATTERN;
 
 /**
  * Show Command implementation for showing calendar status at a specific date and time.

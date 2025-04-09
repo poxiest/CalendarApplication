@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import calendarapp.controller.exporter.Constants;
+import calendarapp.controller.Constants;
 
 import static calendarapp.utils.Constants.IMPORT_FILE_PATH;
 

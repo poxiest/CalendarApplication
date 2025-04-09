@@ -7,14 +7,14 @@ import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
-import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_AUTO_DECLINE_PATTERN;
-import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_EVENT_NAME_PATTERN;
-import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_FROM_TO_PATTERN;
-import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_ON_PATTERN;
-import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_OPTIONAL_PARAMETERS;
-import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_REPEATS_F0R_PATTERN;
-import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_REPEATS_UNTIL_PATTERN;
-import static calendarapp.controller.commands.impl.RegexPatternConstants.IS_RECURRING_EVENT;
+import static calendarapp.controller.Constants.CREATE_AUTO_DECLINE_PATTERN;
+import static calendarapp.controller.Constants.CREATE_EVENT_NAME_PATTERN;
+import static calendarapp.controller.Constants.CREATE_FROM_TO_PATTERN;
+import static calendarapp.controller.Constants.CREATE_ON_PATTERN;
+import static calendarapp.controller.Constants.CREATE_OPTIONAL_PARAMETERS;
+import static calendarapp.controller.Constants.CREATE_REPEATS_F0R_PATTERN;
+import static calendarapp.controller.Constants.CREATE_REPEATS_UNTIL_PATTERN;
+import static calendarapp.controller.Constants.IS_RECURRING_EVENT;
 
 /**
  * Create Command implementation for creating calendar events.

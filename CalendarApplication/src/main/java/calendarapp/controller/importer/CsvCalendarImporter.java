@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import calendarapp.controller.ICalendarImporter;
-import calendarapp.controller.exporter.Constants.CsvFormat;
+import calendarapp.controller.Constants.CsvFormat;
 import calendarapp.model.EventVisibility;
 import calendarapp.model.dto.CalendarImporterDTO;
 
