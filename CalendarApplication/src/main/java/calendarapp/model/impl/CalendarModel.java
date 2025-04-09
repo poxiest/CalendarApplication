@@ -12,6 +12,7 @@ import calendarapp.model.ICalendarRepository;
 import calendarapp.model.SearchType;
 import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
+import calendarapp.model.dto.EditEventRequestDTO;
 import calendarapp.model.dto.EventsResponseDTO;
 
 import static calendarapp.model.impl.Constants.Calendar.DEFAULT_CALENDAR_NAME;
@@ -66,17 +67,12 @@ public class CalendarModel implements ICalendarModel {
   /**
    * Edits an event based on the specified property and value.
    *
-   * @param eventName The name of the event.
-   * @param startTime The start time of the event.
-   * @param endTime   The end time of the event.
-   * @param property  The property to be edited.
-   * @param value     The new value of the property.
+   * @param editEventRequestDTO
    */
   @Override
-  public void editEvent(String eventName, String startTime, String endTime, String property,
-                        String value) {
-    activeCalendar.getEventRepository().update(eventName, getTemporalFromString(startTime),
-        getTemporalFromString(endTime), property, value);
+  public void editEvent(EditEventRequestDTO editEventRequestDTO) {
+    activeCalendar.getEventRepository().update(editEventRequestDTO.getEventName(), getTemporalFromString(editEventRequestDTO.getStartTime()),
+        getTemporalFromString(editEventRequestDTO.getEndTime()), editEventRequestDTO.getPropertyName(), editEventRequestDTO.getPropertyValue(), editEventRequestDTO.isMultiple());
   }
 
   /**

@@ -32,9 +32,11 @@ public class OverlappingEventsSearch implements SearchEventsStrategy {
       throw new InvalidCommandException("Start time must be before end time.\n");
     }
     return events.stream()
-        .filter(event -> TimeUtil.isConflicting(event.getStartTime(),
-            event.getEndTime(), startTime, endTime) || TimeUtil.isEqual(event.getStartTime(),
-            startTime) || TimeUtil.isEqual(event.getEndTime(), startTime))
+        .filter(event -> eventName == null || event.getName().equals(eventName))
+        .filter(event -> (startTime == null && endTime == null)
+            || TimeUtil.isConflicting(event.getStartTime(), event.getEndTime(), startTime, endTime)
+            || TimeUtil.isEqual(event.getStartTime(), startTime)
+            || TimeUtil.isEqual(event.getEndTime(), startTime))
         .sorted((event1, event2) ->
             Math.toIntExact(TimeUtil.difference(event2.getStartTime(), event1.getStartTime())))
         .map(IEvent::deepCopyEvent)

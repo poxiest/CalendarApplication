@@ -7,24 +7,18 @@ import java.util.Map;
 import calendarapp.controller.Features;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
+import calendarapp.model.dto.EditEventRequestDTO;
 import calendarapp.model.dto.EventsResponseDTO;
+import calendarapp.model.impl.Constants;
 import calendarapp.view.GUIView;
 
 import static calendarapp.utils.Constants.CALENDAR_NAME;
 import static calendarapp.utils.Constants.CALENDAR_TIME_ZONE;
-import static calendarapp.utils.Constants.EVENT_DESCRIPTION;
-import static calendarapp.utils.Constants.EVENT_END_DATE;
-import static calendarapp.utils.Constants.EVENT_LOCATION;
-import static calendarapp.utils.Constants.EVENT_NAME;
-import static calendarapp.utils.Constants.EVENT_RECURRING_COUNT;
-import static calendarapp.utils.Constants.EVENT_RECURRING_DAYS;
-import static calendarapp.utils.Constants.EVENT_RECURRING_END_DATE;
-import static calendarapp.utils.Constants.EVENT_START_DATE;
-import static calendarapp.utils.Constants.EVENT_VISIBILITY;
 import static calendarapp.utils.Constants.FIND_END_TIME;
 import static calendarapp.utils.Constants.FIND_EVENT_NAME;
 import static calendarapp.utils.Constants.FIND_ON;
 import static calendarapp.utils.Constants.FIND_START_TIME;
+import static calendarapp.utils.Constants.IS_MULTIPLE;
 
 public class GUIController implements Features {
 
@@ -50,11 +44,15 @@ public class GUIController implements Features {
       if (results == null) {
         return;
       }
-      model.createEvent(results.get(EVENT_NAME), results.get(EVENT_START_DATE),
-          results.get(EVENT_END_DATE), results.get(EVENT_RECURRING_DAYS),
-          results.get(EVENT_RECURRING_COUNT), results.get(EVENT_RECURRING_END_DATE),
-          results.get(EVENT_DESCRIPTION), results.get(EVENT_LOCATION),
-          results.get(EVENT_VISIBILITY), true);
+      model.createEvent(results.get(calendarapp.model.impl.Constants.PropertyKeys.NAME),
+          results.get(Constants.PropertyKeys.START_TIME),
+          results.get(Constants.PropertyKeys.END_TIME),
+          results.get(Constants.PropertyKeys.RECURRING_DAYS),
+          results.get(Constants.PropertyKeys.OCCURRENCE_COUNT),
+          results.get(Constants.PropertyKeys.RECURRENCE_END_DATE),
+          results.get(Constants.PropertyKeys.DESCRIPTION),
+          results.get(Constants.PropertyKeys.LOCATION),
+          results.get(Constants.PropertyKeys.VISIBILITY), true);
       view.showConfirmation("Event created successfully.");
       refreshEvents();
     } catch (EventConflictException e) {
@@ -68,7 +66,20 @@ public class GUIController implements Features {
   public void editEvent(EventsResponseDTO eventName) {
     try {
       Map<String, String> result = view.showEditEventForm(eventName);
-//      model.editEvent(eventName, startTime, endTime, property, value);
+      if (result == null) {
+        return;
+      }
+      Map<String, String> updatedValues = EditEventHelper.getEditEventChanges(eventName, result);
+      for (Map.Entry<String, String> entry : updatedValues.entrySet()) {
+        model.editEvent(
+            EditEventRequestDTO.builder().eventName(eventName.getEventName())
+                .startTime(eventName.getStartTime().toString())
+                .endTime(eventName.getEndTime().toString())
+                .propertyName(entry.getKey())
+                .propertyValue(entry.getValue())
+                .isRecurring(Boolean.parseBoolean(result.getOrDefault(IS_MULTIPLE, String.valueOf(false))))
+                .build());
+      }
       view.showConfirmation("Event updated successfully.");
       refreshEvents();
     } catch (EventConflictException e) {
@@ -147,7 +158,7 @@ public class GUIController implements Features {
           results.get(FIND_START_TIME), results.get(FIND_END_TIME), results.get(FIND_ON));
       view.updateEvents(events);
     } catch (Exception e) {
-      view.showError("Error creating calendar: " + e.getMessage());
+      view.showError("Error Finding events: " + e.getMessage());
     }
   }
 

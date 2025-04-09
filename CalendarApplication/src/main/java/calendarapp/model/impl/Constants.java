@@ -3,6 +3,7 @@ package calendarapp.model.impl;
 import java.time.DayOfWeek;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,6 +24,9 @@ public class Constants {
     public static final String RECURRING_DAYS = "recurring_days";
     public static final String OCCURRENCE_COUNT = "occurrence_count";
     public static final String RECURRENCE_END_DATE = "recurrence_end_date";
+
+    public static final List<String> RECURRING_PROPERTIES_LIST = List.of(RECURRING_DAYS,
+        RECURRENCE_END_DATE, OCCURRENCE_COUNT);
   }
 
   /**

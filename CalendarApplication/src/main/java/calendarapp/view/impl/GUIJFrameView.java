@@ -53,7 +53,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
   public GUIJFrameView() {
     super("Calendar");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setSize(1200, 700);
+    setSize(1200, 750);
     setLocationRelativeTo(null);
     mainPanel = new JPanel(new BorderLayout());
     setContentPane(mainPanel);
@@ -406,15 +406,16 @@ public class GUIJFrameView extends JFrame implements GUIView {
     infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
     infoPanel.setBackground(Color.WHITE);
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
-    JLabel timeLabel = new JLabel(formatter.format(event.getStartTime()) + " to " + formatter.format(event.getEndTime()));
+    JLabel timeLabel =
+        new JLabel(formatter.format(event.getStartTime()) + " to " + formatter.format(event.getEndTime()));
     timeLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-    JLabel titleLabel = new JLabel(event.getEventName() + ((event.getLocation() != null) ? " - Location : " + event.getLocation() : ""));
-    titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
-    infoPanel.add(timeLabel);
+    JLabel titleLabel = new JLabel(event.getEventName());
+    titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
     infoPanel.add(titleLabel);
+    infoPanel.add(timeLabel);
     if (event.getLocation() != null && !event.getLocation().isEmpty()) {
-      JLabel locationLabel = new JLabel(event.getLocation());
-      locationLabel.setFont(new Font("Arial", Font.ITALIC, 11));
+      JLabel locationLabel = new JLabel("Location - " + event.getLocation());
+      locationLabel.setFont(new Font("Arial", Font.PLAIN, 12));
       infoPanel.add(locationLabel);
     }
     JButton editButton = new JButton("Edit");

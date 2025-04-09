@@ -11,6 +11,7 @@ import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
+import calendarapp.model.dto.EditEventRequestDTO;
 import calendarapp.model.dto.EventsResponseDTO;
 import calendarapp.utils.TimeUtil;
 import calendarapp.view.ICalendarView;
@@ -154,7 +155,8 @@ public class ControllerModelIntergationTest {
         + "Start Time: 2025-11-11T11:00\n"
         + "End Time: 2025-11-11T12:00\n"
         + "Property: eventname\n"
-        + "Property Value: Meetup\n", log.toString());
+        + "Property Value: Meetup\n"
+        + "Is Multiple: false\n", log.toString());
     assertEquals("Enter command or enter 'exit' to exit the calendar application.\n"
         + "Processing command: edit event eventname Standup from \"2025-11-11T11:00\" to "
         + "\"2025-11-11T12:00\" with Meetup\n"
@@ -172,7 +174,8 @@ public class ControllerModelIntergationTest {
         + "Start Time: 2025-11-11T11:00\n"
         + "End Time: null\n"
         + "Property: location\n"
-        + "Property Value: Shillman\n", log.toString());
+        + "Property Value: Shillman\n"
+        + "Is Multiple: true\n", log.toString());
     assertEquals("Enter command or enter 'exit' to exit the calendar application.\n"
         + "Processing command: edit events location Standup1 from \"2025-11-11T11:00\" with "
         + "Shillman\n"
@@ -190,7 +193,8 @@ public class ControllerModelIntergationTest {
         + "Start Time: null\n"
         + "End Time: null\n"
         + "Property: location\n"
-        + "Property Value: Richard\n", log.toString());
+        + "Property Value: Richard\n"
+        + "Is Multiple: true\n", log.toString());
     assertEquals("Enter command or enter 'exit' to exit the calendar application.\n"
         + "Processing command: edit events location standup1 Richard\n"
         + "\n"
@@ -375,13 +379,13 @@ public class ControllerModelIntergationTest {
 
 
     @Override
-    public void editEvent(String eventName, String startTime, String endTime, String property,
-                          String value) throws EventConflictException {
-      log.append("Event Name: ").append(eventName).append("\n")
-          .append("Start Time: ").append(startTime).append("\n")
-          .append("End Time: ").append(endTime).append("\n")
-          .append("Property: ").append(property).append("\n")
-          .append("Property Value: ").append(value).append("\n");
+    public void editEvent(EditEventRequestDTO editEventRequestDTO) throws EventConflictException {
+      log.append("Event Name: ").append(editEventRequestDTO.getEventName()).append("\n")
+          .append("Start Time: ").append(editEventRequestDTO.getStartTime()).append("\n")
+          .append("End Time: ").append(editEventRequestDTO.getEndTime()).append("\n")
+          .append("Property: ").append(editEventRequestDTO.getPropertyName()).append("\n")
+          .append("Property Value: ").append(editEventRequestDTO.getPropertyValue()).append("\n")
+          .append("Is Multiple: ").append(editEventRequestDTO.isMultiple()).append("\n");
     }
 
     @Override
