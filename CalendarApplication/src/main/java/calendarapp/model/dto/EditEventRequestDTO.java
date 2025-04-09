@@ -128,7 +128,8 @@ public class EditEventRequestDTO {
     /**
      * Sets whether the event is recurring.
      *
-     * @param isRecurring true if the update applies to a recurring event or series; false otherwise.
+     * @param isRecurring true if the update applies to a recurring event or series; false
+     *                    otherwise.
      * @return this Builder instance.
      */
     public Builder isRecurring(boolean isRecurring) {

@@ -19,6 +19,5 @@ public class Constants {
 
   public static final class SupportImportFormats {
     public static final String CSV = "csv";
-    public static final Set<String> SUPPORTED_IMPORT_FORMATS = Set.of(CSV);
   }
 }

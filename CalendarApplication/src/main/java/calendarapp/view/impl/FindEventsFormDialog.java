@@ -24,13 +24,11 @@ public class FindEventsFormDialog extends JDialog {
 
   private JRadioButton findInBetweenRadio;
   private JRadioButton findOnRadio;
-  private String eventName;
 
   public FindEventsFormDialog(JFrame parent) {
     super(parent, "Find Events", true);
     this.parent = parent;
     result = new HashMap<>();
-
     addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosing(WindowEvent e) {
@@ -38,7 +36,6 @@ public class FindEventsFormDialog extends JDialog {
         dispose();
       }
     });
-
     constructCalendarPanel();
   }
 
@@ -113,8 +110,9 @@ public class FindEventsFormDialog extends JDialog {
       Date findOn = (Date) findOnField.getValue();
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
       SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
-      
-      String eventName = eventNameField.getText().isEmpty() ? null : eventNameField.getText().trim();
+
+      String eventName = eventNameField.getText().isEmpty() ? null :
+          eventNameField.getText().trim();
       result.put(FIND_EVENT_NAME, eventName);
       result.put(FIND_START_TIME, null);
       result.put(FIND_END_TIME, null);

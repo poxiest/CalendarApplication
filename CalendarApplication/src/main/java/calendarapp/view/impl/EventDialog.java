@@ -211,7 +211,8 @@ public class EventDialog extends JDialog {
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
       SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
 
-      result.put(calendarapp.model.impl.Constants.PropertyKeys.NAME, eventNameField.getText().trim());
+      result.put(calendarapp.model.impl.Constants.PropertyKeys.NAME,
+          eventNameField.getText().trim());
       result.put(Constants.PropertyKeys.START_TIME, sdf.format(startDate));
       result.put(Constants.PropertyKeys.END_TIME, sdf.format(endDate));
       result.put(Constants.PropertyKeys.LOCATION,

@@ -71,7 +71,8 @@ public class EventRepository implements IEventRepository {
   public void update(String eventName, Temporal startTime, Temporal endTime, String property,
                      String value, boolean isMultiple) {
     List<IEvent> eventsToUpdate;
-    boolean isRecurringUpdate = Constants.PropertyKeys.RECURRING_PROPERTIES_LIST.contains(property.toLowerCase());
+    boolean isRecurringUpdate =
+        Constants.PropertyKeys.RECURRING_PROPERTIES_LIST.contains(property.toLowerCase());
     if (!isMultiple && endTime != null) {
       eventsToUpdate = searchEventFactory.search(events, eventName, startTime, endTime, false,
           SearchType.EXACT);

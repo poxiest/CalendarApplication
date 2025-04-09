@@ -71,8 +71,11 @@ public class CalendarModel implements ICalendarModel {
    */
   @Override
   public void editEvent(EditEventRequestDTO editEventRequestDTO) {
-    activeCalendar.getEventRepository().update(editEventRequestDTO.getEventName(), getTemporalFromString(editEventRequestDTO.getStartTime()),
-        getTemporalFromString(editEventRequestDTO.getEndTime()), editEventRequestDTO.getPropertyName(), editEventRequestDTO.getPropertyValue(), editEventRequestDTO.isMultiple());
+    activeCalendar.getEventRepository().update(editEventRequestDTO.getEventName(),
+        getTemporalFromString(editEventRequestDTO.getStartTime()),
+        getTemporalFromString(editEventRequestDTO.getEndTime()),
+        editEventRequestDTO.getPropertyName(), editEventRequestDTO.getPropertyValue(),
+        editEventRequestDTO.isMultiple());
   }
 
   /**
