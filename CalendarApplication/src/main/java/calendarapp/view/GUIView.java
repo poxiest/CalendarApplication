@@ -34,4 +34,8 @@ public interface GUIView {
   void navigateToNext(LocalDate date);
 
   Map<String, String> findEvents();
+
+  Map<String, String> showExportCalendarForm();
+
+  Map<String, String> showImportCalendarDialog();
 }

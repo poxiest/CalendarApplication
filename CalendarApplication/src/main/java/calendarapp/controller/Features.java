@@ -25,4 +25,8 @@ public interface Features {
   void showEditEventForm(EventsResponseDTO event);
 
   void findEvents();
+
+  void exportCalendar();
+
+  void importCalendar();
 }

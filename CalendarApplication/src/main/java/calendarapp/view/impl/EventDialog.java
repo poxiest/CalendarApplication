@@ -1,6 +1,8 @@
 package calendarapp.view.impl;
 
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -45,6 +47,15 @@ public class EventDialog extends JDialog {
     this.parent = parent;
     this.selectedDate = Date.from(selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     this.result = new HashMap<>();
+
+    addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosing(WindowEvent e) {
+        result = null;
+        dispose();
+      }
+    });
+
     constructPane();
   }
 

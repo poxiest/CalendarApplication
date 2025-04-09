@@ -29,6 +29,8 @@ public class GUIJFrameView extends JFrame implements GUIView {
   private JButton createCalendarButton;
   private JPanel calendarListPanel;
   private ButtonGroup calendarGroup;
+  private JButton exportButton;
+  private JButton importButton;
   // Content components
   private JPanel contentPanel;
   private JPanel navigationPanel;
@@ -70,6 +72,8 @@ public class GUIJFrameView extends JFrame implements GUIView {
     nextButton.addActionListener(e -> controller.navigateToNext());
     createEventButton.addActionListener(e -> controller.createEvent());
     findEventsButton.addActionListener(e -> controller.findEvents());
+    exportButton.addActionListener(e -> controller.exportCalendar());
+    importButton.addActionListener(e -> controller.importCalendar());
   }
 
   @Override
@@ -164,6 +168,18 @@ public class GUIJFrameView extends JFrame implements GUIView {
     return dialog.showDialog();
   }
 
+  @Override
+  public Map<String, String> showExportCalendarForm() {
+    ExportCalendarFormDialog dialog = new ExportCalendarFormDialog(this);
+    return dialog.showDialog();
+  }
+
+  @Override
+  public Map<String, String> showImportCalendarDialog() {
+    ImportCalendarDialog dialog = new ImportCalendarDialog(this);
+    return dialog.showDialog();
+  }
+
   private void createComponents() {
     // Header panel
     headerPanel = new JPanel(new BorderLayout());
@@ -203,8 +219,27 @@ public class GUIJFrameView extends JFrame implements GUIView {
     calendarListPanel.setBackground(Color.WHITE);
     calendarListPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
     calendarGroup = new ButtonGroup();
+
+    JPanel calendarFooterPanel = new JPanel();
+    calendarFooterPanel.setBackground(Color.WHITE);
+    calendarFooterPanel.setLayout(new BoxLayout(calendarFooterPanel, BoxLayout.Y_AXIS));
+
+    exportButton = new JButton("Export Calendar");
+    exportButton.setPreferredSize(new Dimension(200, 30));
+    exportButton.setFont(new Font("Arial", Font.BOLD, 14));
+
+    importButton = new JButton("Import Calendar");
+    importButton.setPreferredSize(new Dimension(200, 30));
+    importButton.setFont(new Font("Arial", Font.BOLD, 14));
+
+    calendarFooterPanel.add(exportButton);
+    calendarFooterPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+    calendarFooterPanel.add(importButton);
+
     sidebarPanel.add(calendarHeaderPanel);
     sidebarPanel.add(calendarListPanel);
+    sidebarPanel.add(Box.createVerticalGlue());
+    sidebarPanel.add(calendarFooterPanel);
 
     // Content panel
     contentPanel = new JPanel(new BorderLayout());
