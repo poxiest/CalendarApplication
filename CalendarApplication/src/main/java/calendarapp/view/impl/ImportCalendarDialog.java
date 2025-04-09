@@ -11,14 +11,28 @@ import calendarapp.controller.exporter.Constants;
 
 import static calendarapp.utils.Constants.IMPORT_FILE_PATH;
 
+/**
+ * A dialog for selecting a calendar file to import.
+ * Filters the file chooser based on supported calendar file formats.
+ */
 public class ImportCalendarDialog extends JDialog {
   private final JFrame parent;
 
+  /**
+   * Constructs a modal dialog for importing a calendar file.
+   *
+   * @param parent the parent frame of this dialog
+   */
   public ImportCalendarDialog(JFrame parent) {
     super(parent, "Import Calendar", true);
     this.parent = parent;
   }
 
+  /**
+   * Opens a file chooser dialog for the user to select a calendar file to import.
+   *
+   * @return a map containing the selected file path, or null if the operation is cancelled
+   */
   public Map<String, String> showDialog() {
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setDialogTitle("Import Calendar");

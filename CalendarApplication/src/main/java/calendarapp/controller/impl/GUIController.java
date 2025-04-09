@@ -36,11 +36,21 @@ import static calendarapp.utils.Constants.FIND_EVENT_NAME;
 import static calendarapp.utils.Constants.FIND_ON;
 import static calendarapp.utils.Constants.FIND_START_TIME;
 
+/**
+ * Controller implementation for handling user interactions in the GUI-based calendar application.
+ * Connects the view and the model, managing actions such as creating events, navigating dates,
+ * exporting and importing calendars.
+ */
 public class GUIController implements Features {
 
   private final ICalendarModel model;
   private GUIView view;
 
+  /**
+   * Constructs the controller with the given calendar model.
+   *
+   * @param model the calendar model to interact with
+   */
   public GUIController(ICalendarModel model) {
     this.model = model;
   }
@@ -169,9 +179,10 @@ public class GUIController implements Features {
         return;
       }
       ICalendarExporter exporter = EXPORTER_MAP.get(results.get(EXPORT_FILE_EXTENSION));
-      exporter.export(model.getEventsForExport(), results.get(EXPORT_FILE_NAME) + "."
+      String filePath = exporter.export(model.getEventsForExport(), results.get(EXPORT_FILE_NAME) + "."
           + results.get(EXPORT_FILE_EXTENSION));
-      view.showConfirmation("Calendar exported successfully.");
+      view.showConfirmation("Calendar exported successfully at: " + filePath);
+
       refreshEvents();
     } catch (Exception e) {
       view.showError("Error exporting calendar: " + e.getMessage());
@@ -206,10 +217,16 @@ public class GUIController implements Features {
     }
   }
 
+  /**
+   * Updates the calendar list in the view with the latest calendars from the model.
+   */
   private void refreshCalendarList() {
     view.updateCalendarList(model.getCalendars());
   }
 
+  /**
+   * Loads and displays all events for the currently selected month in the view.
+   */
   private void refreshEvents() {
     loadEvents(view.getCurrentDate().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay().toString(),
         view.getCurrentDate().with(TemporalAdjusters.firstDayOfNextMonth()).atStartOfDay().toString(), null);

@@ -13,10 +13,19 @@ import calendarapp.controller.exporter.Constants;
 import static calendarapp.utils.Constants.EXPORT_FILE_EXTENSION;
 import static calendarapp.utils.Constants.EXPORT_FILE_NAME;
 
+/**
+ * A dialog for exporting a calendar by entering the desired file name and selecting a file format.
+ * Returns the export details as a map when submitted.
+ */
 public class ExportCalendarFormDialog extends JDialog {
   private final JFrame parent;
   private Map<String, String> result;
 
+  /**
+   * Constructs a modal dialog for exporting a calendar from the application.
+   *
+   * @param parent the parent frame of this dialog
+   */
   public ExportCalendarFormDialog(JFrame parent) {
     super(parent, "Export Calendar", true);
     this.parent = parent;
@@ -33,6 +42,9 @@ public class ExportCalendarFormDialog extends JDialog {
     constructExportCalendarPanel();
   }
 
+  /**
+   * Builds the form UI for entering the export file name and selecting the file extension.
+   */
   private void constructExportCalendarPanel() {
     setSize(400, 200);
     setLocationRelativeTo(parent);
@@ -85,6 +97,11 @@ public class ExportCalendarFormDialog extends JDialog {
     add(mainPanel);
   }
 
+  /**
+   * Displays the export dialog and returns the result after it is closed.
+   *
+   * @return a map containing file name and extension, or null if cancelled
+   */
   public Map<String, String> showDialog() {
     setVisible(true);
     return result;
