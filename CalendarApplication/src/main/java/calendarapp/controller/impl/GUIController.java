@@ -43,7 +43,7 @@ public class GUIController implements Features {
     this.view = view;
     view.addFeatures(this);
     view.updateCalendarList(model.getCalendars());
-    setActiveCalendar(model.getCalendars().get(0));
+    setActiveCalendar(model.getCalendars().get(0).getName());
   }
 
   @Override

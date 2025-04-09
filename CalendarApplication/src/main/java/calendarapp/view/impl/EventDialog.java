@@ -180,9 +180,12 @@ public class EventDialog extends JDialog {
       isMultiple.addActionListener(e -> {
         if (countRadioButton.isSelected()) {
           String message = "You are editing a recurring series.\n"
-              + "Editing the series will create new number of 'Occurrence count' events mentioned, "
-              + "from the event you edit.\n"
-              + "Please make sure to edit the count too if you dont want more new events!";
+              + "Changes made to an event will affect all subsequent occurrences and create "
+              + "new events based on the remaining occurrence count.\n"
+              + "If you do not wish to add extra events, please adjust the count accordingly.\n\n"
+              + "Example:\n"
+              + "If your recurring series is set for 10 events and you edit the 5th event, "
+              + "5 new events will be created along with the 5 existing ones.";
           String title = "Warning";
           JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);
         }

@@ -3,6 +3,7 @@ package calendarapp.model;
 import java.util.List;
 
 import calendarapp.model.dto.CalendarExporterDTO;
+import calendarapp.model.dto.CalendarResponseDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.model.dto.EditEventRequestDTO;
 import calendarapp.model.dto.EventsResponseDTO;
@@ -107,5 +108,5 @@ public interface ICalendarModel {
    *
    * @return List of calendar names.
    */
-  List<String> getCalendars();
+  List<CalendarResponseDTO> getCalendars();
 }

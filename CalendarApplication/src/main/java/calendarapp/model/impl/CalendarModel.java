@@ -11,6 +11,7 @@ import calendarapp.model.ICalendarModel;
 import calendarapp.model.ICalendarRepository;
 import calendarapp.model.SearchType;
 import calendarapp.model.dto.CalendarExporterDTO;
+import calendarapp.model.dto.CalendarResponseDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.model.dto.EditEventRequestDTO;
 import calendarapp.model.dto.EventsResponseDTO;
@@ -159,7 +160,13 @@ public class CalendarModel implements ICalendarModel {
   }
 
   @Override
-  public List<String> getCalendars() {
-    return calendarRepository.getCalendars();
+  public List<CalendarResponseDTO> getCalendars() {
+    return calendarRepository.getCalendars()
+        .stream()
+        .map(e -> CalendarResponseDTO.builder()
+            .name(e.getName())
+            .zoneId(e.getZoneId())
+            .build())
+        .collect(Collectors.toList());
   }
 }

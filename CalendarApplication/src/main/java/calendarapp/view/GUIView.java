@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import calendarapp.controller.Features;
+import calendarapp.model.dto.CalendarResponseDTO;
 import calendarapp.model.dto.EventsResponseDTO;
 
 public interface GUIView {
@@ -13,7 +14,7 @@ public interface GUIView {
 
   void updateEvents(List<EventsResponseDTO> events);
 
-  void updateCalendarList(List<String> calendarNames);
+  void updateCalendarList(List<CalendarResponseDTO> calendarNames);
 
   void setActiveCalendar(String calendarName);
 

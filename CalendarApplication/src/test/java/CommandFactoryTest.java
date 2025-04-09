@@ -17,6 +17,7 @@ import calendarapp.controller.commands.impl.ShowCommand;
 import calendarapp.controller.commands.impl.UseCommand;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.dto.CalendarExporterDTO;
+import calendarapp.model.dto.CalendarResponseDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.model.dto.EditEventRequestDTO;
 import calendarapp.model.dto.EventsResponseDTO;
@@ -314,7 +315,7 @@ public class CommandFactoryTest {
     }
 
     @Override
-    public List<String> getCalendars() {
+    public List<CalendarResponseDTO> getCalendars() {
       return List.of();
     }
   }
