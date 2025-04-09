@@ -63,7 +63,8 @@ public class GUIController implements Features {
       if (results == null) {
         return;
       }
-      model.createEvent(results.get(calendarapp.model.impl.Constants.PropertyKeys.NAME),
+      model.createEvent(
+          results.get(calendarapp.model.impl.Constants.PropertyKeys.NAME),
           results.get(calendarapp.model.impl.Constants.PropertyKeys.START_TIME),
           results.get(calendarapp.model.impl.Constants.PropertyKeys.END_TIME),
           results.get(calendarapp.model.impl.Constants.PropertyKeys.RECURRING_DAYS),
@@ -73,39 +74,40 @@ public class GUIController implements Features {
           results.get(calendarapp.model.impl.Constants.PropertyKeys.LOCATION),
           results.get(calendarapp.model.impl.Constants.PropertyKeys.VISIBILITY), true);
       view.showConfirmation("Event created successfully.");
-      refreshEvents();
+      loadCurrentMonthEvents();
     } catch (EventConflictException e) {
-      view.showError("Event conflicts with existing event: " + e.getMessage());
+      handleError("Event conflicts with existing event: " + e.getMessage(), e);
     } catch (Exception e) {
-      view.showError("Error creating event: " + e.getMessage());
+      handleError("Error creating event: " + e.getMessage(), e);
     }
   }
 
   @Override
-  public void editEvent(EventsResponseDTO eventName) {
+  public void editEvent(EventsResponseDTO event) {
     try {
-      Map<String, String> result = view.showEditEventForm(eventName);
+      Map<String, String> result = view.showEditEventForm(event);
       if (result == null) {
         return;
       }
-      Map<String, String> updatedValues = EditEventHelper.getEditEventChanges(eventName, result);
+      Map<String, String> updatedValues = EditEventHelper.getEditEventChanges(event, result);
+      boolean isRecurring = Boolean.parseBoolean(result.getOrDefault(IS_MULTIPLE, String.valueOf(false)));
       for (Map.Entry<String, String> entry : updatedValues.entrySet()) {
         model.editEvent(
-            EditEventRequestDTO.builder().eventName(eventName.getEventName())
-                .startTime(eventName.getStartTime().toString())
-                .endTime(eventName.getEndTime().toString())
+            EditEventRequestDTO.builder()
+                .eventName(event.getEventName())
+                .startTime(event.getStartTime().toString())
+                .endTime(event.getEndTime().toString())
                 .propertyName(entry.getKey())
                 .propertyValue(entry.getValue())
-                .isRecurring(Boolean.parseBoolean(result.getOrDefault(IS_MULTIPLE,
-                    String.valueOf(false))))
+                .isRecurring(isRecurring)
                 .build());
       }
       view.showConfirmation("Event updated successfully.");
-      refreshEvents();
+      loadCurrentMonthEvents();
     } catch (EventConflictException e) {
-      view.showError("Event update conflicts with existing event: " + e.getMessage());
+      handleError("Event update conflicts with existing event: " + e.getMessage(), e);
     } catch (Exception e) {
-      view.showError("Error updating event: " + e.getMessage());
+      handleError("Error updating event: " + e.getMessage(), e);
     }
   }
 
@@ -120,7 +122,7 @@ public class GUIController implements Features {
       view.showConfirmation("Calendar created successfully.");
       refreshCalendarList();
     } catch (Exception e) {
-      view.showError("Error creating calendar: " + e.getMessage());
+      handleError("Error creating calendar: " + e.getMessage(), e);
     }
   }
 
@@ -129,9 +131,9 @@ public class GUIController implements Features {
     try {
       model.setCalendar(calendarName);
       view.setActiveCalendar(calendarName);
-      refreshEvents();
+      loadCurrentMonthEvents();
     } catch (Exception e) {
-      view.showError("Error setting active calendar: " + e.getMessage());
+      handleError("Error setting active calendar: " + e.getMessage(), e);
     }
   }
 
@@ -141,20 +143,28 @@ public class GUIController implements Features {
       List<EventsResponseDTO> events = model.getEvents(null, startDate, endDate, on);
       view.updateEvents(events);
     } catch (Exception e) {
-      view.showError("Error loading events: " + e.getMessage());
+      handleError("Error loading events: " + e.getMessage(), e);
     }
   }
 
   @Override
   public void navigateToPrevious() {
-    view.navigateToPrevious(view.getCurrentDate().minusMonths(1));
-    refreshEvents();
+    try {
+      view.navigateToPrevious(view.getCurrentDate().minusMonths(1));
+      loadCurrentMonthEvents();
+    } catch (Exception e) {
+      handleError("Error navigating to previous month: " + e.getMessage(), e);
+    }
   }
 
   @Override
   public void navigateToNext() {
-    view.navigateToNext(view.getCurrentDate().plusMonths(1));
-    refreshEvents();
+    try {
+      view.navigateToNext(view.getCurrentDate().plusMonths(1));
+      loadCurrentMonthEvents();
+    } catch (Exception e) {
+      handleError("Error navigating to next month: " + e.getMessage(), e);
+    }
   }
 
   @Override
@@ -164,11 +174,14 @@ public class GUIController implements Features {
       if (results == null) {
         return;
       }
-      List<EventsResponseDTO> events = model.getEvents(results.get(FIND_EVENT_NAME),
-          results.get(FIND_START_TIME), results.get(FIND_END_TIME), results.get(FIND_ON));
+      List<EventsResponseDTO> events = model.getEvents(
+          results.get(FIND_EVENT_NAME),
+          results.get(FIND_START_TIME),
+          results.get(FIND_END_TIME),
+          results.get(FIND_ON));
       view.updateEvents(events);
     } catch (Exception e) {
-      view.showError("Error Finding events: " + e.getMessage());
+      handleError("Error finding events: " + e.getMessage(), e);
     }
   }
 
@@ -180,13 +193,13 @@ public class GUIController implements Features {
         return;
       }
       ICalendarExporter exporter = EXPORTER_MAP.get(results.get(EXPORT_FILE_EXTENSION));
-      String filePath = exporter.export(model.getEventsForExport(), results.get(EXPORT_FILE_NAME) + "."
+      String filePath = exporter.export(model.getEventsForExport(),
+          results.get(EXPORT_FILE_NAME) + "."
           + results.get(EXPORT_FILE_EXTENSION));
       view.showConfirmation("Calendar exported successfully at: " + filePath);
-
-      refreshEvents();
+      loadCurrentMonthEvents();
     } catch (Exception e) {
-      view.showError("Error exporting calendar: " + e.getMessage());
+      handleError("Error exporting calendar: " + e.getMessage(), e);
     }
   }
 
@@ -197,7 +210,6 @@ public class GUIController implements Features {
       if (results == null) {
         return;
       }
-
       String fileExtension = getFileExtension(results.get(IMPORT_FILE_PATH));
       if (!Constants.SupportExportFormats.SUPPORTED_EXPORT_FORMATS.contains(fileExtension)) {
         throw new IllegalArgumentException("Unsupported export format: " + fileExtension
@@ -214,9 +226,9 @@ public class GUIController implements Features {
             importedEvent.getVisibility(), true);
       }
       view.showConfirmation("Calendar imported successfully.");
-      refreshEvents();
+      loadCurrentMonthEvents();
     } catch (Exception e) {
-      view.showError("Error importing calendar: " + e.getMessage());
+      handleError("Error importing calendar: " + e.getMessage(), e);
     }
   }
 
@@ -228,10 +240,25 @@ public class GUIController implements Features {
   }
 
   /**
-   * Loads and displays all events for the currently selected month in the view.
+   * Loads and displays all events for the current month in the view.
    */
-  private void refreshEvents() {
-    loadEvents(view.getCurrentDate().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay().toString(),
-        view.getCurrentDate().with(TemporalAdjusters.firstDayOfNextMonth()).atStartOfDay().toString(), null);
+  private void loadCurrentMonthEvents() {
+    String startOfMonth = view.getCurrentDate()
+        .with(TemporalAdjusters.firstDayOfMonth())
+        .atStartOfDay().toString();
+    String startOfNextMonth = view.getCurrentDate()
+        .with(TemporalAdjusters.firstDayOfNextMonth())
+        .atStartOfDay().toString();
+    loadEvents(startOfMonth, startOfNextMonth, null);
+  }
+
+  /**
+   * Handles exceptions by logging the error and showing an error message in the view.
+   *
+   * @param message the error message to display
+   * @param e       the exception to log
+   */
+  private void handleError(String message, Exception e) {
+    view.showError(message);
   }
 }
