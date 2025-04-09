@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import calendarapp.controller.InvalidCommandException;
+import calendarapp.model.Constants;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.IEvent;
 import calendarapp.model.IEventRepository;
@@ -20,7 +21,7 @@ import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.impl.searchstrategies.SearchEventFactory;
 import calendarapp.utils.TimeUtil;
 
-import static calendarapp.model.impl.Constants.DaysOfWeek.parseDaysOfWeek;
+import static calendarapp.model.Constants.DaysOfWeek.parseDaysOfWeek;
 import static calendarapp.utils.TimeUtil.isAllDayEvent;
 import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
 

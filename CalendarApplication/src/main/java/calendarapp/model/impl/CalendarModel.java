@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import calendarapp.controller.InvalidCommandException;
+import calendarapp.model.Constants;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendar;
 import calendarapp.model.ICalendarModel;
@@ -16,7 +17,7 @@ import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.model.dto.EditEventRequestDTO;
 import calendarapp.model.dto.EventsResponseDTO;
 
-import static calendarapp.model.impl.Constants.Calendar.DEFAULT_CALENDAR_NAME;
+import static calendarapp.model.Constants.Calendar.DEFAULT_CALENDAR_NAME;
 import static calendarapp.utils.TimeUtil.getEndOfDayFromString;
 import static calendarapp.utils.TimeUtil.getTemporalFromString;
 

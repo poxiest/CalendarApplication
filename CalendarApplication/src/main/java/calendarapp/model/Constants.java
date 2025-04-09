@@ -1,4 +1,4 @@
-package calendarapp.model.impl;
+package calendarapp.model;
 
 import java.time.DayOfWeek;
 import java.util.HashMap;

@@ -6,20 +6,20 @@ import java.util.Map;
 
 import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.dto.EventsResponseDTO;
-import calendarapp.model.impl.Constants;
+import calendarapp.model.Constants;
 import calendarapp.utils.TimeUtil;
 
 public class EditEventHelper {
   public static final String[] EDIT_EVENT_PRECEDENCE = {
-      calendarapp.model.impl.Constants.PropertyKeys.LOCATION,
-      calendarapp.model.impl.Constants.PropertyKeys.RECURRING_DAYS,
-      calendarapp.model.impl.Constants.PropertyKeys.OCCURRENCE_COUNT,
-      calendarapp.model.impl.Constants.PropertyKeys.RECURRENCE_END_DATE,
-      calendarapp.model.impl.Constants.PropertyKeys.DESCRIPTION,
-      calendarapp.model.impl.Constants.PropertyKeys.VISIBILITY,
-      calendarapp.model.impl.Constants.PropertyKeys.END_TIME,
-      calendarapp.model.impl.Constants.PropertyKeys.START_TIME,
-      calendarapp.model.impl.Constants.PropertyKeys.NAME};
+      Constants.PropertyKeys.LOCATION,
+      Constants.PropertyKeys.RECURRING_DAYS,
+      Constants.PropertyKeys.OCCURRENCE_COUNT,
+      Constants.PropertyKeys.RECURRENCE_END_DATE,
+      Constants.PropertyKeys.DESCRIPTION,
+      Constants.PropertyKeys.VISIBILITY,
+      Constants.PropertyKeys.END_TIME,
+      Constants.PropertyKeys.START_TIME,
+      Constants.PropertyKeys.NAME};
 
   /**
    * Determines which single property (based on the given precedence) should be updated.
@@ -77,7 +77,7 @@ public class EditEventHelper {
    */
   public static boolean hasValueChanged(EventsResponseDTO existing, String property,
                                         String newValue) {
-    if (property.equals(calendarapp.model.impl.Constants.PropertyKeys.NAME)) {
+    if (property.equals(Constants.PropertyKeys.NAME)) {
       String current = existing.getEventName();
       return !stringEquals(current, newValue);
     } else if (property.equals(Constants.PropertyKeys.START_TIME)) {

@@ -17,7 +17,7 @@ import javax.swing.border.EmptyBorder;
 
 import calendarapp.model.EventVisibility;
 import calendarapp.model.dto.EventsResponseDTO;
-import calendarapp.model.impl.Constants;
+import calendarapp.model.Constants;
 
 
 /**
@@ -233,7 +233,7 @@ public class EventDialog extends JDialog {
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
       SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
 
-      result.put(calendarapp.model.impl.Constants.PropertyKeys.NAME,
+      result.put(Constants.PropertyKeys.NAME,
           eventNameField.getText().trim());
       result.put(Constants.PropertyKeys.START_TIME, sdf.format(startDate));
       result.put(Constants.PropertyKeys.END_TIME, sdf.format(endDate));

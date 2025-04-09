@@ -64,15 +64,15 @@ public class GUIController implements Features {
         return;
       }
       model.createEvent(
-          results.get(calendarapp.model.impl.Constants.PropertyKeys.NAME),
-          results.get(calendarapp.model.impl.Constants.PropertyKeys.START_TIME),
-          results.get(calendarapp.model.impl.Constants.PropertyKeys.END_TIME),
-          results.get(calendarapp.model.impl.Constants.PropertyKeys.RECURRING_DAYS),
-          results.get(calendarapp.model.impl.Constants.PropertyKeys.OCCURRENCE_COUNT),
-          results.get(calendarapp.model.impl.Constants.PropertyKeys.RECURRENCE_END_DATE),
-          results.get(calendarapp.model.impl.Constants.PropertyKeys.DESCRIPTION),
-          results.get(calendarapp.model.impl.Constants.PropertyKeys.LOCATION),
-          results.get(calendarapp.model.impl.Constants.PropertyKeys.VISIBILITY), true);
+          results.get(calendarapp.model.Constants.PropertyKeys.NAME),
+          results.get(calendarapp.model.Constants.PropertyKeys.START_TIME),
+          results.get(calendarapp.model.Constants.PropertyKeys.END_TIME),
+          results.get(calendarapp.model.Constants.PropertyKeys.RECURRING_DAYS),
+          results.get(calendarapp.model.Constants.PropertyKeys.OCCURRENCE_COUNT),
+          results.get(calendarapp.model.Constants.PropertyKeys.RECURRENCE_END_DATE),
+          results.get(calendarapp.model.Constants.PropertyKeys.DESCRIPTION),
+          results.get(calendarapp.model.Constants.PropertyKeys.LOCATION),
+          results.get(calendarapp.model.Constants.PropertyKeys.VISIBILITY), true);
       view.showConfirmation("Event created successfully.");
       loadCurrentMonthEvents();
     } catch (EventConflictException e) {
