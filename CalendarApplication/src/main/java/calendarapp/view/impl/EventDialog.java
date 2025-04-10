@@ -184,7 +184,6 @@ public class EventDialog extends JDialog {
       daysPanel.setVisible(true);
     });
 
-
     if (super.getTitle().equals("Edit Event")) {
       formPanel.add(new JLabel("Events to Edit:"));
       editPropertyPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));

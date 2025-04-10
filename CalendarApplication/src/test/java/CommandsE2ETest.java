@@ -375,7 +375,6 @@ public class CommandsE2ETest {
         , stringOutput.toString());
   }
 
-  // TODO: Change the searching logic for edit and copy to stick on strictly for datetime
   // edit events from
   @Test
   public void RecurringEventsForNTimesWithExistingEvent3() {
@@ -1875,7 +1874,6 @@ public class CommandsE2ETest {
     }
   }
 
-  // todo: change this
   // copy command with specific event name and same timezone
   @Test
   public void testCopyCalendarCommand4() {

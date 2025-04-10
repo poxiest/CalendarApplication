@@ -237,6 +237,15 @@ public class SearchStrategyTestCases {
     assertEquals("Yoga Class", result.get(3).getName());
   }
 
+  @Test
+  public void testSearchByOverlappingName3() {
+    List<IEvent> result = searchStrategy.search(events, "Team Meeting", null, null, false,
+        SearchType.OVERLAPPING);
+    assertEquals(2, result.size());
+    assertEquals("Team Meeting", result.get(0).getName());
+    assertEquals("Team Meeting", result.get(1).getName());
+  }
+
   @Test(expected = InvalidCommandException.class)
   public void testInvalidTimeRangeThrowsException() {
     List<IEvent> events = new ArrayList<>();
@@ -422,5 +431,10 @@ public class SearchStrategyTestCases {
     assertEquals(LocalDateTime.of(2025, 4, 10, 8, 0), result.get(0).getStartTime());
     assertEquals(LocalDateTime.of(2025, 4, 10, 10, 0), result.get(1).getStartTime());
     assertEquals(LocalDateTime.of(2025, 4, 10, 13, 0), result.get(2).getStartTime());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void invalid() {
+    searchStrategy.search(events, null, null, null, false, null);
   }
 }

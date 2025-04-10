@@ -523,4 +523,58 @@ public class EventTest {
     assertNotEquals(event1, event2);
     assertNotEquals(event1.hashCode(), event2.hashCode());
   }
+
+  @Test
+  public void testEquals_differentValues1() {
+    Event event1 = Event.builder()
+        .name("Sample Event")
+        .startTime(LocalDateTime.of(2025, 3, 13, 10, 0))
+        .endTime(LocalDateTime.of(2025, 3, 13, 12, 0))
+        .description("Conference Room").build();
+
+    Event event2 = Event.builder()
+        .name("Sample Event")
+        .startTime(LocalDateTime.of(2025, 3, 13, 10, 0))
+        .endTime(LocalDateTime.of(2025, 3, 13, 12, 0))
+        .description("Meeting Room").build();
+
+    assertNotEquals(event1, event2);
+    assertNotEquals(event1.hashCode(), event2.hashCode());
+  }
+
+  @Test
+  public void testEquals_differentValue3() {
+    Event event1 = Event.builder()
+        .name("Sample Event")
+        .startTime(LocalDateTime.of(2025, 3, 13, 10, 0))
+        .endTime(LocalDateTime.of(2025, 3, 13, 12, 0))
+        .visibility("public").build();
+
+    Event event2 = Event.builder()
+        .name("Sample Event")
+        .startTime(LocalDateTime.of(2025, 3, 13, 10, 0))
+        .endTime(LocalDateTime.of(2025, 3, 13, 12, 0))
+        .visibility("private").build();
+
+    assertNotEquals(event1, event2);
+    assertNotEquals(event1.hashCode(), event2.hashCode());
+  }
+
+  @Test
+  public void testEquals_differentValue4() {
+    Event event1 = Event.builder()
+        .name("Sample Event")
+        .startTime(LocalDateTime.of(2025, 3, 13, 10, 0))
+        .endTime(LocalDateTime.of(2025, 3, 13, 12, 0))
+        .isAutoDecline(true).build();
+
+    Event event2 = Event.builder()
+        .name("Sample Event")
+        .startTime(LocalDateTime.of(2025, 3, 13, 10, 0))
+        .endTime(LocalDateTime.of(2025, 3, 13, 12, 0))
+        .isAutoDecline(false).build();
+
+    assertNotEquals(event1, event2);
+    assertNotEquals(event1.hashCode(), event2.hashCode());
+  }
 }

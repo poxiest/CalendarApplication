@@ -654,18 +654,18 @@ public class GUIIntegrationTest {
     controller.loadEvents("2025-11-11T00:00", "2025-11-12T00:00", "2025-11-11");
 
     assertEquals("addFeatures called\n"
-        + "updateCalendarList called with: testCalendar America/Los_Angeles\n"
-        + "setActiveCalendar called with: testCalendar\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null "
-        + "null null null null\n"
-        + "setActiveCalendar called with: PersonalCal\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null "
-        + "null null null null\n"
-        + "showError called with message: Error loading events: Invalid command exception\n",
+            + "updateCalendarList called with: testCalendar America/Los_Angeles\n"
+            + "setActiveCalendar called with: testCalendar\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null "
+            + "null null null null\n"
+            + "setActiveCalendar called with: PersonalCal\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null "
+            + "null null null null\n"
+            + "showError called with message: Error loading events: Invalid command exception\n",
         viewLogger.toString());
   }
 
@@ -730,19 +730,19 @@ public class GUIIntegrationTest {
     controller.findEvents();
 
     assertEquals("addFeatures called\n"
-        + "updateCalendarList called with: testCalendar America/Los_Angeles\n"
-        + "setActiveCalendar called with: testCalendar\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null "
-        + "null null null null\n"
-        + "setActiveCalendar called with: PersonalCal\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null "
-        + "null null null null\n"
-        + "findEvents called\n"
-        + "showError called with message: Error finding events: Invalid command exception\n",
+            + "updateCalendarList called with: testCalendar America/Los_Angeles\n"
+            + "setActiveCalendar called with: testCalendar\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null "
+            + "null null null null\n"
+            + "setActiveCalendar called with: PersonalCal\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null "
+            + "null null null null\n"
+            + "findEvents called\n"
+            + "showError called with message: Error finding events: Invalid command exception\n",
         viewLogger.toString());
   }
 
