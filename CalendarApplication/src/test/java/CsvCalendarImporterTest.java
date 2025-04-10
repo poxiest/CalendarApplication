@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 /**
- * Test case for CSV Calendar Importer
+ * Test case for CSV Calendar Importer.
  */
 public class CsvCalendarImporterTest {
 

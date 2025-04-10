@@ -1,7 +1,8 @@
 package calendarapp.view.impl;
 
-import java.awt.*;
-import java.awt.event.WindowAdapter;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.FlowLayout;import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
@@ -10,8 +11,20 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import javax.swing.JSpinner;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JRadioButton;
+import javax.swing.JOptionPane;
+import javax.swing.ButtonGroup;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SpinnerDateModel;import javax.swing.border.EmptyBorder;
 
 import static calendarapp.utils.Constants.FIND_END_TIME;
 import static calendarapp.utils.Constants.FIND_EVENT_NAME;

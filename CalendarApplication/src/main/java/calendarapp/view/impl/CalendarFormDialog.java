@@ -1,12 +1,20 @@
 package calendarapp.view.impl;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.FlowLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.*;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+
 import javax.swing.border.EmptyBorder;
 
 import static calendarapp.utils.Constants.CALENDAR_NAME;

@@ -21,7 +21,9 @@ import calendarapp.view.GUIView;
 
 /**
  * A JFrame-based GUI view for displaying and managing calendars and events.
- * Includes navigation, calendar panel, event creation, and sidebar for calendar selection.
+ * This view provides components for navigation, event creation and editing,
+ * sidebar calendar selection, and a main calendar panel for visualizing the month.
+ * It implements the {@link GUIView} interface.
  */
 public class GUIJFrameView extends JFrame implements GUIView {
   private final Map<String, Color> calendarColors = new HashMap<>();
@@ -39,7 +41,6 @@ public class GUIJFrameView extends JFrame implements GUIView {
   private JButton importButton;
   // Content components
   private JPanel contentPanel;
-  private JPanel navigationPanel;
   private JPanel calendarPanel;
   private JButton prevButton;
   private JButton nextButton;
@@ -60,6 +61,8 @@ public class GUIJFrameView extends JFrame implements GUIView {
 
   /**
    * Constructs and initializes the main GUI window for the calendar application.
+   * This constructor initializes the JFrame, creates UI components, assembles the layout,
+   * and makes the window visible.
    */
   public GUIJFrameView() {
     super(Constants.APP_TITLE);
@@ -73,6 +76,12 @@ public class GUIJFrameView extends JFrame implements GUIView {
     setVisible(true);
   }
 
+  /**
+   * Associates the provided controller with this view and registers event listeners for the UI
+   * components.
+   *
+   * @param controller the Features implementation to handle user interactions.
+   */
   @Override
   public void addFeatures(Features controller) {
     this.controller = controller;
@@ -85,12 +94,22 @@ public class GUIJFrameView extends JFrame implements GUIView {
     importButton.addActionListener(e -> controller.importCalendar());
   }
 
+  /**
+   * Updates the events displayed in the view.
+   *
+   * @param events the list of event response DTOs to be displayed.
+   */
   @Override
   public void updateEvents(List<EventsResponseDTO> events) {
     updateCalendarView();
     updateDetailsPanel(events);
   }
 
+  /**
+   * Updates the list of calendars displayed in the sidebar and assigns colors to new calendars.
+   *
+   * @param calendar the list of calendar response DTOs.
+   */
   @Override
   public void updateCalendarList(List<CalendarResponseDTO> calendar) {
     this.calendarList = calendar;
@@ -102,6 +121,11 @@ public class GUIJFrameView extends JFrame implements GUIView {
     refreshCalendarList();
   }
 
+  /**
+   * Sets the currently active calendar and updates the associated UI components.
+   *
+   * @param calendarName the name of the calendar to activate.
+   */
   @Override
   public void setActiveCalendar(String calendarName) {
     this.activeCalendar = calendarName;
@@ -123,18 +147,33 @@ public class GUIJFrameView extends JFrame implements GUIView {
     }
   }
 
+  /**
+   * Displays a confirmation dialog with the specified message.
+   *
+   * @param message the confirmation message to display.
+   */
   @Override
   public void showConfirmation(String message) {
     JOptionPane.showMessageDialog(this, message, Constants.SUCCESS_DIALOG_TITLE,
         JOptionPane.INFORMATION_MESSAGE);
   }
 
+  /**
+   * Displays an error dialog with the specified error message.
+   *
+   * @param errorMessage the error message to display.
+   */
   @Override
   public void showError(String errorMessage) {
     JOptionPane.showMessageDialog(this, errorMessage, Constants.ERROR_DIALOG_TITLE,
         JOptionPane.ERROR_MESSAGE);
   }
 
+  /**
+   * Displays the form to create a new event and returns the user input.
+   *
+   * @return a map containing the field names and values entered by the user.
+   */
   @Override
   public Map<String, String> showCreateEventForm() {
     EventDialog dialog = new EventDialog(this, selectedDate);
@@ -142,23 +181,44 @@ public class GUIJFrameView extends JFrame implements GUIView {
     return dialog.showDialog();
   }
 
+  /**
+   * Displays the form to edit an existing event and returns the updated user input.
+   *
+   * @param event the event to be edited.
+   * @return a map containing the updated event field names and values.
+   */
   @Override
   public Map<String, String> showEditEventForm(EventsResponseDTO event) {
     EventDialog dialog = new EventDialog(this, selectedDate, event);
     return dialog.showDialog();
   }
 
+  /**
+   * Displays the form to create a new calendar and returns the user input.
+   *
+   * @return a map containing the new calendar field names and values.
+   */
   @Override
   public Map<String, String> showCreateCalendarForm() {
     CalendarFormDialog dialog = new CalendarFormDialog(this);
     return dialog.showDialog();
   }
 
+  /**
+   * Retrieves the current date used by the view.
+   *
+   * @return the current {@link LocalDate} of the view.
+   */
   @Override
   public LocalDate getCurrentDate() {
     return currentDate;
   }
 
+  /**
+   * Navigates to the previous date and updates the calendar and details displays.
+   *
+   * @param date the new current date.
+   */
   @Override
   public void navigateToPrevious(LocalDate date) {
     currentDate = date;
@@ -167,6 +227,11 @@ public class GUIJFrameView extends JFrame implements GUIView {
     updateCalendarView();
   }
 
+  /**
+   * Navigates to the next date and updates the calendar and details displays.
+   *
+   * @param date the new current date.
+   */
   @Override
   public void navigateToNext(LocalDate date) {
     currentDate = date;
@@ -175,6 +240,11 @@ public class GUIJFrameView extends JFrame implements GUIView {
     updateCalendarView();
   }
 
+  /**
+   * Displays a form for finding events and returns the user input.
+   *
+   * @return a map containing the event search criteria entered by the user.
+   */
   @Override
   public Map<String, String> findEvents() {
     FindEventsFormDialog dialog = new FindEventsFormDialog(this);
@@ -182,17 +252,31 @@ public class GUIJFrameView extends JFrame implements GUIView {
     return dialog.showDialog();
   }
 
+  /**
+   * Displays the form for exporting the current calendar and returns the user input.
+   *
+   * @return a map containing the export settings or parameters.
+   */
   @Override
   public Map<String, String> showExportCalendarForm() {
     ExportCalendarFormDialog dialog = new ExportCalendarFormDialog(this);
     return dialog.showDialog();
   }
 
+  /**
+   * Displays a dialog for importing a calendar and returns the user input.
+   *
+   * @return a map containing the import settings or parameters.
+   */
   @Override
   public Map<String, String> showImportCalendarDialog() {
     ImportCalendarDialog dialog = new ImportCalendarDialog(this);
     return dialog.showDialog();
   }
+
+  //===========================================================================
+  // Private helper methods to build and update UI components
+  //===========================================================================
 
   /**
    * Creates and configures all UI components including header, sidebar, calendar grid, and
@@ -206,7 +290,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
   }
 
   /**
-   * Creates the header panel of the application
+   * Initializes and configures the header panel.
    */
   private void createHeaderPanel() {
     headerPanel = new JPanel(new BorderLayout());
@@ -216,7 +300,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
   }
 
   /**
-   * Creates the sidebar panel with calendar controls and calendar listing
+   * Initializes and configures the sidebar panel with calendar controls and listing.
    */
   private void createSidebarPanel() {
     sidebarPanel = new JPanel();
@@ -227,6 +311,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
         BorderFactory.createEmptyBorder(10, 10, 10, 10)));
     sidebarPanel.setBackground(Color.WHITE);
 
+    // Header portion for the sidebar
     JPanel calendarHeaderPanel = new JPanel();
     calendarHeaderPanel.setLayout(new BoxLayout(calendarHeaderPanel, BoxLayout.X_AXIS));
     calendarHeaderPanel.setBackground(Color.WHITE);
@@ -245,12 +330,14 @@ public class GUIJFrameView extends JFrame implements GUIView {
     calendarHeaderPanel.add(Box.createHorizontalGlue());
     calendarHeaderPanel.add(createCalendarButton);
 
+    // List section for calendars
     calendarListPanel = new JPanel();
     calendarListPanel.setLayout(new BoxLayout(calendarListPanel, BoxLayout.Y_AXIS));
     calendarListPanel.setBackground(Color.WHITE);
     calendarListPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
     calendarGroup = new ButtonGroup();
 
+    // Footer section for export/import
     JPanel calendarFooterPanel = new JPanel();
     calendarFooterPanel.setBackground(Color.WHITE);
     calendarFooterPanel.setLayout(new BoxLayout(calendarFooterPanel, BoxLayout.Y_AXIS));
@@ -274,7 +361,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
   }
 
   /**
-   * Creates the main content panel with calendar view
+   * Initializes and configures the main content panel including navigation and calendar grid.
    */
   private void createContentPanel() {
     contentPanel = new JPanel(new BorderLayout());
@@ -282,8 +369,8 @@ public class GUIJFrameView extends JFrame implements GUIView {
         BorderFactory.createMatteBorder(0, 0, 0, 0, Color.WHITE),
         BorderFactory.createMatteBorder(10, 10, 10, 10, Color.WHITE)));
 
-    // Navigation panel
-    navigationPanel = new JPanel(new BorderLayout());
+    // Navigation panel with current timezone and date controls
+    JPanel navigationPanel = new JPanel(new BorderLayout());
     navigationPanel.setBackground(Color.WHITE);
     navigationPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 10, 0, Color.WHITE));
 
@@ -291,6 +378,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
     currentTimeZone.setFont(new Font("Arial", Font.ITALIC, 14));
     navigationPanel.add(currentTimeZone, BorderLayout.WEST);
 
+    // Center panel for navigation buttons and current date
     JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
     centerPanel.setBackground(Color.WHITE);
     prevButton = new JButton(Constants.PREV_BUTTON);
@@ -303,7 +391,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
     centerPanel.add(nextButton);
     navigationPanel.add(centerPanel, BorderLayout.CENTER);
 
-    // Calendar panel
+    // Calendar panel to host the month view grid
     calendarPanel = new JPanel();
     calendarPanel.setBackground(Color.WHITE);
     calendarPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -312,7 +400,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
   }
 
   /**
-   * Creates the details panel for showing events
+   * Initializes and configures the details panel for showing event details.
    */
   private void createDetailsPanel() {
     detailsPanel = new JPanel(new BorderLayout());
@@ -323,10 +411,12 @@ public class GUIJFrameView extends JFrame implements GUIView {
     ));
     detailsPanel.setBackground(Color.WHITE);
 
+    // Container for header in the details panel
     JPanel detailsHeaderContainer = new JPanel();
     detailsHeaderContainer.setLayout(new BoxLayout(detailsHeaderContainer, BoxLayout.Y_AXIS));
     detailsHeaderContainer.setBackground(Color.WHITE);
 
+    // Panel with event creation and search buttons
     JPanel eventButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     eventButtonsPanel.setBackground(Color.WHITE);
     createEventButton = new JButton(Constants.CREATE_EVENT_BUTTON);
@@ -336,6 +426,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
     eventButtonsPanel.add(createEventButton);
     eventButtonsPanel.add(findEventsButton);
 
+    // Panel for displaying the current date in details panel header
     JPanel headerLabelPanel = new JPanel(new BorderLayout());
     headerLabelPanel.setBackground(Color.WHITE);
     detailsDateLabel = new JLabel(formatDateForView(currentDate));
@@ -348,6 +439,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
 
     detailsPanel.add(detailsHeaderContainer, BorderLayout.NORTH);
 
+    // Content area for the details panel where event panels are added
     detailsContentPanel = new JPanel();
     detailsContentPanel.setLayout(new BoxLayout(detailsContentPanel, BoxLayout.Y_AXIS));
     detailsContentPanel.setBackground(Color.WHITE);
@@ -355,7 +447,8 @@ public class GUIJFrameView extends JFrame implements GUIView {
   }
 
   /**
-   * Assembles the main UI layout by placing major panels into the main frame.
+   * Assembles the main UI layout by adding the header, sidebar, content, and details panels to
+   * the main frame.
    */
   private void assembleUI() {
     mainPanel.add(headerPanel, BorderLayout.NORTH);
@@ -367,7 +460,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
   }
 
   /**
-   * Rebuilds the list of calendar radio buttons in the sidebar and updates the calendar view.
+   * Refreshes the sidebar calendar list by recreating the radio button list for calendar selection.
    */
   private void refreshCalendarList() {
     calendarListPanel.removeAll();
@@ -413,7 +506,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
   }
 
   /**
-   * Refreshes the calendar view by clearing and redrawing the calendar grid.
+   * Rebuilds and refreshes the calendar view.
    */
   private void updateCalendarView() {
     calendarPanel.removeAll();
@@ -423,18 +516,22 @@ public class GUIJFrameView extends JFrame implements GUIView {
   }
 
   /**
-   * Formats the given date into a display string for UI headers.
+   * Formats a {@link LocalDate} into a string for use in header displays.
    *
-   * @param date the date to format
-   * @return formatted date string
+   * @param date the date to format.
+   * @return a formatted date string according to the pattern defined in
+   * {@link Constants#MONTH_YEAR_FORMAT}.
    */
   private String formatDateForView(LocalDate date) {
     return date.format(DateTimeFormatter.ofPattern(Constants.MONTH_YEAR_FORMAT));
   }
 
   /**
-   * Builds the visual calendar grid for the current month, including day headers and clickable
-   * day buttons.
+   * Constructs and sets up the visual calendar grid for the current month.
+   * <p>
+   * This includes day headers, empty cells for alignment, and day buttons that trigger event
+   * loading.
+   * </p>
    */
   private void setupMonthView() {
     calendarPanel.setLayout(new GridLayout(0, 7, 5, 5));
@@ -442,6 +539,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
     YearMonth yearMonth = YearMonth.from(currentDate);
     LocalDate firstOfMonth = yearMonth.atDay(1);
 
+    // Create day header cells (Monday, Tuesday, etc.).
     for (String day : Constants.DAYS_OF_WEEK) {
       JPanel headerCell = new JPanel(new BorderLayout());
       headerCell.setBackground(Color.LIGHT_GRAY);
@@ -452,6 +550,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
       calendarPanel.add(headerCell);
     }
 
+    // Add empty cells to align the first day of the month correctly.
     int dayOfWeekValue = firstOfMonth.getDayOfWeek().getValue() % 7;
     for (int i = 0; i < dayOfWeekValue; i++) {
       JPanel emptyCell = new JPanel();
@@ -459,6 +558,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
       calendarPanel.add(emptyCell);
     }
 
+    // Add buttons for each day of the month.
     int daysInMonth = yearMonth.lengthOfMonth();
     for (int day = 1; day <= daysInMonth; day++) {
       LocalDate date = yearMonth.atDay(day);
@@ -483,9 +583,9 @@ public class GUIJFrameView extends JFrame implements GUIView {
   }
 
   /**
-   * Updates the event details panel with the list of events for the selected date.
+   * Updates the details panel with the events for the selected date.
    *
-   * @param events the list of events to display
+   * @param events the list of event response DTOs to be displayed in the details panel.
    */
   private void updateDetailsPanel(List<EventsResponseDTO> events) {
     detailsContentPanel.removeAll();
@@ -507,10 +607,10 @@ public class GUIJFrameView extends JFrame implements GUIView {
   }
 
   /**
-   * Creates a panel displaying a single event's details along with an edit button.
+   * Creates a JPanel representing a single event's details along with an edit button.
    *
-   * @param event the event to render in the panel
-   * @return a JPanel representing the event
+   * @param event the event response DTO to be displayed.
+   * @return a JPanel containing the event information and controls.
    */
   private JPanel createEventPanel(EventsResponseDTO event) {
     JPanel panel = new JPanel(new BorderLayout());
@@ -522,8 +622,8 @@ public class GUIJFrameView extends JFrame implements GUIView {
     infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
     infoPanel.setBackground(Color.WHITE);
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.TIME_FORMAT);
-    JLabel timeLabel =
-        new JLabel(formatter.format(event.getStartTime()) + " to " + formatter.format(event.getEndTime()));
+    JLabel timeLabel = new JLabel(formatter.format(event.getStartTime()) + " to "
+            + formatter.format(event.getEndTime()));
     timeLabel.setFont(new Font("Arial", Font.PLAIN, 12));
     JLabel titleLabel = new JLabel(event.getEventName());
     titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
@@ -543,9 +643,9 @@ public class GUIJFrameView extends JFrame implements GUIView {
   }
 
   /**
-   * Generates a random soft color used to visually identify calendars.
+   * Generates a random soft color used to visually represent different calendars.
    *
-   * @return a new Color instance
+   * @return a new {@link Color} instance with soft, random hues.
    */
   private Color generateRandomColor() {
     return new Color(180 + random.nextInt(51), 180 + random.nextInt(51),

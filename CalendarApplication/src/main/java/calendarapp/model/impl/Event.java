@@ -4,7 +4,6 @@ import java.time.temporal.Temporal;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
-import calendarapp.model.Constants;
 import calendarapp.model.EventVisibility;
 import calendarapp.model.IEvent;
 import calendarapp.utils.TimeUtil;
@@ -134,7 +133,7 @@ public class Event implements IEvent {
 
   /**
    * Creates a new event with the specified property updated to the given value.
-   * Supported properties are defined in {@link Constants.PropertyKeys}.
+   * Supported properties are defined in {@link calendarapp.model.Constants.PropertyKeys}.
    *
    * @param property the property to update.
    * @param value    the new value for the property.

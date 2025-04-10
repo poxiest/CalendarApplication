@@ -45,7 +45,7 @@ public class EditEventCommand extends AbstractCommand {
   private String endDateTime;
 
   /**
-   *
+   * True if editing multiple events, else false.
    */
   private boolean isMultiple;
 

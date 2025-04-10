@@ -23,6 +23,9 @@ import calendarapp.utils.TimeUtil;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Test for GUI Controller to GUI View and to Model.
+ */
 public class GUIIntegrationTest {
   private MockModel mockModel;
   private MockGUIView mockView;

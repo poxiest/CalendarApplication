@@ -270,10 +270,12 @@ public class CommandFactoryTest {
                             String recurringDays, String occurrenceCount,
                             String recurrenceEndDate, String description, String location,
                             String visibility, boolean autoDecline) {
+      // empty for test purposes.
     }
 
     @Override
     public void editEvent(EditEventRequestDTO editEventRequestDTO) {
+      // empty for test purposes.
     }
 
     @Override

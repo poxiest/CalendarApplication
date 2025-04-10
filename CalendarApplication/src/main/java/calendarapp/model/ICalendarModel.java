@@ -41,8 +41,8 @@ public interface ICalendarModel {
   /**
    * Edits an existing event or events that match the specified criteria.
    *
-   * @param editEventRequestDTO@throws EventConflictException if the edited event would conflict
-   *                                   with existing events and auto-decline is enabled.
+   * @param editEventRequestDTO @throws EventConflictException if the edited event would conflict
+   *                            with existing events and auto-decline is enabled.
    */
   void editEvent(EditEventRequestDTO editEventRequestDTO) throws EventConflictException;
 
@@ -52,7 +52,7 @@ public interface ICalendarModel {
    * @param startTime the start of the time range.
    * @param endTime   the end of the time range (if null, defaults to one day after startTime).
    * @param on        specifies whether the event is on a specific day or within a given range.
-   * @param eventName
+   * @param eventName name of the event to get.
    * @return a list of events that intersect with the specified time range.
    */
   List<EventsResponseDTO> getEvents(String eventName, String startTime, String endTime, String on);

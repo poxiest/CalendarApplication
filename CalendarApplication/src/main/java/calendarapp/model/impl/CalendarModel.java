@@ -69,7 +69,7 @@ public class CalendarModel implements ICalendarModel {
   /**
    * Edits an event based on the specified property and value.
    *
-   * @param editEventRequestDTO
+   * @param editEventRequestDTO dto object containing edit event request.
    */
   @Override
   public void editEvent(EditEventRequestDTO editEventRequestDTO) {

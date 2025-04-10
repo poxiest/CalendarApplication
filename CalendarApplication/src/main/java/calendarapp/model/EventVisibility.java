@@ -60,7 +60,7 @@ public enum EventVisibility {
   /**
    * Returns the list of active visibilities.
    *
-   * @return List<String> visibilities.
+   * @return List of visibilities as String.
    */
   public static List<String> getVisibilities() {
     return Arrays.stream(values())

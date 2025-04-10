@@ -1,5 +1,8 @@
 package calendarapp.utils;
 
+/**
+ * This class provides a collection of constant values used throughout the application.
+ */
 public class Constants {
   public static final String CALENDAR_NAME = "name";
   public static final String CALENDAR_TIME_ZONE = "timezone";

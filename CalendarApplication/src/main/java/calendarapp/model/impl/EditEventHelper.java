@@ -9,6 +9,9 @@ import calendarapp.model.Constants;
 import calendarapp.model.dto.EventsResponseDTO;
 import calendarapp.utils.TimeUtil;
 
+/**
+ * Helper class to validate edit event request.
+ */
 public class EditEventHelper {
   public static final String[] EDIT_EVENT_PRECEDENCE = {
       Constants.PropertyKeys.LOCATION,
@@ -39,7 +42,8 @@ public class EditEventHelper {
           continue;
         }
 
-        if (property.equals(Constants.PropertyKeys.OCCURRENCE_COUNT) || property.equals(Constants.PropertyKeys.RECURRENCE_END_DATE)) {
+        if (property.equals(Constants.PropertyKeys.OCCURRENCE_COUNT)
+            || property.equals(Constants.PropertyKeys.RECURRENCE_END_DATE)) {
           if (existing.getRecurringDays() == null || existing.getRecurringDays().trim().isEmpty()) {
             throw new InvalidCommandException("Cannot edit recurrence property on a single event.");
           }
@@ -106,7 +110,7 @@ public class EditEventHelper {
     return false;
   }
 
-  public static boolean stringEquals(String s1, String s2) {
+  private static boolean stringEquals(String s1, String s2) {
     if (s1 == null) {
       return (s2 == null || s2.trim().isEmpty());
     }
