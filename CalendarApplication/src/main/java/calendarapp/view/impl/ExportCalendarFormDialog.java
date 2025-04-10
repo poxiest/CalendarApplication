@@ -8,6 +8,7 @@ import java.util.Map;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.FlowLayout;
+
 import calendarapp.controller.Constants;
 
 import javax.swing.JDialog;
@@ -16,14 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JButton;
-import javax.swing.JSpinner;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JRadioButton;
 import javax.swing.JOptionPane;
 import javax.swing.BorderFactory;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SpinnerDateModel;
 
 import static calendarapp.utils.Constants.EXPORT_FILE_EXTENSION;
 import static calendarapp.utils.Constants.EXPORT_FILE_NAME;

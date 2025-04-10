@@ -6,7 +6,7 @@ This section explains how to use the application's GUI and its main features.
 
 ## 1. Default Calendar
 
-By default, the **Personal** calendar will be active. You can see it in the **My Calendar** section, 
+By default, the **Personal** calendar will be active. You can see it in the **My Calendar** section,
 as shown in the screenshot.
 
 ![img.png](useme-images/default-calendar.png)
@@ -53,6 +53,7 @@ All created events will appear in the calendar view.
 
 Click the **Find Events** button on the right (as shown in the screenshot).  
 You can search for events using:
+
 - **Event name**
 - **Start date**
 - **End date**

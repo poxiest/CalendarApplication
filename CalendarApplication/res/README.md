@@ -24,7 +24,8 @@ Download the .jar file present in /res directory
 
 ### GUI (Default Behavior)
 
-If no `--mode` is specified, the application will launch in **Graphical User Interface (GUI)** mode by default.
+If no `--mode` is specified, the application will launch in **Graphical User Interface (GUI)** mode
+by default.
 
 To run the GUI application:
 

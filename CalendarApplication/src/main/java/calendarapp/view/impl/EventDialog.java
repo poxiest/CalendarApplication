@@ -355,7 +355,8 @@ public class EventDialog extends JDialog {
     boolean hasRecurringDays = recurringDays != null && !recurringDays.isEmpty();
     char[] dayCodes = {'U', 'M', 'T', 'W', 'R', 'F', 'S'};
     for (int i = 0; i < recurringDayCheckBoxes.length; i++) {
-      recurringDayCheckBoxes[i].setSelected(hasRecurringDays && recurringDays.indexOf(dayCodes[i]) != -1);
+      recurringDayCheckBoxes[i].setSelected(hasRecurringDays
+          && recurringDays.indexOf(dayCodes[i]) != -1);
     }
 
     // Choose radio buttons based on recurrence values.

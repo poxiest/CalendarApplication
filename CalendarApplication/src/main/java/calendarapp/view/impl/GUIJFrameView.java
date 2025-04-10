@@ -1,6 +1,12 @@
 package calendarapp.view.impl;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Color;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Dimension;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -10,7 +16,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.SwingConstants;
+import javax.swing.JScrollPane;
+import javax.swing.JRadioButton;
+import javax.swing.ButtonGroup;
+import javax.swing.BoxLayout;
+import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
 
 import calendarapp.controller.Features;
