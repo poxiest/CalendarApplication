@@ -47,7 +47,7 @@
                         <param>GUIIntegrationTest</param>
                         <param>HeadlessControllerTest</param>
                         <param>MockGUIView</param>
-                        <param>SearchStrategyTest</param>Cases
+                        <param>SearchStrategyTestCases</param>
                         <param>TimeUtilsTest</param>
                     </targetTests>
                 </configuration>

@@ -58,31 +58,6 @@ public class MockGUIView implements GUIView {
     updateCalendarListCalls.add(calendarNames);
   }
 
-  // Setter methods to simulate user input.
-  public void setCreateEventResponse(Map<String, String> createEventResponse) {
-    this.createEventResponse = createEventResponse;
-  }
-
-  public void setEditEventFormResponse(Map<String, String> editEventFormResponse) {
-    this.editEventFormResponse = editEventFormResponse;
-  }
-
-  public void setCreateCalendarFormResponse(Map<String, String> createCalendarFormResponse) {
-    this.createCalendarFormResponse = createCalendarFormResponse;
-  }
-
-  public void setFindEventsResponse(Map<String, String> findEventsResponse) {
-    this.findEventsResponse = findEventsResponse;
-  }
-
-  public void setExportCalendarFormResponse(Map<String, String> exportCalendarFormResponse) {
-    this.exportCalendarFormResponse = exportCalendarFormResponse;
-  }
-
-  public void setImportCalendarDialogResponse(Map<String, String> importCalendarDialogResponse) {
-    this.importCalendarDialogResponse = importCalendarDialogResponse;
-  }
-
   @Override
   public void setActiveCalendar(String calendarName) {
     log.append("setActiveCalendar called with: ").append(calendarName).append("\n");
@@ -158,5 +133,30 @@ public class MockGUIView implements GUIView {
 
   public void setCurrentDate(LocalDate currentDate) {
     this.currentDate = currentDate;
+  }
+
+  // Setter methods to simulate user input.
+  public void setCreateEventResponse(Map<String, String> createEventResponse) {
+    this.createEventResponse = createEventResponse;
+  }
+
+  public void setEditEventFormResponse(Map<String, String> editEventFormResponse) {
+    this.editEventFormResponse = editEventFormResponse;
+  }
+
+  public void setCreateCalendarFormResponse(Map<String, String> createCalendarFormResponse) {
+    this.createCalendarFormResponse = createCalendarFormResponse;
+  }
+
+  public void setFindEventsResponse(Map<String, String> findEventsResponse) {
+    this.findEventsResponse = findEventsResponse;
+  }
+
+  public void setExportCalendarFormResponse(Map<String, String> exportCalendarFormResponse) {
+    this.exportCalendarFormResponse = exportCalendarFormResponse;
+  }
+
+  public void setImportCalendarDialogResponse(Map<String, String> importCalendarDialogResponse) {
+    this.importCalendarDialogResponse = importCalendarDialogResponse;
   }
 }

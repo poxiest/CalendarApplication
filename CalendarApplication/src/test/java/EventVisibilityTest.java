@@ -80,7 +80,7 @@ public class EventVisibilityTest {
   @Test
   public void testGetVisbility1() {
     List<String> values = EventVisibility.getVisibilities();
-    for(String s : values) {
+    for (String s : values) {
       assertNotEquals("unknown", s);
     }
   }

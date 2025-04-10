@@ -118,7 +118,8 @@ public class GUIController implements Features {
       if (results != null) {
         model.createCalendar(results.get(CALENDAR_NAME), results.get(CALENDAR_TIME_ZONE));
         view.showConfirmation("Calendar created successfully.");
-        refreshCalendarList();;
+        refreshCalendarList();
+        ;
       }
     } catch (Exception e) {
       handleError("Error creating calendar: " + e.getMessage(), e);
@@ -168,7 +169,8 @@ public class GUIController implements Features {
             results.get(FIND_START_TIME),
             results.get(FIND_END_TIME),
             results.get(FIND_ON));
-        view.updateEvents(events);;
+        view.updateEvents(events);
+        ;
       }
     } catch (Exception e) {
       handleError("Error finding events: " + e.getMessage(), e);
@@ -185,7 +187,8 @@ public class GUIController implements Features {
             results.get(EXPORT_FILE_NAME) + "."
                 + results.get(EXPORT_FILE_EXTENSION));
         view.showConfirmation("Calendar exported successfully at: " + filePath);
-        loadCurrentMonthEvents();;
+        loadCurrentMonthEvents();
+        ;
       }
     } catch (Exception e) {
       handleError("Error exporting calendar: " + e.getMessage(), e);

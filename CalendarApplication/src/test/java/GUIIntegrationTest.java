@@ -166,20 +166,20 @@ public class GUIIntegrationTest {
     assertEquals(expectedModelLog, modelLog);
 
     assertEquals("addFeatures called\n"
-        + "updateCalendarList called with: testCalendar America/Los_Angeles\n"
-        + "setActiveCalendar called with: testCalendar\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation"
-        + " null null null null null\n"
-        + "setActiveCalendar called with: PersonalCal\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation "
-        + "null null null null null\n"
-        + "showCreateCalendarForm called\n"
-        + "showConfirmation called with message: Calendar created successfully.\n"
-        + "updateCalendarList called with: testCalendar America/Los_Angeles\n",
+            + "updateCalendarList called with: testCalendar America/Los_Angeles\n"
+            + "setActiveCalendar called with: testCalendar\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation"
+            + " null null null null null\n"
+            + "setActiveCalendar called with: PersonalCal\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation "
+            + "null null null null null\n"
+            + "showCreateCalendarForm called\n"
+            + "showConfirmation called with message: Calendar created successfully.\n"
+            + "updateCalendarList called with: testCalendar America/Los_Angeles\n",
         viewLogger.toString());
   }
 
@@ -387,7 +387,8 @@ public class GUIIntegrationTest {
             + " " + System.getProperty("user.dir") + File.separator + "Tester.csv\n"
             + "getCurrentDate called, returning: 2025-11-11\n"
             + "getCurrentDate called, returning: 2025-11-11\n"
-            + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null null null null null\n";
+            + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null"
+            + " null null null null\n";
     assertEquals(expectedConfirmation, viewLogger.toString());
   }
 
@@ -521,19 +522,19 @@ public class GUIIntegrationTest {
     controller.createEvent();
 
     assertEquals("addFeatures called\n"
-        + "updateCalendarList called with: testCalendar America/Los_Angeles\n"
-        + "setActiveCalendar called with: testCalendar\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation "
-        + "null null null null null\n"
-        + "setActiveCalendar called with: PersonalCal\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation"
-        + " null null null null null\n"
-        + "showCreateEventForm called\n"
-        + "showError called with message: Error creating event: Invalid command exception\n",
+            + "updateCalendarList called with: testCalendar America/Los_Angeles\n"
+            + "setActiveCalendar called with: testCalendar\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation "
+            + "null null null null null\n"
+            + "setActiveCalendar called with: PersonalCal\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation"
+            + " null null null null null\n"
+            + "showCreateEventForm called\n"
+            + "showError called with message: Error creating event: Invalid command exception\n",
         viewLogger.toString());
   }
 
@@ -584,20 +585,20 @@ public class GUIIntegrationTest {
     controller.editEvent(dummyEvent);
 
     assertEquals("addFeatures called\n"
-        + "updateCalendarList called with: testCalendar America/Los_Angeles\n"
-        + "setActiveCalendar called with: testCalendar\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation"
-        + " null null null null null\n"
-        + "setActiveCalendar called with: PersonalCal\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation"
-        + " null null null null null\n"
-        + "showEditEventForm called for event: TeamMeeting 2025-11-11T10:00 2025-11-11T11:00"
-        + " Room1 null null null null null\n"
-        + "showError called with message: Error updating event: Invalid command exception\n",
+            + "updateCalendarList called with: testCalendar America/Los_Angeles\n"
+            + "setActiveCalendar called with: testCalendar\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation"
+            + " null null null null null\n"
+            + "setActiveCalendar called with: PersonalCal\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation"
+            + " null null null null null\n"
+            + "showEditEventForm called for event: TeamMeeting 2025-11-11T10:00 2025-11-11T11:00"
+            + " Room1 null null null null null\n"
+            + "showError called with message: Error updating event: Invalid command exception\n",
         viewLogger.toString());
   }
 
@@ -657,12 +658,15 @@ public class GUIIntegrationTest {
         + "setActiveCalendar called with: testCalendar\n"
         + "getCurrentDate called, returning: 2025-11-11\n"
         + "getCurrentDate called, returning: 2025-11-11\n"
-        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null null null null null\n"
+        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null "
+        + "null null null null\n"
         + "setActiveCalendar called with: PersonalCal\n"
         + "getCurrentDate called, returning: 2025-11-11\n"
         + "getCurrentDate called, returning: 2025-11-11\n"
-        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null null null null null\n"
-        + "showError called with message: Error loading events: Invalid command exception\n", viewLogger.toString());
+        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null "
+        + "null null null null\n"
+        + "showError called with message: Error loading events: Invalid command exception\n",
+        viewLogger.toString());
   }
 
   @Test
@@ -670,22 +674,22 @@ public class GUIIntegrationTest {
     mockModel.setInvalidCommandException(true);
     controller.navigateToPrevious();
     assertEquals("addFeatures called\n"
-        + "updateCalendarList called with: testCalendar America/Los_Angeles\n"
-        + "setActiveCalendar called with: testCalendar\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation"
-        + " null null null null null\n"
-        + "setActiveCalendar called with: PersonalCal\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation"
-        + " null null null null null\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "navigateToPrevious called with date: 2025-10-11\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "showError called with message: Error loading events: Invalid command exception\n",
+            + "updateCalendarList called with: testCalendar America/Los_Angeles\n"
+            + "setActiveCalendar called with: testCalendar\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation"
+            + " null null null null null\n"
+            + "setActiveCalendar called with: PersonalCal\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation"
+            + " null null null null null\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "navigateToPrevious called with date: 2025-10-11\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "showError called with message: Error loading events: Invalid command exception\n",
         viewLogger.toString());
   }
 
@@ -695,22 +699,22 @@ public class GUIIntegrationTest {
     controller.navigateToNext();
 
     assertEquals("addFeatures called\n"
-        + "updateCalendarList called with: testCalendar America/Los_Angeles\n"
-        + "setActiveCalendar called with: testCalendar\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null"
-        + " null null null null\n"
-        + "setActiveCalendar called with: PersonalCal\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null"
-        + " null null null null\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "navigateToNext called with date: 2025-12-11\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "getCurrentDate called, returning: 2025-11-11\n"
-        + "showError called with message: Error loading events: Invalid command exception\n",
+            + "updateCalendarList called with: testCalendar America/Los_Angeles\n"
+            + "setActiveCalendar called with: testCalendar\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null"
+            + " null null null null\n"
+            + "setActiveCalendar called with: PersonalCal\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null"
+            + " null null null null\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "navigateToNext called with date: 2025-12-11\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "getCurrentDate called, returning: 2025-11-11\n"
+            + "showError called with message: Error loading events: Invalid command exception\n",
         viewLogger.toString());
   }
 
@@ -730,13 +734,16 @@ public class GUIIntegrationTest {
         + "setActiveCalendar called with: testCalendar\n"
         + "getCurrentDate called, returning: 2025-11-11\n"
         + "getCurrentDate called, returning: 2025-11-11\n"
-        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null null null null null\n"
+        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null "
+        + "null null null null\n"
         + "setActiveCalendar called with: PersonalCal\n"
         + "getCurrentDate called, returning: 2025-11-11\n"
         + "getCurrentDate called, returning: 2025-11-11\n"
-        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null null null null null\n"
+        + "updateEvents called with: null 2025-11-01T00:00 2025-12-01T00:00 testLocation null "
+        + "null null null null\n"
         + "findEvents called\n"
-        + "showError called with message: Error finding events: Invalid command exception\n", viewLogger.toString());
+        + "showError called with message: Error finding events: Invalid command exception\n",
+        viewLogger.toString());
   }
 
 
@@ -759,7 +766,7 @@ public class GUIIntegrationTest {
       if (eventConflictException) {
         throw new EventConflictException("Event conflict exception");
       }
-      if  (invalidCommandException) {
+      if (invalidCommandException) {
         throw new InvalidCommandException("Invalid command exception");
       }
       log.append("Creating event\n").append(eventName)
@@ -776,7 +783,7 @@ public class GUIIntegrationTest {
       if (eventConflictException) {
         throw new EventConflictException("Event conflict exception");
       }
-      if  (invalidCommandException) {
+      if (invalidCommandException) {
         throw new InvalidCommandException("Invalid command exception");
       }
       log.append("Editing event\n").append(editEventRequestDTO.getEventName()).append(" ")
@@ -792,7 +799,7 @@ public class GUIIntegrationTest {
       if (eventConflictException) {
         throw new EventConflictException("Event conflict exception");
       }
-      if  (invalidCommandException) {
+      if (invalidCommandException) {
         throw new InvalidCommandException("Invalid command exception");
       }
       log.append("Getting events\n").append(eventName).append(" ").append(startTime)
@@ -809,9 +816,10 @@ public class GUIIntegrationTest {
       if (eventConflictException) {
         throw new EventConflictException("Event conflict exception");
       }
-      if  (invalidCommandException) {
+      if (invalidCommandException) {
         throw new InvalidCommandException("Invalid command exception");
-      }return List.of();
+      }
+      return List.of();
     }
 
     @Override
@@ -819,7 +827,7 @@ public class GUIIntegrationTest {
       if (eventConflictException) {
         throw new EventConflictException("Event conflict exception");
       }
-      if  (invalidCommandException) {
+      if (invalidCommandException) {
         throw new InvalidCommandException("Invalid command exception");
       }
       log.append("Showing status\n").append(dateTime).append("\n");
@@ -831,7 +839,7 @@ public class GUIIntegrationTest {
       if (eventConflictException) {
         throw new EventConflictException("Event conflict exception");
       }
-      if  (invalidCommandException) {
+      if (invalidCommandException) {
         throw new InvalidCommandException("Invalid command exception");
       }
       log.append("Creating calendar\n").append(calendarName).append(" ").append(timezone).append(
@@ -843,7 +851,7 @@ public class GUIIntegrationTest {
       if (eventConflictException) {
         throw new EventConflictException("Event conflict exception");
       }
-      if  (invalidCommandException) {
+      if (invalidCommandException) {
         throw new InvalidCommandException("Invalid command exception");
       }
       log.append("Editing Calendar\n").append(calendarName).append(" ")
@@ -856,7 +864,7 @@ public class GUIIntegrationTest {
       if (eventConflictException) {
         throw new EventConflictException("Event conflict exception");
       }
-      if  (invalidCommandException) {
+      if (invalidCommandException) {
         throw new InvalidCommandException("Invalid command exception");
       }
       log.append("Using calendar: ").append(calendarName).append("\n");
@@ -867,7 +875,7 @@ public class GUIIntegrationTest {
       if (eventConflictException) {
         throw new EventConflictException("Event conflict exception");
       }
-      if  (invalidCommandException) {
+      if (invalidCommandException) {
         throw new InvalidCommandException("Invalid command exception");
       }
       log.append("Copying event\n").append(copyEventRequestDTO.toString()).append("\n");
@@ -878,7 +886,7 @@ public class GUIIntegrationTest {
       if (eventConflictException) {
         throw new EventConflictException("Event conflict exception");
       }
-      if  (invalidCommandException) {
+      if (invalidCommandException) {
         throw new InvalidCommandException("Invalid command exception");
       }
       log.append("Getting calendars\n");
