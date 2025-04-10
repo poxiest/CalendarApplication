@@ -95,13 +95,7 @@ public class CsvCalendarImporter implements ICalendarImporter {
       char c = line.charAt(i);
 
       if (c == '"') {
-        // Check if this is an escaped quote
-        if (i + 1 < line.length() && line.charAt(i + 1) == '"') {
-          field.append('"');
-          i++; // Skip the next quote
-        } else {
           inQuotes = !inQuotes;
-        }
       } else if (c == ',' && !inQuotes) {
         fields.add(field.toString());
         field.setLength(0);

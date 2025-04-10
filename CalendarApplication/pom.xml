@@ -48,6 +48,7 @@
                         <param>HeadlessControllerTest</param>
                         <param>MockGUIView</param>
                         <param>SearchStrategyTestCases</param>
+                        <param>CsvCalendarImporterTest</param>
                         <param>TimeUtilsTest</param>
                     </targetTests>
                 </configuration>

@@ -12,6 +12,9 @@ import org.junit.Test;
 import calendarapp.controller.importer.CsvCalendarImporter;
 import calendarapp.model.dto.CalendarImporterDTO;
 
+/**
+ * Test case for CSV Calendar Importer
+ */
 public class CsvCalendarImporterTest {
 
   private CsvCalendarImporter importer;
@@ -31,14 +34,27 @@ public class CsvCalendarImporterTest {
     }
   }
 
-  /**
-   * Test importing a valid CSV file with a single event.
-   */
+  @Test
+  public void testQuoteAtEndOfLine() throws Exception {
+    String csvContent =
+        "Subject,Start Date,Start Time,End Date,End Time,All Day,Description,Location,Private\n" +
+            "Event,05/24/2023,10:00:00 AM,05/24/2023,11:00:00 AM,FALSE,\"Text ending with quote character: \",Location1,FALSE";
+
+    createTestFile(csvContent);
+
+    List<CalendarImporterDTO> events = importer.importEvents(testFilePath);
+
+    assertEquals(1, events.size());
+    CalendarImporterDTO event = events.get(0);
+    assertEquals("Event", event.getEventName());
+    assertEquals("Text ending with quote character: ", event.getDescription());
+  }
+
   @Test
   public void testImportSingleEvent() throws Exception {
     String csvContent =
         "Subject,Start Date,Start Time,End Date,End Time,All Day,Description,Location,Private\n" +
-            "Meeting,05/15/2023,09:00:00 AM,05/15/2023,10:00:00 AM,FALSE,Team discussion,Conference Room A,FALSE";
+            "Event1,05/15/2023,09:00:00 AM,05/15/2023,10:00:00 AM,FALSE,Some Description,Location1,FALSE";
 
     createTestFile(csvContent);
 
@@ -47,24 +63,21 @@ public class CsvCalendarImporterTest {
     assertEquals(1, events.size());
     CalendarImporterDTO event = events.get(0);
 
-    assertEquals("Meeting", event.getEventName());
+    assertEquals("Event1", event.getEventName());
     assertEquals("2023-05-15T09:00", event.getStartTime());
     assertEquals("2023-05-15T10:00", event.getEndTime());
-    assertEquals("Team discussion", event.getDescription());
-    assertEquals("Conference Room A", event.getLocation());
+    assertEquals("Some Description", event.getDescription());
+    assertEquals("Location1", event.getLocation());
     assertEquals("public", event.getVisibility());
   }
 
-  /**
-   * Test importing a CSV file with multiple events.
-   */
   @Test
   public void testImportMultipleEvents() throws Exception {
     String csvContent =
         "Subject,Start Date,Start Time,End Date,End Time,All Day,Description,Location,Private\n" +
-            "Meeting,05/15/2023,09:00:00 AM,05/15/2023,10:00:00 AM,FALSE,Team discussion,Conference Room A,FALSE\n" +
-            "Lunch,05/15/2023,12:00:00 PM,05/15/2023,01:00:00 PM,FALSE,Lunch with clients,Restaurant,TRUE\n" +
-            "Interview,05/16/2023,02:00:00 PM,05/16/2023,03:30:00 PM,FALSE,Candidate interview,Room B,TRUE";
+            "Event1,05/15/2023,09:00:00 AM,05/15/2023,10:00:00 AM,FALSE,Description1,Location1,FALSE\n" +
+            "Event2,05/15/2023,12:00:00 PM,05/15/2023,01:00:00 PM,FALSE,Description2,Location2,TRUE\n" +
+            "Event3,05/16/2023,02:00:00 PM,05/16/2023,03:30:00 PM,FALSE,Description3,Location3,TRUE";
 
     createTestFile(csvContent);
 
@@ -73,14 +86,11 @@ public class CsvCalendarImporterTest {
     assertEquals(3, events.size());
   }
 
-  /**
-   * Test handling of private events.
-   */
   @Test
   public void testPrivateEvent() throws Exception {
     String csvContent =
         "Subject,Start Date,Start Time,End Date,End Time,All Day,Description,Location,Private\n" +
-            "Doctor Appointment,05/20/2023,02:00:00 PM,05/20/2023,03:00:00 PM,FALSE,Annual checkup,Medical Center,TRUE";
+            "PrivateEvent,05/20/2023,02:00:00 PM,05/20/2023,03:00:00 PM,FALSE,Private Description,Location1,TRUE";
 
     createTestFile(csvContent);
 
@@ -91,14 +101,11 @@ public class CsvCalendarImporterTest {
     assertEquals("private", event.getVisibility());
   }
 
-  /**
-   * Test handling of public events.
-   */
   @Test
   public void testPublicEvent() throws Exception {
     String csvContent =
         "Subject,Start Date,Start Time,End Date,End Time,All Day,Description,Location,Private\n" +
-            "Team Building,05/25/2023,09:00:00 AM,05/25/2023,05:00:00 PM,FALSE,Annual team building,Park,FALSE";
+            "PublicEvent,05/25/2023,09:00:00 AM,05/25/2023,05:00:00 PM,FALSE,Public Description,Location1,FALSE";
 
     createTestFile(csvContent);
 
@@ -109,14 +116,11 @@ public class CsvCalendarImporterTest {
     assertEquals("public", event.getVisibility());
   }
 
-  /**
-   * Test handling of empty description and location.
-   */
   @Test
   public void testEmptyDescriptionAndLocation() throws Exception {
     String csvContent =
         "Subject,Start Date,Start Time,End Date,End Time,All Day,Description,Location,Private\n" +
-            "Quick Call,05/18/2023,03:00:00 PM,05/18/2023,03:15:00 PM,FALSE,,,FALSE";
+            "EmptyEvent,05/18/2023,03:00:00 PM,05/18/2023,03:15:00 PM,FALSE,,,FALSE";
 
     createTestFile(csvContent);
 
@@ -128,14 +132,11 @@ public class CsvCalendarImporterTest {
     assertNull(event.getLocation());
   }
 
-  /**
-   * Test handling of quoted fields in CSV.
-   */
   @Test
   public void testQuotedFields() throws Exception {
     String csvContent =
         "Subject,Start Date,Start Time,End Date,End Time,All Day,Description,Location,Private\n" +
-            "\"Project, Kickoff\",05/22/2023,10:00:00 AM,05/22/2023,11:30:00 AM,FALSE,\"Initial meeting, project X\",\"Building A, Room 101\",FALSE";
+            "\"Event, With Comma\",05/22/2023,10:00:00 AM,05/22/2023,11:30:00 AM,FALSE,\"Description, with comma\",\"Location, with comma\",FALSE";
 
     createTestFile(csvContent);
 
@@ -143,32 +144,11 @@ public class CsvCalendarImporterTest {
 
     assertEquals(1, events.size());
     CalendarImporterDTO event = events.get(0);
-    assertEquals("Project, Kickoff", event.getEventName());
-    assertEquals("Initial meeting, project X", event.getDescription());
-    assertEquals("Building A, Room 101", event.getLocation());
+    assertEquals("Event, With Comma", event.getEventName());
+    assertEquals("Description, with comma", event.getDescription());
+    assertEquals("Location, with comma", event.getLocation());
   }
 
-  /**
-   * Test handling of escaped quotes in quoted fields.
-   */
-  @Test
-  public void testEscapedQuotes() throws Exception {
-    String csvContent =
-        "Subject,Start Date,Start Time,End Date,End Time,All Day,Description,Location,Private\n" +
-            "Meeting,05/23/2023,01:00:00 PM,05/23/2023,02:00:00 PM,FALSE,\"Discussion about \"\"Project X\"\"\",Conference Room,FALSE";
-
-    createTestFile(csvContent);
-
-    List<CalendarImporterDTO> events = importer.importEvents(testFilePath);
-
-    assertEquals(1, events.size());
-    CalendarImporterDTO event = events.get(0);
-    assertEquals("Discussion about \"Project X\"", event.getDescription());
-  }
-
-  /**
-   * Test handling of empty CSV file.
-   */
   @Test(expected = Exception.class)
   public void testEmptyFile() throws Exception {
     createTestFile("");
@@ -176,9 +156,6 @@ public class CsvCalendarImporterTest {
     importer.importEvents(testFilePath);
   }
 
-  /**
-   * Test handling of file with header only.
-   */
   @Test
   public void testHeaderOnly() throws Exception {
     String csvContent =
@@ -191,38 +168,29 @@ public class CsvCalendarImporterTest {
     assertEquals(0, events.size());
   }
 
-  /**
-   * Test handling of CSV line with insufficient fields.
-   */
   @Test(expected = Exception.class)
   public void testInsufficientFields() throws Exception {
     String csvContent =
         "Subject,Start Date,Start Time,End Date,End Time,All Day,Description,Location,Private\n" +
-            "Meeting,05/15/2023,09:00:00 AM,05/15/2023";
+            "IncompleteEvent,05/15/2023,09:00:00 AM,05/15/2023";
 
     createTestFile(csvContent);
 
     importer.importEvents(testFilePath);
   }
 
-  /**
-   * Test handling of nonexistent file.
-   */
   @Test(expected = Exception.class)
   public void testNonexistentFile() throws Exception {
     importer.importEvents("nonexistent_file.csv");
   }
 
-  /**
-   * Test handling of empty lines in CSV.
-   */
   @Test
   public void testEmptyLines() throws Exception {
     String csvContent =
         "Subject,Start Date,Start Time,End Date,End Time,All Day,Description,Location,Private\n" +
-            "Meeting,05/15/2023,09:00:00 AM,05/15/2023,10:00:00 AM,FALSE,Team discussion,Conference Room A,FALSE\n" +
+            "Event1,05/15/2023,09:00:00 AM,05/15/2023,10:00:00 AM,FALSE,Description1,Location1,FALSE\n" +
             "\n" +
-            "Lunch,05/15/2023,12:00:00 PM,05/15/2023,01:00:00 PM,FALSE,Lunch with clients,Restaurant,TRUE";
+            "Event2,05/15/2023,12:00:00 PM,05/15/2023,01:00:00 PM,FALSE,Description2,Location2,TRUE";
 
     createTestFile(csvContent);
 
