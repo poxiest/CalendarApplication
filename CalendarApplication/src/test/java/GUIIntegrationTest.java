@@ -578,8 +578,9 @@ public class GUIIntegrationTest {
   @Test
   public void testEditEventInvalid2() throws EventConflictException {
     EventsResponseDTO dummyEvent =
-        EventsResponseDTO.builder().eventName("TeamMeeting").startTime(LocalDateTime.of(2025, 11,
-                11, 10, 0)).endTime(LocalDateTime.of(2025, 11, 11, 11, 0))
+        EventsResponseDTO.builder().eventName("TeamMeeting")
+            .startTime(LocalDateTime.of(2025, 11, 11, 10, 0))
+            .endTime(LocalDateTime.of(2025, 11, 11, 11, 0))
             .location("Room1").build();
 
     Map<String, String> editInput = new HashMap<>();
