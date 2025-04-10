@@ -7,11 +7,9 @@ import calendarapp.model.Constants;
 import calendarapp.model.impl.Event;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Test class for {@link Event}.
@@ -379,7 +377,7 @@ public class EventTest {
         .isAutoDecline(true).build();
 
     // Reflexive: An object must equal itself
-    assertTrue(event.equals(event));
+    assertEquals(event, event);
     assertEquals(event.hashCode(), event.hashCode());
   }
 
@@ -408,8 +406,8 @@ public class EventTest {
         .isAutoDecline(true).build();
 
     // Symmetric: If event1 equals event2, then event2 should equal event1
-    assertTrue(event1.equals(event2));
-    assertTrue(event2.equals(event1));
+    assertEquals(event1, event2);
+    assertEquals(event2, event1);
 
     assertEquals(event1.hashCode(), event2.hashCode());
     assertEquals(event2.hashCode(), event1.hashCode());
@@ -451,9 +449,9 @@ public class EventTest {
         .isAutoDecline(true).build();
 
     // Transitive: If event1 equals event2 and event2 equals event3, then event1 should equal event3
-    assertTrue(event1.equals(event2));
-    assertTrue(event2.equals(event3));
-    assertTrue(event1.equals(event3));
+    assertEquals(event1, event2);
+    assertEquals(event2, event3);
+    assertEquals(event1, event3);
 
     assertEquals(event1.hashCode(), event2.hashCode());
     assertEquals(event2.hashCode(), event3.hashCode());
@@ -485,8 +483,8 @@ public class EventTest {
         .isAutoDecline(true).build();
 
     // Consistent: Equals should consistently return the same result unless a property is changed
-    assertTrue(event1.equals(event2));
-    assertTrue(event1.equals(event2));
+    assertEquals(event1, event2);
+    assertEquals(event1, event2);
 
     assertEquals(event1.hashCode(), event2.hashCode());
     assertEquals(event2.hashCode(), event1.hashCode());
@@ -503,7 +501,7 @@ public class EventTest {
     String nonEventObject = "Non-event object";
 
     // Different class: Should return false
-    assertFalse(event.equals(nonEventObject));
+    assertNotEquals(event, nonEventObject);
     assertNotEquals(event.hashCode(), nonEventObject.hashCode());
   }
 
@@ -522,7 +520,7 @@ public class EventTest {
         .location("Meeting Room").build();
 
     // Different property values: Should return false
-    assertFalse(event1.equals(event2));
+    assertNotEquals(event1, event2);
     assertNotEquals(event1.hashCode(), event2.hashCode());
   }
 }

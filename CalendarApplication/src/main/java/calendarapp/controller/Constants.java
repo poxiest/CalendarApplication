@@ -88,6 +88,12 @@ public class Constants {
   public static final Map<String, ICalendarExporter> EXPORTER_MAP = Map.of(
       CSV, new CsvCalendarExporter()
   );
+  /**
+   * A map of supported import formats to their corresponding calendar importer.
+   */
+  public static final Map<String, ICalendarImporter> IMPORTER_MAP = Map.of(
+      calendarapp.controller.Constants.SupportImportFormats.CSV, new CsvCalendarImporter()
+  );
 
   /**
    * Constants representing CSV header field names for calendar export.
@@ -121,13 +127,6 @@ public class Constants {
     public static final String CSV = "csv";
     public static final Set<String> SUPPORTED_EXPORT_FORMATS = Set.of(CSV);
   }
-
-  /**
-   * A map of supported import formats to their corresponding calendar importer.
-   */
-  public static final Map<String, ICalendarImporter> IMPORTER_MAP = Map.of(
-      calendarapp.controller.Constants.SupportImportFormats.CSV, new CsvCalendarImporter()
-  );
 
   /**
    * Defines supported file formats for importing calendar data.

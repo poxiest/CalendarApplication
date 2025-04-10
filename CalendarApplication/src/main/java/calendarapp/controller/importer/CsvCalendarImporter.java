@@ -5,8 +5,8 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import calendarapp.controller.ICalendarImporter;
 import calendarapp.controller.Constants.CsvFormat;
+import calendarapp.controller.ICalendarImporter;
 import calendarapp.model.EventVisibility;
 import calendarapp.model.dto.CalendarImporterDTO;
 

@@ -13,8 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import calendarapp.controller.ICalendarExporter;
 import calendarapp.controller.Constants;
+import calendarapp.controller.ICalendarExporter;
 import calendarapp.controller.exporter.CsvCalendarExporter;
 import calendarapp.model.EventVisibility;
 import calendarapp.model.IEvent;
@@ -203,5 +203,4 @@ public class CalendarExporterTest {
             .build())
         .collect(Collectors.toList());
   }
-
 }

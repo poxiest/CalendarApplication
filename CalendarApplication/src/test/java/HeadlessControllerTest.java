@@ -78,6 +78,7 @@ public class HeadlessControllerTest {
             + "\n"
             + "Enter command or enter 'exit' to exit the calendar application.\n"
             + "Enter command or enter 'exit' to exit the calendar application.\n"
+            + "Enter command or enter 'exit' to exit the calendar application.\n"
             + "Exiting application.\n",
         view.getResult());
   }
@@ -100,6 +101,28 @@ public class HeadlessControllerTest {
         + "\"2025-11-12T13:00\"\n"
         + "Reason : Event conflicts with existing event: test1\n"
         + "Exiting application gracefully.\n", view.getResult());
+  }
+
+  @Test
+  public void testHeadless3() {
+    controller = CalendarControllerFactory.getController("headless",
+        filepath + File.separator + ("src") + File.separator + "test" + File.separator + "java" + File.separator + "commentTestCase.txt", model, view);
+    controller.start();
+    assertEquals("Enter command or enter 'exit' to exit the calendar application.\n"
+            + "Processing command: create event test on \"2025-11-11\"\n"
+            + "\n"
+            + "Enter command or enter 'exit' to exit the calendar application.\n"
+            + "Processing command: print events from \"2025-11-09\" to \"2025-11-25\"\n"
+            + "Events:\n"
+            + "• test - 2025-11-11T00:00 to 2025-11-12T00:00 \n"
+            + "\n"
+            + "Enter command or enter 'exit' to exit the calendar application.\n"
+            + "Processing command: / commenting for test\n"
+            + "\n"
+            + "ENCOUNTERED ERROR : Unknown command: / commenting for test\n"
+            + "\n"
+            + "Exiting application gracefully.\n",
+        view.getResult());
   }
 
   private static class MockView implements ICalendarView {

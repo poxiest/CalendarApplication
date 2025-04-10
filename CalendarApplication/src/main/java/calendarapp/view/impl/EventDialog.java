@@ -15,9 +15,9 @@ import java.util.Map;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import calendarapp.model.Constants;
 import calendarapp.model.EventVisibility;
 import calendarapp.model.dto.EventsResponseDTO;
-import calendarapp.model.Constants;
 
 
 /**

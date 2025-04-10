@@ -1,12 +1,12 @@
-package calendarapp.controller.impl;
+package calendarapp.model.impl;
 
 import java.time.temporal.Temporal;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import calendarapp.controller.InvalidCommandException;
-import calendarapp.model.dto.EventsResponseDTO;
 import calendarapp.model.Constants;
+import calendarapp.model.dto.EventsResponseDTO;
 import calendarapp.utils.TimeUtil;
 
 public class EditEventHelper {
@@ -121,6 +121,5 @@ public class EditEventHelper {
       return true;
     }
     return !TimeUtil.isEqual(value, TimeUtil.getTemporalFromString(newValue));
-
   }
 }

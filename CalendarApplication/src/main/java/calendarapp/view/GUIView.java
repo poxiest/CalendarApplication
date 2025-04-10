@@ -24,6 +24,9 @@ public interface GUIView {
    */
   void updateEvents(List<EventsResponseDTO> events);
 
+  /**
+   * Updates the calendar list.
+   */
   void updateCalendarList(List<CalendarResponseDTO> calendarNames);
 
   /**

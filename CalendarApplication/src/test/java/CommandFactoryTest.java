@@ -270,12 +270,10 @@ public class CommandFactoryTest {
                             String recurringDays, String occurrenceCount,
                             String recurrenceEndDate, String description, String location,
                             String visibility, boolean autoDecline) {
-      return;
     }
 
     @Override
     public void editEvent(EditEventRequestDTO editEventRequestDTO) {
-      return;
     }
 
     @Override

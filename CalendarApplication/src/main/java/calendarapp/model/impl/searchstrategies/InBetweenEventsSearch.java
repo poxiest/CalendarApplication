@@ -34,8 +34,8 @@ public class InBetweenEventsSearch implements SearchEventsStrategy {
   @Override
   public List<IEvent> search(List<IEvent> events, String eventName, Temporal startTime,
                              Temporal endTime, boolean isRecurring) {
-    if (endTime != null && TimeUtil.isFirstAfterSecond(startTime, endTime)) {
-      throw new InvalidCommandException("Start time must be before end time");
+    if (endTime != null && startTime != null && TimeUtil.isFirstAfterSecond(startTime, endTime)) {
+      throw new InvalidCommandException("Start time must be before end time.");
     }
     return events.stream()
         .filter(event -> eventName == null || event.getName().equals(eventName))

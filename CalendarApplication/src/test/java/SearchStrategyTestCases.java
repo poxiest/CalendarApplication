@@ -2,13 +2,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.List;
 
+import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.EventVisibility;
 import calendarapp.model.IEvent;
 import calendarapp.model.SearchType;
 import calendarapp.model.impl.Event;
+import calendarapp.model.impl.searchstrategies.ExactMatchEventsSearch;
 import calendarapp.model.impl.searchstrategies.SearchEventFactory;
 
 import static org.junit.Assert.assertEquals;
@@ -66,6 +69,38 @@ public class SearchStrategyTestCases {
     assertEquals(2, result.size());
     assertEquals("Team Meeting", result.get(0).getName());
     assertEquals("Team Meeting", result.get(1).getName());
+  }
+
+  @Test(expected = InvalidCommandException.class)
+  public void testSearchByExactName1() {
+    try {
+      List<IEvent> result = searchStrategy.search(events, "Team Meeting", LocalDateTime.of(2025,
+              4, 11, 10, 0),
+          LocalDateTime.of(2025, 3, 11, 10, 0), false,
+          SearchType.EXACT);
+    } catch (InvalidCommandException e) {
+      assertEquals("Start time must be before end time.", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test
+  public void testSearchByExactName2() {
+    List<IEvent> result = searchStrategy.search(events, null, null, null, false,
+        SearchType.EXACT);
+    assertEquals(4, result.size());
+    assertEquals("Team Meeting", result.get(0).getName());
+    assertEquals("Team Meeting", result.get(1).getName());
+    assertEquals("Doctor's Appointment", result.get(2).getName());
+    assertEquals("Yoga Class", result.get(3).getName());
+  }
+
+  @Test
+  public void testSearchByExactName3() {
+    List<IEvent> result = searchStrategy.search(events, "Team Meeting", LocalDateTime.of(2025, 4, 10, 9, 0), null, false,
+        SearchType.EXACT);
+    assertEquals(1, result.size());
+    assertEquals("Team Meeting", result.get(0).getName());
   }
 
   @Test
@@ -177,4 +212,27 @@ public class SearchStrategyTestCases {
     assertEquals(0, results.size());
   }
 
+  @Test(expected = InvalidCommandException.class)
+  public void testSearchByOverlappingName1() {
+    try {
+      List<IEvent> result = searchStrategy.search(events, "Team Meeting", LocalDateTime.of(2025,
+              4, 11, 10, 0),
+          LocalDateTime.of(2025, 3, 11, 10, 0), false,
+          SearchType.OVERLAPPING);
+    } catch (InvalidCommandException e) {
+      assertEquals("Start time must be before end time.", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Test
+  public void testSearchByOverlappingName2() {
+    List<IEvent> result = searchStrategy.search(events, null, null, null, false,
+        SearchType.OVERLAPPING);
+    assertEquals(4, result.size());
+    assertEquals("Team Meeting", result.get(0).getName());
+    assertEquals("Team Meeting", result.get(1).getName());
+    assertEquals("Doctor's Appointment", result.get(2).getName());
+    assertEquals("Yoga Class", result.get(3).getName());
+  }
 }

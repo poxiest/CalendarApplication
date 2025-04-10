@@ -2,6 +2,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.StringReader;
+import java.time.ZoneId;
+import java.util.List;
 import java.util.Scanner;
 
 import calendarapp.controller.ICalendarController;
@@ -10,6 +12,7 @@ import calendarapp.controller.commands.Command;
 import calendarapp.controller.commands.impl.CommandFactory;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
+import calendarapp.model.dto.CalendarResponseDTO;
 import calendarapp.model.impl.CalendarModel;
 import calendarapp.view.ICalendarView;
 import calendarapp.view.impl.CLIView;
@@ -1954,7 +1957,7 @@ public class CommandsE2ETest {
       controller.start();
     } catch (InvalidCommandException e) {
       assertEquals("copy events between 2025-11-12 and 2025-11-10 --target workcal to 2025-11-10\n"
-          + "Reason : Start time must be before end time", e.getMessage());
+          + "Reason : Start time must be before end time.", e.getMessage());
       throw e;
     }
   }
@@ -2258,6 +2261,13 @@ public class CommandsE2ETest {
             "• abc - 2025-12-22T00:00 to 2025-12-23T00:00 \n" +
             "• cdb - 2025-12-22T00:00 to 2025-12-23T00:00 \n",
         stringOutput.toString());
+  }
+
+  @Test
+  public void testGetCalendar() {
+    List<CalendarResponseDTO> response = model.getCalendars();
+    assertEquals("Personal", response.get(0).getName());
+    assertEquals(ZoneId.systemDefault(), response.get(0).getZoneId());
   }
 
   private static class MockController implements ICalendarController {

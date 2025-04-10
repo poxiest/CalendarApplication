@@ -1,7 +1,10 @@
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.ZoneId;
+
 import calendarapp.controller.InvalidCommandException;
+import calendarapp.model.ICalendar;
 import calendarapp.model.impl.Calendar;
 import calendarapp.model.impl.EventRepository;
 
@@ -27,5 +30,14 @@ public class CalendarTest {
       Assert.assertEquals("Event repository cannot be null.\n", e.getMessage());
       throw e;
     }
+  }
+
+  public void calendarTest() {
+    ICalendar cal = Calendar.builder()
+        .name("New Cal")
+        .zoneId("Europe/Berlin")
+        .eventRepository(new EventRepository()).build();
+    Assert.assertEquals("New Cal", cal.getName());
+    Assert.assertEquals(ZoneId.of("Europe/Berlin"), cal.getZoneId());
   }
 }
