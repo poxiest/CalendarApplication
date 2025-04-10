@@ -32,6 +32,7 @@ public class CalendarTest {
     }
   }
 
+  @Test
   public void calendarTest() {
     ICalendar cal = Calendar.builder()
         .name("New Cal")
