@@ -33,6 +33,10 @@ To run the GUI application:
 java -jar <file.jar>
 ```
 
+Please note that when using the application in GUI mode, you might see an exception in the terminal 
+related to internal components of the Swing library. 
+This message is harmless and does not affect the functionality of the Calendar Application. 
+
 ### Interactive Mode
 
 To run the application in interactive mode:
