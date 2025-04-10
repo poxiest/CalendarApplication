@@ -89,7 +89,8 @@ public class HeadlessControllerTest {
   @Test
   public void testGracefulExit() {
     controller = CalendarControllerFactory.getController("headless",
-        filepath + File.separator + ("src") + File.separator + "test" + File.separator + "java" + File.separator + "SingleEventConflictCommand.txt",
+        filepath + File.separator + ("src") + File.separator + "test" + File.separator
+            + "java" + File.separator + "SingleEventConflictCommand.txt",
         model, view);
     controller.start();
     assertEquals("Enter command or enter 'exit' to exit the calendar application.\n"
