@@ -22,9 +22,7 @@ import static org.junit.Assert.assertEquals;
  * Test class for {@link CalendarControllerFactory}.
  */
 public class CalendarControllerFactoryTest {
-  private final String filepath = System.getProperty("user.dir").contains("CalendarApplication")
-      ? System.getProperty("user.dir") : System.getProperty("user.dir") + File.separator +
-      "CalendarApplication";
+  private final String filepath = System.getProperty("user.dir");
   private ICalendarController controller;
   private ICalendarView view;
   private ICalendarModel model;

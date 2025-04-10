@@ -17,9 +17,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class HeadlessControllerTest {
 
-  private final String filepath = System.getProperty("user.dir").contains("CalendarApplication")
-      ? System.getProperty("user.dir") : System.getProperty("user.dir") + File.separator +
-      "CalendarApplication";
+  private final String filepath = System.getProperty("user.dir");
   private ICalendarController controller;
   private ICalendarModel model;
   private MockView view;
