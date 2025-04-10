@@ -12,10 +12,25 @@ do operations on a specific calendar, copy events from one calendar to other cal
 
 The application can run in two modes:
 
-1. **Interactive Mode**: Allows users to enter commands directly through the command line.
-2. **Headless Mode**: Processes commands from a file without requiring user interaction.
+1. **Interactive Mode**  
+   Allows users to enter commands directly through the command line.  
+   Use with: `--mode interactive`
+
+2. **Headless Mode**  
+   Processes commands from a file without requiring user interaction.  
+   Use with: `--mode headless`
 
 Download the .jar file present in /res directory
+
+### GUI (Default Behavior)
+
+If no `--mode` is specified, the application will launch in **Graphical User Interface (GUI)** mode by default.
+
+To run the GUI application:
+
+```bash
+java -jar <file.jar>
+```
 
 ### Interactive Mode
 
@@ -26,7 +41,8 @@ java -jar <file.jar> --mode interactive
 ```
 
 Once the application starts, you can enter commands directly in the console.
-For command reference check res/commands/validCalendarCommands.txt file.
+For command reference check res/commands/validCalendarCommands.txt file. The application
+stops once an invalid command is given.
 
 ### Headless Mode
 
