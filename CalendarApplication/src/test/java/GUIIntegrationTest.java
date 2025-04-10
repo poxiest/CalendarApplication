@@ -424,7 +424,9 @@ public class GUIIntegrationTest {
   @Test
   public void testImportCalendar() {
     Map<String, String> importInput = new HashMap<>();
-    importInput.put("importFilePath", System.getProperty("user.dir") + File.separator + "test.csv");
+    importInput.put("importFilePath", System.getProperty("user.dir")
+        + File.separator + "src" + File.separator + "test" + File.separator + "java"
+        + File.separator + "test.csv");
     mockView.setImportCalendarDialogResponse(importInput);
     controller.importCalendar();
 
