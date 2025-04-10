@@ -1674,15 +1674,13 @@ public class CommandsE2ETest {
     try {
       controller = new MockController("create calendar --name personalcal --timezone "
           + "\"America/New_York\"\n"
-          + "create calendar --name PersonalCal --timezone "
-          + "\"America/New_York\"\n"
+          + "create calendar --name WorkCal --timezone America/New_York\n"
           + "use calendar --name personalcal\n"
           + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
-          + "print events from 2025-11-10 to 2025-11-12\n"
-          + "edit calendar --name personalcal --property name PersonalCal\n", model, view);
+          + "edit calendar --name personalcal --property name WorkCal\n", model, view);
       controller.start();
     } catch (InvalidCommandException e) {
-      assertEquals("edit calendar --name personalcal --property name PersonalCal\n"
+      assertEquals("edit calendar --name personalcal --property name WorkCal\n"
           + "Reason : Calendar already exists.\n", e.getMessage());
       throw e;
     }
