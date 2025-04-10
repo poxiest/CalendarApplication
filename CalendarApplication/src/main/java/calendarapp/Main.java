@@ -33,9 +33,16 @@ public class Main {
       if (args.length == 3) {
         filename = args[2];
       }
-      ICalendarController controller = CalendarControllerFactory.getController(mode,
-          filename, model, view);
-      controller.start();
+      ICalendarController controller = null;
+      try {
+        controller = CalendarControllerFactory.getController(mode,
+            filename, model, view);
+      } catch (Exception e) {
+        System.out.println("Error: " + e.getMessage());
+      }
+      if (controller != null) {
+        controller.start();
+      }
     } else if (args.length == 0) {
       GUIController guiController = new GUIController(model);
       GUIView guiView = new GUIJFrameView();
