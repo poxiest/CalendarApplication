@@ -102,6 +102,15 @@ public class EventDialog extends JDialog {
     } else {
       this.selectedDate = Date.from(selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
+
+    addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosing(WindowEvent e) {
+        result = null;
+        dispose();
+      }
+    });
+
     this.result = new HashMap<>();
     constructPanel();
     populateFieldsFromDTO(dto);

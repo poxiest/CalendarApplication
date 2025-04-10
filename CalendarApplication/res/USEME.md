@@ -55,8 +55,7 @@ Click the **Find Events** button on the right (as shown in the screenshot).
 You can search for events using:
 
 - **Event name**
-- **Start date**
-- **End date**
+- **Start date and End date** or **On date**
 
 ![img_3.png](useme-images/find-events.png)
 

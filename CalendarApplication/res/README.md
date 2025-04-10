@@ -54,6 +54,7 @@ java -jar <file.jar> --mode headless {absolute_path}
 ```
 
 The command files are present inside res/commands/
+The application stops once an invalid command is seen.
 
 
 ---
