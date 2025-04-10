@@ -38,7 +38,8 @@ public class HeadlessControllerTest {
   public void testHeadless1() {
     try {
       controller = CalendarControllerFactory.getController("headless",
-          filepath + File.separator + ("src") + File.separator + "test" + File.separator + "java" + File.separator + "withoutExitCommand.txt",
+          filepath + File.separator + ("src") + File.separator + "test" + File.separator
+              + "java" + File.separator + "withoutExitCommand.txt",
           model, view);
       controller.start();
     } catch (Exception e) {
@@ -58,7 +59,8 @@ public class HeadlessControllerTest {
   @Test(expected = IllegalArgumentException.class)
   public void testHeadless1_1() {
     controller = CalendarControllerFactory.getController("headless",
-        filepath + File.separator + ("src") + File.separator + "test" + File.separator + "java" + File.separator + "withoutExitCommand",
+        filepath + File.separator + ("src") + File.separator + "test" + File.separator
+            + "java" + File.separator + "withoutExitCommand",
         model, view);
     controller.start();
   }
@@ -66,7 +68,8 @@ public class HeadlessControllerTest {
   @Test
   public void testHeadless2() {
     controller = CalendarControllerFactory.getController("headless",
-        filepath + File.separator + ("src") + File.separator + "test" + File.separator + "java" + File.separator + "positiveTestcase.txt", model, view);
+        filepath + File.separator + ("src") + File.separator + "test" + File.separator
+            + "java" + File.separator + "positiveTestcase.txt", model, view);
     controller.start();
     assertEquals("Enter command or enter 'exit' to exit the calendar application.\n"
             + "Processing command: create event test on \"2025-11-11\"\n"
@@ -106,7 +109,8 @@ public class HeadlessControllerTest {
   @Test
   public void testHeadless3() {
     controller = CalendarControllerFactory.getController("headless",
-        filepath + File.separator + ("src") + File.separator + "test" + File.separator + "java" + File.separator + "commentTestCase.txt", model, view);
+        filepath + File.separator + ("src") + File.separator + "test" + File.separator
+            + "java" + File.separator + "commentTestCase.txt", model, view);
     controller.start();
     assertEquals("Enter command or enter 'exit' to exit the calendar application.\n"
             + "Processing command: create event test on \"2025-11-11\"\n"

@@ -56,7 +56,8 @@ public class CalendarControllerFactoryTest {
   @Test
   public void testControllerFactory3() {
     controller = CalendarControllerFactory.getController("headless",
-        filepath + File.separator + ("src") + File.separator + "test" + File.separator + "java" + File.separator + "positiveTestcase.txt", model,
+        filepath + File.separator + ("src") + File.separator + "test" + File.separator
+            + "java" + File.separator + "positiveTestcase.txt", model,
         view);
     assertEquals(CalendarController.class, controller.getClass());
   }
@@ -70,7 +71,8 @@ public class CalendarControllerFactoryTest {
   @Test
   public void testControllerFactory5() {
     controller = CalendarControllerFactory.getController("HEADLESS",
-        filepath + File.separator + ("src") + File.separator + "test" + File.separator + "java" + File.separator + "positiveTestcase.txt", model,
+        filepath + File.separator + ("src") + File.separator + "test" + File.separator
+            + "java" + File.separator + "positiveTestcase.txt", model,
         view);
     assertEquals(CalendarController.class, controller.getClass());
   }
