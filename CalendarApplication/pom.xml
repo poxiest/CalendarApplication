@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -31,7 +31,6 @@
                     <targetClasses>
                         <param>calendarapp.controller.*</param>
                         <param>calendarapp.model.*</param>
-                        <param>calendarapp.view.*</param>
                         <param>calendarapp.utils.*</param>
                     </targetClasses>
                     <targetTests>
@@ -42,10 +41,14 @@
                         <param>CommandPropertiesTest</param>
                         <param>CommandsE2ETest</param>
                         <param>ControllerModelIntergationTest</param>
+                        <param>EditEventHelperTest</param>
                         <param>EventTest</param>
                         <param>EventVisibilityTest</param>
+                        <param>GUIIntegrationTest</param>
                         <param>HeadlessControllerTest</param>
+                        <param>MockGUIView</param>
                         <param>SearchStrategyTestCases</param>
+                        <param>CsvCalendarImporterTest</param>
                         <param>TimeUtilsTest</param>
                     </targetTests>
                 </configuration>

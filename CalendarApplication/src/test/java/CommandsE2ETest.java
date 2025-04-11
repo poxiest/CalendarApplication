@@ -2,6 +2,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.StringReader;
+import java.time.ZoneId;
+import java.util.List;
 import java.util.Scanner;
 
 import calendarapp.controller.ICalendarController;
@@ -10,6 +12,7 @@ import calendarapp.controller.commands.Command;
 import calendarapp.controller.commands.impl.CommandFactory;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
+import calendarapp.model.dto.CalendarResponseDTO;
 import calendarapp.model.impl.CalendarModel;
 import calendarapp.view.ICalendarView;
 import calendarapp.view.impl.CLIView;
@@ -372,7 +375,6 @@ public class CommandsE2ETest {
         , stringOutput.toString());
   }
 
-  // TODO: Change the searching logic for edit and copy to stick on strictly for datetime
   // edit events from
   @Test
   public void RecurringEventsForNTimesWithExistingEvent3() {
@@ -1666,6 +1668,24 @@ public class CommandsE2ETest {
         + "• propertime - 2025-11-10T11:00 to 2025-11-10T12:00 \n", stringOutput.toString());
   }
 
+  // edit calendar name
+  @Test(expected = InvalidCommandException.class)
+  public void testEditCalendarName_1() {
+    try {
+      controller = new MockController("create calendar --name personalcal --timezone "
+          + "\"America/New_York\"\n"
+          + "create calendar --name WorkCal --timezone America/New_York\n"
+          + "use calendar --name personalcal\n"
+          + "create event propertime from 2025-11-10T11:00 to 2025-11-10T12:00\n"
+          + "edit calendar --name personalcal --property name WorkCal\n", model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("edit calendar --name personalcal --property name WorkCal\n"
+          + "Reason : Calendar already exists.\n", e.getMessage());
+      throw e;
+    }
+  }
+
   // edit calendar name and call use calendar with old name
   @Test(expected = InvalidCommandException.class)
   public void testEditCalendarName1() {
@@ -1852,7 +1872,6 @@ public class CommandsE2ETest {
     }
   }
 
-  // todo: change this
   // copy command with specific event name and same timezone
   @Test
   public void testCopyCalendarCommand4() {
@@ -1919,6 +1938,22 @@ public class CommandsE2ETest {
     } catch (InvalidCommandException e) {
       assertEquals("copy event EventName on 2025-11-11T11:00 --target to "
           + "2025-11-11T10:00\nReason : Required fields are missing.\n", e.getMessage());
+      throw e;
+    }
+  }
+
+  // start greater than end time
+  @Test(expected = InvalidCommandException.class)
+  public void testInvalidCopy_1() {
+    try {
+      controller = new MockController("create calendar --name workcal --timezone "
+          + "\"America/New_York\"\n"
+          + "copy events between 2025-11-12 and 2025-11-10 --target workcal to 2025-11-10"
+          , model, view);
+      controller.start();
+    } catch (InvalidCommandException e) {
+      assertEquals("copy events between 2025-11-12 and 2025-11-10 --target workcal to 2025-11-10\n"
+          + "Reason : Start time must be before end time.", e.getMessage());
       throw e;
     }
   }
@@ -2224,10 +2259,17 @@ public class CommandsE2ETest {
         stringOutput.toString());
   }
 
+  @Test
+  public void testGetCalendar() {
+    List<CalendarResponseDTO> response = model.getCalendars();
+    assertEquals("Personal", response.get(0).getName());
+    assertEquals(ZoneId.systemDefault(), response.get(0).getZoneId());
+  }
+
   private static class MockController implements ICalendarController {
-    private ICalendarModel model;
-    private Readable in;
-    private ICalendarView view;
+    private final ICalendarModel model;
+    private final Readable in;
+    private final ICalendarView view;
 
     public MockController(String input, ICalendarModel calendarApplication,
                           ICalendarView calendarView) {

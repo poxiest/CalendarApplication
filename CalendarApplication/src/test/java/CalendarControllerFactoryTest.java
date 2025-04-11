@@ -1,6 +1,7 @@
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,8 +10,10 @@ import calendarapp.controller.impl.CalendarController;
 import calendarapp.controller.impl.CalendarControllerFactory;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.dto.CalendarExporterDTO;
+import calendarapp.model.dto.CalendarResponseDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
-import calendarapp.model.dto.PrintEventsResponseDTO;
+import calendarapp.model.dto.EditEventRequestDTO;
+import calendarapp.model.dto.EventsResponseDTO;
 import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
@@ -19,12 +22,10 @@ import static org.junit.Assert.assertEquals;
  * Test class for {@link CalendarControllerFactory}.
  */
 public class CalendarControllerFactoryTest {
+  private final String filepath = System.getProperty("user.dir");
   private ICalendarController controller;
   private ICalendarView view;
   private ICalendarModel model;
-
-  private String filepath = System.getProperty("user.dir").contains("CalendarApplication")
-      ? System.getProperty("user.dir") : System.getProperty("user.dir") + "/CalendarApplication";
 
   @Before
   public void setup() {
@@ -55,7 +56,8 @@ public class CalendarControllerFactoryTest {
   @Test
   public void testControllerFactory3() {
     controller = CalendarControllerFactory.getController("headless",
-        filepath + "/src/test/java/positiveTestcase.txt", model,
+        filepath + File.separator + ("src") + File.separator + "test" + File.separator
+            + "java" + File.separator + "positiveTestcase.txt", model,
         view);
     assertEquals(CalendarController.class, controller.getClass());
   }
@@ -69,7 +71,8 @@ public class CalendarControllerFactoryTest {
   @Test
   public void testControllerFactory5() {
     controller = CalendarControllerFactory.getController("HEADLESS",
-        filepath + "/src/test/java/positiveTestcase.txt", model,
+        filepath + File.separator + ("src") + File.separator + "test" + File.separator
+            + "java" + File.separator + "positiveTestcase.txt", model,
         view);
     assertEquals(CalendarController.class, controller.getClass());
   }
@@ -149,15 +152,14 @@ public class CalendarControllerFactoryTest {
     }
 
     @Override
-    public void editEvent(String eventName, String startTime, String endTime, String property,
-                          String value) {
+    public void editEvent(EditEventRequestDTO editEventRequestDTO) {
       System.out.println("message");
 
     }
 
     @Override
-    public List<PrintEventsResponseDTO> getEventsForPrinting(String startTime, String endTime,
-                                                             String on) {
+    public List<EventsResponseDTO> getEvents(String eventName, String startTime, String endTime,
+                                             String on) {
       return List.of();
     }
 
@@ -189,6 +191,11 @@ public class CalendarControllerFactoryTest {
     @Override
     public void copyEvent(CopyEventRequestDTO copyEventRequestDTO) {
       // empty for test purposes.
+    }
+
+    @Override
+    public List<CalendarResponseDTO> getCalendars() {
+      return List.of();
     }
   }
 }

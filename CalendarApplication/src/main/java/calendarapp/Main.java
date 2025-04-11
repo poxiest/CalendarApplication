@@ -2,10 +2,13 @@ package calendarapp;
 
 import calendarapp.controller.ICalendarController;
 import calendarapp.controller.impl.CalendarControllerFactory;
+import calendarapp.controller.impl.GUIController;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.impl.CalendarModel;
+import calendarapp.view.GUIView;
 import calendarapp.view.ICalendarView;
 import calendarapp.view.impl.CLIView;
+import calendarapp.view.impl.GUIJFrameView;
 
 /**
  * This is the Main class of this entire application, it serves as the starting point and contains
@@ -21,21 +24,31 @@ public class Main {
    * @param args command-line arguments taking mode inputs.
    */
   public static void main(String[] args) {
-    if (args.length < 2 || !args[0].equalsIgnoreCase("--mode")) {
-      throw new IllegalArgumentException("--mode argument required for the application to run.");
-    }
-
-    String mode = args[1];
-    String filename = null;
-    if (args.length == 3) {
-      filename = args[2];
-    }
-
     ICalendarModel model = new CalendarModel();
     ICalendarView view = new CLIView(System.out);
-    ICalendarController controller = CalendarControllerFactory.getController(mode,
-        filename, model, view);
 
-    controller.start();
+    if (args.length >= 2) {
+      String mode = args[1];
+      String filename = null;
+      if (args.length == 3) {
+        filename = args[2];
+      }
+      ICalendarController controller = null;
+      try {
+        controller = CalendarControllerFactory.getController(mode,
+            filename, model, view);
+      } catch (Exception e) {
+        System.out.println("Error: " + e.getMessage());
+      }
+      if (controller != null) {
+        controller.start();
+      }
+    } else if (args.length == 0) {
+      GUIController guiController = new GUIController(model);
+      GUIView guiView = new GUIJFrameView();
+      guiController.setView(guiView);
+    } else {
+      view.displayMessage("Invalid arguments.");
+    }
   }
 }

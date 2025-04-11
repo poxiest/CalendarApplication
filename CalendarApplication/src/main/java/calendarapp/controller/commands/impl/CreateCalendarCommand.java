@@ -7,7 +7,7 @@ import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
-import static calendarapp.controller.commands.impl.RegexPatternConstants.CREATE_NEW_CALENDAR;
+import static calendarapp.controller.Constants.CREATE_NEW_CALENDAR;
 
 /**
  * Create Calendar Command implementation for creating new calendar.

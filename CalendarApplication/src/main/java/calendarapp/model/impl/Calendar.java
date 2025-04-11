@@ -29,6 +29,15 @@ public class Calendar implements ICalendar {
     this.eventRepository = eventRepository;
   }
 
+  /**
+   * Creates and returns a new Builder instance for constructing a Calendar.
+   *
+   * @return a new Builder
+   */
+  public static Builder builder() {
+    return new Builder();
+  }
+
   @Override
   public String getName() {
     return name;
@@ -45,20 +54,11 @@ public class Calendar implements ICalendar {
   }
 
   /**
-   * Creates and returns a new Builder instance for constructing a Calendar.
-   *
-   * @return a new Builder
-   */
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  /**
    * Builder class for constructing Calendar instances.
    */
   public static class Builder {
     private String name;
-    private ZoneId zoneId = ZoneId.of(Constants.Calendar.DEFAULT_TIME_ZONE);
+    private ZoneId zoneId = ZoneId.of(ZoneId.systemDefault().getId());
     private IEventRepository eventRepository;
 
     /**
@@ -119,7 +119,7 @@ public class Calendar implements ICalendar {
      * @throws InvalidCommandException if name or event repository is missing
      */
     public Calendar build() {
-      if (name == null) {
+      if (name == null || name.trim().isEmpty()) {
         throw new InvalidCommandException("Calendar name cannot be null or empty.\n");
       }
       if (eventRepository == null) {

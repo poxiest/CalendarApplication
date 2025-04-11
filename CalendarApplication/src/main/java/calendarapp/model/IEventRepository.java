@@ -34,14 +34,15 @@ public interface IEventRepository {
   /**
    * Updates a specific property of an existing event identified by its name and time range.
    *
-   * @param eventName The name of the event.
-   * @param startTime The start time of the event.
-   * @param endTime   The end time of the event.
-   * @param property  The property to update (e.g., description, location).
-   * @param value     The new value to be set for the property.
+   * @param eventName  The name of the event.
+   * @param startTime  The start time of the event.
+   * @param endTime    The end time of the event.
+   * @param property   The property to update (e.g., description, location).
+   * @param value      The new value to be set for the property.
+   * @param isMultiple true if editing multiple events.
    */
   void update(String eventName, Temporal startTime, Temporal endTime, String property,
-              String value);
+              String value, boolean isMultiple);
 
   /**
    * Retrieves a list of events based on the specified search criteria.

@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import calendarapp.controller.InvalidCommandException;
+import calendarapp.model.Constants;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.IEvent;
 import calendarapp.model.IEventRepository;
@@ -20,7 +21,7 @@ import calendarapp.model.dto.CalendarExporterDTO;
 import calendarapp.model.impl.searchstrategies.SearchEventFactory;
 import calendarapp.utils.TimeUtil;
 
-import static calendarapp.model.impl.Constants.DaysOfWeek.parseDaysOfWeek;
+import static calendarapp.model.Constants.DaysOfWeek.parseDaysOfWeek;
 import static calendarapp.utils.TimeUtil.isAllDayEvent;
 import static calendarapp.utils.TimeUtil.isFirstBeforeSecond;
 
@@ -69,23 +70,22 @@ public class EventRepository implements IEventRepository {
 
   @Override
   public void update(String eventName, Temporal startTime, Temporal endTime, String property,
-                     String value) {
+                     String value, boolean isMultiple) {
     List<IEvent> eventsToUpdate;
-    boolean isSingleEventUpdate = false;
-    if (endTime != null) {
+    boolean isRecurringUpdate =
+        Constants.PropertyKeys.RECURRING_PROPERTIES_LIST.contains(property.toLowerCase());
+    if (!isMultiple && endTime != null) {
       eventsToUpdate = searchEventFactory.search(events, eventName, startTime, endTime, false,
           SearchType.EXACT);
-      isSingleEventUpdate = true;
     } else {
-      eventsToUpdate = searchEventFactory.search(events, eventName, startTime, endTime,
-          isRecurringProperty(property), SearchType.MATCHING);
+      eventsToUpdate = searchEventFactory.search(events, eventName, startTime, null,
+          isRecurringUpdate, SearchType.BETWEEN);
     }
     List<IEvent> updatedEvents = new ArrayList<>();
-
-    if (!isRecurringProperty(property)) {
+    if (!isRecurringUpdate) {
       boolean isFirstRecurringEventUpdated = false;
       for (IEvent event : eventsToUpdate) {
-        if (event.getRecurringDays() != null && !isSingleEventUpdate) {
+        if (event.getRecurringDays() != null && isMultiple) {
           if (!isFirstRecurringEventUpdated) {
             IEvent firstEvent = event.updateProperty(property, value);
             updatedEvents.addAll(getUpdatedRecurringEvents(firstEvent));
@@ -97,7 +97,7 @@ public class EventRepository implements IEventRepository {
         updatedEvents.add(updatedEvent);
       }
     } else {
-      if (isSingleEventUpdate) {
+      if (!isMultiple) {
         throw new InvalidCommandException("Cannot update a recurring property for a single event.");
       }
       IEvent firstEvent = eventsToUpdate.get(0).updateProperty(property, value);
@@ -106,6 +106,13 @@ public class EventRepository implements IEventRepository {
     validateEvents(updatedEvents, eventsToUpdate);
     events.addAll(updatedEvents);
     events.removeAll(eventsToUpdate);
+  }
+
+  @Override
+  public List<IEvent> getEvents(String eventName, Temporal startTime,
+                                Temporal endTime, SearchType type) {
+    return searchEventFactory.search(events, eventName, startTime, endTime, false, type)
+        .stream().map(IEvent::deepCopyEvent).collect(Collectors.toList());
   }
 
   @Override
@@ -163,13 +170,6 @@ public class EventRepository implements IEventRepository {
             .visibility(event.getVisibility() != null ? event.getVisibility().getValue() : null)
             .build())
         .collect(Collectors.toList());
-  }
-
-  @Override
-  public List<IEvent> getEvents(String eventName, Temporal startTime,
-                                Temporal endTime, SearchType type) {
-    return searchEventFactory.search(events, eventName, startTime, endTime, false, type)
-        .stream().map(IEvent::deepCopyEvent).collect(Collectors.toList());
   }
 
   /**
@@ -271,19 +271,6 @@ public class EventRepository implements IEventRepository {
         }
       }
     }
-  }
-
-  /**
-   * Checks if the given property is related to event recurrence.
-   *
-   * @param property the name of the property
-   * @return true if it is a recurring-related property, false otherwise
-   */
-  private boolean isRecurringProperty(String property) {
-    String lowerCaseProperty = property.toLowerCase();
-    return lowerCaseProperty.equals(Constants.PropertyKeys.RECURRING_DAYS)
-        || lowerCaseProperty.equals(Constants.PropertyKeys.OCCURRENCE_COUNT)
-        || lowerCaseProperty.equals(Constants.PropertyKeys.RECURRENCE_END_DATE);
   }
 
   /**

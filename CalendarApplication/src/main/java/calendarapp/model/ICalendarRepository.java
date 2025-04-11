@@ -1,5 +1,7 @@
 package calendarapp.model;
 
+import java.util.List;
+
 import calendarapp.model.dto.CopyEventRequestDTO;
 
 /**
@@ -41,4 +43,11 @@ public interface ICalendarRepository {
    * @return the calendar with the given name
    */
   ICalendar getCalendar(String name);
+
+  /**
+   * Fetches all the calendar present.
+   *
+   * @return List of calendar.
+   */
+  List<ICalendar> getCalendars();
 }

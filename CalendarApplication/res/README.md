@@ -12,10 +12,30 @@ do operations on a specific calendar, copy events from one calendar to other cal
 
 The application can run in two modes:
 
-1. **Interactive Mode**: Allows users to enter commands directly through the command line.
-2. **Headless Mode**: Processes commands from a file without requiring user interaction.
+1. **Interactive Mode**  
+   Allows users to enter commands directly through the command line.  
+   Use with: `--mode interactive`
+
+2. **Headless Mode**  
+   Processes commands from a file without requiring user interaction.  
+   Use with: `--mode headless`
 
 Download the .jar file present in /res directory
+
+### GUI (Default Behavior)
+
+If no `--mode` is specified, the application will launch in **Graphical User Interface (GUI)** mode
+by default.
+
+To run the GUI application:
+
+```bash
+java -jar <file.jar>
+```
+
+Please note that when using the application in GUI mode, you might see an exception in the terminal 
+related to internal components of the Swing library. 
+This message is harmless and does not affect the functionality of the Calendar Application. 
 
 ### Interactive Mode
 
@@ -26,8 +46,8 @@ java -jar <file.jar> --mode interactive
 ```
 
 Once the application starts, you can enter commands directly in the console.
-For command reference check res/commands/validCalendarCommands.txt file.
-
+For command reference check res/commands/validCalendarCommands.txt file. The application
+stops once an invalid command is given.
 
 ### Headless Mode
 
@@ -38,6 +58,7 @@ java -jar <file.jar> --mode headless {absolute_path}
 ```
 
 The command files are present inside res/commands/
+The application stops once an invalid command is seen.
 
 
 ---
@@ -54,7 +75,7 @@ create calendar --name <calendarName> --timezone area/location
 
 Create a calendar with the name and timezone specified.
 
-**Note**: The application at start defaults to `Personal` Calendar. 
+**Note**: The application at start defaults to `Personal` Calendar.
 
 ### Edit a calendar
 
@@ -77,7 +98,7 @@ use calendar --name <calendarName>
 Set a specific calendar as the active calendar. The operations done post this will be done on the
 active calendar.
 
-**Note**: The application at start uses `Personal` Calendar to work. 
+**Note**: The application at start uses `Personal` Calendar to work.
 
 ### Creating Events
 

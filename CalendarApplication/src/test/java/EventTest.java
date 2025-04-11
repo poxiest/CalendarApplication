@@ -3,15 +3,13 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 
-import calendarapp.model.impl.Constants;
+import calendarapp.model.Constants;
 import calendarapp.model.impl.Event;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Test class for {@link Event}.
@@ -375,12 +373,11 @@ public class EventTest {
         .description("Annual Meeting")
         .visibility("Public")
         .recurringDays("MRW")
-        .occurrenceCount(5)
         .recurrenceEndDate(LocalDateTime.of(2025, 12, 31, 0, 0))
         .isAutoDecline(true).build();
 
     // Reflexive: An object must equal itself
-    assertTrue(event.equals(event));
+    assertEquals(event, event);
     assertEquals(event.hashCode(), event.hashCode());
   }
 
@@ -395,7 +392,6 @@ public class EventTest {
         .visibility("Public")
         .recurringDays("MRW")
         .occurrenceCount(5)
-        .recurrenceEndDate(LocalDateTime.of(2025, 12, 31, 0, 0))
         .isAutoDecline(true).build();
 
     Event event2 = Event.builder()
@@ -407,12 +403,11 @@ public class EventTest {
         .visibility("Public")
         .recurringDays("MRW")
         .occurrenceCount(5)
-        .recurrenceEndDate(LocalDateTime.of(2025, 12, 31, 0, 0))
         .isAutoDecline(true).build();
 
     // Symmetric: If event1 equals event2, then event2 should equal event1
-    assertTrue(event1.equals(event2));
-    assertTrue(event2.equals(event1));
+    assertEquals(event1, event2);
+    assertEquals(event2, event1);
 
     assertEquals(event1.hashCode(), event2.hashCode());
     assertEquals(event2.hashCode(), event1.hashCode());
@@ -429,7 +424,6 @@ public class EventTest {
         .visibility("Public")
         .recurringDays("MRW")
         .occurrenceCount(5)
-        .recurrenceEndDate(LocalDateTime.of(2025, 12, 31, 0, 0))
         .isAutoDecline(true).build();
 
     Event event2 = Event.builder()
@@ -441,7 +435,6 @@ public class EventTest {
         .visibility("Public")
         .recurringDays("MRW")
         .occurrenceCount(5)
-        .recurrenceEndDate(LocalDateTime.of(2025, 12, 31, 0, 0))
         .isAutoDecline(true).build();
 
     Event event3 = Event.builder()
@@ -453,13 +446,12 @@ public class EventTest {
         .visibility("Public")
         .recurringDays("MRW")
         .occurrenceCount(5)
-        .recurrenceEndDate(LocalDateTime.of(2025, 12, 31, 0, 0))
         .isAutoDecline(true).build();
 
     // Transitive: If event1 equals event2 and event2 equals event3, then event1 should equal event3
-    assertTrue(event1.equals(event2));
-    assertTrue(event2.equals(event3));
-    assertTrue(event1.equals(event3));
+    assertEquals(event1, event2);
+    assertEquals(event2, event3);
+    assertEquals(event1, event3);
 
     assertEquals(event1.hashCode(), event2.hashCode());
     assertEquals(event2.hashCode(), event3.hashCode());
@@ -476,7 +468,6 @@ public class EventTest {
         .description("Annual Meeting")
         .visibility("Public")
         .recurringDays("MRW")
-        .occurrenceCount(5)
         .recurrenceEndDate(LocalDateTime.of(2025, 12, 31, 0, 0))
         .isAutoDecline(true).build();
 
@@ -488,13 +479,12 @@ public class EventTest {
         .description("Annual Meeting")
         .visibility("Public")
         .recurringDays("MRW")
-        .occurrenceCount(5)
         .recurrenceEndDate(LocalDateTime.of(2025, 12, 31, 0, 0))
         .isAutoDecline(true).build();
 
     // Consistent: Equals should consistently return the same result unless a property is changed
-    assertTrue(event1.equals(event2));
-    assertTrue(event1.equals(event2));
+    assertEquals(event1, event2);
+    assertEquals(event1, event2);
 
     assertEquals(event1.hashCode(), event2.hashCode());
     assertEquals(event2.hashCode(), event1.hashCode());
@@ -511,7 +501,7 @@ public class EventTest {
     String nonEventObject = "Non-event object";
 
     // Different class: Should return false
-    assertFalse(event.equals(nonEventObject));
+    assertNotEquals(event, nonEventObject);
     assertNotEquals(event.hashCode(), nonEventObject.hashCode());
   }
 
@@ -530,7 +520,61 @@ public class EventTest {
         .location("Meeting Room").build();
 
     // Different property values: Should return false
-    assertFalse(event1.equals(event2));
+    assertNotEquals(event1, event2);
+    assertNotEquals(event1.hashCode(), event2.hashCode());
+  }
+
+  @Test
+  public void testEquals_differentValues1() {
+    Event event1 = Event.builder()
+        .name("Sample Event")
+        .startTime(LocalDateTime.of(2025, 3, 13, 10, 0))
+        .endTime(LocalDateTime.of(2025, 3, 13, 12, 0))
+        .description("Conference Room").build();
+
+    Event event2 = Event.builder()
+        .name("Sample Event")
+        .startTime(LocalDateTime.of(2025, 3, 13, 10, 0))
+        .endTime(LocalDateTime.of(2025, 3, 13, 12, 0))
+        .description("Meeting Room").build();
+
+    assertNotEquals(event1, event2);
+    assertNotEquals(event1.hashCode(), event2.hashCode());
+  }
+
+  @Test
+  public void testEquals_differentValue3() {
+    Event event1 = Event.builder()
+        .name("Sample Event")
+        .startTime(LocalDateTime.of(2025, 3, 13, 10, 0))
+        .endTime(LocalDateTime.of(2025, 3, 13, 12, 0))
+        .visibility("public").build();
+
+    Event event2 = Event.builder()
+        .name("Sample Event")
+        .startTime(LocalDateTime.of(2025, 3, 13, 10, 0))
+        .endTime(LocalDateTime.of(2025, 3, 13, 12, 0))
+        .visibility("private").build();
+
+    assertNotEquals(event1, event2);
+    assertNotEquals(event1.hashCode(), event2.hashCode());
+  }
+
+  @Test
+  public void testEquals_differentValue4() {
+    Event event1 = Event.builder()
+        .name("Sample Event")
+        .startTime(LocalDateTime.of(2025, 3, 13, 10, 0))
+        .endTime(LocalDateTime.of(2025, 3, 13, 12, 0))
+        .isAutoDecline(true).build();
+
+    Event event2 = Event.builder()
+        .name("Sample Event")
+        .startTime(LocalDateTime.of(2025, 3, 13, 10, 0))
+        .endTime(LocalDateTime.of(2025, 3, 13, 12, 0))
+        .isAutoDecline(false).build();
+
+    assertNotEquals(event1, event2);
     assertNotEquals(event1.hashCode(), event2.hashCode());
   }
 }

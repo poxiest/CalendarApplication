@@ -17,8 +17,10 @@ import calendarapp.controller.commands.impl.ShowCommand;
 import calendarapp.controller.commands.impl.UseCommand;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.dto.CalendarExporterDTO;
+import calendarapp.model.dto.CalendarResponseDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
-import calendarapp.model.dto.PrintEventsResponseDTO;
+import calendarapp.model.dto.EditEventRequestDTO;
+import calendarapp.model.dto.EventsResponseDTO;
 import calendarapp.view.ICalendarView;
 
 import static org.junit.Assert.assertEquals;
@@ -268,18 +270,17 @@ public class CommandFactoryTest {
                             String recurringDays, String occurrenceCount,
                             String recurrenceEndDate, String description, String location,
                             String visibility, boolean autoDecline) {
-      return;
+      // empty for test purposes.
     }
 
     @Override
-    public void editEvent(String eventName, String startTime, String endTime,
-                          String property, String value) {
-      return;
+    public void editEvent(EditEventRequestDTO editEventRequestDTO) {
+      // empty for test purposes.
     }
 
     @Override
-    public List<PrintEventsResponseDTO> getEventsForPrinting(String startTime, String endTime,
-                                                             String on) {
+    public List<EventsResponseDTO> getEvents(String startTime, String endTime,
+                                             String on, String eventName) {
       return List.of();
     }
 
@@ -311,6 +312,11 @@ public class CommandFactoryTest {
     @Override
     public void copyEvent(CopyEventRequestDTO copyEventRequestDTO) {
       // empty for test purposes.
+    }
+
+    @Override
+    public List<CalendarResponseDTO> getCalendars() {
+      return List.of();
     }
   }
 }
