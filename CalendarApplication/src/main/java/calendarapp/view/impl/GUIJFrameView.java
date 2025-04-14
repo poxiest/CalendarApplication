@@ -102,7 +102,7 @@ public class GUIJFrameView extends JFrame implements GUIView {
   @Override
   public void addFeatures(Features controller) {
     this.controller = controller;
-    createCalendarButton.addActionListener(e -> controller.createCalendar());
+    createCalendarButton.addActionListener(me -> controller.createCalendar());
     prevButton.addActionListener(e -> controller.navigateToPrevious());
     nextButton.addActionListener(e -> controller.navigateToNext());
     createEventButton.addActionListener(e -> controller.createEvent());

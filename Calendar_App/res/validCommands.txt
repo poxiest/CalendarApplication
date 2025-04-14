@@ -1,0 +1,22 @@
+create event --autoDecline testEvent0 from 2025-03-10T09:00 to 2025-03-10T10:00
+create event --autoDecline testEvent1 from 2025-03-11T09:00 to 2025-03-11T10:00 repeats T for 2 times
+create event --autoDecline testEvent2 from 2025-03-12T09:00 to 2025-03-12T10:00 repeats W until 2025-03-28T10:00
+create event --autoDecline testEvent3 on 2025-03-13T09:00
+create event testEvent4 on 2025-03-14 repeats F for 2 times
+create event testEvent5 on 2025-03-15 repeats S until 2025-03-31
+edit event subject testEvent0 from 2025-03-10T09:00 to 2025-03-10T10:00 with testEvent0Updated
+edit events subject testEvent1 from 2025-03-11T09:00 with testEvent1Updated
+edit events subject testEvent2 testEvent2Updated
+print events on 2025-03-29
+print events from 2025-03-10T09:00 to 2025-03-13T09:00
+export cal fileName.csv
+show status on 2025-03-10T09:00
+show status on 2025-03-10T11:00
+create calendar --name newCalendar --timezone Europe/Dublin
+edit calendar --name newCalendar --property timezone Europe/Berlin
+copy events between 2025-03-10 and 2025-03-10 --target newCalendar to 2025-03-28
+use calendar --name newCalendar
+create event testEvent4 from 2025-03-26T09:00 to 2025-03-26T10:00
+copy event testEvent4 on from 2025-03-26 --target default to 2025-03-26
+copy events on 2025-03-28 --target default to 2025-03-29
+exit

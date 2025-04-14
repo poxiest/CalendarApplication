@@ -1,0 +1,15 @@
+Subject,Start date,Start time,End Date,End Time,All Day Event,Description,Location,Private
+All Day Single,2025-04-09,19:15,2025-04-09,20:15,true,All Day Single,All Day Single,false
+Single,2025-04-10,19:15,2025-04-10,20:15,false,Single,Single,false
+Single,2025-04-10,21:00,2025-04-10,22:00,false,Single,Single,true
+Recurring All Day Until,2025-04-11,19:16,2025-04-11,20:16,true,Recurring All Day Until,Recurring All Day Until,false
+Recurring All Day Until,2025-04-12,19:16,2025-04-12,20:16,true,Recurring All Day Until,Recurring All Day Until,false
+Recurring All Day Until,2025-04-18,19:16,2025-04-18,20:16,true,Recurring All Day Until,Recurring All Day Until,false
+Recurring All Day Until,2025-04-19,19:16,2025-04-19,20:16,true,Recurring All Day Until,Recurring All Day Until,false
+Recurring Normal Until,2025-04-13,19:17,2025-04-13,20:17,false,Recurring Normal Until,Recurring Normal Until,true
+Recurring Normal Until,2025-04-20,19:17,2025-04-20,20:17,false,Recurring Normal Until,Recurring Normal Until,true
+Recurring After Normal,2025-04-13,21:00,2025-04-13,22:00,false,Recurring After Normal,Recurring After Normal,false
+Recurring After Normal,2025-04-20,21:00,2025-04-20,22:00,false,Recurring After Normal,Recurring After Normal,false
+Recurring After All Day,2025-04-14,19:21,2025-04-14,20:21,true,Recurring After All Day,Recurring After All Day,false
+Recurring After All Day,2025-04-15,19:21,2025-04-15,20:21,true,Recurring After All Day,Recurring After All Day,false
+Recurring After All Day,2025-04-16,19:21,2025-04-16,20:21,true,Recurring After All Day,Recurring After All Day,false
