@@ -113,6 +113,11 @@ public class Event implements IEvent {
     return this.isPrivate;
   }
 
+  @Override
+  public <R> R accept(IEventVisitor<R> visitor) {
+    return visitor.visitEvent(this);
+  }
+
   /**
    * This is an EventBuilder class which allows setting
    * event properties according to the Builder design

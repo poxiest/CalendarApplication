@@ -552,7 +552,7 @@ public class ControllerTest {
         true
     );
     mockController.execute();
-    String header = "Subject,Start date,Start time,End Date,";
+    String header = "Subject,Start Date,Start Time,End Date,";
     header += "End Time,All Day Event,Description,Location,Private";
     String line0 = "test,2025-03-11,10:00,2025-03-11,11:00,,,,";
     String line1 = "test1,2025-03-12,10:00,2025-03-12,11:00,,,,";

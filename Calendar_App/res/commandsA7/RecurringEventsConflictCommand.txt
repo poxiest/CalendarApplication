@@ -1,0 +1,2 @@
+create event "Recurring Event" from "2025-11-11T10:00" to "2025-11-11T10:30" repeats "MFW" for 6 times
+create event "New Recurring Event" from "2025-11-11T10:15" to "2025-11-11T11:15" repeats "MFW" until "2025-11-24T20:00"

@@ -71,7 +71,7 @@ public class Export implements IControllerCommand {
         .queryDateRange(LocalDateTime.MIN, LocalDateTime.MAX);
     File exportFile = new File(fileName);
     FileWriter fileWriter = new FileWriter(exportFile);
-    String header = "Subject,Start date,Start time,End Date,"
+    String header = "Subject,Start Date,Start Time,End Date,"
         + "End Time,All Day Event,Description,Location,Private\n";
     fileWriter.append(header);
     for (IEvent event: events) {

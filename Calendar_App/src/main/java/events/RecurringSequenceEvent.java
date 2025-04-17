@@ -62,6 +62,10 @@ public class RecurringSequenceEvent
     return this.sequenceSize;
   }
 
+  @Override
+  public <R> R accept(IEventVisitor<R> visitor) {
+    return visitor.visitRecurringSequence(this);
+  }
 
   /**
    * An implementation of a recurring sequence event builder

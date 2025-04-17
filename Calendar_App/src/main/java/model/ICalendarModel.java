@@ -202,4 +202,5 @@ public interface ICalendarModel {
    */
   String show(LocalDateTime dateTime);
 
+  <R> R accept(ICalendarVisitor<R> visitor);
 }

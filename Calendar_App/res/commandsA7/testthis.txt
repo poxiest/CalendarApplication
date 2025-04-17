@@ -1,0 +1,11 @@
+create event testEvent0 from 2025-03-10T09:00 to 2025-03-10T10:00
+create event testEvent1 from 2025-03-11T09:00 to 2025-03-11T10:00 repeats MTWRFSU for 2 times
+create event testEvent2 from 2025-03-12T12:00 to 2025-03-12T13:00 repeats MTWRFSU until 2025-03-15T10:00
+create event testEvent3 on 2025-03-09T12:00
+edit events location testEvent2 from 2025-03-11T09:00 with online
+create event test3DayEvent from 2025-03-15T12:00 to 2025-03-20T10:00
+show status on 2025-03-21T10:00
+show status on 2025-03-09T10:00
+print events from 2025-03-09T00:00 to 2025-03-21T00:00
+show calendar dashboard from 2025-03-09 to 2025-03-20
+exit

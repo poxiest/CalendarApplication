@@ -84,4 +84,5 @@ public interface IEvent {
    */
   public Boolean isPrivate();
 
+  <R> R accept(IEventVisitor<R> visitor);
 }

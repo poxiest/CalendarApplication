@@ -107,7 +107,7 @@ public class ControllerWithView extends Controller implements IControllerWithVie
       Readable fileReader = new FileReader(importFile);
       Scanner scan = new Scanner(fileReader);
       String header = scan.nextLine();
-      String headerFormat = "Subject,Start date,Start time,End Date,"
+      String headerFormat = "Subject,Start Date,Start Time,End Date,"
           + "End Time,All Day Event,Description,Location,Private";
       if (header.compareTo(headerFormat) != 0) {
         scan.close();

@@ -60,6 +60,11 @@ public class RecurringUntilEvent
     return this.untilDateTime;
   }
 
+  @Override
+  public <R> R accept(IEventVisitor<R> visitor) {
+    return visitor.visitRecurringUntil(this);
+  }
+
   /**
    * An implementation of a recurring until event builder
    * which allows creating sequence instances according to the

@@ -325,9 +325,9 @@ public class CalendarModel implements ICalendarModel {
                               .filter(event ->
                               event.getSubject().equals(eventName)
                               && (event.getStartDateTime()
-                              .isAfter(startDateTime))
+                              .isAfter(startDateTime)
                               || event.getStartDateTime()
-                              .isEqual(startDateTime))
+                              .isEqual(startDateTime)))
                               .collect(Collectors.toList());
     for (IEvent event : namedEvent) {
       IEvent updatedEvent = new Event.EventBuilder()
@@ -352,7 +352,7 @@ public class CalendarModel implements ICalendarModel {
     List<IEvent> namedEvent = events
                               .stream()
                               .filter(event -> event.getSubject()
-                              .equals(eventName))
+                                  .equals(eventName))
                               .collect(Collectors.toList());
     for (IEvent event : namedEvent) {
       IEvent updatedEvent = new Event.EventBuilder()
@@ -397,8 +397,8 @@ public class CalendarModel implements ICalendarModel {
       result += "• " + event.getSubject() 
               + " " + event.getStartDateTime().toString() + "-"
               + event.getEndDateTime().toString();
-      if (event.getDescription() != null) {
-        result += ". Description: " + event.getDescription();
+      if (event.getLocation() != null) {
+        result += ". Location: " + event.getLocation();
       }
       result += "\n";
     }
@@ -421,6 +421,10 @@ public class CalendarModel implements ICalendarModel {
     }
   }
 
+  public <R> R accept(ICalendarVisitor<R> visitor) {
+    return visitor.visitCalendarModel(this);
+  }
+
   protected void checkConflict(IEvent event) throws ConflictException {
     for (IEvent e: this.events) {
       if (event.getStartDate().isEqual(e.getStartDate())) {
@@ -434,21 +438,21 @@ public class CalendarModel implements ICalendarModel {
             + e.getStartDate().toString()
           );
         }
-        if ((event.getStartTime().isBefore(e.getStartTime()))
-            && event.getEndTime().isAfter(e.getStartTime())
-            || (e.getStartTime().isBefore(event.getStartTime())
-            && e.getEndTime().isAfter(event.getStartTime()))
-            || (e.getStartTime().equals(event.getStartTime())
-            && e.getEndTime().equals(event.getEndTime()))) {
-          throw new ConflictException(
-            "This event conflicts with event: "
-            + e.getSubject() 
-            + " on: " 
-            + e.getStartDate().toString() 
-            + " at: "
-            + e.getStartTime().toString()
-          );
-        }
+      }
+      if ((event.getStartDateTime().isAfter(e.getStartDateTime())
+          && event.getStartDateTime().isBefore(e.getEndDateTime())
+          || (e.getStartDateTime().isAfter(event.getStartDateTime())
+          && e.getStartDateTime().isBefore(event.getEndDateTime())))
+          || (e.getStartDateTime().equals(event.getStartDateTime())
+          && e.getEndDateTime().equals(event.getEndDateTime()))) {
+        throw new ConflictException(
+          "This event conflicts with event: "
+          + e.getSubject()
+          + " on: "
+          + e.getStartDate().toString()
+          + " at: "
+          + e.getStartTime().toString()
+        );
       }
     }
   }
