@@ -157,15 +157,25 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
       }
     }
 
-    int minCount = Collections.min(eventsPerDay.values());
-    int maxCount = Collections.max(eventsPerDay.values());
+    List<Map.Entry<LocalDate, Integer>> nonZeroDays = eventsPerDay.entrySet().stream()
+        .filter(entry -> entry.getValue() > 0)
+        .collect(Collectors.toList());
 
-    leastBusyByEvents = eventsPerDay.entrySet().stream()
+    if (nonZeroDays.isEmpty()) {
+      leastBusyByEvents = Collections.emptyList();
+      mostBusyByEvents = Collections.emptyList();
+      return;
+    }
+
+    int minCount = nonZeroDays.stream().mapToInt(Map.Entry::getValue).min().orElse(0);
+    int maxCount = nonZeroDays.stream().mapToInt(Map.Entry::getValue).max().orElse(0);
+
+    leastBusyByEvents = nonZeroDays.stream()
         .filter(entry -> entry.getValue() == minCount)
         .map(Map.Entry::getKey)
         .collect(Collectors.toList());
 
-    mostBusyByEvents = eventsPerDay.entrySet().stream()
+    mostBusyByEvents = nonZeroDays.stream()
         .filter(entry -> entry.getValue() == maxCount)
         .map(Map.Entry::getKey)
         .collect(Collectors.toList());
@@ -177,15 +187,32 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
       hoursPerDay.put(date, calculateOverlapHoursOnDate(events, date));
     }
 
-    double minHours = Collections.min(hoursPerDay.values());
-    double maxHours = Collections.max(hoursPerDay.values());
+    List<Map.Entry<LocalDate, Double>> nonZeroDays = hoursPerDay.entrySet().stream()
+        .filter(entry -> entry.getValue() > 0.0)
+        .collect(Collectors.toList());
 
-    leastBusyByHours = hoursPerDay.entrySet().stream()
+    if (nonZeroDays.isEmpty()) {
+      leastBusyByHours = Collections.emptyList();
+      mostBusyByHours = Collections.emptyList();
+      return;
+    }
+
+    double minHours = nonZeroDays.stream()
+        .mapToDouble(Map.Entry::getValue)
+        .min()
+        .orElse(0.0);
+
+    double maxHours = nonZeroDays.stream()
+        .mapToDouble(Map.Entry::getValue)
+        .max()
+        .orElse(0.0);
+
+    leastBusyByHours = nonZeroDays.stream()
         .filter(entry -> entry.getValue() == minHours)
         .map(Map.Entry::getKey)
         .collect(Collectors.toList());
 
-    mostBusyByHours = hoursPerDay.entrySet().stream()
+    mostBusyByHours = nonZeroDays.stream()
         .filter(entry -> entry.getValue() == maxHours)
         .map(Map.Entry::getKey)
         .collect(Collectors.toList());

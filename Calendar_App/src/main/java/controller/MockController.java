@@ -96,7 +96,8 @@ public class MockController implements IController {
   private boolean handleCommand(String command) 
       throws IOException {
     String[] commandComponents = command.split(" ");
-    switch (commandComponents[0]) {
+    String commandName = !commandComponents[0].equals("show") ? commandComponents[0] : commandComponents[0] + " " + commandComponents[1];
+    switch (commandName) {
       case "create":
         handleCreate(commandComponents);
         break;
@@ -109,7 +110,7 @@ public class MockController implements IController {
       case "export":
         handleExport(commandComponents);
         break;
-      case "show":
+      case "show status":
         handleShow(commandComponents);
         break;
       case "copy":
@@ -120,6 +121,9 @@ public class MockController implements IController {
         break;
       case "exit":
         return false;
+      case "show calendar":
+        handleShowCalendar(commandComponents);
+        break;
       default:
         throw new IOException("Invalid command action: " + commandComponents[0]);
     }
@@ -540,6 +544,29 @@ public class MockController implements IController {
     }
     else {
       throw new IOException("Invalid number of arguments for show\n" + menu);
+    }
+  }
+
+  private void handleShowCalendar(String[] commandComponents)
+      throws IOException {
+    String menu = "menu: show calendar dashboard from <dateString> to <dateString>\n";
+    if (commandComponents.length == 7) {
+      if (commandComponents[1].compareTo("calendar") != 0
+          || commandComponents[2].compareTo("dashboard") != 0
+          || commandComponents[3].compareTo("from") != 0
+          || commandComponents[5].compareTo("to") != 0) {
+        throw new IOException("Invalid use of show calendar\n" + menu);
+      }
+      else {
+        LocalDate startTime = LocalDate.parse(commandComponents[4]);
+        LocalDate endTime = LocalDate.parse(commandComponents[6]);
+        this.out.append(startTime.toString());
+        this.out.append("\t");
+        this.out.append(endTime.toString());
+      }
+    }
+    else {
+      throw new IOException("Invalid number of arguments for show calendar\n" + menu);
     }
   }
 
