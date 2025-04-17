@@ -83,4 +83,5 @@ public interface IHeaderPanel {
    */
   public File getImportFile();
 
+  public void selectAnalyticsRadio();
 }

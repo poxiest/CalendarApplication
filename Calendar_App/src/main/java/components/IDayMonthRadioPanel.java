@@ -1,14 +1,16 @@
 package components;
 
 /**
- * Interface representing the day month radio panel which 
- * allows switching between the day and the month view.
+ * An interface for the day/month radio panel component.
  */
 public interface IDayMonthRadioPanel {
-
   /**
    * Selects the day radio button.
    */
-  public void selectDayRadio();
+  void selectDayRadio();
 
+  /**
+   * Selects the analytics radio button.
+   */
+  void selectAnalyticsRadio();
 }

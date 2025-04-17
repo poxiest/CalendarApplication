@@ -48,6 +48,7 @@ public class HeaderPanel extends JPanel implements IHeaderPanel {
   private ActionListener featureActionListener;
   private JButton exportButton;
   private JButton importButton;
+  private JButton analyticsButton;
   private File importFile;
 
   /**
@@ -70,6 +71,7 @@ public class HeaderPanel extends JPanel implements IHeaderPanel {
   ) {
     this.featureActionListener = featureActionListener;
 
+    this.analyticsButton = new JButton("Analytics");
     this.exportButton = new JButton("Export");
     this.importButton = new JButton("Import");
 
@@ -107,8 +109,9 @@ public class HeaderPanel extends JPanel implements IHeaderPanel {
     this.add(nextButton);
     this.add(importButton);
     this.add(exportButton);
+    this.add(analyticsButton);
 
-    this.setLayout(new GridLayout(0, 9));
+    this.setLayout(new GridLayout(0, 10));
 
     this.calendarNameField = new JTextField(20);
     this.initializeActionCommands();
@@ -116,8 +119,11 @@ public class HeaderPanel extends JPanel implements IHeaderPanel {
   }
   
   private void initializeActionListeners() {
+    analyticsButton.addActionListener(featureActionListener);
     importButton.addActionListener(featureActionListener);
     exportButton.addActionListener(featureActionListener);
+    analyticsButton.addActionListener(e -> {});
+    analyticsButton.setActionCommand("show-analytics");
     importButton.addActionListener(e -> showFileChooserDisplay());
     showAddCalendarDisplayButton.addActionListener(e -> showAddCalendarDisplay());
     prevButton.addActionListener(featureActionListener);
@@ -233,6 +239,11 @@ public class HeaderPanel extends JPanel implements IHeaderPanel {
   @Override
   public void selectDayRadio() {
     this.dayMonthRadioPanel.selectDayRadio();
+  }
+
+  @Override
+  public void selectAnalyticsRadio() {
+    this.dayMonthRadioPanel.selectAnalyticsRadio();
   }
 
   private void setInstantLabel() {

@@ -1,19 +1,20 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+
+import javax.swing.*;
+
+import components.AnalyticsPanel;
 import components.CreateEventsFormPanel;
 import components.EventsListPanel;
 import components.HeaderPanel;
@@ -46,10 +47,17 @@ public class View extends JFrame implements IView {
   private Features features;
   private String exportPath;
 
+  // Analytics related fields
+  private JPanel analyticsDateRangePanel;
+  private JTextField startDateField;
+  private JTextField endDateField;
+  private AnalyticsPanel analyticsPanel;
+  private boolean hasAnalyticsData = false;
+
   /**
    * A constructor for the view class which takes no parameters.
    * This constructor displays the GUI JFrame and initializes
-   * ActionListeners for components. 
+   * ActionListeners for components.
    */
   public View() {
     super("Calendar App");
@@ -67,8 +75,8 @@ public class View extends JFrame implements IView {
     DisplayActionListener displayActionListener = new DisplayActionListener();
 
     headerPanel = new HeaderPanel(
-        currentMonth, 
-        currentDate, 
+        currentMonth,
+        currentDate,
         currentZoneId,
         featureActionListener,
         displayActionListener
@@ -82,6 +90,28 @@ public class View extends JFrame implements IView {
     eventsListPanel = new EventsListPanel(featureActionListener);
     createEventsFormPanel = new CreateEventsFormPanel(featureActionListener, currentDate);
 
+    analyticsPanel = new AnalyticsPanel();
+    analyticsDateRangePanel = new JPanel(new FlowLayout());
+    analyticsDateRangePanel.setBorder(BorderFactory.createTitledBorder("Date Range"));
+
+    JLabel startLabel = new JLabel("Start Date (yyyy-MM-dd):");
+    startDateField = new JTextField(10);
+    startDateField.setText(LocalDate.now().minusMonths(1).toString());
+
+    JLabel endLabel = new JLabel("End Date (yyyy-MM-dd):");
+    endDateField = new JTextField(10);
+    endDateField.setText(LocalDate.now().toString());
+
+    JButton generateButton = new JButton("Generate Analytics");
+    generateButton.setActionCommand("generate-analytics");
+    generateButton.addActionListener(featureActionListener);
+
+    analyticsDateRangePanel.add(startLabel);
+    analyticsDateRangePanel.add(startDateField);
+    analyticsDateRangePanel.add(endLabel);
+    analyticsDateRangePanel.add(endDateField);
+    analyticsDateRangePanel.add(generateButton);
+
     mainPanel.add((JPanel) monthPanel);
     this.add(mainPanel, BorderLayout.CENTER);
     this.setLocationRelativeTo(null);
@@ -89,7 +119,9 @@ public class View extends JFrame implements IView {
 
   private void renderMonth() {
     this.currentView = ViewTypes.MONTH;
+    this.headerPanel.setCurrentView(currentView);
     this.mainPanel.removeAll();
+    this.mainPanel.setLayout(new GridLayout(1, 1));
     this.mainPanel.add((JPanel) monthPanel);
     this.monthPanel.rerender();
     this.mainPanel.revalidate();
@@ -107,6 +139,22 @@ public class View extends JFrame implements IView {
     this.eventsListPanel.rerender();
     this.createEventsFormPanel.setLocalDate(currentDate);
     this.createEventsFormPanel.rerender();
+    this.mainPanel.revalidate();
+    this.mainPanel.repaint();
+  }
+
+  private void renderAnalytics() {
+    this.currentView = ViewTypes.ANALYTICS;
+    this.headerPanel.setCurrentView(currentView);
+    this.mainPanel.removeAll();
+    this.mainPanel.setLayout(new BorderLayout());
+    this.mainPanel.add(analyticsDateRangePanel, BorderLayout.NORTH);
+    this.mainPanel.add(analyticsPanel, BorderLayout.CENTER);
+
+    if (hasAnalyticsData) {
+      analyticsPanel.refreshDisplay();
+    }
+
     this.mainPanel.revalidate();
     this.mainPanel.repaint();
   }
@@ -137,6 +185,34 @@ public class View extends JFrame implements IView {
     this.headerPanel.setTimeZone(zoneId);
   }
 
+  @Override
+  public void setAnalyticsData(
+      int totalEvents,
+      Map<DayOfWeek, Integer> eventsByWeekday,
+      Map<String, Long> eventsByName,
+      double averageEventsPerDay,
+      List<LocalDate> busiestDays,
+      List<LocalDate> leastBusyDays,
+      double onlineEventsPercentage,
+      double offlineEventsPercentage) {
+
+    analyticsPanel.updateData(
+        totalEvents,
+        eventsByWeekday,
+        eventsByName,
+        averageEventsPerDay,
+        busiestDays,
+        leastBusyDays,
+        onlineEventsPercentage,
+        offlineEventsPercentage
+    );
+    hasAnalyticsData = true;
+  }
+
+  public void setExportPath(String exportPath) {
+    this.exportPath = exportPath;
+  }
+
   private class FeatureActionListener implements ActionListener {
 
     private JFrame contextFrame;
@@ -159,9 +235,12 @@ public class View extends JFrame implements IView {
           case "day-radio":
             renderDay();
             break;
+          case "show-analytics":
+            renderAnalytics();
+            break;
           case "create-calendar":
             features.createCalendar(
-                headerPanel.getCalendarFieldName(), 
+                headerPanel.getCalendarFieldName(),
                 headerPanel.getZoneIdString());
             showSuccessMessage("Create success");
             break;
@@ -186,7 +265,7 @@ public class View extends JFrame implements IView {
             break;
           case "edit-single":
             features.editSingle(
-                eventsListPanel.getSelectedEventId(), 
+                eventsListPanel.getSelectedEventId(),
                 eventsListPanel.getEditSingleEvent());
             features.queryEventsOnDate(currentDate);
             eventsListPanel.rerender();
@@ -194,8 +273,8 @@ public class View extends JFrame implements IView {
             break;
           case "edit-recurring-single":
             features.editRecurring(
-                eventsListPanel.getSelectedEventId(), 
-                eventsListPanel.getEditRecurringEvent(), 
+                eventsListPanel.getSelectedEventId(),
+                eventsListPanel.getEditRecurringEvent(),
                 EditType.SINGLE);
             features.queryEventsOnDate(currentDate);
             eventsListPanel.rerender();
@@ -203,8 +282,8 @@ public class View extends JFrame implements IView {
             break;
           case "edit-recurring-this-and-following":
             features.editRecurring(
-                eventsListPanel.getSelectedEventId(), 
-                eventsListPanel.getEditRecurringEvent(), 
+                eventsListPanel.getSelectedEventId(),
+                eventsListPanel.getEditRecurringEvent(),
                 EditType.THISANDFOLLOWING);
             features.queryEventsOnDate(currentDate);
             eventsListPanel.rerender();
@@ -212,8 +291,8 @@ public class View extends JFrame implements IView {
             break;
           case "edit-recurring-all":
             features.editRecurring(
-                eventsListPanel.getSelectedEventId(), 
-                eventsListPanel.getEditRecurringEvent(), 
+                eventsListPanel.getSelectedEventId(),
+                eventsListPanel.getEditRecurringEvent(),
                 EditType.ALL);
             features.queryEventsOnDate(currentDate);
             eventsListPanel.rerender();
@@ -231,6 +310,12 @@ public class View extends JFrame implements IView {
             features.export();
             showSuccessMessage("Exported to file at: " + exportPath);
             break;
+          case "generate-analytics":
+            features.queryAnalytics(
+                LocalDate.parse(startDateField.getText()),
+                LocalDate.parse(endDateField.getText())
+            );
+            break;
           default:
             currentView = ViewTypes.DAY;
             currentDate = currentMonth.atDay(Integer.parseInt(actionCommand));
@@ -242,9 +327,9 @@ public class View extends JFrame implements IView {
       }
       catch (Exception ex) {
         JOptionPane.showMessageDialog(
-            contextFrame, 
-            ex.getMessage(), 
-            "Error", 
+            contextFrame,
+            ex.getMessage(),
+            "Error",
             JOptionPane.ERROR_MESSAGE
         );
       }
@@ -252,13 +337,13 @@ public class View extends JFrame implements IView {
 
     private void showSuccessMessage(String message) {
       JOptionPane.showMessageDialog(
-          contextFrame, 
-          message, 
-          "Success", 
+          contextFrame,
+          message,
+          "Success",
           JOptionPane.INFORMATION_MESSAGE
       );
     }
-  
+
     private void handleNextPrevButtonAction(int offset) throws IOException {
       switch (currentView) {
         case DAY:
@@ -273,14 +358,13 @@ public class View extends JFrame implements IView {
           monthPanel.setMonth(currentMonth);
           renderMonth();
           break;
+        case ANALYTICS:
+          // Analytics view doesn't change with prev/next buttons
+          break;
         default:
           break;
       }
     }
-  }
-
-  public void setExportPath(String exportPath) {
-    this.exportPath = exportPath;
   }
 
   private class DisplayActionListener implements ActionListener {
@@ -292,5 +376,4 @@ public class View extends JFrame implements IView {
       }
     }
   }
-
 }
