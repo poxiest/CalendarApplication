@@ -103,3 +103,19 @@ The GUI provides a graphical user interface for users to interact with thier cal
 To run with the GUI, run:
 
 `java -jar CalendarApp.jar `
+
+
+the application works for commands that has only lowercase alphabets.
+the application does not exit itself gracefully.
+error message exposes internals of the code.
+even though command design pattern is used, inside the class there are switch cases for parsing, this breaks open close principle and the code grows when the new commands come.
+the application is not supporting event names with spaces in both interactive and headless
+application does not throws an exception when there is no exit command in the headless mode. and this is not documented in the readme as well.
+calendar export, import headers are different
+conflict is not working as expected
+edit event also not working
+
+controller to view test is not there 
+controller to model test is not there 
+mockcontroller is not actually mock, it is not working as expected
+their full day is not 00:00 to 00:00, but 00:00 to 23.98

@@ -568,5 +568,31 @@ public class ControllerTest {
     assertEquals(line2, scan.nextLine());
     scan.close();
   }
+
+  @Test
+  public void testCorrectInputAtShowCalendar() throws IOException {
+    Reader in = new StringReader("show calendar dashboard from 2025-03-10 to 2025-03-20\nexit");
+    mockController = new MockController(
+        calendarModel,
+        in,
+        out,
+        new String[] {"--mode", "interactive"}
+    );
+    mockController.execute();
+    String actual = out.toString().split("\n")[1];
+    assertEquals("2025-03-10\t2025-03-20", actual);
+  }
+
+  @Test(expected = IOException.class)
+  public void testCorrectInputAtShowCalendarInvalid() throws IOException {
+    Reader in = new StringReader("show calendar dashboard from 2025-03-10 to\nexit");
+    mockController = new MockController(
+        calendarModel,
+        in,
+        out,
+        new String[] {"--mode", "interactive"}
+    );
+    mockController.execute();
+  }
   
 }
