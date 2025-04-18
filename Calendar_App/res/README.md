@@ -111,9 +111,10 @@ error message exposes internals of the code.
 even though command design pattern is used, inside the class there are switch cases for parsing, this breaks open close principle and the code grows when the new commands come.
 the application is not supporting event names with spaces in both interactive and headless
 application does not throws an exception when there is no exit command in the headless mode. and this is not documented in the readme as well.
-calendar export, import headers are different
+headless mode continues to execute code even if there is an error
 conflict is not working as expected
 edit event also not working
+
 
 controller to view test is not there 
 controller to model test is not there 

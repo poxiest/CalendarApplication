@@ -1,9 +1,21 @@
 use calendar --name default
-create event testSingleEvent from 2025-03-11T10:00 to 2025-03-11T12:00
-edit event location testSingleEvent from 2025-03-11T10:00 to 2025-03-11T12:00 with online
-create event testRecurringEvent from 2025-03-11T12:00 to 2025-03-11T12:45 repeats MTWRFSU for 5 times
-create event testUntilEvent from 2025-03-11T15:00 to 2025-03-11T16:00 repeats RFS until 2025-03-20T09:00
-edit events location testUntilEvent from 2025-03-11T15:00 with online
-print events from 2025-03-11T00:00 to 2025-03-21T00:00
-show calendar dashboard from 2025-03-11 to 2025-03-21
+create event event1 from 2025-04-01T09:00 to 2025-04-01T10:00
+create event event2 from 2025-04-02T10:00 to 2025-04-02T11:00 repeats MTWRF for 5 times
+create event event3 from 2025-04-03T13:00 to 2025-04-03T14:00
+create event event4 from 2025-04-04T15:00 to 2025-04-04T16:00 repeats RFS until 2025-04-20T17:00
+create event event5 from 2025-04-06T14:00 to 2025-04-06T15:00
+create event event6 from 2025-04-09T16:00 to 2025-04-09T17:00 repeats W for 3 times
+create event event7 from 2025-04-10T13:30 to 2025-04-10T14:30
+create event event8 from 2025-04-11T09:00 to 2025-04-11T10:00
+create event event9 from 2025-04-23T09:30 to 2025-04-23T10:30
+create event event10 from 2025-04-24T11:00 to 2025-04-24T12:00 repeats TR for 2 times
+create event event11 from 2025-04-28T10:00 to 2025-04-28T11:00
+create event event12 from 2025-04-05T17:00 to 2025-04-05T18:00 repeats MTWRF until 2025-04-25T00:00
+create event event13 from 2025-04-23T20:00 to 2025-04-23T22:00
+edit event location event1 from 2025-04-01T09:00 to 2025-04-01T10:00 with online
+edit events location event2 online
+edit event location event3 from 2025-04-03T13:00 to 2025-04-03T14:00 with online
+edit events location event4 online
+print events from 2025-04-01T00:00 to 2025-04-30T23:59
+show calendar dashboard from 2025-04-01 to 2025-04-30
 exit

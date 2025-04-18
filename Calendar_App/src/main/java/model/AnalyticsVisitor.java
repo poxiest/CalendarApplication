@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -146,7 +147,15 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
    * @return unmodifiable map of event subjects to number of times they appear
    */
   public Map<String, Long> getSubjectCountMap() {
-    return Collections.unmodifiableMap(subjectCountMap);
+    return subjectCountMap.entrySet()
+        .stream()
+        .sorted(Map.Entry.comparingByKey())
+        .collect(Collectors.toMap(
+            Map.Entry::getKey,
+            Map.Entry::getValue,
+            (e1, e2) -> e1,
+            LinkedHashMap::new
+        ));
   }
 
   // Private helpers
