@@ -135,7 +135,7 @@ public class AnalyticsPanel extends JPanel {
     }
 
     if (eventsByName != null) {
-      eventsByNamePanel.setLayout(new GridLayout(0, 1)); // 0 rows means as many as needed, 1 column
+      eventsByNamePanel.setLayout(new GridLayout(0, 1));
       eventsByName.entrySet().forEach(entry -> {
         JPanel entryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         entryPanel.add(new JLabel("\t" + entry.getKey() + ": " + entry.getValue()));
