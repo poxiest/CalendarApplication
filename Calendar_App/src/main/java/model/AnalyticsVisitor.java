@@ -15,7 +15,20 @@ import events.EventWeekdays;
 import events.IEvent;
 import events.OnlineEvent;
 
+/**
+ * AnalyticsVisitor is a visitor that collects various statistics about events in a calendar
+ * for a given date range. It calculates:
+ * <ul>
+ *   <li>Total number of events</li>
+ *   <li>Number of events per weekday</li>
+ *   <li>Number of events by subject</li>
+ *   <li>Percentage of online and offline events</li>
+ *   <li>Average number of events per day</li>
+ *   <li>Most and least busy days by event count and total duration</li>
+ * </ul>
+ */
 public class AnalyticsVisitor implements ICalendarVisitor<Void> {
+
   private final LocalDate startDate;
   private final LocalDate endDate;
 
@@ -29,6 +42,12 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
   private final Map<DayOfWeek, Integer> daysCount;
   private Map<String, Long> subjectCountMap;
 
+  /**
+   * Constructs an AnalyticsVisitor with the given date range.
+   *
+   * @param startDate the start date of the range (inclusive)
+   * @param endDate   the end date of the range (inclusive)
+   */
   public AnalyticsVisitor(LocalDate startDate, LocalDate endDate) {
     this.startDate = startDate;
     this.endDate = endDate;
@@ -41,6 +60,12 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
     this.subjectCountMap = new HashMap<>();
   }
 
+  /**
+   * Visits a calendar and computes analytics over the specified date range.
+   *
+   * @param calendar the calendar model to visit
+   * @return null (this visitor does not return a value)
+   */
   @Override
   public Void visitCalendarModel(CalendarModel calendar) {
     List<IEvent> events = fetchEvents(calendar);
@@ -54,45 +79,77 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
     return null;
   }
 
+  /**
+   * @return list of least busy dates by event count (excluding days with zero events)
+   */
   public List<LocalDate> getLeastBusyByEvents() {
     return leastBusyByEvents;
   }
 
+  /**
+   * @return list of most busy dates by event count
+   */
   public List<LocalDate> getMostBusyByEvents() {
     return mostBusyByEvents;
   }
 
+  /**
+   * @return list of least busy dates by event duration (in hours)
+   */
   public List<LocalDate> getLeastBusyByDuration() {
     return leastBusyByDuration;
   }
 
+  /**
+   * @return list of most busy dates by event duration (in hours)
+   */
   public List<LocalDate> getMostBusyByDuration() {
     return mostBusyByDuration;
   }
 
+  /**
+   * @return total number of events in the selected date range
+   */
   public int getTotalCount() {
     return totalCount;
   }
 
+  /**
+   * @return percentage of events marked as online
+   */
   public double getOnlinePercentage() {
     return totalCount == 0 ? 0.0 : (onlineCount * 100.0) / totalCount;
   }
 
+  /**
+   * @return percentage of events not marked as online
+   */
   public double getOfflinePercentage() {
     return totalCount == 0 ? 0.0 : ((totalCount - onlineCount) * 100.0) / totalCount;
   }
 
+  /**
+   * @return average number of event days per day in the selected range
+   */
   public double getAverageEventsPerDay() {
     return averageEventsPerDay;
   }
 
+  /**
+   * @return unmodifiable map of weekday to number of events
+   */
   public Map<DayOfWeek, Integer> getDaysCount() {
     return Collections.unmodifiableMap(daysCount);
   }
 
+  /**
+   * @return unmodifiable map of event subjects to number of times they appear
+   */
   public Map<String, Long> getSubjectCountMap() {
     return Collections.unmodifiableMap(subjectCountMap);
   }
+
+  // Private helpers
 
   private List<IEvent> fetchEvents(CalendarModel calendar) {
     return calendar.queryDateRange(startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay());
@@ -112,8 +169,8 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
   }
 
   private void computeSubjectCounts(List<IEvent> events) {
-    subjectCountMap = events.stream().collect(Collectors.groupingBy(IEvent::getSubject,
-        Collectors.counting()));
+    subjectCountMap = events.stream()
+        .collect(Collectors.groupingBy(IEvent::getSubject, Collectors.counting()));
   }
 
   private void countOnlineEvents(List<IEvent> events) {
@@ -131,9 +188,8 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
       LocalDate eventEnd = event.getEndDateTime().toLocalDate();
       LocalDate actualStart = eventStart.isBefore(startDate) ? startDate : eventStart;
       LocalDate actualEnd = eventEnd.isAfter(endDate) ? endDate : eventEnd;
-
       if (!actualStart.isAfter(actualEnd)) {
-        totalEventDays += (ChronoUnit.DAYS.between(actualStart, actualEnd) + 1);
+        totalEventDays += ChronoUnit.DAYS.between(actualStart, actualEnd) + 1;
       }
     }
     long totalDaysInRange = ChronoUnit.DAYS.between(startDate, endDate) + 1;
@@ -142,13 +198,15 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
 
   private void calculateBusyDaysByEventCount(List<IEvent> events) {
     Map<LocalDate, Integer> eventsPerDay = new TreeMap<>();
+    for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+      eventsPerDay.put(date, 0);
+    }
 
     for (IEvent event : events) {
       LocalDate eventStart = event.getStartDateTime().toLocalDate();
       LocalDate eventEnd = event.getEndDateTime().toLocalDate();
       LocalDate actualStart = eventStart.isBefore(startDate) ? startDate : eventStart;
       LocalDate actualEnd = eventEnd.isAfter(endDate) ? endDate : eventEnd;
-
       for (LocalDate date = actualStart; !date.isAfter(actualEnd); date = date.plusDays(1)) {
         eventsPerDay.put(date, eventsPerDay.getOrDefault(date, 0) + 1);
       }
@@ -194,15 +252,8 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
       return;
     }
 
-    double minHours = nonZeroDays.stream()
-        .mapToDouble(Map.Entry::getValue)
-        .min()
-        .orElse(0.0);
-
-    double maxHours = nonZeroDays.stream()
-        .mapToDouble(Map.Entry::getValue)
-        .max()
-        .orElse(0.0);
+    double minHours = nonZeroDays.stream().mapToDouble(Map.Entry::getValue).min().orElse(0.0);
+    double maxHours = nonZeroDays.stream().mapToDouble(Map.Entry::getValue).max().orElse(0.0);
 
     leastBusyByDuration = nonZeroDays.stream()
         .filter(entry -> entry.getValue() == minHours)

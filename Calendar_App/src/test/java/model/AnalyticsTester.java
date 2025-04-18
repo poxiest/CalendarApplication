@@ -494,4 +494,21 @@ public class AnalyticsTester {
       assertFalse(onlineEvent.visitRecurringUntil((RecurringUntilEvent) e));
     }
   }
+
+  @Test
+  public void testEventOnOnlyEndDateIncluded() throws ConflictException {
+    LocalDate onlyDay = LocalDate.of(2025, 3, 15);
+    LocalDateTime startDateTime = onlyDay.atTime(10, 0);
+    LocalDateTime endDateTime = onlyDay.atTime(11, 0);
+    model.createSingleEvent("onlyDayEvent", startDateTime, endDateTime, true);
+
+    AnalyticsVisitor visitor = new AnalyticsVisitor(onlyDay, onlyDay);
+    model.accept(visitor);
+
+    assertEquals(List.of(onlyDay), visitor.getMostBusyByEvents());
+    assertEquals(List.of(onlyDay), visitor.getLeastBusyByEvents());
+    assertEquals(List.of(onlyDay), visitor.getMostBusyByDuration());
+    assertEquals(List.of(onlyDay), visitor.getLeastBusyByDuration());
+    assertEquals(1, visitor.getTotalCount());
+  }
 }
