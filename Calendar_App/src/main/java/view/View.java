@@ -362,9 +362,6 @@ public class View extends JFrame implements IView {
           monthPanel.setMonth(currentMonth);
           renderMonth();
           break;
-        case ANALYTICS:
-          // Analytics view doesn't change with prev/next buttons
-          break;
         default:
           break;
       }
