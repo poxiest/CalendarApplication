@@ -17,15 +17,25 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>RELEASE</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.17.2</version>
+                <configuration>
+                    <targetClasses>
+                        <param>events.OnlineEvent</param>
+                        <param>events.EventWeekdays</param>
+                        <param>model.AnalyticsVisitor</param>
+                    </targetClasses>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
