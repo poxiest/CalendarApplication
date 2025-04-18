@@ -397,8 +397,8 @@ public class ControllerWithView extends Controller implements IControllerWithVie
           visitor.getAverageEventsPerDay(),
           visitor.getMostBusyByEvents(),
           visitor.getLeastBusyByEvents(),
-          visitor.getMostBusyByHours(),
-          visitor.getLeastBusyByHours(),
+          visitor.getMostBusyByDuration(),
+          visitor.getLeastBusyByDuration(),
           visitor.getOnlinePercentage(),
           visitor.getOfflinePercentage()
       );
