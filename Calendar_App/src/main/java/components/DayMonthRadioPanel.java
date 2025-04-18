@@ -20,7 +20,6 @@ public class DayMonthRadioPanel extends JPanel implements IDayMonthRadioPanel {
    * the controller. Feature events are events
    * that require the model, and display events
    * are simple display changes.
-   *
    * @param featureActionListener the action listener for feature events.
    * @param displayActionListener the action listener for display events.
    */
@@ -46,4 +45,5 @@ public class DayMonthRadioPanel extends JPanel implements IDayMonthRadioPanel {
   public void selectDayRadio() {
     this.dayMonthRadioButtons[0].doClick();
   }
+
 }
