@@ -19,6 +19,7 @@ import events.IRecurringSequenceEvent;
 import events.IRecurringUntilEvent;
 import events.RecurringSequenceEvent;
 import events.RecurringUntilEvent;
+import model.AnalyticsVisitor;
 import model.IMultipleCalendarModel;
 import view.IView;
 import view.IViewEvent;
@@ -382,6 +383,25 @@ public class ControllerWithView extends Controller implements IControllerWithVie
             break;
         }
       }
+    }
+
+    @Override
+    public void queryAnalytics(LocalDate startDate, LocalDate endDate) throws IOException {
+      AnalyticsVisitor visitor = new AnalyticsVisitor(startDate, endDate);
+      calendarModel.getActiveCalendar().accept(visitor);
+
+      view.setAnalyticsData(
+          visitor.getTotalCount(),
+          visitor.getDaysCount(),
+          visitor.getSubjectCountMap(),
+          visitor.getAverageEventsPerDay(),
+          visitor.getMostBusyByEvents(),
+          visitor.getLeastBusyByEvents(),
+          visitor.getMostBusyByHours(),
+          visitor.getLeastBusyByHours(),
+          visitor.getOnlinePercentage(),
+          visitor.getOfflinePercentage()
+      );
     }
 
     private List<IViewEvent> createViewEvents(List<IEvent> events) {

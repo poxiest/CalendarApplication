@@ -6,5 +6,6 @@ package view;
  */
 public enum ViewTypes {
   DAY,
-  MONTH
+  MONTH,
+  ANALYTICS,
 }

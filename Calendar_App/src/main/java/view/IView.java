@@ -1,7 +1,10 @@
 package view;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import controller.Features;
 
@@ -54,4 +57,27 @@ public interface IView {
    */
   public void setExportPath(String exportPath);
 
+  /**
+   * Sets all analytics data for display.
+   * @param totalEvents the total number of events
+   * @param eventsByWeekday map of day of week to event count
+   * @param eventsByName map of event name to event count
+   * @param averageEventsPerDay the average number of events per day
+   * @param busiestDays list of the busiest days
+   * @param leastBusyDays list of the least busy days
+   * @param onlineEventsPercentage percentage of events that are online
+   * @param offlineEventsPercentage percentage of events that are offline
+   */
+  public void setAnalyticsData(
+      int totalEvents,
+      Map<DayOfWeek, Integer> eventsByWeekday,
+      Map<String, Long> eventsByName,
+      double averageEventsPerDay,
+      List<LocalDate> busiestDays,
+      List<LocalDate> leastBusyDays,
+      List<LocalDate> busiestDaysByHours,
+      List<LocalDate> leastBusyDaysByHours,
+      double onlineEventsPercentage,
+      double offlineEventsPercentage
+  );
 }

@@ -106,4 +106,6 @@ public interface Features {
    * @throws IOException if there is a conflict while creating events.
    */
   public void importFile(File importFile) throws FileNotFoundException, IOException;
+
+  public void queryAnalytics(LocalDate startDate, LocalDate endDate) throws IOException;
 }
