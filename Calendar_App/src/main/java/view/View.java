@@ -328,8 +328,7 @@ public class View extends JFrame implements IView {
             renderDay();
             break;
         }
-      }
-      catch (Exception ex) {
+      } catch (Exception ex) {
         JOptionPane.showMessageDialog(
             contextFrame,
             ex.getMessage(),
