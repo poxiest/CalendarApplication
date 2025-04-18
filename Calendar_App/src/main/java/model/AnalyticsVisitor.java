@@ -21,8 +21,8 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
 
   private List<LocalDate> leastBusyByEvents;
   private List<LocalDate> mostBusyByEvents;
-  private List<LocalDate> leastBusyByHours;
-  private List<LocalDate> mostBusyByHours;
+  private List<LocalDate> leastBusyByDuration;
+  private List<LocalDate> mostBusyByDuration;
   private int totalCount;
   private int onlineCount;
   private double averageEventsPerDay;
@@ -62,12 +62,12 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
     return mostBusyByEvents;
   }
 
-  public List<LocalDate> getLeastBusyByHours() {
-    return leastBusyByHours;
+  public List<LocalDate> getLeastBusyByDuration() {
+    return leastBusyByDuration;
   }
 
-  public List<LocalDate> getMostBusyByHours() {
-    return mostBusyByHours;
+  public List<LocalDate> getMostBusyByDuration() {
+    return mostBusyByDuration;
   }
 
   public int getTotalCount() {
@@ -142,9 +142,6 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
 
   private void calculateBusyDaysByEventCount(List<IEvent> events) {
     Map<LocalDate, Integer> eventsPerDay = new TreeMap<>();
-    for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-      eventsPerDay.put(date, 0);
-    }
 
     for (IEvent event : events) {
       LocalDate eventStart = event.getStartDateTime().toLocalDate();
@@ -192,8 +189,8 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
         .collect(Collectors.toList());
 
     if (nonZeroDays.isEmpty()) {
-      leastBusyByHours = Collections.emptyList();
-      mostBusyByHours = Collections.emptyList();
+      leastBusyByDuration = Collections.emptyList();
+      mostBusyByDuration = Collections.emptyList();
       return;
     }
 
@@ -207,12 +204,12 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
         .max()
         .orElse(0.0);
 
-    leastBusyByHours = nonZeroDays.stream()
+    leastBusyByDuration = nonZeroDays.stream()
         .filter(entry -> entry.getValue() == minHours)
         .map(Map.Entry::getKey)
         .collect(Collectors.toList());
 
-    mostBusyByHours = nonZeroDays.stream()
+    mostBusyByDuration = nonZeroDays.stream()
         .filter(entry -> entry.getValue() == maxHours)
         .map(Map.Entry::getKey)
         .collect(Collectors.toList());
@@ -229,7 +226,7 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
           LocalDateTime overlapStart = eventStart.isBefore(dayStart) ? dayStart : eventStart;
           LocalDateTime overlapEnd = eventEnd.isAfter(dayEnd) ? dayEnd : eventEnd;
           return overlapStart.isBefore(overlapEnd)
-              ? ChronoUnit.MINUTES.between(overlapStart, overlapEnd) / 60.0
+              ? ChronoUnit.MINUTES.between(overlapStart, overlapEnd)
               : 0.0;
         })
         .sum();

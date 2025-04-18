@@ -3,7 +3,6 @@ package commands;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -11,9 +10,8 @@ import model.AnalyticsVisitor;
 import model.IMultipleCalendarModel;
 
 /**
- * Class that handles all show events heard by the controller
- * and applies the commandComponents to the given multiple calendar
- * model.
+ * Class to parse show calendar dashboard command and
+ * display the analytics of the given dates.
  */
 public class ShowCalendar implements IControllerCommand {
 
@@ -103,11 +101,11 @@ public class ShowCalendar implements IControllerCommand {
             .append("\n");
 
         this.out.append("Most Busy Date(s) by Total Hours: ")
-            .append(analyticsVisitor.getMostBusyByHours().stream().map(LocalDate::toString).collect(Collectors.joining(", ")))
+            .append(analyticsVisitor.getMostBusyByDuration().stream().map(LocalDate::toString).collect(Collectors.joining(", ")))
             .append("\n");
 
         this.out.append("Least Busy Date(s) by Total Hours: ")
-            .append(analyticsVisitor.getLeastBusyByHours().stream().map(LocalDate::toString).collect(Collectors.joining(", ")))
+            .append(analyticsVisitor.getLeastBusyByDuration().stream().map(LocalDate::toString).collect(Collectors.joining(", ")))
             .append("\n");
       }
     } else {
