@@ -16,7 +16,6 @@ public class AnalyticsPanel extends JPanel {
   private final JPanel statsPanel;
   private final JPanel eventsByWeekdayPanel;
   private final JPanel eventsByNamePanel;
-  private final JPanel onlineOfflinePanel;
 
   // Analytics data fields
   private int totalEvents;
@@ -34,7 +33,6 @@ public class AnalyticsPanel extends JPanel {
   public AnalyticsPanel() {
     this.setLayout(new BorderLayout());
 
-    // Stats panel
     statsPanel = new JPanel(new GridLayout(8, 1));
     statsPanel.setBorder(BorderFactory.createTitledBorder("Statistics"));
 
@@ -44,11 +42,7 @@ public class AnalyticsPanel extends JPanel {
     eventsByNamePanel = new JPanel(new GridLayout(0, 2));
     eventsByNamePanel.setBorder(BorderFactory.createTitledBorder("Events by Name"));
 
-    // Changed from GridLayout to FlowLayout to reduce vertical gap
-    onlineOfflinePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    onlineOfflinePanel.setBorder(BorderFactory.createTitledBorder("Online & Offline"));
-
-    JPanel distributionPanel = new JPanel(new GridLayout(1, 3));
+    JPanel distributionPanel = new JPanel(new GridLayout(3, 1));
     distributionPanel.add(statsPanel);
     distributionPanel.add(eventsByWeekdayPanel);
     distributionPanel.add(eventsByNamePanel);
@@ -91,7 +85,6 @@ public class AnalyticsPanel extends JPanel {
     statsPanel.removeAll();
     eventsByWeekdayPanel.removeAll();
     eventsByNamePanel.removeAll();
-    onlineOfflinePanel.removeAll();
 
     JPanel totalEventsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     totalEventsPanel.add(new JLabel("Total Events: " + totalEvents));
@@ -116,12 +109,20 @@ public class AnalyticsPanel extends JPanel {
     leastBusyDayByHoursPanel.add(new JLabel("Least Busy Date(s) by Total Hours: " +
         formatDateList(leastBusyDaysByHours)));
 
+    JPanel onlinePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    onlinePanel.add(new JLabel("Online %: " + onlineEventsPercentage));
+
+    JPanel offlinePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    offlinePanel.add(new JLabel("Offline %: " + offlineEventsPercentage));
+
     statsPanel.add(totalEventsPanel);
     statsPanel.add(avgEventsPanel);
     statsPanel.add(busiestDayPanel);
     statsPanel.add(leastBusyDayPanel);
     statsPanel.add(busiestDayByHoursPanel);
     statsPanel.add(leastBusyDayByHoursPanel);
+    statsPanel.add(onlinePanel);
+    statsPanel.add(offlinePanel);
 
     if (eventsByWeekday != null) {
       for (DayOfWeek day : DayOfWeek.values()) {
@@ -142,17 +143,12 @@ public class AnalyticsPanel extends JPanel {
       });
     }
 
-    onlineOfflinePanel.add(new JLabel(String.format("Online: %.2f%%", onlineEventsPercentage)));
-    onlineOfflinePanel.add(new JLabel(String.format("Offline: %.2f%%", offlineEventsPercentage)));
-
     statsPanel.revalidate();
     statsPanel.repaint();
     eventsByWeekdayPanel.revalidate();
     eventsByWeekdayPanel.repaint();
     eventsByNamePanel.revalidate();
     eventsByNamePanel.repaint();
-    onlineOfflinePanel.revalidate();
-    onlineOfflinePanel.repaint();
   }
 
   private String formatDateList(List<LocalDate> dates) {
