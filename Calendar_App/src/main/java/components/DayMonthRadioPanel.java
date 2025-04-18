@@ -1,8 +1,9 @@
 package components;
 
 import java.awt.event.ActionListener;
-
-import javax.swing.*;
+import javax.swing.ButtonGroup;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 /**
  * This component includes a button group which allows users
@@ -45,5 +46,4 @@ public class DayMonthRadioPanel extends JPanel implements IDayMonthRadioPanel {
   public void selectDayRadio() {
     this.dayMonthRadioButtons[0].doClick();
   }
-
 }
