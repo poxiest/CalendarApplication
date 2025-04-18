@@ -1,8 +1,6 @@
 package components;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -27,6 +25,8 @@ public class AnalyticsPanel extends JPanel {
   private double averageEventsPerDay;
   private List<LocalDate> busiestDays;
   private List<LocalDate> leastBusyDays;
+  private List<LocalDate> busiestDaysByHours;
+  private List<LocalDate> leastBusyDaysByHours;
   private double onlineEventsPercentage;
   private double offlineEventsPercentage;
   private boolean hasData = false;
@@ -35,7 +35,7 @@ public class AnalyticsPanel extends JPanel {
     this.setLayout(new BorderLayout());
 
     // Stats panel
-    statsPanel = new JPanel(new GridLayout(4, 1));
+    statsPanel = new JPanel(new GridLayout(8, 1));
     statsPanel.setBorder(BorderFactory.createTitledBorder("Statistics"));
 
     eventsByWeekdayPanel = new JPanel(new GridLayout(7, 1));
@@ -48,17 +48,12 @@ public class AnalyticsPanel extends JPanel {
     onlineOfflinePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     onlineOfflinePanel.setBorder(BorderFactory.createTitledBorder("Online & Offline"));
 
-    JPanel contentPanel = new JPanel(new BorderLayout());
-    contentPanel.add(statsPanel, BorderLayout.NORTH);
-
-    JPanel distributionPanel = new JPanel(new GridLayout(3, 1));
+    JPanel distributionPanel = new JPanel(new GridLayout(1, 3));
+    distributionPanel.add(statsPanel);
     distributionPanel.add(eventsByWeekdayPanel);
     distributionPanel.add(eventsByNamePanel);
-    distributionPanel.add(onlineOfflinePanel);
 
-    contentPanel.add(distributionPanel, BorderLayout.CENTER);
-
-    this.add(new JScrollPane(contentPanel), BorderLayout.CENTER);
+    this.add(new JScrollPane(distributionPanel), BorderLayout.CENTER);
   }
 
   public void updateData(
@@ -68,6 +63,8 @@ public class AnalyticsPanel extends JPanel {
       double averageEventsPerDay,
       List<LocalDate> busiestDays,
       List<LocalDate> leastBusyDays,
+      List<LocalDate> busiestDaysByHours,
+      List<LocalDate> leastBusyDaysByHours,
       double onlineEventsPercentage,
       double offlineEventsPercentage) {
 
@@ -77,6 +74,8 @@ public class AnalyticsPanel extends JPanel {
     this.averageEventsPerDay = averageEventsPerDay;
     this.busiestDays = busiestDays;
     this.leastBusyDays = leastBusyDays;
+    this.busiestDaysByHours = busiestDaysByHours;
+    this.leastBusyDaysByHours = leastBusyDaysByHours;
     this.onlineEventsPercentage = onlineEventsPercentage;
     this.offlineEventsPercentage = offlineEventsPercentage;
     this.hasData = true;
@@ -102,17 +101,27 @@ public class AnalyticsPanel extends JPanel {
         averageEventsPerDay)));
 
     JPanel busiestDayPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    busiestDayPanel.add(new JLabel("Busiest Day(s): " +
+    busiestDayPanel.add(new JLabel("Most Busy Date(s) by Event Count: " +
         formatDateList(busiestDays)));
 
     JPanel leastBusyDayPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    leastBusyDayPanel.add(new JLabel("Least Busy Day(s): " +
+    leastBusyDayPanel.add(new JLabel("Least Busy Date(s) by Event Count: " +
         formatDateList(leastBusyDays)));
+
+    JPanel busiestDayByHoursPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    busiestDayByHoursPanel.add(new JLabel("Most Busy Date(s) by Total Hours: " +
+        formatDateList(busiestDaysByHours)));
+
+    JPanel leastBusyDayByHoursPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    leastBusyDayByHoursPanel.add(new JLabel("Least Busy Date(s) by Total Hours: " +
+        formatDateList(leastBusyDaysByHours)));
 
     statsPanel.add(totalEventsPanel);
     statsPanel.add(avgEventsPanel);
     statsPanel.add(busiestDayPanel);
     statsPanel.add(leastBusyDayPanel);
+    statsPanel.add(busiestDayByHoursPanel);
+    statsPanel.add(leastBusyDayByHoursPanel);
 
     if (eventsByWeekday != null) {
       for (DayOfWeek day : DayOfWeek.values()) {
@@ -125,17 +134,14 @@ public class AnalyticsPanel extends JPanel {
     }
 
     if (eventsByName != null) {
-      eventsByName.entrySet().stream()
-          .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
-          .limit(10)
-          .forEach(entry -> {
-            JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            namePanel.add(new JLabel(entry.getKey() + ": " + entry.getValue()));
-            eventsByNamePanel.add(namePanel);
-          });
+      eventsByNamePanel.setLayout(new GridLayout(0, 1)); // 0 rows means as many as needed, 1 column
+      eventsByName.entrySet().forEach(entry -> {
+        JPanel entryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        entryPanel.add(new JLabel("\t" + entry.getKey() + ": " + entry.getValue()));
+        eventsByNamePanel.add(entryPanel);
+      });
     }
 
-    // Modified to add labels directly to the panel without creating separate panels
     onlineOfflinePanel.add(new JLabel(String.format("Online: %.2f%%", onlineEventsPercentage)));
     onlineOfflinePanel.add(new JLabel(String.format("Offline: %.2f%%", offlineEventsPercentage)));
 

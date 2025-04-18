@@ -1,4 +1,4 @@
-Subject,Start date,Start time,End Date,End Time,All Day Event,Description,Location,Private
+Subject,Start Date,Start Time,End Date,End Time,All Day Event,Description,Location,Private
 All Day Single,2025-04-09,19:15,2025-04-09,20:15,true,All Day Single,All Day Single,false
 Single,2025-04-10,19:15,2025-04-10,20:15,false,Single,Single,false
 Single,2025-04-10,21:00,2025-04-10,22:00,false,Single,Single,true

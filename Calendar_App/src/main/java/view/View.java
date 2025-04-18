@@ -193,6 +193,8 @@ public class View extends JFrame implements IView {
       double averageEventsPerDay,
       List<LocalDate> busiestDays,
       List<LocalDate> leastBusyDays,
+      List<LocalDate> busiestDaysByHours,
+      List<LocalDate> leastBusyDaysByHours,
       double onlineEventsPercentage,
       double offlineEventsPercentage) {
 
@@ -203,6 +205,8 @@ public class View extends JFrame implements IView {
         averageEventsPerDay,
         busiestDays,
         leastBusyDays,
+        busiestDaysByHours,
+        leastBusyDaysByHours,
         onlineEventsPercentage,
         offlineEventsPercentage
     );

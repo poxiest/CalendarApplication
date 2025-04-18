@@ -75,6 +75,8 @@ public interface IView {
       double averageEventsPerDay,
       List<LocalDate> busiestDays,
       List<LocalDate> leastBusyDays,
+      List<LocalDate> busiestDaysByHours,
+      List<LocalDate> leastBusyDaysByHours,
       double onlineEventsPercentage,
       double offlineEventsPercentage
   );
