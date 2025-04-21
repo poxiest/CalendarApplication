@@ -110,10 +110,10 @@ public class AnalyticsPanel extends JPanel {
         formatDateList(leastBusyDaysByHours)));
 
     JPanel onlinePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    onlinePanel.add(new JLabel("Online %: " + onlineEventsPercentage));
+    onlinePanel.add(new JLabel(String.format("Online %%: %.2f", onlineEventsPercentage)));
 
     JPanel offlinePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    offlinePanel.add(new JLabel("Offline %: " + offlineEventsPercentage));
+    offlinePanel.add(new JLabel(String.format("Offline %%: %.2f", offlineEventsPercentage)));
 
     statsPanel.add(totalEventsPanel);
     statsPanel.add(avgEventsPanel);
