@@ -3,7 +3,10 @@ package commands;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import events.IEvent;
@@ -74,11 +77,12 @@ public class Export implements IControllerCommand {
     String header = "Subject,Start Date,Start Time,End Date,"
         + "End Time,All Day Event,Description,Location,Private\n";
     fileWriter.append(header);
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     for (IEvent event: events) {
       String row = event.getSubject() + ",";
-      row += event.getStartDate() + ",";
+      row += event.getStartDate().format(formatter) + ",";
       row += event.getStartTime() + ",";
-      row += event.getEndDate() + ",";
+      row += event.getEndDate().format(formatter) + ",";
       row += event.getEndTime() + ",";
       row += event.isAllDayEvent() + ",";
       row += event.getDescription() + ",";

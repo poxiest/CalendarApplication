@@ -122,3 +122,10 @@ mockcontroller is not actually mock, it is not working as expected
 their full day is not 00:00 to 00:00, but 00:00 to 23.98
 test case cannot be written for showcalendar command class as the previous team have not done any kind of mocking for both controller and the model.
 no location means it is considered as offline
+
+export works differently in CLI for dates and it works different for GUI
+CLI date has / separated 
+GUI date has - separated
+GUI import expects -
+
+The same set of events when exported from CLI is exported into GUI, says conflict of events. 
