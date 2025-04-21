@@ -99,7 +99,8 @@ public class Controller implements IController {
     String commandName = !commandComponents[0].equals("show") ? commandComponents[0]
         : commandComponents[0] + " " + commandComponents[1];
     if (commandName.equalsIgnoreCase("show calendar") && !commandsExecuted.contains("use")) {
-      // throwing IOException instead of custom exception because they have already used it IOException.
+      // throwing IOException instead of custom exception because they have already
+      // used it IOException.
       throw new IOException("Cannot use show calendar command before use calendar command.");
     }
     Function<String[], IControllerCommand> cmd = knownCommands.getOrDefault(

@@ -96,7 +96,8 @@ public class MockController implements IController {
   private boolean handleCommand(String command) 
       throws IOException {
     String[] commandComponents = command.split(" ");
-    String commandName = !commandComponents[0].equals("show") ? commandComponents[0] : commandComponents[0] + " " + commandComponents[1];
+    String commandName = !commandComponents[0].equals("show") ? commandComponents[0]
+        : commandComponents[0] + " " + commandComponents[1];
     switch (commandName) {
       case "create":
         handleCreate(commandComponents);

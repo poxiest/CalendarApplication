@@ -32,7 +32,7 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
 
   private final LocalDate startDate;
   private final LocalDate endDate;
-
+  private final Map<DayOfWeek, Integer> daysCount;
   private List<LocalDate> leastBusyByEvents;
   private List<LocalDate> mostBusyByEvents;
   private List<LocalDate> leastBusyByDuration;
@@ -40,7 +40,6 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
   private int totalCount;
   private int onlineCount;
   private double averageEventsPerDay;
-  private final Map<DayOfWeek, Integer> daysCount;
   private Map<String, Long> subjectCountMap;
 
   /**
@@ -81,70 +80,90 @@ public class AnalyticsVisitor implements ICalendarVisitor<Void> {
   }
 
   /**
-   * @return list of least busy dates by event count (excluding days with zero events)
+   * Returns the list of dates with the fewest events (excluding days with zero events).
+   *
+   * @return a list of dates representing the least busy days by event count
    */
   public List<LocalDate> getLeastBusyByEvents() {
     return leastBusyByEvents;
   }
 
   /**
-   * @return list of most busy dates by event count
+   * Returns the list of dates with the most events.
+   *
+   * @return a list of dates representing the most busy days by event count
    */
   public List<LocalDate> getMostBusyByEvents() {
     return mostBusyByEvents;
   }
 
   /**
-   * @return list of least busy dates by event duration (in hours)
+   * Returns the list of dates with the least total event duration.
+   *
+   * @return a list of dates representing the least busy days by total event duration
    */
   public List<LocalDate> getLeastBusyByDuration() {
     return leastBusyByDuration;
   }
 
   /**
-   * @return list of most busy dates by event duration (in hours)
+   * Returns the list of dates with the highest total event duration.
+   *
+   * @return a list of dates representing the most busy days by total event duration
    */
   public List<LocalDate> getMostBusyByDuration() {
     return mostBusyByDuration;
   }
 
   /**
-   * @return total number of events in the selected date range
+   * Returns the total number of events found in the selected date range.
+   *
+   * @return the number of events
    */
   public int getTotalCount() {
     return totalCount;
   }
 
   /**
-   * @return percentage of events marked as online
+   * Returns the percentage of events that are marked as online.
+   *
+   * @return a percentage value between 0.0 and 100.0 representing online events
    */
   public double getOnlinePercentage() {
     return totalCount == 0 ? 0.0 : (onlineCount * 100.0) / totalCount;
   }
 
   /**
-   * @return percentage of events not marked as online
+   * Returns the percentage of events that are marked as offline.
+   *
+   * @return a percentage value between 0.0 and 100.0 representing offline events
    */
   public double getOfflinePercentage() {
     return totalCount == 0 ? 0.0 : ((totalCount - onlineCount) * 100.0) / totalCount;
   }
 
   /**
-   * @return average number of event days per day in the selected range
+   * Returns the average number of event days per day across the date range.
+   *
+   * @return the average events per day
    */
   public double getAverageEventsPerDay() {
     return averageEventsPerDay;
   }
 
   /**
-   * @return unmodifiable map of weekday to number of events
+   * Returns an unmodifiable map of weekdays to the number of events that occur on each.
+   *
+   * @return map of {@link DayOfWeek} to event counts
    */
   public Map<DayOfWeek, Integer> getDaysCount() {
     return Collections.unmodifiableMap(daysCount);
   }
 
   /**
-   * @return unmodifiable map of event subjects to number of times they appear
+   * Returns a sorted map of subjects to the number of times they appear across events.
+   *
+   * @return map of subject names to their frequency count
    */
   public Map<String, Long> getSubjectCountMap() {
     return subjectCountMap.entrySet()

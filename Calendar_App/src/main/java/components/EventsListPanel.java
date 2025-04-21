@@ -101,8 +101,8 @@ public class EventsListPanel extends AbstractComponent implements IEventsListPan
 
   private void renderRecurringEventView(IViewEvent event) {
     recurringEventForm = new RecurringEventForm(
-        "edit-recurring-single"
-        , "Edit", 
+        "edit-recurring-single",
+        "Edit",
         featureActionListener, 
         null, 
         null, 

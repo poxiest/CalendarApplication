@@ -93,19 +93,23 @@ public class ShowCalendar implements IControllerCommand {
             .append("%\n");
 
         this.out.append("Most Busy Date(s) by Event Count: ")
-            .append(analyticsVisitor.getMostBusyByEvents().stream().map(LocalDate::toString).collect(Collectors.joining(", ")))
+            .append(analyticsVisitor.getMostBusyByEvents().stream().map(LocalDate::toString)
+                .collect(Collectors.joining(", ")))
             .append("\n");
 
         this.out.append("Least Busy Date(s) by Event Count: ")
-            .append(analyticsVisitor.getLeastBusyByEvents().stream().map(LocalDate::toString).collect(Collectors.joining(", ")))
+            .append(analyticsVisitor.getLeastBusyByEvents().stream().map(LocalDate::toString)
+                .collect(Collectors.joining(", ")))
             .append("\n");
 
         this.out.append("Most Busy Date(s) by Total Hours: ")
-            .append(analyticsVisitor.getMostBusyByDuration().stream().map(LocalDate::toString).collect(Collectors.joining(", ")))
+            .append(analyticsVisitor.getMostBusyByDuration().stream().map(LocalDate::toString)
+                .collect(Collectors.joining(", ")))
             .append("\n");
 
         this.out.append("Least Busy Date(s) by Total Hours: ")
-            .append(analyticsVisitor.getLeastBusyByDuration().stream().map(LocalDate::toString).collect(Collectors.joining(", ")))
+            .append(analyticsVisitor.getLeastBusyByDuration().stream().map(LocalDate::toString)
+                .collect(Collectors.joining(", ")))
             .append("\n");
       }
     } else {

@@ -122,7 +122,6 @@ public class HeaderPanel extends JPanel implements IHeaderPanel {
     analyticsButton.addActionListener(featureActionListener);
     importButton.addActionListener(featureActionListener);
     exportButton.addActionListener(featureActionListener);
-    analyticsButton.addActionListener(e -> {});
     analyticsButton.setActionCommand("show-analytics");
     importButton.addActionListener(e -> showFileChooserDisplay());
     showAddCalendarDisplayButton.addActionListener(e -> showAddCalendarDisplay());
