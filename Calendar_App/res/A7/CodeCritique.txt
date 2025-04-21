@@ -6,7 +6,7 @@ Bad
 
 3) The printing style of events in the CLI is formatted from the Model. This is not the work of a model to perform. View is responsible for this. This limits viewing events in different formats later.
 
-4) IViewEvents, IViewRecurringEvent, IViewRecurringUntilEvent, IViewRecurringSequenceEvent are interfaces with getters and setters to view events in the GUI. 8 different interfaces and classes are used just for this increasing confusion and needs to changes if there is a new type of event required.
+4) IViewEvents, IViewRecurringEvent, IViewRecurringUntilEvent, IViewRecurringSequenceEvent are interfaces with getters and setters to view events in the GUI. 8 different interfaces and classes are used just for this increasing confusion and the other classes are feature envying these classes.
 
 5) View class has a private class FeatureActionListener which is responsible for action listeners. action performed has a list of action commands with the corresponding actions. All the cases are in a switch case, instead it could have been in a Map or in separate classes.
 
@@ -16,7 +16,7 @@ Good
 
 2) GUI View and controller are independent following General Command Callbacks, allowing the user to add a different kind of view if required.
 
-
+3) Interfaces are well-structured and provides proper decoupling, allowing more flexibility and extension.
 
 
 
