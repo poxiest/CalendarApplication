@@ -1,4 +1,4 @@
-### GUI Instructions
+## GUI Instructions
 
 - The main view of the calendar app shows the current month of the calendar.
 - Each day is a button that can be clicked to reveal the Day View.
@@ -17,3 +17,9 @@ Subject,Start date,Start time,End Date,End Time,All Day Event,Description,Locati
 - All values may be changed. For recurring events, if changing recurring parameters such as weekday, ends on date, or after n occurrences, the event series must be updated instead of a single instance.
 - The edit, edit this and following, and edit all buttons in the recurring view/edit modal will edit the individual event, the selected event and all events following it in the series, or all events in the series respectively.
 - The view/edit event modal will change dynamically based on if the event is recurring or a single.
+
+### Analytics
+
+1. Click the Analytics button in the header panel of the GUI to view the analytics.
+2. Choose the required start and end date for the analytics and generate the analytics for the given time frame.
+3. Click Close Analytics button to go back to the month view.
