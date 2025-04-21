@@ -160,7 +160,8 @@ public class View extends JFrame implements IView {
   }
 
   /**
-   * Renders the analytics view by updating the main panel layout and refreshing analytics data if available.
+   * Renders the analytics view by updating the main panel layout and refreshing analytics
+   * data if available.
    */
   private void renderAnalytics() {
     this.currentView = ViewTypes.ANALYTICS;

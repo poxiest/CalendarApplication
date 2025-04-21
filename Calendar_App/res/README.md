@@ -95,7 +95,7 @@ Below are the data that will be generated:
 4) Average number of events per day
 5) The busiest day and the least busy day based on number of events
 6) The busiest day and the least busy day based on number of hours of meetings in a day
-7) Percentage of events that were online and not online. An event is online if its location is online.
+7) Percentage of events that were online and not online. An event is online if its location is online, anything else is offline even if the location is not specified.
 
 `exit`
 
@@ -115,3 +115,51 @@ The GUI provides a graphical user interface for users to interact with thier cal
 To run with the GUI, run:
 
 `java -jar CalendarApp.jar`
+
+# Known Bugs and Issues
+
+## App Exit Issues
+- The application does not exit gracefully on its own.
+- In **headless mode**, if the `exit` command is missing, the app continues running indefinitely.
+- This behavior is **not documented** in the `README.md`.
+
+---
+
+## Error Handling
+- Error messages expose internal code details, which can be confusing and not user-friendly.
+- In **headless mode**, the application continues running even after encountering errors, rather than halting or reporting gracefully.
+
+---
+
+## Input Limitations
+- **Event names containing spaces** are not supported in either **interactive** or **headless** modes.
+- Cannot create events with optional parameters, you can only add optional parameters using edit command.
+
+---
+
+## Conflict Feature Not Working
+- **Conflict detection** is not functioning correctly.
+- Events that overlap in time are still allowed without any warning or blocking behavior.
+
+---
+
+## Time Representation Issue
+- **Full-day events** are shown as lasting from `00:00` to `23.99`, instead of from `00:00` to `00:00` of the following day.
+- This can lead to incorrect assumptions about the event’s actual duration.
+
+---
+
+## Testing Gaps
+- There are **no tests** validating how the **controller interacts** with the **view** or **model**.
+- The `showcalendar` command is **untested** due to a lack of mock implementations.
+
+--- 
+
+# How the Analytics Feature Was Implemented
+
+- We implemented the analytics feature using the **Visitor design pattern** to extract the required data from the existing system.
+- Visitor interfaces were added to both `ICalendarModel` and `IEvent` to support analytics computation without modifying the core logic.
+- The existing codebase was easy to work with, thanks to well-structured and clearly written JavaDocs.
+- `AnalyticsVisitor` serves as the concrete implementation of the visitor for the `ICalendarModel` interface.
+- Additionally, `EventWeekdays` and `OnlineEvent` are visitor classes for the `IEvent` interface that help determine event-specific details such as weekdays and online status.
+- Overall, we successfully implemented all aspects of the analytics feature, and it is fully supported in both the **CLI** and **GUI** versions of the application.
