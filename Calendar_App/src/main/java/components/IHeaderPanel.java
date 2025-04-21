@@ -77,6 +77,8 @@ public interface IHeaderPanel {
    */
   public void selectDayRadio();
 
+  public void selectMonthRadio();
+
   /**
    * Gets the import file from the file choooser.
    * @return the import selected.

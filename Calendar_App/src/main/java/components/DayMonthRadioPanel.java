@@ -46,4 +46,8 @@ public class DayMonthRadioPanel extends JPanel implements IDayMonthRadioPanel {
     this.dayMonthRadioButtons[0].doClick();
   }
 
+  public void selectMonthRadio() {
+    this.dayMonthRadioButtons[1].doClick();
+  }
+
 }

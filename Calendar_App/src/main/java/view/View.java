@@ -106,11 +106,16 @@ public class View extends JFrame implements IView {
     generateButton.setActionCommand("generate-analytics");
     generateButton.addActionListener(featureActionListener);
 
+    JButton closeButton = new JButton("Close Analytics");
+    closeButton.setActionCommand("close-analytics");
+    closeButton.addActionListener(featureActionListener);
+
     analyticsDateRangePanel.add(startLabel);
     analyticsDateRangePanel.add(startDateField);
     analyticsDateRangePanel.add(endLabel);
     analyticsDateRangePanel.add(endDateField);
     analyticsDateRangePanel.add(generateButton);
+    analyticsDateRangePanel.add(closeButton);
 
     mainPanel.add((JPanel) monthPanel);
     this.add(mainPanel, BorderLayout.CENTER);
@@ -319,6 +324,10 @@ public class View extends JFrame implements IView {
                 LocalDate.parse(startDateField.getText()),
                 LocalDate.parse(endDateField.getText())
             );
+            break;
+          case "close-analytics":
+            headerPanel.selectMonthRadio();
+            renderMonth();
             break;
           default:
             currentView = ViewTypes.DAY;

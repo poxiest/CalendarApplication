@@ -241,6 +241,11 @@ public class HeaderPanel extends JPanel implements IHeaderPanel {
     this.dayMonthRadioPanel.selectDayRadio();
   }
 
+  @Override
+  public void selectMonthRadio() {
+    this.dayMonthRadioPanel.selectMonthRadio();
+  }
+
   private void setInstantLabel() {
     switch (this.currentView) {
       case DAY:

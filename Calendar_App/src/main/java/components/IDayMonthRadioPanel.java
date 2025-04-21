@@ -11,4 +11,6 @@ public interface IDayMonthRadioPanel {
    */
   void selectDayRadio();
 
+  void selectMonthRadio();
+
 }
