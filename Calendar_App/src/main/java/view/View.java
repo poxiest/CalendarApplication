@@ -148,6 +148,9 @@ public class View extends JFrame implements IView {
     this.mainPanel.repaint();
   }
 
+  /**
+   * Renders the analytics view by updating the main panel layout and refreshing analytics data if available.
+   */
   private void renderAnalytics() {
     this.currentView = ViewTypes.ANALYTICS;
     this.headerPanel.setCurrentView(currentView);

@@ -107,5 +107,12 @@ public interface Features {
    */
   public void importFile(File importFile) throws FileNotFoundException, IOException;
 
+  /**
+   * Computes and updates analytics data for the active calendar between the given date range.
+   *
+   * @param startDate the start date of the analysis range
+   * @param endDate the end date of the analysis range
+   * @throws IOException if data processing fails
+   */
   public void queryAnalytics(LocalDate startDate, LocalDate endDate) throws IOException;
 }

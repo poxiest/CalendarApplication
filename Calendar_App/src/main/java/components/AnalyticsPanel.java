@@ -12,6 +12,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+/**
+ * Initializes the AnalyticsPanel with layout and sub panels.
+ */
 public class AnalyticsPanel extends JPanel {
   private final JPanel statsPanel;
   private final JPanel eventsByWeekdayPanel;
@@ -30,6 +33,10 @@ public class AnalyticsPanel extends JPanel {
   private double offlineEventsPercentage;
   private boolean hasData = false;
 
+  /**
+   * Creates and sets up the layout for the AnalyticsPanel with sections for statistics,
+   * events by weekday, and events by name.
+   */
   public AnalyticsPanel() {
     this.setLayout(new BorderLayout());
 
@@ -50,6 +57,20 @@ public class AnalyticsPanel extends JPanel {
     this.add(new JScrollPane(distributionPanel), BorderLayout.CENTER);
   }
 
+  /**
+   * Updates the analytics data and refreshes the panel display.
+   *
+   * @param totalEvents total number of events
+   * @param eventsByWeekday map of event count by weekday
+   * @param eventsByName map of event count by event name
+   * @param averageEventsPerDay average number of events per day
+   * @param busiestDays list of busiest dates by event count
+   * @param leastBusyDays list of least busy dates by event count
+   * @param busiestDaysByHours list of busiest dates by total hours
+   * @param leastBusyDaysByHours list of least busy dates by total hours
+   * @param onlineEventsPercentage percentage of online events
+   * @param offlineEventsPercentage percentage of offline events
+   */
   public void updateData(
       int totalEvents,
       Map<DayOfWeek, Integer> eventsByWeekday,
@@ -77,6 +98,9 @@ public class AnalyticsPanel extends JPanel {
     refreshDisplay();
   }
 
+  /**
+   * Refreshes the display of the analytics data on the panel.
+   */
   public void refreshDisplay() {
     if (!hasData) {
       return;
@@ -151,6 +175,12 @@ public class AnalyticsPanel extends JPanel {
     eventsByNamePanel.repaint();
   }
 
+  /**
+   * Formats a list of dates into a comma-separated string.
+   *
+   * @param dates list of dates to format
+   * @return formatted string of dates or "None" if list is empty
+   */
   private String formatDateList(List<LocalDate> dates) {
     if (dates == null || dates.isEmpty()) {
       return "None";
