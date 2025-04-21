@@ -1,0 +1,9 @@
+1) All the command classes in commands package have switch cases based on the input length to process different kind of request. This will be a problem when two different commands have same length. further increasing the conditional cases.
+
+2) Current code the controller get the current active calendar and calls each operation, letting controller do more work other than the actual work. Introduction of a facade design pattern to act a bridge between the controller and calendar model would have an option to eliminate the additional work the calendar application is performing.
+
+3) The printing style of events in the CLI is formatted from the Model. This is not the work of a model to perform. View is responsible for this. This limits viewing events in different formats later.
+
+4) IViewEvents, IViewRecurringEvent, IViewRecurringUntilEvent, IViewRecurringSequenceEvent are interfaces with getters and setters to view events in the GUI. 8 different interfaces and classes are used just for this increasing confusion and needs to changes if there is a new type of event required.
+
+
