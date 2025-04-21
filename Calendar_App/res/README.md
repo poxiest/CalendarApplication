@@ -85,6 +85,18 @@ Copies all events on a given date to the target calendar, converting events to t
 
 Copies all events in the provided interval to the target calendar where the begin on the provided date, converting events to the target timezone if needed.
 
+`show calendar dashboard from <dateString> to <dateString>`
+
+Shows analytics of the current calendar between two Dates. You can use this command only after using USE command.
+Below are the data that will be generated:
+1) Total number of events
+2) Total number of events by weekdays
+3) Total number of events by name
+4) Average number of events per day
+5) The busiest day and the least busy day based on number of events
+6) The busiest day and the least busy day based on number of hours of meetings in a day
+7) Percentage of events that were online and not online. An event is online if its location is online.
+
 `exit`
 
 Exits the program.
