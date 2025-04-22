@@ -22,4 +22,4 @@ Subject,Start date,Start time,End Date,End Time,All Day Event,Description,Locati
 
 1. Click the Analytics button in the header panel of the GUI to view the analytics.
 2. Choose the required start and end date for the analytics and generate the analytics for the given time frame.
-3. Click Close Analytics button to go back to the month view.
+3. Click Close Analytics button to go back to the month view. Closing will not refresh the results screen, it will retain the last generated analytics.
