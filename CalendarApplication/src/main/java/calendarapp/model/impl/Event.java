@@ -68,6 +68,33 @@ public class Event implements IEvent {
    */
   private final boolean isAutoDecline;
 
+  /**
+   * Private constructor used by the Builder.
+   *
+   * @param builder the builder containing event parameters
+   */
+  private Event(Builder builder) {
+    this.name = builder.name;
+    this.startTime = builder.startTime;
+    this.endTime = builder.endTime;
+    this.description = builder.description;
+    this.location = builder.location;
+    this.visibility = builder.visibility;
+    this.recurringDays = builder.recurringDays;
+    this.occurrenceCount = builder.occurrenceCount;
+    this.recurrenceEndDate = builder.recurrenceEndDate;
+    this.isAutoDecline = builder.isAutoDecline;
+  }
+
+  /**
+   * Creates and returns a new Builder instance for constructing Event objects.
+   *
+   * @return a new Builder instance.
+   */
+  public static Builder builder() {
+    return new Builder();
+  }
+
   public String getName() {
     return name;
   }
@@ -105,35 +132,74 @@ public class Event implements IEvent {
   }
 
   /**
-   * Private constructor used by the Builder.
+   * Creates a new event with the specified property updated to the given value.
+   * Supported properties are defined in {@link calendarapp.model.Constants.PropertyKeys}.
    *
-   * @param builder the builder containing event parameters
+   * @param property the property to update.
+   * @param value    the new value for the property.
+   * @return a new Event instance with the updated property.
+   * @throws IllegalArgumentException if the property is not supported or the value is invalid.
    */
-  private Event(Builder builder) {
-    this.name = builder.name;
-    this.startTime = builder.startTime;
-    this.endTime = builder.endTime;
-    this.description = builder.description;
-    this.location = builder.location;
-    this.visibility = builder.visibility;
-    this.recurringDays = builder.recurringDays;
-    this.occurrenceCount = builder.occurrenceCount;
-    this.recurrenceEndDate = builder.recurrenceEndDate;
-    this.isAutoDecline = builder.isAutoDecline;
-  }
-
-  /**
-   * Creates and returns a new Builder instance for constructing Event objects.
-   *
-   * @return a new Builder instance.
-   */
-  public static Builder builder() {
-    return new Builder();
+  public Event updateProperty(String property, String value) {
+    BiConsumer<Builder, String> updater = EventPropertyUpdater.getUpdater(property);
+    if (updater == null) {
+      throw new IllegalArgumentException("Cannot edit property: " + property + "\n");
+    }
+    Builder builder = new Builder(this);
+    updater.accept(builder, value);
+    return builder.build();
   }
 
   @Override
   public IEvent deepCopyEvent() {
     return new Builder(this).build();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, startTime, endTime, description, location, visibility,
+        recurringDays, occurrenceCount, recurrenceEndDate, isAutoDecline);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+
+    if (!(obj instanceof Event)) {
+      return false;
+    }
+
+    Event other = (Event) obj;
+    if (!name.equals(other.name)) {
+      return false;
+    }
+    if (!startTime.equals(other.startTime)) {
+      return false;
+    }
+    if (!endTime.equals(other.endTime)) {
+      return false;
+    }
+    if (!Objects.equals(description, other.description)) {
+      return false;
+    }
+    if (!Objects.equals(location, other.location)) {
+      return false;
+    }
+    if (!Objects.equals(visibility, other.visibility)) {
+      return false;
+    }
+    if (!Objects.equals(recurringDays, other.recurringDays)) {
+      return false;
+    }
+    if (!Objects.equals(occurrenceCount, other.occurrenceCount)) {
+      return false;
+    }
+    if (!Objects.equals(recurrenceEndDate, other.recurrenceEndDate)) {
+      return false;
+    }
+    return isAutoDecline == other.isAutoDecline;
   }
 
   /**
@@ -339,6 +405,11 @@ public class Event implements IEvent {
               + "Use M,T,W,R,F,S,U for days of week");
         }
 
+        if (occurrenceCount != null && recurrenceEndDate != null) {
+          throw new IllegalArgumentException("Cannot have both occurrenceCount and "
+              + "recurrenceEndDate.");
+        }
+
         if (occurrenceCount == null && recurrenceEndDate == null) {
           throw new IllegalArgumentException("Recurring events require either occurrence "
               + "count or end date");
@@ -361,71 +432,5 @@ public class Event implements IEvent {
         }
       }
     }
-  }
-
-  /**
-   * Creates a new event with the specified property updated to the given value.
-   * Supported properties are defined in {@link Constants.PropertyKeys}.
-   *
-   * @param property the property to update.
-   * @param value    the new value for the property.
-   * @return a new Event instance with the updated property.
-   * @throws IllegalArgumentException if the property is not supported or the value is invalid.
-   */
-  public Event updateProperty(String property, String value) {
-    BiConsumer<Builder, String> updater = EventPropertyUpdater.getUpdater(property);
-    if (updater == null) {
-      throw new IllegalArgumentException("Cannot edit property: " + property + "\n");
-    }
-    Builder builder = new Builder(this);
-    updater.accept(builder, value);
-    return builder.build();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-
-    if (!(obj instanceof Event)) {
-      return false;
-    }
-
-    Event other = (Event) obj;
-    if (!name.equals(other.name)) {
-      return false;
-    }
-    if (!startTime.equals(other.startTime)) {
-      return false;
-    }
-    if (!endTime.equals(other.endTime)) {
-      return false;
-    }
-    if (!Objects.equals(description, other.description)) {
-      return false;
-    }
-    if (!Objects.equals(location, other.location)) {
-      return false;
-    }
-    if (!Objects.equals(visibility, other.visibility)) {
-      return false;
-    }
-    if (!Objects.equals(recurringDays, other.recurringDays)) {
-      return false;
-    }
-    if (!Objects.equals(occurrenceCount, other.occurrenceCount)) {
-      return false;
-    }
-    if (!Objects.equals(recurrenceEndDate, other.recurrenceEndDate)) {
-      return false;
-    }
-    return isAutoDecline == other.isAutoDecline;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(name, startTime, endTime, description, location, visibility,
-        recurringDays, occurrenceCount, recurrenceEndDate, isAutoDecline);
   }
 }

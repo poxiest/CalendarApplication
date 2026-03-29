@@ -60,6 +60,10 @@ public class CommandFactory {
       }
     }
 
+    if (cmd == null) {
+      throw new InvalidCommandException("Invalid command.\n");
+    }
+
     BiFunction<ICalendarModel, ICalendarView, Command> commandFunction = commandsMap
         .getOrDefault(Objects.requireNonNull(CommandProperties
             .getCommand(cmd.toLowerCase())), null);

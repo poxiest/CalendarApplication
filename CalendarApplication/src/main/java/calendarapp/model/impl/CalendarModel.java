@@ -5,16 +5,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import calendarapp.controller.InvalidCommandException;
+import calendarapp.model.Constants;
 import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendar;
 import calendarapp.model.ICalendarModel;
 import calendarapp.model.ICalendarRepository;
 import calendarapp.model.SearchType;
 import calendarapp.model.dto.CalendarExporterDTO;
+import calendarapp.model.dto.CalendarResponseDTO;
 import calendarapp.model.dto.CopyEventRequestDTO;
-import calendarapp.model.dto.PrintEventsResponseDTO;
+import calendarapp.model.dto.EditEventRequestDTO;
+import calendarapp.model.dto.EventsResponseDTO;
 
-import static calendarapp.model.impl.Constants.Calendar.DEFAULT_CALENDAR_NAME;
+import static calendarapp.model.Constants.Calendar.DEFAULT_CALENDAR_NAME;
 import static calendarapp.utils.TimeUtil.getEndOfDayFromString;
 import static calendarapp.utils.TimeUtil.getTemporalFromString;
 
@@ -66,17 +69,15 @@ public class CalendarModel implements ICalendarModel {
   /**
    * Edits an event based on the specified property and value.
    *
-   * @param eventName The name of the event.
-   * @param startTime The start time of the event.
-   * @param endTime   The end time of the event.
-   * @param property  The property to be edited.
-   * @param value     The new value of the property.
+   * @param editEventRequestDTO dto object containing edit event request.
    */
   @Override
-  public void editEvent(String eventName, String startTime, String endTime, String property,
-                        String value) {
-    activeCalendar.getEventRepository().update(eventName, getTemporalFromString(startTime),
-        getTemporalFromString(endTime), property, value);
+  public void editEvent(EditEventRequestDTO editEventRequestDTO) {
+    activeCalendar.getEventRepository().update(editEventRequestDTO.getEventName(),
+        getTemporalFromString(editEventRequestDTO.getStartTime()),
+        getTemporalFromString(editEventRequestDTO.getEndTime()),
+        editEventRequestDTO.getPropertyName(), editEventRequestDTO.getPropertyValue(),
+        editEventRequestDTO.isMultiple());
   }
 
   /**
@@ -85,11 +86,11 @@ public class CalendarModel implements ICalendarModel {
    * @param startDateTime The start date-time of the range (ignored if {@code on} is provided).
    * @param endDateTime   The end date-time of the range (ignored if {@code on} is provided).
    * @param on            (Optional) A specific date to retrieve all events occurring on that day.
-   * @return A list of {@link PrintEventsResponseDTO} objects containing event details.
+   * @return A list of {@link EventsResponseDTO} objects containing event details.
    */
   @Override
-  public List<PrintEventsResponseDTO> getEventsForPrinting(String startDateTime,
-                                                           String endDateTime, String on) {
+  public List<EventsResponseDTO> getEvents(String eventName, String startDateTime,
+                                           String endDateTime, String on) {
     Temporal startTemporal = getTemporalFromString(startDateTime);
     Temporal endTemporal = getTemporalFromString(endDateTime);
 
@@ -100,13 +101,18 @@ public class CalendarModel implements ICalendarModel {
     }
 
     return activeCalendar.getEventRepository()
-        .getEvents(null, startTemporal, endTemporal, SearchType.OVERLAPPING)
+        .getEvents(eventName, startTemporal, endTemporal, SearchType.OVERLAPPING)
         .stream()
-        .map(event -> PrintEventsResponseDTO.builder()
+        .map(event -> EventsResponseDTO.builder()
             .eventName(event.getName())
             .startTime(event.getStartTime())
             .endTime(event.getEndTime())
             .location(event.getLocation())
+            .description(event.getDescription())
+            .recurringEndDate(event.getRecurrenceEndDate())
+            .occurrenceCount(event.getOccurrenceCount())
+            .recurringDays(event.getRecurringDays())
+            .visibility(event.getVisibility().getValue())
             .build())
         .collect(Collectors.toList());
   }
@@ -152,5 +158,16 @@ public class CalendarModel implements ICalendarModel {
   @Override
   public void copyEvent(CopyEventRequestDTO copyEventRequestDTO) {
     calendarRepository.copyCalendarEvents(activeCalendar.getName(), copyEventRequestDTO);
+  }
+
+  @Override
+  public List<CalendarResponseDTO> getCalendars() {
+    return calendarRepository.getCalendars()
+        .stream()
+        .map(e -> CalendarResponseDTO.builder()
+            .name(e.getName())
+            .zoneId(e.getZoneId())
+            .build())
+        .collect(Collectors.toList());
   }
 }

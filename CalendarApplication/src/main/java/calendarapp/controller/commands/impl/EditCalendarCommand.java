@@ -7,7 +7,7 @@ import calendarapp.model.EventConflictException;
 import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
-import static calendarapp.controller.commands.impl.RegexPatternConstants.EDIT_CALENDAR_PATTERN;
+import static calendarapp.controller.Constants.EDIT_CALENDAR_PATTERN;
 
 /**
  * Command to edit a calendar's property such as name or time zone.

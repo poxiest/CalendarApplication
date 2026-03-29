@@ -1,10 +1,17 @@
-package calendarapp.controller.commands.impl;
+package calendarapp.controller;
+
+import java.util.Map;
+import java.util.Set;
+
+import calendarapp.controller.exporter.CsvCalendarExporter;
+import calendarapp.controller.importer.CsvCalendarImporter;
+
+import static calendarapp.controller.Constants.SupportExportFormats.CSV;
 
 /**
- * This class contains the regex patterns used to validate commands.
+ * Class containing exporter constants.
  */
-public class RegexPatternConstants {
-
+public class Constants {
   /*
   Create command regex pattern constants.
    */
@@ -38,7 +45,6 @@ public class RegexPatternConstants {
   public static final String EDIT_EVENT_NAME_PATTERN =
       "(?i)\\s+events\\s+([a-zA-Z_]+)\\s+(?:\"([^\"]+)\"|([^\\s\"]+))\\s+(?:\"([^\"]+)\""
           + "|([^\\s\"]+))$";
-  public static final String IS_RECURRING_EVENTS = "edit events";
   public static final String EDIT_CALENDAR_PATTERN = "(?i)\\s+--name\\s+(?:\"([^\"]+)\"|(\\S+))"
       + "\\s+--property\\s+([a-zA-Z_]+)\\s+(?:\"([^\"]+)\"|(\\S+))$";
 
@@ -75,4 +81,57 @@ public class RegexPatternConstants {
   public static final String COPY_EVENTS_BETWEEN_COMMAND = "(?i)\\s+events\\s+between\\s+(?:\""
       + "([^\"]+)\"|(\\S+))\\s+and\\s+(?:\"([^\"]+)\"|(\\S+))\\s+--target\\s+(?:\"([^\"]+)\"|"
       + "(\\S+))\\s+to\\s+(?:\"([^\"]+)\"|(\\S+))$";
+
+  /**
+   * A map of supported export formats to their corresponding calendar exporter.
+   */
+  public static final Map<String, ICalendarExporter> EXPORTER_MAP = Map.of(
+      CSV, new CsvCalendarExporter()
+  );
+  /**
+   * A map of supported import formats to their corresponding calendar importer.
+   */
+  public static final Map<String, ICalendarImporter> IMPORTER_MAP = Map.of(
+      calendarapp.controller.Constants.SupportImportFormats.CSV, new CsvCalendarImporter()
+  );
+
+  /**
+   * Constants representing CSV header field names for calendar export.
+   */
+  public static final class CsvHeaders {
+    public static final String SUBJECT = "Subject";
+    public static final String START_DATE = "Start Date";
+    public static final String START_TIME = "Start Time";
+    public static final String END_DATE = "End Date";
+    public static final String END_TIME = "End Time";
+    public static final String ALL_DAY_EVENT = "All Day Event";
+    public static final String DESCRIPTION = "Description";
+    public static final String LOCATION = "Location";
+    public static final String PRIVATE = "Private";
+  }
+
+  /**
+   * Constants related to CSV formatting for calendar export.
+   */
+  public static final class CsvFormat {
+    public static final String DELIMITER = ",";
+    public static final String LINE_END = "\n";
+    public static final String TRUE_VALUE = "TRUE";
+    public static final String FALSE_VALUE = "FALSE";
+  }
+
+  /**
+   * Defines supported file formats for exporting calendar data.
+   */
+  public static final class SupportExportFormats {
+    public static final String CSV = "csv";
+    public static final Set<String> SUPPORTED_EXPORT_FORMATS = Set.of(CSV);
+  }
+
+  /**
+   * Defines supported file formats for importing calendar data.
+   */
+  public static final class SupportImportFormats {
+    public static final String CSV = "csv";
+  }
 }

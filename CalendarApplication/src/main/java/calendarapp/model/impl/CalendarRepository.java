@@ -3,9 +3,9 @@ package calendarapp.model.impl;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
 
 import calendarapp.controller.InvalidCommandException;
+import calendarapp.model.CalendarUpdateOperation;
 import calendarapp.model.ICalendar;
 import calendarapp.model.ICalendarRepository;
 import calendarapp.model.IEventRepository;
@@ -46,24 +46,20 @@ public class CalendarRepository implements ICalendarRepository {
       throw new InvalidCommandException("Calendar does not exist.\n");
     }
 
-    BiConsumer<Calendar.Builder, String> updater = CalendarPropertyUpdater.getUpdater(propertyName);
-    if (updater == null) {
+    CalendarUpdateOperation operation = CalendarPropertyUpdater.getUpdater(propertyName);
+    if (operation == null) {
       throw new InvalidCommandException("Invalid property name.\n");
     }
 
-    Calendar.Builder calendarBuilder = Calendar.builder()
-        .name(calendarToEdit.getName())
-        .zoneId(calendarToEdit.getZoneId())
-        .eventRepository(calendarToEdit.getEventRepository());
-    updater.accept(calendarBuilder, propertyValue);
-
-    ICalendar newCalendar = calendarBuilder.build();
-    if (propertyName.equals(Constants.Calendar.CALENDAR_TIME_ZONE)) {
-      newCalendar.getEventRepository().changeTimeZone(calendarToEdit.getZoneId(),
-          newCalendar.getZoneId());
-    }
-    calendars.add(newCalendar);
     calendars.remove(calendarToEdit);
+    try {
+      ICalendar newCalendar = operation.update(calendarToEdit, propertyValue);
+      addCalendar(newCalendar.getName(), newCalendar.getZoneId().toString(),
+          newCalendar.getEventRepository());
+    } catch (Exception e) {
+      calendars.add(calendarToEdit);
+      throw new InvalidCommandException(e.getMessage());
+    }
   }
 
   @Override
@@ -84,7 +80,7 @@ public class CalendarRepository implements ICalendarRepository {
     toCalendar.getEventRepository().copyEvents(currentCalendar.getEventRepository()
             .getEvents(copyEventRequestDTO.getEventName(),
                 copyEventRequestDTO.getStartTime(), endTime,
-                copyEventRequestDTO.getEventName() == null ? SearchType.MATCHING :
+                copyEventRequestDTO.getEventName() == null ? SearchType.BETWEEN :
                     SearchType.EXACT),
         copyEventRequestDTO.getCopyToDate(), currentCalendar.getZoneId(), toCalendar.getZoneId());
   }
@@ -94,5 +90,10 @@ public class CalendarRepository implements ICalendarRepository {
     return calendars.stream()
         .filter(calendar -> calendar.getName().equals(calendarName))
         .findFirst().orElse(null);
+  }
+
+  @Override
+  public List<ICalendar> getCalendars() {
+    return calendars;
   }
 }

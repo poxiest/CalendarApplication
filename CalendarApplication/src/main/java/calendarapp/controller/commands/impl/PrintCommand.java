@@ -5,11 +5,11 @@ import java.util.regex.Matcher;
 
 import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.ICalendarModel;
-import calendarapp.model.dto.PrintEventsResponseDTO;
+import calendarapp.model.dto.EventsResponseDTO;
 import calendarapp.view.ICalendarView;
 
-import static calendarapp.controller.commands.impl.RegexPatternConstants.PRINT_FROM_TO_PATTERN;
-import static calendarapp.controller.commands.impl.RegexPatternConstants.PRINT_ON_PATTERN;
+import static calendarapp.controller.Constants.PRINT_FROM_TO_PATTERN;
+import static calendarapp.controller.Constants.PRINT_ON_PATTERN;
 
 /**
  * Print Command implementation for printing calendar events within a specified time range.
@@ -66,11 +66,11 @@ public class PrintCommand extends AbstractCommand {
       throw new InvalidCommandException(command + "\nReason : Required fields are missing.\n");
     }
 
-    List<PrintEventsResponseDTO> eventsToShow =
-        model.getEventsForPrinting(startDateTime, endDateTime, on);
+    List<EventsResponseDTO> eventsToShow =
+        model.getEvents(null, startDateTime, endDateTime, on);
     if (!eventsToShow.isEmpty()) {
       view.displayMessage("Events:\n");
-      for (PrintEventsResponseDTO event : eventsToShow) {
+      for (EventsResponseDTO event : eventsToShow) {
         view.displayMessage(String.format("• %s - %s to %s %s\n",
             event.getEventName(),
             event.getStartTime(),

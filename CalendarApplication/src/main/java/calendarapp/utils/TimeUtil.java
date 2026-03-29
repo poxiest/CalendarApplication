@@ -3,6 +3,7 @@ package calendarapp.utils;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -201,6 +202,30 @@ public class TimeUtil {
       return ((LocalDateTime) temporal).format(DateTimeFormatter.ofPattern("h:mm:ss a"));
     }
     return "";
+  }
+
+  /**
+   * Parses a date string (MM/dd/yyyy) and time string (h:mm a) and converts them
+   * to a combined string in yyyy-MM-ddTHH:mm format.
+   *
+   * @param dateStr the date string in MM/dd/yyyy format
+   * @param timeStr the time string in h:mm a format
+   * @return a string in yyyy-MM-ddTHH:mm format
+   */
+  public static String parseAndFormatDateTime(String dateStr, String timeStr) {
+    DateTimeFormatter inputDateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    DateTimeFormatter inputTimeFormatter = DateTimeFormatter.ofPattern("h:mm:ss a");
+    DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+
+    LocalDate date = LocalDate.parse(dateStr, inputDateFormatter);
+
+    LocalTime time = (timeStr != null && !timeStr.isEmpty())
+        ? LocalTime.parse(timeStr, inputTimeFormatter)
+        : LocalTime.of(0, 0);
+
+    LocalDateTime dateTime = LocalDateTime.of(date, time);
+
+    return dateTime.format(outputFormatter);
   }
 
   /**

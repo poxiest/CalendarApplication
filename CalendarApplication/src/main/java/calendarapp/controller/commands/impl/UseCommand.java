@@ -6,7 +6,7 @@ import calendarapp.controller.InvalidCommandException;
 import calendarapp.model.ICalendarModel;
 import calendarapp.view.ICalendarView;
 
-import static calendarapp.controller.commands.impl.RegexPatternConstants.USE_COMMAND;
+import static calendarapp.controller.Constants.USE_COMMAND;
 
 /**
  * Command to switch the active calendar to the specified one.

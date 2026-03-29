@@ -1,8 +1,11 @@
 import org.junit.Test;
 
+import java.util.List;
+
 import calendarapp.model.EventVisibility;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * Test class for Enum {@link EventVisibility}.
@@ -64,5 +67,21 @@ public class EventVisibilityTest {
     assertEquals("private", EventVisibility.PRIVATE.getValue());
     assertEquals("default", EventVisibility.DEFAULT.getValue());
     assertEquals("unknown", EventVisibility.UNKNOWN.getValue());
+  }
+
+  @Test
+  public void testGetVisbility() {
+    List<String> values = EventVisibility.getVisibilities();
+    assertEquals("public", values.get(0));
+    assertEquals("private", values.get(1));
+    assertEquals("default", values.get(2));
+  }
+
+  @Test
+  public void testGetVisbility1() {
+    List<String> values = EventVisibility.getVisibilities();
+    for (String s : values) {
+      assertNotEquals("unknown", s);
+    }
   }
 }

@@ -9,9 +9,9 @@ import calendarapp.model.dto.CopyEventRequestDTO;
 import calendarapp.utils.TimeUtil;
 import calendarapp.view.ICalendarView;
 
-import static calendarapp.controller.commands.impl.RegexPatternConstants.COPY_EVENTS_BETWEEN_COMMAND;
-import static calendarapp.controller.commands.impl.RegexPatternConstants.COPY_EVENTS_ON_COMMAND;
-import static calendarapp.controller.commands.impl.RegexPatternConstants.COPY_EVENT_COMMAND;
+import static calendarapp.controller.Constants.COPY_EVENTS_BETWEEN_COMMAND;
+import static calendarapp.controller.Constants.COPY_EVENTS_ON_COMMAND;
+import static calendarapp.controller.Constants.COPY_EVENT_COMMAND;
 
 /**
  * Command to copy events from the current calendar to another calendar.
